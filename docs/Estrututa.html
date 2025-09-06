@@ -1,0 +1,34 @@
+espaco-vital/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                # Ponto de entrada do FastAPI
+│   │   ├── models/                # Modelos ORM (SQLAlchemy)
+│   │   │   └── user.py
+│   │   ├── schemas/               # Pydantic para validação
+│   │   │   └── user.py
+│   │   ├── crud/                  # Lógica de acesso a dados
+│   │   │   └── user.py
+│   │   ├── api/                   # Rotas
+│   │   │   └── routes_user.py
+│   │   ├── core/                  # Configurações (DB, JWT, etc.)
+│   │   │   ├── config.py
+│   │   │   └── database.py
+│   │   └── dependencies.py        # Dependências comuns (ex: autenticação)
+│   └── requirements.txt           # Dependências do backend
+│
+├── frontend/
+│   └── espaco-vital/              # App Angular
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── components/
+│       │   │   ├── pages/
+│       │   │   ├── services/
+│       │   │   └── app.module.ts
+│       │   ├── assets/
+│       │   └── index.html
+│       └── angular.json
+│
+├── docs/                          # Documentação técnica e escopo
+├── README.md                      # Descrição do projeto
+└── .gitignore
