@@ -1,9 +1,9 @@
 <!-- 
 ===============================================================
-Título: Template Home - Espaço Vital
-Descrição: Página inicial com hero section, terapeutas em destaque e seções principais
+Título: Template Home - Espaço Vital (Versão Refatorada)
+Descrição: Página inicial responsiva fiel ao layout das imagens
 Autor: Will
-Data: 30/08/2025 | Atualizado: 31/08/2025
+Data: 07/09/2025
 ===============================================================
 -->
 {% extends 'base.html' %}
@@ -13,61 +13,102 @@ Data: 30/08/2025 | Atualizado: 31/08/2025
 
 {% block content %}
 <!-- Hero Section Principal -->
-<section class="relative bg-primary py-16 md:py-20">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row items-center">
-            <!-- Texto Principal -->
-            <div class="md:w-1/2 text-white mb-8 md:mb-0">
-                <h1 class="text-3xl md:text-4xl font-poppins font-bold mb-4">
+<section class="relative bg-primary overflow-hidden min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(rgba(11, 82, 89, 0.7), rgba(11, 82, 89, 0.8)), url('{% static 'images/backgrounds/imagem_principal_mobile.png' %}');">
+    <!-- Formas decorativas de fundo -->
+    <div class="absolute inset-0 opacity-10">
+        <!-- Formas orgânicas inspiradas no design -->
+        <div class="absolute top-20 right-10 w-64 h-64 bg-white rounded-full opacity-20"></div>
+        <div class="absolute top-40 right-32 w-48 h-48 bg-mint rounded-full opacity-15"></div>
+        <div class="absolute bottom-20 left-20 w-32 h-32 bg-coral rounded-full opacity-25"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 lg:px-6 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center py-16 lg:py-20 min-h-[600px]">
+            <!-- Conteúdo texto (lado esquerdo) -->
+            <div class="lg:w-1/2 text-white mb-12 lg:mb-0 lg:pr-12">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold mb-6 leading-tight">
                     Encontre terapeutas que combinam com você
                 </h1>
                 
-                <!-- Campo de busca -->
-                <div class="relative max-w-md">
-                    <input type="text" 
-                           placeholder="Digite a Terapia" 
-                           class="w-full px-4 py-3 rounded-lg text-gray-900 pr-12">
-                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white p-2 rounded">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
+                <!-- Campo de busca principal -->
+                <div class="relative max-w-lg mb-6">
+                    <div class="relative">
+                        <input type="text" 
+                               placeholder="Digite a Terapia" 
+                               class="w-full px-6 py-4 pr-14 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 shadow-lg text-lg">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white p-3 rounded-lg hover:bg-primary/90 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
-                <p class="text-sm mt-3 flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                    </svg>
-                    Todos os Terapeutas dos são verificados
-                </p>
+                <!-- Texto de verificação -->
+                <div class="flex items-center text-sm lg:text-base">
+                    <div class="flex items-center justify-center w-6 h-6 bg-white bg-opacity-20 rounded-full mr-3 flex-shrink-0">
+                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="text-white/90">Todos os terapeutas são verificados</span>
+                </div>
             </div>
             
-            <!-- Imagem Hero -->
-            <div class="relative">
-                <img src="{% static 'images/backgrounds/imagem_principal_mobile.png' %}" 
-                    alt="Mulher meditando" 
-                    class="w-96 h-64 object-cover rounded-lg">
-                <!-- Degradê translúcido na ponta esquerda -->
-                <div class="absolute inset-0 bg-gradient-to-r from-primary/30 via-transparent to-transparent rounded-lg"></div>
+            <!-- Imagem Hero (lado direito) -->
+            <div class="lg:w-1/2 flex justify-center lg:justify-end">
+                <div class="relative">
+                    <!-- Imagem principal -->
+                    <div class="relative w-96 h-80 lg:w-[48rem] lg:h-96 rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="{% static 'images/backgrounds/imagem_principal_mobile.png' %}" 
+                             alt="Mulher meditando em ambiente tranquilo" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        
+                        <!-- Fallback com gradiente -->
+                        <div class="hidden w-full h-full bg-gradient-to-br from-mint/40 via-coral/30 to-primary/40 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium">Bem-estar e Tranquilidade</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gradiente overlay sutil -->
+                    <div class="absolute inset-0 bg-gradient-to-l from-primary/20 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
+                    
+                    <!-- Elementos decorativos flutuantes -->
+                    <div class="absolute -top-4 -left-4 w-8 h-8 bg-white/30 rounded-full animate-pulse"></div>
+                    <div class="absolute -bottom-6 -right-6 w-12 h-12 bg-coral/40 rounded-full animate-pulse"></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Seção Terapeutas em Destaque -->
-<section class="py-16 bg-light-bg">
-    <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl md:text-3xl font-poppins font-bold text-primary">
+<section class="py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Header da seção -->
+        <div class="flex items-center justify-between mb-12">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary">
                 Terapeutas em Destaque
             </h2>
-            <div class="flex space-x-2">
-                <button class="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            
+            <!-- Controles do carrossel - Desktop -->
+            <div class="hidden md:flex items-center space-x-3">
+                <button class="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200" 
+                        onclick="moveCarousel('therapists', -1)">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-                <button class="w-10 h-10 bg-primary text-white rounded-full shadow-md flex items-center justify-center">
+                <button class="w-12 h-12 bg-primary text-white rounded-full shadow-md flex items-center justify-center hover:bg-primary/90 transition-colors" 
+                        onclick="moveCarousel('therapists', 1)">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -75,338 +116,724 @@ Data: 30/08/2025 | Atualizado: 31/08/2025
             </div>
         </div>
         
-        <!-- Cards de Terapeutas -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {% for i in "1234" %}
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gradient-to-br from-mint/20 to-coral/20 flex items-center justify-center">
-                    <!-- Placeholder para foto do terapeuta -->
-                    <div class="w-24 h-24 bg-primary/20 rounded-full"></div>
+        <!-- Container do carrossel -->
+        <div class="relative overflow-hidden">
+            <div id="therapists-carousel" class="flex transition-transform duration-300 ease-in-out">
+                <!-- Card Terapeuta 1 -->
+                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
+                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
+                        <!-- Área da imagem com gradiente -->
+                        <div class="h-48 bg-gradient-to-br from-mint/20 via-coral/15 to-primary/20 flex items-center justify-center relative">
+                            <!-- Placeholder para foto do terapeuta -->
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <!-- Badge de verificação -->
+                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                                Verificado
+                            </div>
+                        </div>
+                        
+                        <!-- Conteúdo do card -->
+                        <div class="p-6 text-center">
+                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Ana Silva</h3>
+                            <p class="text-sm text-gray-600 mb-4">Massoterapia • Reiki</p>
+                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-4 text-center">
-                    <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm hover:bg-primary/90">
-                        Ver perfil
-                    </button>
+                
+                <!-- Card Terapeuta 2 -->
+                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
+                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-coral/20 via-mint/15 to-primary/20 flex items-center justify-center relative">
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                                Verificado
+                            </div>
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Carlos Mendes</h3>
+                            <p class="text-sm text-gray-600 mb-4">Yoga • Meditação</p>
+                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card Terapeuta 3 -->
+                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
+                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-primary/20 via-coral/15 to-mint/20 flex items-center justify-center relative">
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                                Verificado
+                            </div>
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Marina Costa</h3>
+                            <p class="text-sm text-gray-600 mb-4">Aromaterapia • Cristaloterapia</p>
+                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card Terapeuta 4 -->
+                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
+                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-mint/20 via-primary/15 to-coral/20 flex items-center justify-center relative">
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                                Verificado
+                            </div>
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Roberto Lima</h3>
+                            <p class="text-sm text-gray-600 mb-4">Shiatsu • Reflexologia</p>
+                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endfor %}
+        </div>
+        
+        <!-- Indicadores mobile -->
+        <div class="flex justify-center mt-8 md:hidden">
+            <div class="flex space-x-2">
+                <div class="w-2 h-2 bg-primary rounded-full"></div>
+                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Seção Espaços Terapêuticos -->
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl md:text-3xl font-poppins font-bold text-primary">
+<section class="py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Header da seção -->
+        <div class="flex items-center justify-between mb-12">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary">
                 Espaços Terapêuticos
             </h2>
-            <button class="w-10 h-10 bg-primary text-white rounded-full shadow-md flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </button>
+            
+            <!-- Botão Ver Todos - Desktop -->
+            <div class="hidden md:block">
+                <button class="w-12 h-12 bg-primary text-white rounded-full shadow-md flex items-center justify-center hover:bg-primary/90 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
         
-        <!-- Cards de Espaços -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-yellow-200 to-orange-300"></div>
-                <div class="p-3">
-                    <p class="text-xs text-gray-600">Centro / RJ</p>
+        <!-- Grid de Espaços -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+            <!-- Espaço 1 - Centro/RJ -->
+            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 bg-gradient-to-br from-yellow-200 via-orange-300 to-amber-400 relative overflow-hidden">
+                    <!-- Padrão decorativo -->
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="absolute top-2 left-2 w-6 h-6 bg-white rounded-full"></div>
+                        <div class="absolute bottom-2 right-2 w-4 h-4 bg-white rounded-full"></div>
+                    </div>
+                    <!-- Overlay hover -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <div class="p-3 lg:p-4">
+                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Centro / RJ</p>
+                    <p class="text-xs text-gray-500 mt-1">3 terapeutas</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-amber-400 to-orange-600"></div>
-                <div class="p-3">
-                    <p class="text-xs text-gray-600">Santa da Tijuca / RJ</p>
+            
+            <!-- Espaço 2 - Santa da Tijuca/RJ -->
+            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="absolute top-3 right-3 w-5 h-5 bg-white rounded-full"></div>
+                        <div class="absolute bottom-3 left-3 w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <div class="p-3 lg:p-4">
+                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Santa da Tijuca / RJ</p>
+                    <p class="text-xs text-gray-500 mt-1">5 terapeutas</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-red-400 to-red-700"></div>
-                <div class="p-3">
-                    <p class="text-xs text-gray-600">Vila Madalena / SP</p>
+            
+            <!-- Espaço 3 - Vila Madalena/SP -->
+            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 bg-gradient-to-br from-red-400 via-red-600 to-red-800 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="absolute top-4 left-4 w-4 h-4 bg-white rounded-full"></div>
+                        <div class="absolute bottom-4 right-4 w-6 h-6 bg-white rounded-full"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <div class="p-3 lg:p-4">
+                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Vila Madalena / SP</p>
+                    <p class="text-xs text-gray-500 mt-1">8 terapeutas</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-gray-300 to-gray-500"></div>
-                <div class="p-3">
-                    <p class="text-xs text-gray-600">Santo Inácio / RJ</p>
+            
+            <!-- Espaço 4 - Santo Inácio/RJ -->
+            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 bg-gradient-to-br from-gray-300 via-gray-500 to-gray-700 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full"></div>
+                        <div class="absolute bottom-2 left-2 w-7 h-7 bg-white rounded-full"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <div class="p-3 lg:p-4">
+                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Santo Inácio / RJ</p>
+                    <p class="text-xs text-gray-500 mt-1">2 terapeutas</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-amber-300 to-yellow-600"></div>
-                <div class="p-3">
-                    <p class="text-xs text-gray-600">Vilinha / ES</p>
+            
+            <!-- Espaço 5 - Vilinha/ES -->
+            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 bg-gradient-to-br from-amber-300 via-yellow-400 to-orange-500 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="absolute top-3 left-3 w-6 h-6 bg-white rounded-full"></div>
+                        <div class="absolute bottom-3 right-3 w-4 h-4 bg-white rounded-full"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <div class="p-3 lg:p-4">
+                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Vilinha / ES</p>
+                    <p class="text-xs text-gray-500 mt-1">4 terapeutas</p>
                 </div>
             </div>
+        </div>
+        
+        <!-- Botão Ver Todos - Mobile -->
+        <div class="flex justify-center mt-8 md:hidden">
+            <button class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                Ver todos os espaços
+            </button>
         </div>
     </div>
 </section>
 
 <!-- Seção Benefícios da Terapia -->
-<section class="py-16 bg-light-bg">
-    <div class="container mx-auto px-4">
-        <h2 class="text-2xl md:text-3xl font-poppins font-bold text-primary text-center mb-12">
-            Benefícios da Terapia
-        </h2>
+<section class="py-16 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Header da seção -->
+        <div class="text-center mb-16">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary mb-4">
+                Benefícios da Terapia
+            </h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Descubra como a terapia pode transformar sua vida e promover bem-estar integral
+            </p>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <!-- Autoconhecimento -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/autoconhecimento.png' %}" 
-                         alt="Autoconhecimento" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
+        <!-- Grid de Benefícios -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+            <!-- Benefício 1 - Autoconhecimento -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/autoconhecimento.png' %}" 
+                            alt="Autoconhecimento" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Autoconhecimento</h3>
-                <p class="text-sm text-gray-600">
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Autoconhecimento</h3>
+                <p class="text-gray-600 leading-relaxed">
                     Descubra suas próprias competências e desperte vitalidade e felicidade. 
-                    A terapia ajuda você a descobrir que potenciais antes incomuns sobre quem você realmente é.
+                    A terapia ajuda você a descobrir potenciais antes desconhecidos sobre quem você realmente é.
                 </p>
             </div>
             
-            <!-- Resgate da autoestima -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/autoestima.png' %}" 
-                         alt="Resgate da autoestima" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
+            <!-- Benefício 2 - Resgate da autoestima -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/autoestima.png' %}" 
+                            alt="Resgate da autoestima" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Resgate da autoestima</h3>
-                <p class="text-sm text-gray-600">
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Resgate da autoestima</h3>
+                <p class="text-gray-600 leading-relaxed">
                     Reconecte-se com seu corpo e valor pessoal. 
-                    Valorize suas competências e sua autoestima de forma genuína.
+                    Valorize suas competências e desenvolva sua autoestima de forma genuína e duradoura.
                 </p>
             </div>
             
-            <!-- Liberação de traumas -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/liberacao_traumas.png' %}" 
-                         alt="Liberação de traumas" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
+            <!-- Benefício 3 - Liberação de traumas -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/liberacao_traumas.png' %}" 
+                            alt="Liberação de traumas" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Liberação de traumas</h3>
-                <p class="text-sm text-gray-600">
-                    Solução segura para transformar danos de traumas através de um ambiente cuidadoso em uma atmosfera única.
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Liberação de traumas</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Transforme traumas em cura através de um ambiente seguro e cuidadoso, 
+                    com técnicas terapêuticas especializadas em uma atmosfera única e acolhedora.
                 </p>
             </div>
             
-            <!-- Expansão da consciência -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/expansao_consciencia.png' %}" 
-                         alt="Expansão da consciência" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27C12.59 16.41 11.11 17 9.5 17A6.5 6.5 0 0 1 3 10.5A6.5 6.5 0 0 1 9.5 3m0 2C7.01 5 5 7.01 5 9.5S7.01 14 9.5 14 14 11.99 14 9.5 11.99 5 9.5 5z"/>
-                    </svg>
+            <!-- Benefício 4 - Expansão da consciência -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/expansao_consciencia.png' %}" 
+                            alt="Expansão da consciência" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27C12.59 16.41 11.11 17 9.5 17A6.5 6.5 0 0 1 3 10.5A6.5 6.5 0 0 1 9.5 3m0 2C7.01 5 5 7.01 5 9.5S7.01 14 9.5 14 14 11.99 14 9.5 11.99 5 9.5 5z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Expansão da consciência</h3>
-                <p class="text-sm text-gray-600">
-                    Ampliação da percepção, na consciência. 
-                    Amplie sua visão sobre a vida e seus processos.
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Expansão da consciência</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Amplie sua percepção e consciência sobre a vida. 
+                    Desenvolva uma visão mais clara sobre seus processos internos e externos.
                 </p>
             </div>
             
-            <!-- Melhoria nos relacionamentos -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/relacionamentos.png' %}" 
-                         alt="Melhoria nos relacionamentos" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A3.01 3.01 0 0 0 16.94 6c-.5 0-.98.18-1.34.5L14.25 7.75 13 4.5a2.5 2.5 0 0 0-4.5 0L6 9.5a2.5 2.5 0 0 0 4.5 0L12 6.75l1.25 3.25-1.35 1.35a2.97 2.97 0 0 0-.96 1.96c-.01.16-.01.32-.01.48V22h2v-7h2v7h2z"/>
-                    </svg>
+            <!-- Benefício 5 - Melhoria nos relacionamentos -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/relacionamentos.png' %}" 
+                            alt="Melhoria nos relacionamentos" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A3.01 3.01 0 0 0 16.94 6c-.5 0-.98.18-1.34.5L14.25 7.75 13 4.5a2.5 2.5 0 0 0-4.5 0L6 9.5a2.5 2.5 0 0 0 4.5 0L12 6.75l1.25 3.25-1.35 1.35a2.97 2.97 0 0 0-.96 1.96c-.01.16-.01.32-.01.48V22h2v-7h2v7h2z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Melhoria nos relacionamentos</h3>
-                <p class="text-sm text-gray-600">
-                    Desenvolva empatia, clareza na comunicação e desenvolva com mais velocidade e afeto.
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Melhoria nos relacionamentos</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Desenvolva empatia, clareza na comunicação e construa relacionamentos 
+                    mais saudáveis com maior velocidade e afeto genuíno.
                 </p>
             </div>
             
-            <!-- Redução do estresse -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/reducao_estresse.png' %}" 
-                         alt="Redução do estresse" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
+            <!-- Benefício 6 - Redução do estresse -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/reducao_estresse.png' %}" 
+                            alt="Redução do estresse" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Redução do estresse</h3>
-                <p class="text-sm text-gray-600">
-                    Técnicas que promovem relaxamento físico e mental. 
-                    Trabalhe a ansiedade e encontre cuidado com uma atmosfera acolhedora.
+                <h3 class="font-poppins font-semibold text-primary mb-4 text-xl">Redução do estresse</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Aprenda técnicas que promovem relaxamento físico e mental. 
+                    Trabalhe a ansiedade e encontre paz em uma atmosfera acolhedora e transformadora.
                 </p>
             </div>
         </div>
     </div>
 </section>
-
 <!-- Seção Por que utilizar o Espaço Vital -->
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-2xl md:text-3xl font-poppins font-bold text-primary text-center mb-4">
-            Por que utilizar o Espaço Vital?
-        </h2>
-        <p class="text-gray-600 text-center mb-12">
-            Conectamos você a profissionais qualificados em um ambiente seguro, ético e acolhedor.
-        </p>
+<section class="py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Header da seção -->
+        <div class="text-center mb-16">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary mb-4">
+                Por que utilizar o Espaço Vital?
+            </h2>
+            <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+                Conectamos você a profissionais qualificados em um ambiente seguro, ético e acolhedor.
+            </p>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/profissionais_verificados.png' %}" 
-                         alt="Profissionais verificados" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                    </svg>
+        <!-- Grid de Vantagens -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
+            <!-- Vantagem 1 - Profissionais verificados -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/profissionais_verificados.png' %}" 
+                            alt="Profissionais verificados" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Profissionais verificados</h3>
-                <p class="text-xs text-gray-600">
-                    Garantia de segurança e credibilidade.
+                <h3 class="font-poppins font-semibold text-primary mb-3 text-lg">Profissionais verificados</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Garantia de segurança e credibilidade com todos os terapeutas aprovados.
                 </p>
             </div>
             
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/espacos_selecionados.png' %}" 
-                         alt="Espaços selecionados" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
-                    </svg>
+            <!-- Vantagem 2 - Espaços selecionados -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/espacos_selecionados.png' %}" 
+                            alt="Espaços selecionados" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Espaços selecionados</h3>
-                <p class="text-xs text-gray-600">
-                    Locais que representam a ética terapêutica.
+                <h3 class="font-poppins font-semibold text-primary mb-3 text-lg">Espaços selecionados</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Locais cuidadosamente escolhidos que representam a ética terapêutica.
                 </p>
             </div>
             
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/filtro_especialidade.png' %}" 
-                         alt="Filtro por especialidade" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                    </svg>
+            <!-- Vantagem 3 - Filtro por especialidade -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/filtro_especialidade.png' %}" 
+                            alt="Filtro por especialidade" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Filtro por especialidade</h3>
-                <p class="text-xs text-gray-600">
-                    Encontre exatamente o que procura em segundos.
+                <h3 class="font-poppins font-semibold text-primary mb-3 text-lg">Filtro por especialidade</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Encontre exatamente o que procura de forma rápida e precisa.
                 </p>
             </div>
             
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img src="{% static 'images/icons/conteudo_educativo.png' %}" 
-                         alt="Conteúdo educativo" 
-                         class="w-8 h-8"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <svg class="w-8 h-8 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
+            <!-- Vantagem 4 - Conteúdo educativo -->
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <img src="{% static 'images/icons/conteudo_educativo.png' %}" 
+                            alt="Conteúdo educativo" 
+                            class="w-6 h-6"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
                 </div>
-                <h3 class="font-poppins font-semibold text-primary mb-2">Conteúdo educativo</h3>
-                <p class="text-xs text-gray-600">
-                    Aprenda mais sobre autocuidado atravé nossa autoridade científica.
+                <h3 class="font-poppins font-semibold text-primary mb-3 text-lg">Conteúdo educativo</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Aprenda sobre autocuidado através de nossa base científica.
                 </p>
             </div>
         </div>
     </div>
 </section>
-
 <!-- Seção Blog do Espaço Vital -->
-<section class="py-16 bg-light-bg">
-    <div class="container mx-auto px-4">
-        <h2 class="text-2xl md:text-3xl font-poppins font-bold text-primary text-center mb-4">
-            Blog do Espaço Vital
-        </h2>
-        <p class="text-gray-600 text-center mb-12">
-            Nossos terapeutas compartilham experiências e saberes com você.
-        </p>
+<section class="py-16 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Header da seção -->
+        <div class="text-center mb-16">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary mb-4">
+                Blog do Espaço Vital
+            </h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Nossos terapeutas compartilham experiências e saberes com você.
+            </p>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <article class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gradient-to-br from-gray-400 to-gray-600"></div>
-                <div class="p-6">
-                    <h3 class="font-poppins font-semibold text-gray-900 mb-2">
+        <!-- Grid de Artigos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+            <!-- Artigo 1 -->
+            <article class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden group cursor-pointer">
+                <!-- Imagem do artigo -->
+                <div class="h-48 lg:h-56 bg-gradient-to-br from-gray-400 via-gray-600 to-gray-800 relative overflow-hidden">
+                    <!-- Placeholder para imagem -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-white/70 text-center">
+                            <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            <p class="text-xs">Imagem do artigo</p>
+                        </div>
+                    </div>
+                    <!-- Overlay hover -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                
+                <!-- Conteúdo do artigo -->
+                <div class="p-6 lg:p-8">
+                    <h3 class="font-poppins font-semibold text-gray-900 mb-3 text-xl leading-tight group-hover:text-primary transition-colors">
                         A importância do toque consciente na terapia
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitationis.
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Descubra como o toque terapêutico pode ser uma ferramenta poderosa de cura e conexão, 
+                        promovendo bem-estar físico e emocional através de técnicas conscientes.
                     </p>
+                    
+                    <!-- Autor -->
                     <div class="flex items-center">
-                        <div class="w-8 h-8 bg-gray-300 rounded-full mr-3"></div>
+                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-primary/60" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
                         <div>
-                            <p class="text-xs font-medium text-gray-900">Luiza Marques</p>
+                            <p class="text-sm font-medium text-gray-900">Luiza Marques</p>
                             <p class="text-xs text-gray-500">Massoterapeuta</p>
                         </div>
                     </div>
                 </div>
             </article>
             
-            <article class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gradient-to-br from-amber-300 to-orange-400"></div>
-                <div class="p-6">
-                    <h3 class="font-poppins font-semibold text-gray-900 mb-2">
+            <!-- Artigo 2 -->
+            <article class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden group cursor-pointer">
+                <div class="h-48 lg:h-56 bg-gradient-to-br from-amber-300 via-orange-400 to-red-400 relative overflow-hidden">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-white/70 text-center">
+                            <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            <p class="text-xs">Imagem do artigo</p>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                
+                <div class="p-6 lg:p-8">
+                    <h3 class="font-poppins font-semibold text-gray-900 mb-3 text-xl leading-tight group-hover:text-primary transition-colors">
                         Como a respiração pode transformar seu estado mental
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitationis.
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Explore técnicas de respiração consciente que podem revolucionar sua saúde mental, 
+                        reduzir ansiedade e promover um estado de calma e clareza mental duradouro.
                     </p>
+                    
                     <div class="flex items-center">
-                        <div class="w-8 h-8 bg-gray-300 rounded-full mr-3"></div>
+                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-primary/60" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
                         <div>
-                            <p class="text-xs font-medium text-gray-900">Marcelo Araujo</p>
+                            <p class="text-sm font-medium text-gray-900">Marcelo Araujo</p>
                             <p class="text-xs text-gray-500">Yoga</p>
                         </div>
                     </div>
                 </div>
             </article>
             
-            <article class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-400"></div>
-                <div class="p-6">
-                    <h3 class="font-poppins font-semibold text-gray-900 mb-2">
+            <!-- Artigo 3 -->
+            <article class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden group cursor-pointer">
+                <div class="h-48 lg:h-56 bg-gradient-to-br from-purple-400 via-pink-400 to-red-400 relative overflow-hidden">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-white/70 text-center">
+                            <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            <p class="text-xs">Imagem do artigo</p>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                
+                <div class="p-6 lg:p-8">
+                    <h3 class="font-poppins font-semibold text-gray-900 mb-3 text-xl leading-tight group-hover:text-primary transition-colors">
                         Tantra além do prazer: uma jornada de cura
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitationis.
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Entenda como o Tantra vai muito além do aspecto sexual, oferecendo um caminho 
+                        profundo de autoconhecimento, cura emocional e expansão da consciência.
                     </p>
+                    
                     <div class="flex items-center">
-                        <div class="w-8 h-8 bg-gray-300 rounded-full mr-3"></div>
+                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-primary/60" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
                         <div>
-                            <p class="text-xs font-medium text-gray-900">Beatriz</p>
+                            <p class="text-sm font-medium text-gray-900">Beatriz Silva</p>
                             <p class="text-xs text-gray-500">Tantra</p>
                         </div>
                     </div>
                 </div>
             </article>
         </div>
+        
+        <!-- Botão Ver Todos os Artigos -->
+        <div class="text-center mt-12">
+            <button class="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                Ver todos os artigos
+            </button>
+        </div>
     </div>
 </section>
+<!-- JavaScript para funcionalidades -->
+<script>
+    // ===================================================================
+    // JavaScript para Carrossel de Terapeutas
+    // Autor: Will
+    // Data: 07/09/2025
+    // ===================================================================
+    
+    let currentSlide = 0;
+    const maxSlides = 4; // Total de terapeutas
+    
+    function moveCarousel(carouselId, direction) {
+        const carousel = document.getElementById(carouselId + '-carousel');
+        const cardWidth = carousel.children[0].offsetWidth;
+        const visibleCards = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 768 ? 2 : 1;
+        
+        currentSlide += direction;
+        
+        // Controlar limites do carrossel
+        if (currentSlide < 0) {
+            currentSlide = 0;
+        } else if (currentSlide > maxSlides - visibleCards) {
+            currentSlide = maxSlides - visibleCards;
+        }
+        
+        const translateX = -currentSlide * (cardWidth + (window.innerWidth >= 1024 ? 24 : 12));
+        carousel.style.transform = `translateX(${translateX}px)`;
+        
+        // Atualizar indicadores mobile
+        updateMobileIndicators();
+    }
+    
+    function updateMobileIndicators() {
+        const indicators = document.querySelectorAll('.flex.justify-center .w-2');
+        indicators.forEach((indicator, index) => {
+            if (index === currentSlide) {
+                indicator.classList.remove('bg-gray-300');
+                indicator.classList.add('bg-primary');
+            } else {
+                indicator.classList.remove('bg-primary');
+                indicator.classList.add('bg-gray-300');
+            }
+        });
+    }
+    
+    // Auto-play do carrossel (opcional)
+    function autoPlay() {
+        setInterval(() => {
+            const visibleCards = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 768 ? 2 : 1;
+            if (currentSlide >= maxSlides - visibleCards) {
+                currentSlide = 0;
+            } else {
+                currentSlide++;
+            }
+            
+            const carousel = document.getElementById('therapists-carousel');
+            const cardWidth = carousel.children[0].offsetWidth;
+            const translateX = -currentSlide * (cardWidth + (window.innerWidth >= 1024 ? 24 : 12));
+            carousel.style.transform = `translateX(${translateX}px)`;
+            
+            updateMobileIndicators();
+        }, 5000); // Muda a cada 5 segundos
+    }
+    
+    // Inicializar funcionalidades quando página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar indicadores
+        updateMobileIndicators();
+        
+        // Iniciar auto-play (descomente se quiser)
+        // autoPlay();
+        
+        // Adicionar event listeners para touch/swipe em mobile
+        let startX = 0;
+        let endX = 0;
+        
+        const carousel = document.getElementById('therapists-carousel');
+        
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        carousel.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const threshold = 50; // Mínimo de pixels para considerar swipe
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    // Swipe para esquerda - próximo
+                    moveCarousel('therapists', 1);
+                } else {
+                    // Swipe para direita - anterior
+                    moveCarousel('therapists', -1);
+                }
+            }
+        }
+        
+        // Ajustar carrossel ao redimensionar janela
+        window.addEventListener('resize', () => {
+            currentSlide = 0;
+            const carousel = document.getElementById('therapists-carousel');
+            carousel.style.transform = 'translateX(0px)';
+            updateMobileIndicators();
+        });
+    });
+    
+    // ===================================================================
+    // Smooth scroll para links internos (se necessário)
+    // ===================================================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+
 {% endblock %}

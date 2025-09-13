@@ -1,11 +1,109 @@
-asgiref==3.9.1
-Django==4.2
-django-allauth==65.1.0
-django-ckeditor==6.7.3
-django-crispy-forms==2.4
-django-filter==25.1
-django-js-asset==3.1.2
-pillow==11.3.0
-psycopg2==2.9.10
-sqlparse==0.5.3
-tzdata==2025.2
+# ===============================================================
+# Título: Requirements - Espaço Vital
+# Descrição: Dependências Python para o projeto
+# Autor: Will
+# Data: 07/09/2025
+# ===============================================================
+
+# Django Framework
+Django==4.2.15
+asgiref==3.7.2
+sqlparse==0.4.4
+tzdata==2024.1
+
+# Database
+psycopg2-binary==2.9.9
+
+# Authentication & Authorization
+django-allauth==0.57.0
+PyJWT==2.8.0
+
+# Forms & UI
+django-crispy-forms==2.1
+crispy-tailwind==0.5.0
+django-widget-tweaks==1.5.0
+
+# Rich Text Editor
+django-ckeditor==6.7.0
+django-js-asset==2.2.0
+
+# Image Processing
+Pillow==10.4.0
+
+# Search & Filtering
+django-filter==23.5
+
+# API & AJAX
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# File Management
+django-storages==1.14.2
+boto3==1.34.162
+botocore==1.34.162
+
+# Environment Variables
+python-decouple==3.8
+python-dotenv==1.0.0
+
+# Development Tools
+django-debug-toolbar==4.2.0
+django-extensions==3.2.3
+
+# Testing
+pytest==7.4.4
+pytest-django==4.8.0
+factory-boy==3.3.0
+coverage==7.3.2
+
+# Code Quality
+flake8==6.1.0
+black==23.12.1
+isort==5.13.2
+
+# Security
+django-ratelimit==4.1.0
+django-csp==3.7
+
+# Monitoring & Logging
+sentry-sdk==1.38.0
+
+# Utilities
+requests==2.31.0
+python-slugify==8.0.1
+django-model-utils==4.3.1
+
+# Date & Time
+python-dateutil==2.8.2
+
+# Production Server
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Cache
+redis==5.0.1
+django-redis==5.4.0
+
+# Celery (para tarefas assíncronas futuras)
+celery==5.3.4
+kombu==5.3.4
+
+# Email
+django-anymail==10.2
+
+# SEO & Sitemap
+django-robots==6.1
+# django-sitemap==2.3
+
+# Analytics (opcional)
+django-analytical==3.1.0
+
+# Backup & Management
+django-dbbackup==4.0.2
+
+# Development Dependencies (apenas para desenvolvimento)
+# Descomente se necessário:
+# ipython==8.18.1
+# jupyter==1.0.0
+# django-silk==5.0.4  # Para profiling
+# pre-commit==3.6.0   # Para hooks de git
