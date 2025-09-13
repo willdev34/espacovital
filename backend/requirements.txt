@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Requirements - Espaço Vital
 # Descrição: Dependências Python para o projeto
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 

@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: URLs Principal - Espaço Vital
 # Descrição: Configuração principal de rotas da aplicação
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 30/08/2025
 # ===============================================================
 

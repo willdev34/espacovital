@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Context Processors - Espaço Vital
 # Descrição: Dados globais disponíveis em todos os templates
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 

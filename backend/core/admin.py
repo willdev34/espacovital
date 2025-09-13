@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Admin do App Core - Espaço Vital (Versão Corrigida)
 # Descrição: Interface administrativa para modelos do core
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 

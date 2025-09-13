@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Settings - Espaço Vital (Versão Limpa)
 # Descrição: Configurações básicas funcionais
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 

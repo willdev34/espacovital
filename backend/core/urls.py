@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: URLs do App Core - Espaço Vital (Versão Atualizada)  
 # Descrição: Configuração de rotas do app core com novas funcionalidades
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 

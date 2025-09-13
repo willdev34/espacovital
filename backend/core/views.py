@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Views do App Core - Espaço Vital (Versão Atualizada)
 # Descrição: Views principais da aplicação com contexto otimizado
-# Autor: Will
+# Autor: Will | Empresa: Espaço VItal
 # Data: 07/09/2025
 # ===============================================================
 
