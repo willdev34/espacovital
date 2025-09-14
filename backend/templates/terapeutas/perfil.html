@@ -1,0 +1,538 @@
+<!-- 
+===============================================================
+Título: Template Perfil do Terapeuta - Espaço Vital
+Descrição: Página completa do perfil de um terapeuta
+Autor: Will | Empresa: Espaço VItal
+Data: 13/09/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section do Perfil -->
+<section class="relative bg-gradient-to-r from-primary to-primary/80 overflow-hidden">
+    <!-- Foto de capa ou gradiente -->
+    {% if terapeuta.foto_capa %}
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30" 
+         style="background-image: url('{{ terapeuta.foto_capa.url }}');"></div>
+    {% endif %}
+    
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-primary/70"></div>
+    
+    <div class="container mx-auto px-4 lg:px-6 relative z-10">
+        <div class="py-12 lg:py-16">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
+                <!-- Foto do perfil -->
+                <div class="flex justify-center lg:justify-start mb-6 lg:mb-0">
+                    <div class="relative">
+                        {% if terapeuta.foto_perfil %}
+                            <img src="{{ terapeuta.foto_perfil.url }}" 
+                                 alt="{{ terapeuta.nome_exibicao }}"
+                                 class="w-32 h-32 lg:w-40 lg:h-40 rounded-full object-cover border-4 border-white shadow-2xl">
+                        {% else %}
+                            <div class="w-32 h-32 lg:w-40 lg:h-40 bg-white/20 rounded-full flex items-center justify-center border-4 border-white shadow-2xl">
+                                <svg class="w-16 h-16 lg:w-20 lg:h-20 text-white/60" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Badge de verificação -->
+                        {% if terapeuta.verificado %}
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Informações principais -->
+                <div class="text-center lg:text-left text-white flex-1">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                        <div class="mb-4 lg:mb-0">
+                            <h1 class="text-3xl lg:text-4xl font-poppins font-bold mb-2">
+                                {{ terapeuta.nome_exibicao }}
+                            </h1>
+                            
+                            <!-- Localização -->
+                            {% if terapeuta.cidade %}
+                            <p class="text-lg text-white/90 mb-4 flex items-center justify-center lg:justify-start">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                {{ terapeuta.cidade.nome }}, {{ terapeuta.cidade.estado.sigla }}
+                            </p>
+                            {% endif %}
+                            
+                            <!-- Especialidades principais -->
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
+                                {% for esp_det in especialidades_detalhadas|slice:":3" %}
+                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-medium{% if esp_det.principal %} bg-white/30{% endif %}">
+                                    {{ esp_det.especialidade.nome }}{% if esp_det.principal %} ⭐{% endif %}
+                                </span>
+                                {% endfor %}
+                                {% if especialidades_detalhadas.count > 3 %}
+                                <span class="text-white/80 text-sm">
+                                    +{{ especialidades_detalhadas.count|add:"-3" }} mais
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Bio curta -->
+                            <p class="text-white/90 text-lg max-w-2xl">
+                                {{ terapeuta.bio_curta }}
+                            </p>
+                        </div>
+                        
+                        <!-- Stats e badges -->
+                        <div class="flex flex-col items-center lg:items-end space-y-4">
+                            <!-- Rating -->
+                            {% if stats.media_avaliacoes %}
+                            <div class="text-center lg:text-right">
+                                <div class="flex items-center justify-center lg:justify-end mb-1">
+                                    <span class="text-2xl font-bold text-white mr-2">{{ stats.media_avaliacoes }}</span>
+                                    <div class="text-yellow-400">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= stats.media_avaliacoes %}⭐{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-white/80 text-sm">{{ stats.total_avaliacoes }} avaliação{{ stats.total_avaliacoes|pluralize:"ões" }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Badges de status -->
+                            <div class="flex flex-col space-y-2">
+                                {% if terapeuta.premium %}
+                                <div class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    Premium
+                                </div>
+                                {% endif %}
+                                
+                                {% if terapeuta.verificado %}
+                                <div class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Verificado
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botão de contato flutuante (mobile) -->
+    <div class="lg:hidden fixed bottom-6 right-6 z-50">
+        <a href="{% url 'terapeutas:contatar' terapeuta.slug %}" 
+           class="bg-coral text-white p-4 rounded-full shadow-lg hover:bg-coral/90 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+        </a>
+    </div>
+</section>
+
+<!-- Conteúdo Principal -->
+<section class="py-12 lg:py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            <!-- Coluna Principal (2/3) -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Sobre o Terapeuta -->
+                <div class="bg-white rounded-2xl shadow-card p-6 lg:p-8">
+                    <h2 class="text-2xl font-poppins font-bold text-primary mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Sobre {{ terapeuta.nome_exibicao }}
+                    </h2>
+                    
+                    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                        {{ terapeuta.bio_completa|linebreaks }}
+                    </div>
+                    
+                    <!-- Formação -->
+                    {% if terapeuta.formacao %}
+                    <div class="mt-8 p-6 bg-gray-50 rounded-xl">
+                        <h3 class="font-poppins font-semibold text-primary mb-3">Formação</h3>
+                        <p class="text-gray-700">{{ terapeuta.formacao|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Metodologia -->
+                    {% if terapeuta.metodologia %}
+                    <div class="mt-6 p-6 bg-primary/5 rounded-xl">
+                        <h3 class="font-poppins font-semibold text-primary mb-3">Metodologia</h3>
+                        <p class="text-gray-700">{{ terapeuta.metodologia|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Especialidades Detalhadas -->
+                <div class="bg-white rounded-2xl shadow-card p-6 lg:p-8">
+                    <h2 class="text-2xl font-poppins font-bold text-primary mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        Especialidades e Terapias
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for esp_det in especialidades_detalhadas %}
+                        <div class="border border-gray-200 rounded-xl p-6 hover:border-primary/30 transition-colors">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="font-poppins font-semibold text-primary mb-2">
+                                        {{ esp_det.especialidade.nome }}
+                                        {% if esp_det.principal %}
+                                        <span class="ml-2 text-xs bg-primary text-white px-2 py-1 rounded-full">Principal</span>
+                                        {% endif %}
+                                    </h3>
+                                    <p class="text-gray-600 text-sm">
+                                        {{ esp_det.especialidade.descricao_curta }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2 text-sm text-gray-700">
+                                {% if esp_det.anos_experiencia %}
+                                <p><strong>Experiência:</strong> {{ esp_det.anos_experiencia }} ano{{ esp_det.anos_experiencia|pluralize }}</p>
+                                {% endif %}
+                                
+                                {% if esp_det.preco_sessao %}
+                                <p><strong>Sessão:</strong> R$ {{ esp_det.preco_sessao }}
+                                {% if esp_det.duracao_sessao %} ({{ esp_det.duracao_sessao }}min){% endif %}
+                                </p>
+                                {% endif %}
+                                
+                                {% if esp_det.certificacao %}
+                                <p><strong>Certificação:</strong> {{ esp_det.certificacao }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Avaliações -->
+                {% if avaliacoes_recentes %}
+                <div class="bg-white rounded-2xl shadow-card p-6 lg:p-8">
+                    <h2 class="text-2xl font-poppins font-bold text-primary mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                        Avaliações ({{ stats.total_avaliacoes }})
+                    </h2>
+                    
+                    <!-- Resumo das avaliações -->
+                    <div class="flex items-center mb-8 p-6 bg-gray-50 rounded-xl">
+                        <div class="text-center mr-8">
+                            <div class="text-3xl font-bold text-primary mb-2">{{ stats.media_avaliacoes }}</div>
+                            <div class="text-yellow-400 mb-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= stats.media_avaliacoes %}⭐{% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="text-sm text-gray-600">{{ stats.total_avaliacoes }} avaliação{{ stats.total_avaliacoes|pluralize:"ões" }}</p>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <p class="text-gray-700">
+                                <span class="font-semibold">{{ avaliacoes_recentes|length }}</span> das últimas avaliações
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de avaliações -->
+                    <div class="space-y-6">
+                        {% for avaliacao in avaliacoes_recentes %}
+                        <div class="border-b border-gray-200 pb-6 last:border-b-0">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-primary font-medium">
+                                                {{ avaliacao.cliente.first_name|first|default:"?" }}{{ avaliacao.cliente.last_name|first|default:"" }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">
+                                                {{ avaliacao.cliente.get_full_name|default:avaliacao.cliente.username }}
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                {{ avaliacao.created_at|date:"d/m/Y" }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-yellow-400">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= avaliacao.nota %}⭐{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            {% if avaliacao.comentario %}
+                            <p class="text-gray-700 italic">
+                                "{{ avaliacao.comentario }}"
+                            </p>
+                            {% endif %}
+                            
+                            {% if avaliacao.recomenda %}
+                            <p class="text-sm text-green-600 mt-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                Recomenda este terapeuta
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar (1/3) -->
+            <div class="space-y-6">
+                <!-- Card de Contato -->
+                <div class="bg-white rounded-2xl shadow-card p-6 sticky top-24">
+                    <h3 class="font-poppins font-bold text-primary mb-6 text-xl">Entre em Contato</h3>
+                    
+                    <!-- Informações de atendimento -->
+                    <div class="space-y-4 mb-6">
+                        {% if terapeuta.tipos_sessao %}
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 mb-2">Tipos de Sessão:</p>
+                            <div class="flex flex-wrap gap-2">
+                                {% for tipo in terapeuta.tipos_sessao %}
+                                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                    {% if tipo == 'presencial' %}👥 Presencial
+                                    {% elif tipo == 'online' %}💻 Online
+                                    {% elif tipo == 'domicilio' %}🏠 Domicílio
+                                    {% endif %}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if terapeuta.acessibilidade %}
+                        <div>
+                            <p class="text-sm text-green-600 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                Local com acessibilidade
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 mb-2">Experiência:</p>
+                            <p class="text-primary font-semibold">{{ stats.anos_experiencia }} ano{{ stats.anos_experiencia|pluralize }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Botões de ação -->
+                    <div class="space-y-3">
+                        <a href="{% url 'terapeutas:contatar' terapeuta.slug %}" 
+                           class="block w-full bg-primary text-white text-center py-3 px-4 rounded-lg font-poppins font-semibold hover:bg-primary/90 transition-colors">
+                            💬 Enviar Mensagem
+                        </a>
+                        
+                        {% if terapeuta.whatsapp %}
+                        <a href="https://wa.me/{{ terapeuta.whatsapp }}" 
+                           target="_blank"
+                           class="block w-full bg-green-500 text-white text-center py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors">
+                            📱 WhatsApp
+                        </a>
+                        {% endif %}
+                        
+                        <a href="mailto:{{ terapeuta.email_profissional }}" 
+                           class="block w-full border border-primary text-primary text-center py-3 px-4 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors">
+                            📧 E-mail
+                        </a>
+                    </div>
+                    
+                    <!-- Estatísticas -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-primary">{{ stats.visualizacoes }}</div>
+                                <div class="text-xs text-gray-500">Visualizações</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-primary">{{ terapeuta.total_contatos }}</div>
+                                <div class="text-xs text-gray-500">Contatos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terapeutas Relacionados -->
+                {% if terapeutas_relacionados %}
+                <div class="bg-white rounded-2xl shadow-card p-6">
+                    <h3 class="font-poppins font-bold text-primary mb-6 text-lg">Outros Terapeutas em {{ terapeuta.cidade.nome }}</h3>
+                    
+                    <div class="space-y-4">
+                        {% for relacionado in terapeutas_relacionados %}
+                        <div class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                            {% if relacionado.foto_perfil %}
+                                <img src="{{ relacionado.foto_perfil.url }}" 
+                                     alt="{{ relacionado.nome_exibicao }}"
+                                     class="w-12 h-12 rounded-full object-cover">
+                            {% else %}
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 text-sm">{{ relacionado.nome_exibicao }}</h4>
+                                <p class="text-xs text-gray-500">{{ relacionado.especialidades.all.0.nome }}</p>
+                                {% if relacionado.media_avaliacoes %}
+                                <div class="text-xs text-yellow-500">⭐ {{ relacionado.media_avaliacoes }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <a href="{% url 'terapeutas:profile' relacionado.slug %}" 
+                               class="text-xs text-primary hover:underline">
+                                Ver
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript para funcionalidades -->
+<script>
+    // ===============================================================
+    // JavaScript para Perfil do Terapeuta
+    // Autor: Will | Empresa: Espaço VItal
+    // Data: 13/09/2025
+    // ===============================================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // ===== SCROLL SUAVE PARA SEÇÕES =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // ===== ANIMAÇÃO DO BOTÃO FLUTUANTE =====
+        const botaoFlutuante = document.querySelector('.fixed.bottom-6.right-6');
+        if (botaoFlutuante) {
+            let lastScrollY = window.scrollY;
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > lastScrollY) {
+                    // Descendo - esconder botão
+                    botaoFlutuante.style.transform = 'translateY(100px)';
+                } else {
+                    // Subindo - mostrar botão
+                    botaoFlutuante.style.transform = 'translateY(0)';
+                }
+                lastScrollY = window.scrollY;
+            });
+        }
+        
+        // ===== LAZY LOADING PARA IMAGENS =====
+        const images = document.querySelectorAll('img[data-src]');
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('opacity-0');
+                    img.classList.add('opacity-100');
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+        
+        // ===== EXPANSÃO DE TEXTO LONGO =====
+        const textoLongo = document.querySelectorAll('.texto-expandivel');
+        textoLongo.forEach(texto => {
+            const botaoExpandir = texto.querySelector('.expandir-btn');
+            const conteudo = texto.querySelector('.conteudo-expandivel');
+            
+            if (botaoExpandir && conteudo) {
+                botaoExpandir.addEventListener('click', function() {
+                    if (conteudo.style.maxHeight) {
+                        conteudo.style.maxHeight = null;
+                        this.textContent = 'Ver mais';
+                    } else {
+                        conteudo.style.maxHeight = conteudo.scrollHeight + 'px';
+                        this.textContent = 'Ver menos';
+                    }
+                });
+            }
+        });
+        
+        // ===== COMPARTILHAMENTO =====
+        const botaoCompartilhar = document.getElementById('compartilhar-perfil');
+        if (botaoCompartilhar) {
+            botaoCompartilhar.addEventListener('click', async function() {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: '{{ terapeuta.nome_exibicao }} - Espaço Vital',
+                            text: '{{ terapeuta.bio_curta|truncatewords:15 }}',
+                            url: window.location.href
+                        });
+                    } catch (err) {
+                        console.log('Erro ao compartilhar:', err);
+                    }
+                } else {
+                    // Fallback: copiar URL
+                    navigator.clipboard.writeText(window.location.href);
+                    // Mostrar feedback
+                    const feedback = document.createElement('div');
+                    feedback.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50';
+                    feedback.textContent = 'Link copiado!';
+                    document.body.appendChild(feedback);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(feedback);
+                    }, 3000);
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}

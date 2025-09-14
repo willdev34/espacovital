@@ -1,0 +1,252 @@
+[
+  {
+    "model": "terapeutas.estado",
+    "pk": 1,
+    "fields": {
+      "nome": "Rio de Janeiro",
+      "sigla": "RJ"
+    }
+  },
+  {
+    "model": "terapeutas.estado",
+    "pk": 2,
+    "fields": {
+      "nome": "São Paulo",
+      "sigla": "SP"
+    }
+  },
+  {
+    "model": "terapeutas.estado",
+    "pk": 3,
+    "fields": {
+      "nome": "Minas Gerais",
+      "sigla": "MG"
+    }
+  },
+  {
+    "model": "terapeutas.estado",
+    "pk": 4,
+    "fields": {
+      "nome": "Espírito Santo",
+      "sigla": "ES"
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 1,
+    "fields": {
+      "nome": "Rio de Janeiro",
+      "estado": 1
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 2,
+    "fields": {
+      "nome": "Niterói",
+      "estado": 1
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 3,
+    "fields": {
+      "nome": "São Paulo",
+      "estado": 2
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 4,
+    "fields": {
+      "nome": "Guarulhos",
+      "estado": 2
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 5,
+    "fields": {
+      "nome": "Belo Horizonte",
+      "estado": 3
+    }
+  },
+  {
+    "model": "terapeutas.cidade",
+    "pk": 6,
+    "fields": {
+      "nome": "Vitória",
+      "estado": 4
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 1,
+    "fields": {
+      "nome": "Massoterapia",
+      "slug": "massoterapia",
+      "descricao_curta": "Explore as formas comuns de massoterapia e seus benefícios, além de como se preparar para uma massagem.",
+      "descricao_completa": "A massoterapia é uma técnica terapêutica que utiliza manipulações manuais dos tecidos moles do corpo para promover relaxamento, alívio da dor e melhoria da circulação sanguínea. Através de diferentes técnicas de pressão e movimento, a massoterapia ajuda a liberar tensões musculares, reduzir o estresse e promover o bem-estar geral.",
+      "cor_destaque": "#0B5259",
+      "ordem": 1,
+      "destaque": true,
+      "is_active": true,
+      "created_at": "2025-09-13T20:00:00Z",
+      "updated_at": "2025-09-13T20:00:00Z"
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 2,
+    "fields": {
+      "nome": "Reiki",
+      "slug": "reiki",
+      "descricao_curta": "Descubra o Reiki, uma prática de cura energética do Japão que promove o relaxamento.",
+      "descricao_completa": "O Reiki é uma técnica japonesa de cura energética que utiliza a imposição de mãos para canalizar energia vital universal. Esta prática milenar promove o relaxamento profundo, reduz o estresse e auxilia nos processos naturais de cura do corpo. O Reiki trabalha com os chakras e o campo energético, proporcionando equilíbrio e harmonia.",
+      "cor_destaque": "#56C596",
+      "ordem": 2,
+      "destaque": true,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 3,
+    "fields": {
+      "nome": "Yoga",
+      "slug": "yoga",
+      "descricao_curta": "Quer experimentar Yoga? Aprenda sobre os benefícios da Yoga, incluindo a diferença entre Yoga e Yogaterapia.",
+      "descricao_completa": "O Yoga é uma prática milenar que combina posturas físicas (asanas), técnicas de respiração (pranayamas) e meditação para promover o equilíbrio entre corpo, mente e espírito. Através da prática regular, o Yoga desenvolve flexibilidade, força, concentração e paz interior, contribuindo significativamente para a saúde física e mental.",
+      "cor_destaque": "#FFB4A2",
+      "ordem": 3,
+      "destaque": true,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 4,
+    "fields": {
+      "nome": "Aromaterapia",
+      "slug": "aromaterapia",
+      "descricao_curta": "A aromaterapia utiliza óleos essenciais para promover cura, relaxamento e alívio do estresse.",
+      "descricao_completa": "A aromaterapia é uma terapia holística que utiliza óleos essenciais extraídos de plantas para promover saúde física, mental e emocional. Os óleos podem ser aplicados através de massagem, inalação ou banhos aromáticos. Esta prática milenar ajuda a reduzir o estresse, melhorar o humor, aliviar dores e promover o relaxamento profundo.",
+      "cor_destaque": "#D8E2DC",
+      "ordem": 4,
+      "destaque": true,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 5,
+    "fields": {
+      "nome": "Cristaloterapia",
+      "slug": "cristaloterapia",
+      "descricao_curta": "O que é cura com cristais? A cura com cristais envolve a colocação de cristais sobre e ao redor de uma pessoa para desbloquear a energia e estimular a cura natural.",
+      "descricao_completa": "A Cristaloterapia é uma terapia vibracional que utiliza as propriedades energéticas dos cristais e pedras preciosas para promover cura e equilíbrio. Cada cristal possui frequências específicas que interagem com os chakras e o campo energético humano, ajudando a desbloquear energias estagnadas, promover clareza mental e estimular os processos naturais de cura do organismo.",
+      "cor_destaque": "#E8B4CB",
+      "ordem": 5,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 6,
+    "fields": {
+      "nome": "Shiatsu",
+      "slug": "shiatsu",
+      "descricao_curta": "Saiba mais sobre a massagem shiatsu, incluindo o que é, para que serve e como encontrar um profissional de shiatsu.",
+      "descricao_completa": "O Shiatsu é uma técnica de massagem terapêutica japonesa que utiliza pressão digital em pontos específicos do corpo para estimular o fluxo de energia vital (Ki). Esta prática milenar combina conhecimentos da medicina tradicional chinesa com técnicas manuais japonesas, promovendo relaxamento, alívio de tensões e reequilíbrio energético através de movimentos precisos e pressão aplicada com dedos, palmas e às vezes cotovelos.",
+      "cor_destaque": "#A8DADC",
+      "ordem": 6,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 7,
+    "fields": {
+      "nome": "Reflexologia",
+      "slug": "reflexologia",
+      "descricao_curta": "A reflexologia é uma técnica que aplica pressão em pontos específicos dos pés, mãos e orelhas para promover cura.",
+      "descricao_completa": "A Reflexologia é uma técnica terapêutica baseada na aplicação de pressão em pontos específicos dos pés, mãos e orelhas que correspondem a diferentes órgãos e sistemas do corpo. Esta prática promove o relaxamento, melhora a circulação, estimula o sistema nervoso e auxilia os processos naturais de cura, proporcionando bem-estar geral e alívio de diversos sintomas.",
+      "cor_destaque": "#F1FAEE",
+      "ordem": 7,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 8,
+    "fields": {
+      "nome": "Acupuntura",
+      "slug": "acupuntura",
+      "descricao_curta": "A acupuntura utiliza agulhas finas inseridas em pontos específicos do corpo para promover cura e equilíbrio.",
+      "descricao_completa": "A Acupuntura é uma prática da medicina tradicional chinesa que utiliza agulhas muito finas inseridas em pontos específicos do corpo para estimular o fluxo de energia (Qi) e restaurar o equilíbrio. Esta técnica milenar é eficaz no tratamento de dores, distúrbios emocionais, problemas digestivos e diversos outros desequilíbrios, promovendo a auto-cura natural do organismo.",
+      "cor_destaque": "#457B9D",
+      "ordem": 8,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 9,
+    "fields": {
+      "nome": "Tantra",
+      "slug": "tantra",
+      "descricao_curta": "O Tantra é uma filosofia de vida que promove conexão profunda, autoconhecimento e expansão da consciência.",
+      "descricao_completa": "O Tantra é uma antiga filosofia oriental que vai muito além do aspecto sexual, oferecendo um caminho profundo de autoconhecimento, cura emocional e expansão da consciência. Através de práticas de respiração, meditação, movimento e conexão energética, o Tantra promove a integração do masculino e feminino interior, desenvolvendo maior presença, intimidade e plenitude na vida.",
+      "cor_destaque": "#E63946",
+      "ordem": 9,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 10,
+    "fields": {
+      "nome": "Meditação",
+      "slug": "meditacao",
+      "descricao_curta": "A meditação é uma prática que desenvolve atenção plena, reduz estresse e promove bem-estar mental.",
+      "descricao_completa": "A Meditação é uma prática contemplativa que desenvolve a capacidade de observar pensamentos e emoções sem julgamento, cultivando a atenção plena (mindfulness) e a presença consciente. Através de diferentes técnicas como concentração na respiração, mantras ou visualizações, a meditação reduz significativamente o estresse, melhora a concentração, promove clareza mental e desenvolve estados profundos de paz interior.",
+      "cor_destaque": "#6F4E7C",
+      "ordem": 10,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 11,
+    "fields": {
+      "nome": "Terapia Floral",
+      "slug": "terapia-floral",
+      "descricao_curta": "A terapia floral utiliza essências de flores para equilibrar estados emocionais e promover bem-estar.",
+      "descricao_completa": "A Terapia Floral é um sistema terapêutico que utiliza essências vibracionais de flores para tratar desequilíbrios emocionais, mentais e espirituais. Desenvolvida pelo Dr. Edward Bach, esta terapia suave e natural atua nos padrões emocionais negativos, transformando-os em virtudes positivas e promovendo harmonia interior, autoconhecimento e desenvolvimento pessoal.",
+      "cor_destaque": "#FFE66D",
+      "ordem": 11,
+      "destaque": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "terapeutas.especialidade",
+    "pk": 12,
+    "fields": {
+      "nome": "Quiropraxia",
+      "slug": "quiropraxia",
+      "descricao_curta": "A quiropraxia trata problemas do sistema musculoesquelético através de ajustes manuais da coluna.",
+      "descricao_completa": "A Quiropraxia é uma profissão da saúde que se concentra no diagnóstico, tratamento e prevenção de distúrbios do sistema neuro-músculo-esquelético. Através de técnicas manuais precisas, especialmente ajustes da coluna vertebral, a quiropraxia restaura a mobilidade articular, alivia dores, melhora a função nervosa e promove a capacidade natural de cura do corpo.",
+      "cor_destaque": "#06FFA5",
+      "ordem": 12,
+      "destaque": false,
+      "is_active": true
+    }
+  }
+]

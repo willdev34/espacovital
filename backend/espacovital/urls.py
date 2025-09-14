@@ -20,8 +20,10 @@ urlpatterns = [
     # App core - páginas principais (home, sobre, etc.)
     path('', include('core.urls')),
     
-    # Apps principais - URLs futuras
-    # path('terapeutas/', include('terapeutas.urls')),
+    # Apps principais
+    path('terapeutas/', include('terapeutas.urls')),
+    
+    # URLs futuras
     # path('espacos/', include('espacos.urls')),
     # path('terapias/', include('terapias.urls')),
     # path('blog/', include('blog.urls')),

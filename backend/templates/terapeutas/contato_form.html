@@ -1,0 +1,579 @@
+<!-- 
+===============================================================
+Título: Template Formulário de Contato - Espaço Vital
+Descrição: Página para contatar um terapeuta
+Autor: Will | Empresa: Espaço VItal
+Data: 13/09/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<!-- Seção do Formulário de Contato -->
+<section class="py-12 lg:py-16 min-h-screen bg-light-bg">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto">
+            <!-- Breadcrumb -->
+            <nav class="mb-8 text-sm">
+                <ol class="flex items-center space-x-2 text-gray-600">
+                    <li><a href="{% url 'core:home' %}" class="hover:text-primary">Início</a></li>
+                    <li><span class="mx-2">›</span></li>
+                    <li><a href="{% url 'terapeutas:busca_avancada' %}" class="hover:text-primary">Terapeutas</a></li>
+                    <li><span class="mx-2">›</span></li>
+                    <li><a href="{% url 'terapeutas:profile' terapeuta.slug %}" class="hover:text-primary">{{ terapeuta.nome_exibicao }}</a></li>
+                    <li><span class="mx-2">›</span></li>
+                    <li class="text-primary">Contatar</li>
+                </ol>
+            </nav>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Informações do Terapeuta (1/3) -->
+                <div class="bg-white rounded-2xl shadow-card p-6">
+                    <div class="text-center mb-6">
+                        <!-- Foto do terapeuta -->
+                        {% if terapeuta.foto_perfil %}
+                            <img src="{{ terapeuta.foto_perfil.url }}" 
+                                 alt="{{ terapeuta.nome_exibicao }}"
+                                 class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-white shadow-lg">
+                        {% else %}
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                        {% endif %}
+                        
+                        <h2 class="text-xl font-poppins font-bold text-primary mb-2">
+                            {{ terapeuta.nome_exibicao }}
+                        </h2>
+                        
+                        {% if terapeuta.cidade %}
+                        <p class="text-gray-600 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            {{ terapeuta.cidade.nome }}, {{ terapeuta.cidade.estado.sigla }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Especialidades -->
+                    <div class="mb-6">
+                        <h3 class="font-poppins font-semibold text-primary mb-3">Especialidades:</h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for especialidade in especialidades %}
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                {{ especialidade.nome }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="space-y-2 mb-6">
+                        {% if terapeuta.verificado %}
+                        <div class="flex items-center text-sm text-green-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Terapeuta verificado
+                        </div>
+                        {% endif %}
+                        
+                        {% if terapeuta.acessibilidade %}
+                        <div class="flex items-center text-sm text-blue-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Local acessível
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Botão voltar ao perfil -->
+                    <a href="{% url 'terapeutas:profile' terapeuta.slug %}" 
+                       class="block w-full text-center border border-primary text-primary px-4 py-3 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors">
+                        ← Voltar ao Perfil
+                    </a>
+                </div>
+                
+                <!-- Formulário de Contato (2/3) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-card p-6 lg:p-8">
+                        <h1 class="text-2xl lg:text-3xl font-poppins font-bold text-primary mb-6">
+                            Entre em contato com {{ terapeuta.nome_exibicao }}
+                        </h1>
+                        
+                        <p class="text-gray-600 mb-8 leading-relaxed">
+                            Envie uma mensagem para {{ terapeuta.nome_exibicao }} com suas dúvidas, 
+                            para agendar uma consulta ou solicitar mais informações sobre as terapias oferecidas.
+                        </p>
+                        
+                        <!-- Mensagens de feedback -->
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="mb-6 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+                                <div class="flex items-center">
+                                    {% if message.tags == 'success' %}
+                                    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {% elif message.tags == 'error' %}
+                                    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {% endif %}
+                                    {{ message }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <!-- Formulário -->
+                        <form method="POST" id="contato-form" class="space-y-6">
+                            {% csrf_token %}
+                            
+                            <!-- Nome e E-mail (linha) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="nome" class="block text-primary font-poppins font-semibold mb-2">
+                                        Nome completo <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           id="nome" 
+                                           name="nome" 
+                                           required
+                                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                           placeholder="Digite seu nome completo">
+                                </div>
+                                
+                                <div>
+                                    <label for="email" class="block text-primary font-poppins font-semibold mb-2">
+                                        E-mail <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="email" 
+                                           id="email" 
+                                           name="email" 
+                                           required
+                                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                           placeholder="seu@email.com">
+                                </div>
+                            </div>
+                            
+                            <!-- Telefone e Especialidade de Interesse (linha) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="telefone" class="block text-primary font-poppins font-semibold mb-2">
+                                        Telefone/WhatsApp
+                                    </label>
+                                    <input type="tel" 
+                                           id="telefone" 
+                                           name="telefone" 
+                                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                           placeholder="(11) 99999-9999">
+                                </div>
+                                
+                                <div>
+                                    <label for="especialidade_interesse" class="block text-primary font-poppins font-semibold mb-2">
+                                        Especialidade de interesse
+                                    </label>
+                                    <select id="especialidade_interesse" 
+                                            name="especialidade_interesse"
+                                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <option value="">Selecione (opcional)</option>
+                                        {% for especialidade in especialidades %}
+                                        <option value="{{ especialidade.id }}">{{ especialidade.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Assunto -->
+                            <div>
+                                <label for="assunto" class="block text-primary font-poppins font-semibold mb-2">
+                                    Assunto <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="assunto" 
+                                       name="assunto" 
+                                       required
+                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                       placeholder="Ex: Consulta sobre massoterapia">
+                            </div>
+                            
+                            <!-- Mensagem -->
+                            <div>
+                                <label for="mensagem" class="block text-primary font-poppins font-semibold mb-2">
+                                    Mensagem <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="mensagem" 
+                                          name="mensagem" 
+                                          required
+                                          rows="6"
+                                          class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical"
+                                          placeholder="Descreva sua necessidade, dúvidas ou o que gostaria de saber sobre os serviços oferecidos..."></textarea>
+                            </div>
+                            
+                            <!-- Aviso de privacidade -->
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="text-sm text-gray-700">
+                                        <p class="font-medium mb-1">Sobre sua privacidade:</p>
+                                        <p>Suas informações serão enviadas diretamente para {{ terapeuta.nome_exibicao }} e não serão compartilhadas com terceiros. Ao enviar este formulário, você concorda com nossa <a href="#" class="text-primary hover:underline">Política de Privacidade</a>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botões -->
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4">
+                                <button type="button" 
+                                        onclick="history.back()"
+                                        class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                    Cancelar
+                                </button>
+                                
+                                <button type="submit" 
+                                        id="submit-btn"
+                                        class="order-1 sm:order-2 bg-primary text-white px-8 py-3 rounded-lg font-poppins font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span class="submit-text">Enviar Mensagem</span>
+                                    <span class="loading-text hidden">
+                                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Enviando...
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Outras formas de contato -->
+                    <div class="mt-8 bg-white rounded-2xl shadow-card p-6">
+                        <h3 class="font-poppins font-bold text-primary mb-4">Outras formas de contato</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- WhatsApp -->
+                            {% if terapeuta.whatsapp %}
+                            <a href="https://wa.me/{{ terapeuta.whatsapp }}" 
+                               target="_blank"
+                               class="flex items-center p-4 border border-green-200 rounded-lg hover:bg-green-50 transition-colors group">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.570-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 group-hover:text-green-700">WhatsApp</p>
+                                    <p class="text-sm text-gray-600">Resposta mais rápida</p>
+                                </div>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- E-mail direto -->
+                            <a href="mailto:{{ terapeuta.email_profissional }}" 
+                               class="flex items-center p-4 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors group">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 group-hover:text-blue-700">E-mail direto</p>
+                                    <p class="text-sm text-gray-600">{{ terapeuta.email_profissional }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript para funcionalidades -->
+<script>
+    // ===============================================================
+    // JavaScript para Formulário de Contato
+    // Autor: Will | Empresa: Espaço VItal
+    // Data: 13/09/2025
+    // ===============================================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contato-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const submitText = submitBtn.querySelector('.submit-text');
+        const loadingText = submitBtn.querySelector('.loading-text');
+        
+        // ===== VALIDAÇÃO EM TEMPO REAL =====
+        const campos = form.querySelectorAll('input[required], textarea[required]');
+        
+        campos.forEach(campo => {
+            campo.addEventListener('blur', function() {
+                validarCampo(this);
+            });
+            
+            campo.addEventListener('input', function() {
+                if (this.classList.contains('border-red-300')) {
+                    validarCampo(this);
+                }
+            });
+        });
+        
+        function validarCampo(campo) {
+            const valor = campo.value.trim();
+            const isValido = valor !== '' && campo.checkValidity();
+            
+            if (isValido) {
+                campo.classList.remove('border-red-300', 'bg-red-50');
+                campo.classList.add('border-green-300', 'bg-green-50');
+            } else {
+                campo.classList.remove('border-green-300', 'bg-green-50');
+                campo.classList.add('border-red-300', 'bg-red-50');
+            }
+            
+            return isValido;
+        }
+        
+        // ===== MÁSCARA PARA TELEFONE =====
+        const telefoneInput = document.getElementById('telefone');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function() {
+                let valor = this.value.replace(/\D/g, '');
+                valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+                valor = valor.replace(/(\d{4,5})(\d{4})$/, '$1-$2');
+                this.value = valor;
+            });
+        }
+        
+        // ===== ENVIO DO FORMULÁRIO =====
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar todos os campos
+            let formValido = true;
+            campos.forEach(campo => {
+                if (!validarCampo(campo)) {
+                    formValido = false;
+                }
+            });
+            
+            if (!formValido) {
+                // Scroll para o primeiro campo inválido
+                const primeiroInvalido = form.querySelector('.border-red-300');
+                if (primeiroInvalido) {
+                    primeiroInvalido.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    primeiroInvalido.focus();
+                }
+                return;
+            }
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            submitText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+            
+            // Enviar via AJAX ou submit normal
+            const formData = new FormData(form);
+            
+            fetch(form.action || window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Sucesso - mostrar mensagem
+                    mostrarFeedback('success', data.message || 'Mensagem enviada com sucesso!');
+                    form.reset();
+                    
+                    // Scroll para o topo
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    // Erro
+                    mostrarFeedback('error', data.message || 'Erro ao enviar mensagem. Tente novamente.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                mostrarFeedback('error', 'Erro de conexão. Verifique sua internet e tente novamente.');
+            })
+            .finally(() => {
+                // Resetar botão
+                submitBtn.disabled = false;
+                submitText.classList.remove('hidden');
+                loadingText.classList.add('hidden');
+            });
+        });
+        
+        // ===== FUNÇÃO PARA MOSTRAR FEEDBACK =====
+        function mostrarFeedback(tipo, mensagem) {
+            // Remover feedbacks existentes
+            const feedbacksAntigos = document.querySelectorAll('.feedback-message');
+            feedbacksAntigos.forEach(f => f.remove());
+            
+            // Criar novo feedback
+            const feedback = document.createElement('div');
+            feedback.className = `feedback-message mb-6 p-4 rounded-lg ${tipo === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`;
+            
+            feedback.innerHTML = `
+                <div class="flex items-center">
+                    ${tipo === 'success' 
+                        ? '<svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>'
+                        : '<svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+                    }
+                    ${mensagem}
+                </div>
+            `;
+            
+            // Inserir antes do formulário
+            form.parentNode.insertBefore(feedback, form);
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, 5000);
+        }
+        
+        // ===== CONTADOR DE CARACTERES PARA TEXTAREA =====
+        const mensagemTextarea = document.getElementById('mensagem');
+        if (mensagemTextarea) {
+            const maxLength = 1000; // Limite de caracteres
+            
+            // Criar contador
+            const contador = document.createElement('div');
+            contador.className = 'text-right text-sm text-gray-500 mt-1';
+            contador.textContent = `0/${maxLength}`;
+            mensagemTextarea.parentNode.appendChild(contador);
+            
+            mensagemTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                contador.textContent = `${length}/${maxLength}`;
+                
+                if (length > maxLength * 0.9) {
+                    contador.classList.add('text-orange-500');
+                } else {
+                    contador.classList.remove('text-orange-500');
+                }
+                
+                if (length > maxLength) {
+                    contador.classList.add('text-red-500');
+                    this.value = this.value.substring(0, maxLength);
+                } else {
+                    contador.classList.remove('text-red-500');
+                }
+            });
+        }
+        
+        // ===== AUTO-SAVE NO LOCAL STORAGE =====
+        const camposParaSalvar = ['nome', 'email', 'telefone', 'assunto', 'mensagem'];
+        const formKey = 'contato_form_{{ terapeuta.slug }}';
+        
+        // Carregar dados salvos
+        function carregarDadosSalvos() {
+            try {
+                const dadosSalvos = localStorage.getItem(formKey);
+                if (dadosSalvos) {
+                    const dados = JSON.parse(dadosSalvos);
+                    camposParaSalvar.forEach(campo => {
+                        const elemento = document.getElementById(campo);
+                        if (elemento && dados[campo]) {
+                            elemento.value = dados[campo];
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log('Erro ao carregar dados salvos:', e);
+            }
+        }
+        
+        // Salvar dados no local storage
+        function salvarDados() {
+            try {
+                const dados = {};
+                camposParaSalvar.forEach(campo => {
+                    const elemento = document.getElementById(campo);
+                    if (elemento) {
+                        dados[campo] = elemento.value;
+                    }
+                });
+                localStorage.setItem(formKey, JSON.stringify(dados));
+            } catch (e) {
+                console.log('Erro ao salvar dados:', e);
+            }
+        }
+        
+        // Event listeners para auto-save
+        camposParaSalvar.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+                elemento.addEventListener('input', salvarDados);
+            }
+        });
+        
+        // Carregar dados ao iniciar
+        carregarDados();
+        
+        // Limpar dados salvos ao enviar com sucesso
+        form.addEventListener('submit', function() {
+            // Limpar após delay para permitir que o envio seja processado
+            setTimeout(() => {
+                localStorage.removeItem(formKey);
+            }, 1000);
+        });
+        
+        // ===== ATALHOS DE TECLADO =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter para enviar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                submitBtn.click();
+            }
+            
+            // Escape para limpar form
+            if (e.key === 'Escape') {
+                if (confirm('Deseja limpar todos os campos do formulário?')) {
+                    form.reset();
+                    localStorage.removeItem(formKey);
+                }
+            }
+        });
+    });
+    
+    // ===== FUNÇÃO HELPER PARA CARREGAR DADOS =====
+    function carregarDados() {
+        try {
+            const formKey = 'contato_form_{{ terapeuta.slug }}';
+            const dadosSalvos = localStorage.getItem(formKey);
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                ['nome', 'email', 'telefone', 'assunto', 'mensagem'].forEach(campo => {
+                    const elemento = document.getElementById(campo);
+                    if (elemento && dados[campo]) {
+                        elemento.value = dados[campo];
+                    }
+                });
+            }
+        } catch (e) {
+            console.log('Erro ao carregar dados:', e);
+        }
+    }
+</script>
+
+{% endblock %}
