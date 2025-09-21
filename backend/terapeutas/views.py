@@ -29,7 +29,7 @@ class TerapeutaListView(ListView):
     Baseada no layout da busca avançada compartilhado
     """
     model = Terapeuta
-    template_name = 'terapeutas/busca_avancada.html'
+    template_name = 'terapeutas/listagem_resultados.html'
     context_object_name = 'terapeutas'
     paginate_by = 12
     
@@ -43,8 +43,7 @@ class TerapeutaListView(ListView):
         ).prefetch_related(
             'especialidades', 'avaliacoes'
         ).annotate(
-            media_avaliacoes=Avg('avaliacoes__nota'),
-            total_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
+            media_avaliacoes=Avg('avaliacoes__nota')
         )
         
         # ===== FILTROS DO LAYOUT =====
@@ -182,18 +181,112 @@ class TerapeutaListView(ListView):
 
 def terapeutas_sem_filtro(request, especialidade_slug=None):
     """
-    View para listagem simples sem filtros (baseado no layout sem filtro)
-    Usado quando vem de links diretos ou categorias
+    View para listagem de terapeutas que processa filtros vindos do modal
+    Usado para /terapeutas/lista/ com parâmetros da busca
     """
+    # DEBUG: Ver parâmetros recebidos
+    print(f"=== DEBUG FILTROS ===")
+    print(f"GET params: {dict(request.GET)}")
+    
     terapeutas = Terapeuta.objects.filter(is_active=True).select_related(
         'cidade', 'cidade__estado'
     ).prefetch_related(
         'especialidades', 'avaliacoes'
-    ).annotate(
-        media_avaliacoes=Avg('avaliacoes__nota'),
-        total_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
     )
     
+    print(f"Terapeutas antes dos filtros: {terapeutas.count()}")
+    
+    # ===== PROCESSAR FILTROS DO MODAL =====
+    
+    # Filtro: Tipo de sessão
+    tipos_sessao = request.GET.getlist('tipo_sessao')
+    if tipos_sessao:
+        print(f"Filtrando por tipos_sessao: {tipos_sessao}")
+        # O campo no modelo é 'tipos_sessao' (JSONField ou CharField)
+        # Filtrar terapeutas que atendem pelo menos um dos tipos
+        filtro_sessao = Q()
+        for tipo in tipos_sessao:
+            if tipo in ['presencial', 'online', 'domicilio']:
+                # Se for JSONField, usar contains
+                filtro_sessao |= Q(tipos_sessao__icontains=tipo)
+        
+        if filtro_sessao:
+            terapeutas = terapeutas.filter(filtro_sessao)
+            print(f"Terapeutas após filtro tipo_sessao: {terapeutas.count()}")
+    
+    # Filtro: Localização (Estado e Cidade)
+    estado = request.GET.get('estado')
+    cidade = request.GET.get('cidade')
+    
+    if estado:
+        print(f"Filtrando por estado: {estado}")
+        # Filtrar por estado usando nome ou sigla
+        terapeutas = terapeutas.filter(
+            Q(cidade__estado__nome__icontains=estado) | 
+            Q(cidade__estado__sigla__iexact=estado)
+        )
+        print(f"Terapeutas após filtro estado: {terapeutas.count()}")
+    
+    if cidade:
+        print(f"Filtrando por cidade: {cidade}")
+        # Filtrar por cidade usando apenas nome
+        terapeutas = terapeutas.filter(cidade__nome__icontains=cidade)
+        print(f"Terapeutas após filtro cidade: {terapeutas.count()}")
+        
+        # DEBUG: Ver quais cidades existem no banco
+        cidades_existentes = Cidade.objects.values_list('nome', flat=True)
+        print(f"Cidades no banco: {list(cidades_existentes)}")
+    
+    # Filtro: Terapias/Especialidades
+    terapias = request.GET.getlist('terapias')
+    if terapias:
+        print(f"Filtrando por terapias: {terapias}")
+        # Buscar especialidades pelos nomes
+        especialidades_ids = []
+        for terapia in terapias:
+            # Converter nomes do modal para especialidades do banco
+            try:
+                if terapia == 'aromaterapia':
+                    especialidade = Especialidade.objects.get(nome__icontains='Aromaterapia')
+                elif terapia == 'cristaloterapia':
+                    especialidade = Especialidade.objects.get(nome__icontains='Cristaloterapia')
+                elif terapia == 'massoterapia':
+                    especialidade = Especialidade.objects.get(nome__icontains='Massoterapia')
+                elif terapia == 'reiki':
+                    especialidade = Especialidade.objects.get(nome__icontains='Reiki')
+                elif terapia == 'terapia-tantrica':
+                    especialidade = Especialidade.objects.get(nome__icontains='Tântrica')
+                elif terapia == 'thetahealing':
+                    especialidade = Especialidade.objects.get(nome__icontains='Thetahealing')
+                elif terapia == 'psicoterapia':
+                    especialidade = Especialidade.objects.get(nome__icontains='Psicoterapia')
+                elif terapia == 'acupuntura':
+                    especialidade = Especialidade.objects.get(nome__icontains='Acupuntura')
+                else:
+                    # Busca genérica
+                    especialidade = Especialidade.objects.filter(nome__icontains=terapia).first()
+                
+                if especialidade:
+                    especialidades_ids.append(especialidade.id)
+            except Especialidade.DoesNotExist:
+                continue
+        
+        if especialidades_ids:
+            terapeutas = terapeutas.filter(especialidades__id__in=especialidades_ids).distinct()
+            print(f"Terapeutas após filtro terapias: {terapeutas.count()}")
+    
+    # Filtro: Acessibilidade
+    acessibilidade = request.GET.get('acessibilidade')
+    if acessibilidade == 'sim':
+        terapeutas = terapeutas.filter(acessibilidade=True)
+        print(f"Terapeutas após filtro acessibilidade=True: {terapeutas.count()}")
+    elif acessibilidade == 'nao':
+        terapeutas = terapeutas.filter(acessibilidade=False)
+        print(f"Terapeutas após filtro acessibilidade=False: {terapeutas.count()}")
+    
+    print(f"=== FIM DEBUG ===")
+    
+    # ===== FILTRO POR ESPECIALIDADE (PARA URLs DIRETAS) =====
     especialidade = None
     if especialidade_slug:
         especialidade = get_object_or_404(
@@ -203,19 +296,40 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         )
         terapeutas = terapeutas.filter(especialidades=especialidade)
     
-    # Ordenação padrão: destaque > premium > verificado
+    # ===== ORDENAÇÃO =====
+    # Ordenação padrão: destaque > premium > verificado > nome
     terapeutas = terapeutas.order_by(
-        '-destaque', '-premium', '-verificado', '-created_at'
+        '-destaque', '-premium', '-verificado', 'nome_exibicao'
     )
     
-    # Paginação
+    # ===== PAGINAÇÃO =====
     paginator = Paginator(terapeutas, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # Busca por região/cidade (para o filtro lateral)
+    # ===== DADOS PARA O TEMPLATE =====
     estados = Estado.objects.all().order_by('nome')
     especialidades = Especialidade.objects.filter(is_active=True).order_by('nome')
+    
+    # Construir título baseado nos filtros
+    titulo_pagina = "Terapeutas"
+    if especialidade:
+        titulo_pagina = f"{especialidade.nome}"
+    elif cidade:
+        # Usar o nome da cidade diretamente, não buscar por ID
+        titulo_pagina = f"Terapeutas em {cidade}"
+    elif estado:
+        # Usar o nome do estado diretamente
+        titulo_pagina = f"Terapeutas no {estado}"
+    
+    # Informações sobre filtros aplicados
+    filtros_aplicados = []
+    if tipos_sessao:
+        filtros_aplicados.append(f"Tipos: {', '.join(tipos_sessao)}")
+    if terapias:
+        filtros_aplicados.append(f"Terapias: {', '.join(terapias)}")
+    if acessibilidade:
+        filtros_aplicados.append(f"Acessibilidade: {acessibilidade}")
     
     context = {
         'terapeutas': page_obj,
@@ -223,8 +337,10 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         'estados': estados,
         'especialidades': especialidades,
         'total_resultados': terapeutas.count(),
-        'page_title': f'Terapeutas{" - " + especialidade.nome if especialidade else ""} - Espaço Vital',
-        'meta_description': f'Encontre os melhores terapeutas{" de " + especialidade.nome if especialidade else ""} verificados pela plataforma.',
+        'titulo_pagina': titulo_pagina,
+        'filtros_aplicados': filtros_aplicados,
+        'page_title': f'{titulo_pagina} - Espaço Vital',
+        'meta_description': f'Encontre os melhores {titulo_pagina.lower()} verificados pela plataforma.'
     }
     
     return render(request, 'terapeutas/listagem_simples.html', context)

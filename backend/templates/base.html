@@ -82,11 +82,40 @@ Data: 07/09/2025
                 
                 <!-- Menu desktop -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Buscar Terapeuta</a>
-                    <a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Terapias</a>
-                    <a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Espaços</a>
-                    <a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Blog</a>
-                    <a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Sobre</a>
+
+                    <a href="{% url 'core:home' %}" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                        Home
+                    </a>
+                    <!-- Link para Busca de Terapeutas (FUNCIONANDO) -->
+                    <button onclick="abrirModalBusca()" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    Buscar Terapeuta
+                    </button>
+                    
+                    <!-- Link temporário para Terapias -->
+                    <a href="#terapias" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                        Terapias
+                    </a>
+                    
+                    <!-- Link para Espaços (NOVO - FUNCIONARÁ APÓS MIGRATION) -->
+                    <a href="{% url 'espacos:busca_avancada' %}" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                        Espaços
+                    </a>
+                    
+                    <!-- Link temporário para Blog -->
+                    <a href="#blog" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                        Blog
+                    </a>
+                    
+                    <!-- Link temporário para Sobre -->
+                    <a href="#sobre" 
+                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                        Sobre
+                    </a>
                 </div>
                 
                 <!-- Botão Login/Cadastrar Desktop -->
@@ -148,11 +177,32 @@ Data: 07/09/2025
             <!-- Mobile Menu (oculto por padrão) -->
             <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
                 <div class="flex flex-col space-y-4">
-                    <a href="#" class="text-gray-700 font-medium py-2">Buscar Terapeuta</a>
-                    <a href="#" class="text-gray-700 font-medium py-2">Terapias</a>
-                    <a href="#" class="text-gray-700 font-medium py-2">Espaços</a>
-                    <a href="#" class="text-gray-700 font-medium py-2">Blog</a>
-                    <a href="#" class="text-gray-700 font-medium py-2">Sobre</a>
+                    <a href="{% url 'core:home' %}" 
+                    class="text-gray-700 font-medium py-2">
+                        Home
+                    </a>
+
+                    <button onclick="abrirModalBusca()" 
+                    class="text-gray-700 font-medium py-2 w-full text-left">
+                    Buscar Terapeuta
+                    </button>
+
+                    <a href="#terapias" 
+                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                        Terapias
+                    </a>
+                    <a href="{% url 'espacos:busca_avancada' %}" 
+                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                        Espaços
+                    </a>
+                    <a href="#blog" 
+                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                        Blog
+                    </a>
+                    <a href="#sobre" 
+                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                        Sobre
+                    </a>
                     <hr class="border-gray-200 my-2">
                     <a href="#" class="px-6 py-3 border border-primary text-primary rounded-lg text-center font-medium">
                         LOGIN / CADASTRAR
@@ -416,7 +466,321 @@ Data: 07/09/2025
         });
     </script>
     
-    <!-- JavaScript customizado adicional -->
-    {% block extra_js %}{% endblock %}
+    <!-- 
+===============================================================
+Título: Alterações no base.html - Modal de Busca Avançada
+Descrição: Implementação do modal de busca no template Django
+Autor: Will
+Data: 20/09/2025
+===============================================================
+-->
+
+<!-- ANTES: Na seção do menu desktop (substituir o link "Buscar Terapeuta") -->
+<!-- 
+<a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Buscar Terapeuta</a>
+-->
+
+<!-- DEPOIS: Substituir por este botão que abre o modal -->
+<button onclick="abrirModalBusca()" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+    Buscar Terapeuta
+</button>
+
+<!-- DEPOIS: Substituir por este botão que abre o modal -->
+<button onclick="abrirModalBusca()" class="text-gray-700 font-medium py-2 w-full text-left">
+    Buscar Terapeuta
+</button>
+
+<!-- Formulario Buscar Terapeuta -->
+<div id="modal-busca" class="fixed inset-0 z-50 hidden">
+    <!-- Overlay com fade mais escuro -->
+    <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity duration-300" onclick="fecharModalBusca()"></div>
+    
+    <!-- Container do Modal -->
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <!-- Conteúdo do Modal -->
+            <div class="relative transform bg-white shadow-2xl transition-all w-full max-w-2xl max-h-[90vh] rounded-2xl" 
+                 style="border: 3px solid white; box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5), 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+                
+                <!-- Header do Modal -->
+                <div class="bg-primary px-6 py-4 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-white">
+                            Que tipo de sessão está buscando?
+                        </h2>
+                        <button onclick="fecharModalBusca()" class="text-white hover:text-gray-200 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Área do Formulário com Scroll -->
+                <div class="max-h-[calc(90vh-120px)] overflow-y-auto mx-2 my-2 rounded-xl">
+                    <!-- Formulário -->
+                    <form id="form-busca-modal" onsubmit="enviarBuscaModal(event)" class="p-4 space-y-6">
+                    
+                    <!-- Tipo de Sessão - Checkboxes -->
+                    <div class="space-y-3">
+                        <label class="block text-base font-medium text-gray-700">
+                            Tipo de Sessão
+                        </label>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="presencial" name="tipo_sessao" value="presencial" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="presencial" class="text-gray-700 cursor-pointer">Presencial</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="online" name="tipo_sessao" value="online" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="online" class="text-gray-700 cursor-pointer">On-line</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="domicilio" name="tipo_sessao" value="domicilio" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="domicilio" class="text-gray-700 cursor-pointer">Domicílio</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Localização -->
+                    <div class="space-y-4">
+                        <label class="block text-base font-medium text-gray-700">
+                            Localização <span class="text-red-500">*</span>
+                        </label>
+                        
+                        <!-- Estado -->
+                        <div>
+                            <select id="estado" name="estado" onchange="carregarCidades()" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Estado</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="MG">Minas Gerais</option>
+                            </select>
+                        </div>
+
+                        <!-- Cidade -->
+                        <div>
+                            <select id="cidade" name="cidade" disabled class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100">
+                                <option value="">Cidade</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Terapias -->
+                    <div class="space-y-3">
+                        <label class="block text-base font-medium text-gray-700">
+                            Terapias
+                        </label>
+                        <div class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="aromaterapia" name="terapias" value="aromaterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="aromaterapia" class="text-gray-700 cursor-pointer text-sm">Aromaterapia</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="cristaloterapia" name="terapias" value="cristaloterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="cristaloterapia" class="text-gray-700 cursor-pointer text-sm">Cristaloterapia</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="massoterapia" name="terapias" value="massoterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="massoterapia" class="text-gray-700 cursor-pointer text-sm">Massoterapia</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="reiki" name="terapias" value="reiki" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="reiki" class="text-gray-700 cursor-pointer text-sm">Reiki</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="terapia-tantrica" name="terapias" value="terapia-tantrica" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="terapia-tantrica" class="text-gray-700 cursor-pointer text-sm">Terapia Tântrica</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="thetahealing" name="terapias" value="thetahealing" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="thetahealing" class="text-gray-700 cursor-pointer text-sm">Thetahealing</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="psicoterapia" name="terapias" value="psicoterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="psicoterapia" class="text-gray-700 cursor-pointer text-sm">Psicoterapia</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="acupuntura" name="terapias" value="acupuntura" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="acupuntura" class="text-gray-700 cursor-pointer text-sm">Acupuntura</label>
+                            </div>
+                        </div>
+                        <p class="text-sm text-orange-500 mt-2">Selecione várias</p>
+                    </div>
+
+                    <!-- Acessibilidade -->
+                    <div class="space-y-3">
+                        <label class="block text-base font-medium text-gray-700">
+                            Acessibilidade?
+                        </label>
+                        <div class="flex space-x-6">
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" id="acess-sim" name="acessibilidade" value="sim" class="text-primary focus:ring-primary border-gray-300">
+                                <label for="acess-sim" class="text-gray-700 cursor-pointer">Sim</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" id="acess-nao" name="acessibilidade" value="nao" class="text-primary focus:ring-primary border-gray-300">
+                                <label for="acess-nao" class="text-gray-700 cursor-pointer">Não</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Buscar -->
+                    <div class="pt-4 pb-2">
+                        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg text-lg font-medium transition-colors">
+                            Buscar
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADICIONAR: JavaScript para controlar o modal (adicionar antes do fechamento do </body>) -->
+<script>
+    // ============================================
+    // FUNÇÕES DO MODAL DE BUSCA
+    // ============================================
+    
+    // Dados das cidades por estado (usando nomes exatos do banco)
+    const cidadesPorEstado = {
+        'RJ': [
+            { value: 'Rio de Janeiro', text: 'Rio de Janeiro' },
+            { value: 'Nitéroi', text: 'Niterói' },  // Banco tem 'Nitéroi', mostrar como 'Niterói'
+            { value: 'Angra dos Reis', text: 'Angra dos Reis' }
+        ],
+        'SP': [
+            { value: 'São Paulo', text: 'São Paulo' },
+            { value: 'Santos', text: 'Santos' }
+        ],
+        'MG': [
+            { value: 'Belo Horizonte', text: 'Belo Horizonte' }
+        ]
+    };
+
+    // Abrir modal
+    function abrirModalBusca() {
+        const modal = document.getElementById('modal-busca');
+        const overlay = modal.querySelector('.bg-black');
+        const container = modal.querySelector('.transform');
+        
+        // Resetar estados iniciais
+        overlay.classList.remove('bg-opacity-70', 'bg-opacity-0');
+        overlay.classList.add('bg-opacity-0');
+        container.style.transform = 'scale(0.95)';
+        container.style.opacity = '0';
+        
+        // Mostrar modal
+        modal.classList.remove('hidden');
+        
+        // Adicionar classe para animação de fade suave
+        setTimeout(() => {
+            overlay.classList.remove('bg-opacity-0');
+            overlay.classList.add('bg-opacity-70');
+            container.style.transform = 'scale(1)';
+            container.style.opacity = '1';
+        }, 10);
+        
+        // Prevenir scroll do body
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Fechar modal
+    function fecharModalBusca() {
+        const modal = document.getElementById('modal-busca');
+        const overlay = modal.querySelector('.bg-black');
+        const container = modal.querySelector('.transform');
+        
+        // Animação de saída
+        overlay.classList.remove('bg-opacity-70');
+        overlay.classList.add('bg-opacity-0');
+        container.style.transform = 'scale(0.95)';
+        container.style.opacity = '0';
+        
+        // Esconder modal após animação
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+        
+        // Restaurar scroll do body
+        document.body.style.overflow = 'auto';
+        
+        // Fechar menu mobile se estiver aberto
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    }
+
+    // Carregar cidades baseado no estado selecionado
+    function carregarCidades() {
+        const estadoSelect = document.getElementById('estado');
+        const cidadeSelect = document.getElementById('cidade');
+        const estadoValue = estadoSelect.value;
+        
+        // Limpar cidades
+        cidadeSelect.innerHTML = '<option value="">Cidade</option>';
+        
+        if (estadoValue && cidadesPorEstado[estadoValue]) {
+            // Habilitar select de cidade
+            cidadeSelect.disabled = false;
+            
+            // Adicionar cidades
+            cidadesPorEstado[estadoValue].forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade.value;
+                option.textContent = cidade.text;
+                cidadeSelect.appendChild(option);
+            });
+        } else {
+            // Desabilitar select de cidade
+            cidadeSelect.disabled = true;
+        }
+    }
+
+    // Enviar formulário de busca
+    function enviarBuscaModal(event) {
+        event.preventDefault();
+        
+        // Coletar dados do formulário
+        const formData = new FormData(event.target);
+        const params = new URLSearchParams();
+        
+        // Processar checkboxes de tipo de sessão
+        const tiposSessao = formData.getAll('tipo_sessao');
+        tiposSessao.forEach(tipo => params.append('tipo_sessao', tipo));
+        
+        // Processar localização
+        if (formData.get('estado')) params.append('estado', formData.get('estado'));
+        if (formData.get('cidade')) params.append('cidade', formData.get('cidade'));
+        
+        // Processar checkboxes de terapias
+        const terapias = formData.getAll('terapias');
+        terapias.forEach(terapia => params.append('terapias', terapia));
+        
+        // Processar acessibilidade
+        if (formData.get('acessibilidade')) params.append('acessibilidade', formData.get('acessibilidade'));
+        
+        // Fechar modal
+        fecharModalBusca();
+        
+        // Redirecionar para página de listagem com parâmetros
+        const urlBusca = '/terapeutas/lista/?' + params.toString();
+        window.location.href = urlBusca;
+    }
+
+    // Fechar modal com tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('modal-busca');
+            if (!modal.classList.contains('hidden')) {
+                fecharModalBusca();
+            }
+        }
+    });
+</script>
+
 </body>
 </html>

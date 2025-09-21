@@ -22,7 +22,7 @@ urlpatterns = [
     path(
         '', 
         views.TerapeutaListView.as_view(), 
-        name='busca_avancada'
+        name='listagem_resultados'
     ),
     
     # Busca avançada com parâmetros específicos
