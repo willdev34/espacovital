@@ -106,112 +106,52 @@ Data: 07/09/2025
         <!-- Container do carrossel -->
         <div class="relative overflow-hidden">
             <div id="therapists-carousel" class="flex transition-transform duration-300 ease-in-out">
-                <!-- Card Terapeuta 1 -->
+                <!-- LOOP DINÂMICO DOS TERAPEUTAS -->
+                {% for therapist in featured_therapists %}
                 <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
                     <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
                         <!-- Área da imagem com gradiente -->
                         <div class="h-48 bg-gradient-to-br from-mint/20 via-coral/15 to-primary/20 flex items-center justify-center relative">
-                            <!-- Placeholder para foto do terapeuta -->
-                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                            </div>
-                            <!-- Badge de verificação -->
+                            {% if therapist.photo %}
+                                <img src="{{ therapist.photo }}" alt="{{ therapist.name }}" class="w-20 h-20 rounded-full object-cover">
+                            {% else %}
+                                <!-- Placeholder para foto do terapeuta -->
+                                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Badge de verificação dinâmico -->
+                            {% if therapist.verified %}
                             <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
                                 Verificado
                             </div>
+                            {% endif %}
                         </div>
                         
-                        <!-- Conteúdo do card -->
+                        <!-- Conteúdo do card dinâmico -->
                         <div class="p-6 text-center">
-                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Ana Silva</h3>
-                            <p class="text-sm text-gray-600 mb-4">Massoterapia • Reiki</p>
-                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
+                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">{{ therapist.name }}</h3>
+                            <p class="text-sm text-gray-600 mb-4">{{ therapist.specialties }}</p>
+                            <p class="text-xs text-gray-500 mb-4">{{ therapist.location }}</p>
+                            <a href="{{ therapist.url }}" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full inline-block">
                                 Ver perfil
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Card Terapeuta 2 -->
-                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
-                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
-                        <div class="h-48 bg-gradient-to-br from-coral/20 via-mint/15 to-primary/20 flex items-center justify-center relative">
-                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                                Verificado
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Carlos Mendes</h3>
-                            <p class="text-sm text-gray-600 mb-4">Yoga • Meditação</p>
-                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
-                                Ver perfil
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Card Terapeuta 3 -->
-                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
-                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
-                        <div class="h-48 bg-gradient-to-br from-primary/20 via-coral/15 to-mint/20 flex items-center justify-center relative">
-                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                                Verificado
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Marina Costa</h3>
-                            <p class="text-sm text-gray-600 mb-4">Aromaterapia • Cristaloterapia</p>
-                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
-                                Ver perfil
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Card Terapeuta 4 -->
-                <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
-                    <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
-                        <div class="h-48 bg-gradient-to-br from-mint/20 via-primary/15 to-coral/20 flex items-center justify-center relative">
-                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white/90 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                                Verificado
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="font-poppins font-semibold text-gray-900 mb-2">Roberto Lima</h3>
-                            <p class="text-sm text-gray-600 mb-4">Shiatsu • Reflexologia</p>
-                            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full">
-                                Ver perfil
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
         
         <!-- Indicadores mobile -->
         <div class="flex justify-center mt-8 md:hidden">
             <div class="flex space-x-2">
-                <div class="w-2 h-2 bg-primary rounded-full"></div>
-                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                {% for therapist in featured_therapists %}
+                <div class="w-2 h-2 {% if forloop.first %}bg-primary{% else %}bg-gray-300{% endif %} rounded-full"></div>
+                {% endfor %}
             </div>
         </div>
     </div>

@@ -22,9 +22,11 @@ urlpatterns = [
     
     # Apps principais
     path('terapeutas/', include('terapeutas.urls')),
+
+    path('espacos/', include('espacos.urls')),
+
     
     # URLs futuras
-    # path('espacos/', include('espacos.urls')),
     # path('terapias/', include('terapias.urls')),
     # path('blog/', include('blog.urls')),
 ]
