@@ -81,42 +81,37 @@ Data: 07/09/2025
                 </div>
                 
                 <!-- Menu desktop -->
-                <div class="hidden md:flex items-center space-x-8">
-
+                <nav class="hidden md:flex md:items-center md:space-x-8">
                     <a href="{% url 'core:home' %}" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Home
                     </a>
-                    <!-- Link para Busca de Terapeutas (FUNCIONANDO) -->
+
                     <button onclick="abrirModalBusca()" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
-                    Buscar Terapeuta
+                            class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                        Buscar Terapeuta
                     </button>
-                    
-                    <!-- Link temporário para Terapias -->
+
                     <a href="#terapias" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Terapias
                     </a>
                     
-                    <!-- Link para Espaços (NOVO - FUNCIONARÁ APÓS MIGRATION) -->
                     <a href="{% url 'espacos:busca_avancada' %}" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Espaços
                     </a>
                     
-                    <!-- Link temporário para Blog -->
                     <a href="#blog" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Blog
                     </a>
                     
-                    <!-- Link temporário para Sobre -->
                     <a href="#sobre" 
-                    class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Sobre
                     </a>
-                </div>
+                </nav>
                 
                 <!-- Botão Login/Cadastrar Desktop -->
                 <div class="flex items-center">
@@ -268,7 +263,7 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-4 text-lg">Para você</h3>
                         <ul class="space-y-3 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary transition-colors">Busque um terapeuta</a></li>
+                            <li><a href="#" class="hover:text-primary transition-colors">Buscar Terapeuta</a></li>
                             <li><a href="#" class="hover:text-primary transition-colors">Encontre um espaço</a></li>
                             <li><a href="#" class="hover:text-primary transition-colors">Artigos do Blog</a></li>
                             <li><a href="#" class="hover:text-primary transition-colors">Qual terapia escolher?</a></li>
@@ -348,7 +343,7 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-3">Para você</h3>
                         <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary">Busque um terapeuta</a></li>
+                            <li><a href="#" class="hover:text-primary">Buscar Terapeuta</a></li>
                             <li><a href="#" class="hover:text-primary">Encontre um espaço</a></li>
                             <li><a href="#" class="hover:text-primary">Artigos do Blog</a></li>
                             <li><a href="#" class="hover:text-primary">Qual terapia escolher?</a></li>
@@ -466,30 +461,6 @@ Data: 07/09/2025
         });
     </script>
     
-    <!-- 
-===============================================================
-Título: Alterações no base.html - Modal de Busca Avançada
-Descrição: Implementação do modal de busca no template Django
-Autor: Will
-Data: 20/09/2025
-===============================================================
--->
-
-<!-- ANTES: Na seção do menu desktop (substituir o link "Buscar Terapeuta") -->
-<!-- 
-<a href="#" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">Buscar Terapeuta</a>
--->
-
-<!-- DEPOIS: Substituir por este botão que abre o modal -->
-<button onclick="abrirModalBusca()" class="text-gray-700 hover:text-primary transition-colors text-lg font-medium">
-    Buscar Terapeuta
-</button>
-
-<!-- DEPOIS: Substituir por este botão que abre o modal -->
-<button onclick="abrirModalBusca()" class="text-gray-700 font-medium py-2 w-full text-left">
-    Buscar Terapeuta
-</button>
-
 <!-- Formulario Buscar Terapeuta -->
 <div id="modal-busca" class="fixed inset-0 z-50 hidden">
     <!-- Overlay com fade mais escuro -->
@@ -611,9 +582,13 @@ Data: 20/09/2025
                     <!-- Acessibilidade -->
                     <div class="space-y-3">
                         <label class="block text-base font-medium text-gray-700">
-                            Acessibilidade?
+                            Espaço com acessibilidade?
                         </label>
-                        <div class="flex space-x-6">
+                        <div class="flex flex-wrap gap-x-6 gap-y-2">
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" id="acess-tanto-faz" name="acessibilidade" value="" class="text-primary focus:ring-primary border-gray-300" checked>
+                                <label for="acess-tanto-faz" class="text-gray-700 cursor-pointer">Tanto faz</label>
+                            </div>
                             <div class="flex items-center space-x-2">
                                 <input type="radio" id="acess-sim" name="acessibilidade" value="sim" class="text-primary focus:ring-primary border-gray-300">
                                 <label for="acess-sim" class="text-gray-700 cursor-pointer">Sim</label>

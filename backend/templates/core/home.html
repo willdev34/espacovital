@@ -106,18 +106,18 @@ Data: 07/09/2025
         <!-- Container do carrossel -->
         <div class="relative overflow-hidden">
             <div id="therapists-carousel" class="flex transition-transform duration-300 ease-in-out">
-                <!-- LOOP DINÂMICO DOS TERAPEUTAS -->
+                <!-- Card individual do terapeuta -->
                 {% for therapist in featured_therapists %}
                 <div class="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
                     <div class="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
                         <!-- Área da imagem com gradiente -->
                         <div class="h-48 bg-gradient-to-br from-mint/20 via-coral/15 to-primary/20 flex items-center justify-center relative">
                             {% if therapist.photo %}
-                                <img src="{{ therapist.photo }}" alt="{{ therapist.name }}" class="w-20 h-20 rounded-full object-cover">
+                                <img src="{{ therapist.photo }}" alt="{{ therapist.name }}" class="w-28 h-28 rounded-full object-cover">
                             {% else %}
                                 <!-- Placeholder para foto do terapeuta -->
-                                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                                    <svg class="w-10 h-10 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
+                                <div class="w-28 h-28 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-14 h-14 text-primary/40" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                                     </svg>
                                 </div>
@@ -282,13 +282,13 @@ Data: 07/09/2025
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
             <!-- Benefício 1 - Autoconhecimento -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/autoconhecimento.png' %}" 
                             alt="Autoconhecimento" 
                             class="w-6 h-6"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <svg class="w-6 h-6 text-primary hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-primary hidden animate-spin" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
                     </div>
@@ -302,8 +302,8 @@ Data: 07/09/2025
             
             <!-- Benefício 2 - Resgate da autoestima -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/autoestima.png' %}" 
                             alt="Resgate da autoestima" 
                             class="w-6 h-6"
@@ -322,8 +322,8 @@ Data: 07/09/2025
             
             <!-- Benefício 3 - Liberação de traumas -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/liberacao_traumas.png' %}" 
                             alt="Liberação de traumas" 
                             class="w-6 h-6"
@@ -342,8 +342,8 @@ Data: 07/09/2025
             
             <!-- Benefício 4 - Expansão da consciência -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/expansao_consciencia.png' %}" 
                             alt="Expansão da consciência" 
                             class="w-6 h-6"
@@ -362,8 +362,8 @@ Data: 07/09/2025
             
             <!-- Benefício 5 - Melhoria nos relacionamentos -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/relacionamentos.png' %}" 
                             alt="Melhoria nos relacionamentos" 
                             class="w-6 h-6"
@@ -382,8 +382,8 @@ Data: 07/09/2025
             
             <!-- Benefício 6 - Redução do estresse -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/reducao_estresse.png' %}" 
                             alt="Redução do estresse" 
                             class="w-6 h-6"
@@ -419,8 +419,8 @@ Data: 07/09/2025
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
             <!-- Vantagem 1 - Profissionais verificados -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/profissionais_verificados.png' %}" 
                             alt="Profissionais verificados" 
                             class="w-6 h-6"
@@ -438,8 +438,8 @@ Data: 07/09/2025
             
             <!-- Vantagem 2 - Espaços selecionados -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/espacos_selecionados.png' %}" 
                             alt="Espaços selecionados" 
                             class="w-6 h-6"
@@ -457,8 +457,8 @@ Data: 07/09/2025
             
             <!-- Vantagem 3 - Filtro por especialidade -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/filtro_especialidade.png' %}" 
                             alt="Filtro por especialidade" 
                             class="w-6 h-6"
@@ -476,8 +476,8 @@ Data: 07/09/2025
             
             <!-- Vantagem 4 - Conteúdo educativo -->
             <div class="text-center group">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors animate-pulse">
+                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-bounce">
                         <img src="{% static 'images/icons/conteudo_educativo.png' %}" 
                             alt="Conteúdo educativo" 
                             class="w-6 h-6"
@@ -639,33 +639,89 @@ Data: 07/09/2025
 <script>
     // ===================================================================
     // JavaScript para Carrossel de Terapeutas
-    // Autor: Will | Empresa: Espaço VItal
-    // Data: 07/09/2025
     // ===================================================================
     
     let currentSlide = 0;
-    const maxSlides = 4; // Total de terapeutas
-    
+
     function moveCarousel(carouselId, direction) {
         const carousel = document.getElementById(carouselId + '-carousel');
-        const cardWidth = carousel.children[0].offsetWidth;
-        const visibleCards = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 768 ? 2 : 1;
+        if (!carousel || !carousel.children.length) return;
         
+        const totalCards = carousel.children.length;
+        const visibleCards = getVisibleCards();
+        const cardWidth = carousel.children[0].offsetWidth;
+        const gap = window.innerWidth >= 1024 ? 24 : window.innerWidth >= 768 ? 16 : 12;
+        
+        // Calcular novo slide
         currentSlide += direction;
         
         // Controlar limites do carrossel
+        const maxSlide = Math.max(0, totalCards - visibleCards);
         if (currentSlide < 0) {
             currentSlide = 0;
-        } else if (currentSlide > maxSlides - visibleCards) {
-            currentSlide = maxSlides - visibleCards;
+        } else if (currentSlide > maxSlide) {
+            currentSlide = maxSlide;
         }
         
-        const translateX = -currentSlide * (cardWidth + (window.innerWidth >= 1024 ? 24 : 12));
+        // Aplicar transformação com transição suave
+        const translateX = -currentSlide * (cardWidth + gap);
         carousel.style.transform = `translateX(${translateX}px)`;
+        carousel.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
         
-        // Atualizar indicadores mobile
-        updateMobileIndicators();
+        // Atualizar estado dos botões
+        updateCarouselButtons(carouselId, currentSlide, maxSlide);
     }
+
+    function getVisibleCards() {
+        if (window.innerWidth >= 1024) return 4;  // Desktop: 4 cards
+        if (window.innerWidth >= 768) return 2;   // Tablet: 2 cards
+        return 1;                                 // Mobile: 1 card
+    }
+
+    function updateCarouselButtons(carouselId, current, max) {
+        const prevBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', -1)"]`);
+        const nextBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', 1)"]`);
+        
+        if (prevBtn) {
+            prevBtn.disabled = current <= 0;
+            prevBtn.style.opacity = current <= 0 ? '0.5' : '1';
+            prevBtn.style.cursor = current <= 0 ? 'not-allowed' : 'pointer';
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = current >= max;
+            nextBtn.style.opacity = current >= max ? '0.5' : '1';
+            nextBtn.style.cursor = current >= max ? 'not-allowed' : 'pointer';
+        }
+    }
+
+    // Resetar carrossel no redimensionamento da tela
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            currentSlide = 0;
+            const carousel = document.getElementById('therapists-carousel');
+            if (carousel) {
+                carousel.style.transform = 'translateX(0px)';
+                const totalCards = carousel.children.length;
+                const visibleCards = getVisibleCards();
+                const maxSlide = Math.max(0, totalCards - visibleCards);
+                updateCarouselButtons('therapists', 0, maxSlide);
+            }
+        }, 250);
+    });
+
+    // Inicializar estado dos botões quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('therapists-carousel');
+        if (carousel) {
+            const totalCards = carousel.children.length;
+            const visibleCards = getVisibleCards();
+            const maxSlide = Math.max(0, totalCards - visibleCards);
+            updateCarouselButtons('therapists', 0, maxSlide);
+        }
+    });
     
     function updateMobileIndicators() {
         const indicators = document.querySelectorAll('.flex.justify-center .w-2');
