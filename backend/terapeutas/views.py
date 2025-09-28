@@ -16,8 +16,52 @@ from .models import (
     Terapeuta, Especialidade, Estado, Cidade, 
     Avaliacao, Contato, SessionType, ProfileType, ClientType
 )
+from django.views.generic import CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 import json
 
+
+def processar_multiplas_cidades(request, terapeuta_instance):
+    """
+    Processa e salva as múltiplas cidades do formulário
+    """
+    from .models import Cidade
+    
+    # Cidade principal (obrigatória)
+    cidade_principal_id = request.POST.get('cidade_principal')
+    if cidade_principal_id:
+        try:
+            cidade_principal = Cidade.objects.get(id=cidade_principal_id)
+            terapeuta_instance.cidade_principal = cidade_principal
+        except Cidade.DoesNotExist:
+            return False, "Cidade principal inválida"
+    else:
+        return False, "Cidade principal é obrigatória"
+    
+    # Salvar terapeuta com cidade principal
+    terapeuta_instance.save()
+    
+    # Processar cidades adicionais
+    cidades_adicionais = []
+    
+    # Buscar todas as cidades adicionais do POST
+    for key, value in request.POST.items():
+        if key.startswith('cidade_adicional_') and value:
+            try:
+                cidade_adicional = Cidade.objects.get(id=value)
+                # Evitar duplicatas (não adicionar a cidade principal)
+                if cidade_adicional.id != cidade_principal.id:
+                    cidades_adicionais.append(cidade_adicional)
+            except Cidade.DoesNotExist:
+                continue  # Ignora cidades inválidas
+    
+    # Limpar cidades antigas e adicionar as novas
+    terapeuta_instance.cidades_atendimento.clear()
+    if cidades_adicionais:
+        terapeuta_instance.cidades_atendimento.add(*cidades_adicionais)
+    
+    return True, "Cidades processadas com sucesso"
 
 # ===============================================================
 # VIEWS DE BUSCA E LISTAGEM
@@ -39,9 +83,9 @@ class TerapeutaListView(ListView):
         Exatamente como no layout da busca avançada
         """
         queryset = Terapeuta.objects.filter(is_active=True).select_related(
-            'cidade', 'cidade__estado'
+            'cidade_principal', 'cidade_principal__estado'
         ).prefetch_related(
-            'especialidades', 'avaliacoes'
+            'cidades_atendimento', 'especialidades', 'avaliacoes'
         ).annotate(
             media_avaliacoes=Avg('avaliacoes__nota')
         )
@@ -62,14 +106,20 @@ class TerapeutaListView(ListView):
         cidade_id = self.request.GET.get('cidade')
         if cidade_id:
             try:
-                queryset = queryset.filter(cidade_id=cidade_id)
+                queryset = queryset.filter(
+                    Q(cidade_principal_id=cidade_id) |
+                    Q(cidades_atendimento__id=cidade_id)
+                ).distinct()
             except ValueError:
                 pass
         
         estado_id = self.request.GET.get('estado')
         if estado_id:
             try:
-                queryset = queryset.filter(cidade__estado_id=estado_id)
+                queryset = queryset.filter(
+                    Q(cidade_principal__estado_id=estado_id) |
+                    Q(cidades_atendimento__estado_id=estado_id)
+                ).distinct()
             except ValueError:
                 pass
         
@@ -189,8 +239,9 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
     print(f"GET params: {dict(request.GET)}")
     
     terapeutas = Terapeuta.objects.filter(is_active=True).select_related(
-        'cidade', 'cidade__estado'
+        'cidade_principal', 'cidade_principal__estado'
     ).prefetch_related(
+        'cidades_atendimento',
         'especialidades', 'avaliacoes'
     )
     
@@ -222,15 +273,20 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         print(f"Filtrando por estado: {estado}")
         # Filtrar por estado usando nome ou sigla
         terapeutas = terapeutas.filter(
-            Q(cidade__estado__nome__icontains=estado) | 
-            Q(cidade__estado__sigla__iexact=estado)
-        )
+            Q(cidade_principal__estado__nome__icontains=estado) | 
+            Q(cidade_principal__estado__sigla__iexact=estado) |
+            Q(cidades_atendimento__estado__nome__icontains=estado) |
+            Q(cidades_atendimento__estado__sigla__iexact=estado)
+        ).distinct()
         print(f"Terapeutas após filtro estado: {terapeutas.count()}")
     
     if cidade:
         print(f"Filtrando por cidade: {cidade}")
         # Filtrar por cidade usando apenas nome
-        terapeutas = terapeutas.filter(cidade__nome__icontains=cidade)
+        terapeutas = terapeutas.filter(
+            Q(cidade_principal__nome__icontains=cidade) |
+            Q(cidades_atendimento__nome__icontains=cidade)
+        ).distinct()
         print(f"Terapeutas após filtro cidade: {terapeutas.count()}")
         
         # DEBUG: Ver quais cidades existem no banco
@@ -362,8 +418,9 @@ class TerapeutaDetailView(DetailView):
     
     def get_queryset(self):
         return Terapeuta.objects.filter(is_active=True).select_related(
-            'cidade', 'cidade__estado', 'user'
+            'cidade_principal', 'cidade_principal__estado', 'user'
         ).prefetch_related(
+            'cidades_atendimento',
             'especialidades',
             'terapeutaespecialidade_set',
             'avaliacoes__cliente'
@@ -399,7 +456,8 @@ class TerapeutaDetailView(DetailView):
         
         # Terapeutas relacionados (mesma cidade, especialidades similares)
         context['terapeutas_relacionados'] = Terapeuta.objects.filter(
-            cidade=terapeuta.cidade,
+            Q(cidade_principal=terapeuta.cidade_principal) |
+            Q(cidades_atendimento__in=terapeuta.get_todas_cidades()),
             especialidades__in=terapeuta.especialidades.all(),
             is_active=True
         ).exclude(
@@ -456,7 +514,8 @@ def busca_terapeutas_ajax(request):
         Q(especialidades__nome__icontains=query),
         is_active=True,
         verificado=True
-    ).select_related('cidade').prefetch_related(
+    ).select_related('cidade_principal').prefetch_related(
+        'cidades_atendimento',
         'especialidades'
     ).annotate(
         media_avaliacoes=Avg('avaliacoes__nota')
@@ -468,7 +527,7 @@ def busca_terapeutas_ajax(request):
             'id': terapeuta.id,
             'nome': terapeuta.nome_exibicao,
             'slug': terapeuta.slug,
-            'cidade': f"{terapeuta.cidade.nome} - {terapeuta.cidade.estado.sigla}" if terapeuta.cidade else '',
+            'cidade': f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}" if terapeuta.cidade_principal else '',
             'especialidades': [esp.nome for esp in terapeuta.especialidades.filter(is_active=True)[:2]],
             'rating': float(terapeuta.media_avaliacoes) if terapeuta.media_avaliacoes else 0.0,
             'verificado': terapeuta.verificado,
@@ -568,3 +627,112 @@ def contatar_terapeuta(request, terapeuta_slug):
     }
     
     return render(request, 'terapeutas/contato_form.html', context)
+
+class TerapeutaCreateView(LoginRequiredMixin, CreateView):
+    """
+    View para cadastro de novo terapeuta
+    Com suporte a múltiplas cidades
+    """
+    model = Terapeuta
+    template_name = 'terapeutas/cadastro.html'
+    fields = [
+        'nome_exibicao', 'bio_curta', 'bio_completa', 'telefone', 
+        'whatsapp', 'email', 'foto_perfil', 'especialidades',
+        'tipos_sessao', 'tipo_perfil', 'para_quem', 'acessibilidade'
+    ]
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona estados e cidades ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        context['estados'] = Estado.objects.all().order_by('nome')
+        context['cidades'] = Cidade.objects.all().order_by('nome')
+        context['page_title'] = 'Cadastrar Terapeuta - Espaço Vital'
+        return context
+    
+    def form_valid(self, form):
+        """
+        Processa formulário e múltiplas cidades
+        """
+        # Associar usuário logado
+        form.instance.user = self.request.user
+        
+        # Salvar formulário básico
+        response = super().form_valid(form)
+        
+        # Processar múltiplas cidades
+        sucesso, mensagem = processar_multiplas_cidades(self.request, self.object)
+        
+        if not sucesso:
+            messages.error(self.request, f"Erro: {mensagem}")
+            return self.form_invalid(form)
+        
+        messages.success(
+            self.request, 
+            "Perfil de terapeuta cadastrado com sucesso! "
+            "Suas informações serão verificadas em até 24h."
+        )
+        
+        return response
+    
+    def get_success_url(self):
+        return reverse('terapeutas:profile', kwargs={'slug': self.object.slug})
+
+
+class TerapeutaUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    View para edição de terapeuta existente
+    Com suporte a múltiplas cidades
+    """
+    model = Terapeuta
+    template_name = 'terapeutas/editar.html'
+    fields = [
+        'nome_exibicao', 'bio_curta', 'bio_completa', 'telefone', 
+        'whatsapp', 'email', 'foto_perfil', 'especialidades',
+        'tipos_sessao', 'tipo_perfil', 'para_quem', 'acessibilidade'
+    ]
+    
+    def get_object(self):
+        """
+        Garante que usuário só edita próprio perfil
+        """
+        return get_object_or_404(
+            Terapeuta, 
+            user=self.request.user,
+            slug=self.kwargs['slug']
+        )
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona estados e cidades ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        context['estados'] = Estado.objects.all().order_by('nome')
+        context['cidades'] = Cidade.objects.all().order_by('nome')
+        context['page_title'] = f'Editar Perfil - {self.object.nome_exibicao}'
+        return context
+    
+    def form_valid(self, form):
+        """
+        Processa formulário e múltiplas cidades
+        """
+        # Salvar formulário básico
+        response = super().form_valid(form)
+        
+        # Processar múltiplas cidades
+        sucesso, mensagem = processar_multiplas_cidades(self.request, self.object)
+        
+        if not sucesso:
+            messages.error(self.request, f"Erro: {mensagem}")
+            return self.form_invalid(form)
+        
+        messages.success(
+            self.request, 
+            "Perfil atualizado com sucesso!"
+        )
+        
+        return response
+    
+    def get_success_url(self):
+        return reverse('terapeutas:profile', kwargs={'slug': self.object.slug})

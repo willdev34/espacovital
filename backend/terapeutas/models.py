@@ -179,7 +179,7 @@ class Especialidade(BaseModel):
     def get_absolute_url(self):
         return reverse('terapias:detail', kwargs={'slug': self.slug})
 
-
+# Inicio classe Terapeutas
 class Terapeuta(BaseModel):
     """
     Modelo principal para Terapeutas
@@ -243,12 +243,20 @@ class Terapeuta(BaseModel):
     )
     
     # Localização
-    cidade = models.ForeignKey(
+    cidade_principal = models.ForeignKey(
         Cidade,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Cidade',
-        help_text='Cidade onde atua'
+        on_delete=models.PROTECT,
+        verbose_name='Cidade Principal',
+        help_text='Cidade principal onde atua',
+        related_name='terapeutas_principal'
+    )
+
+    cidades_atendimento = models.ManyToManyField(
+        Cidade,
+        blank=True,
+        verbose_name='Outras Cidades de Atendimento',
+        help_text='Outras cidades onde também atende (além da principal)',
+        related_name='terapeutas_adicionais'
     )
     
     bairro = models.CharField(
@@ -401,7 +409,7 @@ class Terapeuta(BaseModel):
             models.Index(fields=['verificado', 'is_active']),
             models.Index(fields=['destaque', 'is_active']),
             models.Index(fields=['premium', 'is_active']),
-            models.Index(fields=['cidade', 'is_active']),
+           # models.Index(fields=['cidade', 'is_active']),
         ]
     
     def __str__(self):
@@ -447,7 +455,41 @@ class Terapeuta(BaseModel):
         """
         self.visualizacoes += 1
         self.save(update_fields=['visualizacoes'])
+    
+    # Novos métodos
+    def get_todas_cidades(self):
+        """Retorna lista com todas as cidades onde o terapeuta atende
+        (principal + adicionais)
+        """
+        if not hasattr(self, 'cidade_principal') or not self.cidade_principal:
+            return []
+        
+        cidades = [self.cidade_principal]
+        cidades.extend(list(self.cidades_atendimento.all()))
+        return cidades
 
+    def get_cidades_display(self):
+        """
+        Retorna string formatada das cidades de atendimento
+        """
+        cidades = self.get_todas_cidades()
+        if len(cidades) == 0:
+            return "Sem localização definida"
+        elif len(cidades) == 1:
+            return str(cidades[0])
+        elif len(cidades) <= 3:
+            return ", ".join([str(c) for c in cidades])
+        else:
+            return f"{cidades[0]} + {len(cidades)-1} outras"
+
+    def get_cidade_principal_display(self):
+        """
+        Retorna apenas a cidade principal formatada
+        """
+        if hasattr(self, 'cidade_principal') and self.cidade_principal:
+            return f"{self.cidade_principal.nome} - {self.cidade_principal.estado.sigla}"
+        return "Não informado"    
+# Fim classe Terapeutas
 
 class TerapeutaEspecialidade(BaseModel):
     """

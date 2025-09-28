@@ -170,20 +170,24 @@ class TerapeutaAdmin(admin.ModelAdmin):
     Admin principal para Terapeutas com controle total para admin
     """
     list_display = [
-        'nome_exibicao', 'user_display', 'cidade', 'status_display', 'rating_display',
-        'total_avaliacoes', 'visualizacoes', 'created_at'
+        'nome_exibicao', 'user_display', 'get_cidade_principal_display', 'verificado',  # ← NOVO
+        'premium', 'destaque', 'is_active'
     ]
     list_filter = [
         VerificadoFilter, AvaliacaoFilter, 'destaque', 'premium',
-        'is_active', 'cidade__estado', 'tipos_sessao'
+        'is_active', 'cidade_principal__estado', 'tipos_sessao'
     ]
     search_fields = [
         'nome_completo', 'nome_exibicao', 'email_profissional',
-        'user__username', 'user__email', 'cidade__nome'
+        'user__username', 'user__email', 'cidade_principal__nome'
     ]
     readonly_fields = [
         'user_info', 'slug', 'visualizacoes', 'total_contatos', 
         'rating_medio', 'total_avaliacoes', 'created_at', 'updated_at'
+    ]
+
+    filter_horizontal = [
+        'especialidades', 'cidades_atendimento'
     ]
     
     # Inlines
@@ -216,7 +220,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('email_profissional', 'telefone', 'whatsapp')
                 }),
                 ('Localização', {
-                    'fields': ('cidade', 'bairro', 'endereco')
+                    'fields': ('cidade_principal', 'cidades_atendimento', 'bairro', 'endereco')
                 }),
                 ('Informações Profissionais', {
                     'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
@@ -259,7 +263,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('email_profissional', 'telefone', 'whatsapp')
                 }),
                 ('Localização', {
-                    'fields': ('cidade', 'bairro', 'endereco')
+                    'fields': ('get_cidade_principal_display', 'bairro', 'endereco')
                 }),
                 ('Informações Profissionais', {
                     'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
@@ -665,6 +669,15 @@ class TerapeutaAdmin(admin.ModelAdmin):
         Verifica se o usuário é administrador
         """
         return user.is_superuser or user.groups.filter(name='Administradores').exists()
+    
+    def get_cidade_principal_display(self, obj):
+        """Exibe cidade principal na listagem do admin"""
+        if obj.cidade_principal:
+            return f"{obj.cidade_principal.nome} - {obj.cidade_principal.estado.sigla}"
+        return "Não informado"
+
+    get_cidade_principal_display.short_description = 'Cidade Principal'
+    get_cidade_principal_display.admin_order_field = 'cidade_principal__nome'
 
 # ===============================================================
 # ADMINS PARA AVALIAÇÕES E CONTATOS

@@ -1,0 +1,195 @@
+<!-- ===============================================================
+     Título: Template - Formulário Múltiplas Cidades
+     Descrição: Seção de localização com botão + para adicionar cidades
+     Autor: Will | Empresa: Espaço Vital
+     Data: 28/09/2025
+     Arquivo: backend/templates/terapeutas/includes/form_localizacao.html
+     =============================================================== -->
+
+<!-- Seção de Localização no Formulário de Terapeuta -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <h3 class="text-xl font-poppins font-semibold text-primary mb-4 flex items-center">
+        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        Localização de Atendimento
+    </h3>
+    
+    <p class="text-gray-600 mb-6">
+        Informe onde você atende seus clientes. Você pode adicionar múltiplas cidades.
+    </p>
+    
+    <!-- Container das Cidades -->
+    <div id="cidades-container">
+        
+        <!-- Cidade Principal (obrigatória) -->
+        <div class="cidade-principal">
+            <h4 class="font-poppins font-medium text-gray-800 mb-3">
+                Cidade Principal <span class="text-red-500">*</span>
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Estado Principal -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado
+                    </label>
+                    <select name="estado_principal" 
+                            id="estado-principal"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                            onchange="carregarCidadesPrincipal(this.value)"
+                            required>
+                        <option value="">Selecione o Estado</option>
+                        {% for estado in estados %}
+                            <option value="{{ estado.id }}" 
+                                    {% if form.instance.cidade_principal.estado_id == estado.id %}selected{% endif %}>
+                                {{ estado.nome }} ({{ estado.sigla }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Cidade Principal -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Cidade
+                    </label>
+                    <select name="cidade_principal" 
+                            id="cidade-principal"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                            required
+                            {% if not form.instance.cidade_principal %}disabled{% endif %}>
+                        {% if form.instance.cidade_principal %}
+                            <option value="{{ form.instance.cidade_principal.id }}" selected>
+                                {{ form.instance.cidade_principal.nome }}
+                            </option>
+                        {% else %}
+                            <option value="">Primeiro selecione o estado</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cidades Adicionais (se existirem) -->
+        {% if form.instance.cidades_atendimento.exists %}
+            <div class="cidades-existentes mt-6">
+                <h4 class="font-poppins font-medium text-gray-800 mb-3">
+                    Outras Cidades de Atendimento
+                </h4>
+                
+                {% for cidade in form.instance.cidades_atendimento.all %}
+                    <div class="cidade-adicional flex items-center space-x-3 mt-3" data-cidade="existente-{{ forloop.counter }}">
+                        <!-- Estado -->
+                        <div class="flex-1">
+                            <select name="estado_adicional_existente_{{ forloop.counter }}" 
+                                    class="estado-select w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    onchange="carregarCidadesPorEstado(this, 'existente_{{ forloop.counter }}')">
+                                {% for estado in estados %}
+                                    <option value="{{ estado.id }}" 
+                                            {% if cidade.estado_id == estado.id %}selected{% endif %}>
+                                        {{ estado.nome }} ({{ estado.sigla }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Cidade -->
+                        <div class="flex-1">
+                            <select name="cidade_adicional_existente_{{ forloop.counter }}" 
+                                    class="cidade-select w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="{{ cidade.id }}" selected>{{ cidade.nome }}</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Botão Remover -->
+                        <button type="button" 
+                                class="btn-remover-cidade bg-red-500 hover:bg-red-600 text-white px-3 py-3 rounded-lg transition-colors"
+                                onclick="removerCampoCity('existente_{{ forloop.counter }}')"
+                                title="Remover cidade">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Botão para Adicionar Cidade -->
+        <button type="button" 
+                id="btn-adicionar-cidade"
+                class="flex items-center justify-center w-full mt-4 px-4 py-3 border-2 border-dashed border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-colors font-medium">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Adicionar Outra Cidade de Atendimento
+        </button>
+        
+    </div>
+    
+    <!-- Informação Adicional -->
+    <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div class="flex items-start">
+            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div class="text-sm text-blue-700">
+                <p class="font-medium mb-1">Dica:</p>
+                <p>Adicione todas as cidades onde você atende para aparecer nas buscas dos clientes dessas regiões. Isso aumenta sua visibilidade na plataforma.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para Estados (populado pelo Django) -->
+<script>
+    // Opções de estados disponíveis para os campos dinâmicos
+    window.estadosOptions = `
+        {% for estado in estados %}
+            <option value="{{ estado.id }}">{{ estado.nome }} ({{ estado.sigla }})</option>
+        {% endfor %}
+    `;
+    
+    /**
+     * Carrega cidades para o campo principal
+     */
+    function carregarCidadesPrincipal(estadoId) {
+        const selectCidade = document.getElementById('cidade-principal');
+        
+        if (!estadoId) {
+            selectCidade.innerHTML = '<option value="">Primeiro selecione o estado</option>';
+            selectCidade.disabled = true;
+            return;
+        }
+        
+        // Loading state
+        selectCidade.innerHTML = '<option value="">Carregando cidades...</option>';
+        selectCidade.disabled = true;
+        
+        // AJAX para buscar cidades
+        fetch(`/terapeutas/api/cidades-por-estado/?estado_id=${estadoId}`)
+            .then(response => response.json())
+            .then(data => {
+                let opcoesCidades = '<option value="">Selecione a cidade</option>';
+                
+                data.cidades.forEach(cidade => {
+                    opcoesCidades += `<option value="${cidade.id}">${cidade.nome}</option>`;
+                });
+                
+                selectCidade.innerHTML = opcoesCidades;
+                selectCidade.disabled = false;
+            })
+            .catch(error => {
+                console.error('Erro ao carregar cidades:', error);
+                selectCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+            });
+    }
+</script>
+
+<!-- Incluir JavaScript de múltiplas cidades -->
+<script src="{% static 'js/multiplas_cidades.js' %}"></script>
