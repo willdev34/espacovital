@@ -1,0 +1,158 @@
+<!-- 
+===============================================================
+Título: Template Personalizado para Edição de Usuários - Espaço Vital
+Descrição: Template que exibe permissões traduzidas no admin
+Autor: Will
+Data: 27/09/2025
+===============================================================
+-->
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script>
+(function($) {
+    // Melhorar visualização das permissões
+    $(document).ready(function() {
+        // Adicionar tradução das permissões em tempo real
+        const permissionTranslations = {
+            'Can add': 'Pode adicionar',
+            'Can change': 'Pode editar', 
+            'Can delete': 'Pode excluir',
+            'Can view': 'Pode visualizar',
+            'terapeuta': 'terapeuta',
+            'especialidade': 'especialidade',
+            'cidade': 'cidade',
+            'estado': 'estado',
+            'contato': 'contato',
+            'avaliacao': 'avaliação',
+            'user': 'usuário',
+            'group': 'grupo',
+            'espaco': 'espaço terapêutico'
+        };
+        
+        // Traduzir texto das permissões
+        $('.vCheckboxLabel').each(function() {
+            let text = $(this).text();
+            Object.keys(permissionTranslations).forEach(function(key) {
+                text = text.replace(new RegExp(key, 'gi'), permissionTranslations[key]);
+            });
+            $(this).text(text);
+        });
+        
+        // Adicionar indicador visual para grupos
+        $('.field-groups .vCheckboxLabel').each(function() {
+            const groupName = $(this).text().trim();
+            let badge = '';
+            
+            switch(groupName) {
+                case 'Administradores':
+                    badge = '<span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; margin-left: 8px;">ADMIN</span>';
+                    break;
+                case 'Terapeutas':
+                    badge = '<span style="background: #059669; color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; margin-left: 8px;">TERAPEUTA</span>';
+                    break;
+                case 'Gestores de Espaços':
+                    badge = '<span style="background: #7c3aed; color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; margin-left: 8px;">ESPAÇOS</span>';
+                    break;
+                case 'Editores de Conteúdo':
+                    badge = '<span style="background: #2563eb; color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; margin-left: 8px;">EDITOR</span>';
+                    break;
+            }
+            
+            if (badge) {
+                $(this).append(badge);
+            }
+        });
+        
+        // Adicionar informação de ajuda sobre grupos
+        if ($('.field-groups').length) {
+            $('.field-groups').append(`
+                <div style="margin-top: 15px; padding: 12px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; font-size: 12px;">
+                    <strong style="color: #0369a1;">💡 Sobre os Grupos:</strong><br>
+                    <div style="margin-top: 8px; line-height: 1.4;">
+                        <span style="color: #dc2626;">●</span> <strong>Administradores:</strong> Acesso total ao sistema<br>
+                        <span style="color: #059669;">●</span> <strong>Terapeutas:</strong> Podem gerenciar seus próprios perfis<br>
+                        <span style="color: #7c3aed;">●</span> <strong>Gestores de Espaços:</strong> Administram espaços terapêuticos<br>
+                        <span style="color: #2563eb;">●</span> <strong>Editores de Conteúdo:</strong> Gerenciam blog e conteúdo educativo
+                    </div>
+                </div>
+            `);
+        }
+        
+        // Melhorar visual do campo de permissões individuais
+        if ($('.field-user_permissions').length) {
+            $('.field-user_permissions').before(`
+                <div style="margin: 15px 0; padding: 12px; background: #fef3f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 12px;">
+                    <strong style="color: #dc2626;">⚠️ Atenção:</strong><br>
+                    <div style="margin-top: 8px; line-height: 1.4; color: #7f1d1d;">
+                        É recomendado usar <strong>Grupos</strong> ao invés de permissões individuais para facilitar o gerenciamento.
+                        Permissões individuais devem ser usadas apenas para casos específicos.
+                    </div>
+                </div>
+            `);
+        }
+    });
+})(django.jQuery);
+</script>
+
+<style>
+/* Estilos personalizados para melhorar a visualização */
+.field-permissions_summary .readonly {
+    background: transparent !important;
+    border: none !important;
+    font-size: 13px;
+}
+
+.vCheckboxLabel {
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 2px 0;
+}
+
+.field-groups .vCheckboxInputList li,
+.field-user_permissions .vCheckboxInputList li {
+    margin: 4px 0;
+    padding: 4px 8px;
+    background: #f9fafb;
+    border-radius: 4px;
+    border-left: 3px solid #e5e7eb;
+}
+
+.field-groups .vCheckboxInputList li:hover,
+.field-user_permissions .vCheckboxInputList li:hover {
+    background: #f3f4f6;
+    border-left-color: #6b7280;
+}
+
+.field-groups .vCheckboxInputList input:checked + label,
+.field-user_permissions .vCheckboxInputList input:checked + label {
+    font-weight: 600;
+    color: #059669;
+}
+
+/* Melhorar visual dos fieldsets */
+.module h2 {
+    background: linear-gradient(to right, #059669, #047857);
+    color: white;
+    padding: 12px 16px;
+    margin: 0 0 16px 0;
+    border-radius: 6px 6px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.module {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'admin/js/jquery.init.js' %}"></script>
+{% endblock %}

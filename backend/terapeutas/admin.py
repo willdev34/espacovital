@@ -1,8 +1,8 @@
 # ===============================================================
-# Título: Admin do App Terapeutas - Espaço Vital
+# Título: Admin do App Terapeutas - Espaço Vital (Versão Corrigida)
 # Descrição: Interface administrativa para gerenciar terapeutas e especialidades
-# Autor: Will | Empresa: Espaço VItal
-# Data: 13/09/2025
+# Autor: Will
+# Data: 27/09/2025
 # ===============================================================
 
 from django.contrib import admin
@@ -15,7 +15,6 @@ from .models import (
     Estado, Cidade, Especialidade, Terapeuta, 
     TerapeutaEspecialidade, Avaliacao, Contato
 )
-
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -44,7 +43,6 @@ class VerificadoFilter(SimpleListFilter):
             return queryset.filter(verificado=False, data_verificacao__isnull=False)
         return queryset
 
-
 class AvaliacaoFilter(SimpleListFilter):
     """
     Filtro por média de avaliações
@@ -62,26 +60,17 @@ class AvaliacaoFilter(SimpleListFilter):
     
     def queryset(self, request, queryset):
         if self.value() == '5':
-            return queryset.annotate(
-                media=Avg('avaliacoes__nota')
-            ).filter(media=5.0)
+            return queryset.filter(rating_medio=5)
         elif self.value() == '4+':
-            return queryset.annotate(
-                media=Avg('avaliacoes__nota')
-            ).filter(media__gte=4.0)
+            return queryset.filter(rating_medio__gte=4)
         elif self.value() == '3+':
-            return queryset.annotate(
-                media=Avg('avaliacoes__nota')
-            ).filter(media__gte=3.0)
+            return queryset.filter(rating_medio__gte=3)
         elif self.value() == 'sem_avaliacao':
-            return queryset.annotate(
-                total_avaliacoes=Count('avaliacoes')
-            ).filter(total_avaliacoes=0)
+            return queryset.filter(rating_medio__isnull=True)
         return queryset
 
-
 # ===============================================================
-# INLINE ADMINS
+# INLINES
 # ===============================================================
 
 class TerapeutaEspecialidadeInline(admin.TabularInline):
@@ -90,14 +79,8 @@ class TerapeutaEspecialidadeInline(admin.TabularInline):
     """
     model = TerapeutaEspecialidade
     extra = 1
-    fields = [
-        'especialidade', 'principal', 'preco_sessao', 
-        'duracao_sessao', 'anos_experiencia', 'certificacao'
-    ]
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('especialidade')
-
+    verbose_name = 'Especialidade'
+    verbose_name_plural = 'Especialidades do Terapeuta'
 
 class AvaliacaoInline(admin.TabularInline):
     """
@@ -105,15 +88,16 @@ class AvaliacaoInline(admin.TabularInline):
     """
     model = Avaliacao
     extra = 0
-    readonly_fields = ['created_at', 'cliente', 'nota', 'comentario']
-    fields = ['created_at', 'cliente', 'nota', 'recomenda', 'verificada']
+    readonly_fields = ['cliente', 'nota', 'comentario', 'created_at']
+    can_delete = False
+    verbose_name = 'Avaliação'
+    verbose_name_plural = 'Avaliações Recebidas'
     
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, request, obj):
         return False
 
-
 # ===============================================================
-# ADMINS DOS MODELOS
+# ADMINS PRINCIPAIS
 # ===============================================================
 
 @admin.register(Estado)
@@ -129,7 +113,6 @@ class EstadoAdmin(admin.ModelAdmin):
         return obj.cidades.count()
     total_cidades.short_description = 'Cidades'
 
-
 @admin.register(Cidade)
 class CidadeAdmin(admin.ModelAdmin):
     """
@@ -144,60 +127,35 @@ class CidadeAdmin(admin.ModelAdmin):
         return obj.terapeuta_set.filter(is_active=True).count()
     total_terapeutas.short_description = 'Terapeutas'
 
-
 @admin.register(Especialidade)
 class EspecialidadeAdmin(admin.ModelAdmin):
     """
     Admin para Especialidades
     """
-    list_display = [
-        'nome', 'cor_destaque_display', 'destaque_display', 
-        'total_terapeutas', 'ordem', 'is_active'
-    ]
+    list_display = ['nome', 'destaque', 'ordem', 'total_terapeutas', 'is_active']
     list_filter = ['destaque', 'is_active']
-    search_fields = ['nome', 'descricao_curta']
-    list_editable = ['ordem', 'is_active']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
+    search_fields = ['nome', 'descricao_curta', 'descricao_completa']
+    list_editable = ['destaque', 'ordem']
+    ordering = ['ordem', 'nome']
     
     fieldsets = [
         ('Informações Básicas', {
-            'fields': ('nome', 'slug', 'descricao_curta', 'descricao_completa')
+            'fields': ('nome', 'slug', 'descricao_curta')
         }),
-        ('Personalização', {
-            'fields': ('icone', 'cor_destaque', 'ordem')
+        ('Descrição Completa', {
+            'fields': ('descricao_completa',),
+            'classes': ('collapse',)
         }),
         ('Configurações', {
-            'fields': ('destaque', 'is_active')
+            'fields': ('destaque', 'ordem', 'cor_destaque')
         }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
+        ('Sistema', {
+            'fields': ('is_active', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         })
     ]
     
-    def cor_destaque_display(self, obj):
-        """
-        Exibe a cor como um quadrado colorido
-        """
-        return format_html(
-            '<div style="width: 20px; height: 20px; background-color: {}; '
-            'border: 1px solid #ddd; border-radius: 3px;"></div>',
-            obj.cor_destaque
-        )
-    cor_destaque_display.short_description = 'Cor'
-    
-    def destaque_display(self, obj):
-        """
-        Exibe status de destaque com ícone
-        """
-        if obj.destaque:
-            return format_html(
-                '<span style="color: gold;">⭐ Destaque</span>'
-            )
-        return format_html(
-            '<span style="color: gray;">-</span>'
-        )
-    destaque_display.short_description = 'Status'
+    readonly_fields = ['slug', 'created_at', 'updated_at']
     
     def total_terapeutas(self, obj):
         """
@@ -206,14 +164,13 @@ class EspecialidadeAdmin(admin.ModelAdmin):
         return obj.terapeuta_set.filter(is_active=True).count()
     total_terapeutas.short_description = 'Terapeutas'
 
-
 @admin.register(Terapeuta)
 class TerapeutaAdmin(admin.ModelAdmin):
     """
-    Admin principal para Terapeutas
+    Admin principal para Terapeutas com controle total para admin
     """
     list_display = [
-        'nome_exibicao', 'cidade', 'status_display', 'rating_display',
+        'nome_exibicao', 'user_display', 'cidade', 'status_display', 'rating_display',
         'total_avaliacoes', 'visualizacoes', 'created_at'
     ]
     list_filter = [
@@ -222,11 +179,11 @@ class TerapeutaAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'nome_completo', 'nome_exibicao', 'email_profissional',
-        'especialidades__nome', 'cidade__nome'
+        'user__username', 'user__email', 'cidade__nome'
     ]
     readonly_fields = [
-    'slug', 'visualizacoes', 'total_contatos', 
-    'rating_medio', 'total_avaliacoes', 'created_at', 'updated_at'
+        'user_info', 'slug', 'visualizacoes', 'total_contatos', 
+        'rating_medio', 'total_avaliacoes', 'created_at', 'updated_at'
     ]
     
     # Inlines
@@ -239,99 +196,415 @@ class TerapeutaAdmin(admin.ModelAdmin):
     # Ações personalizadas
     actions = ['verificar_terapeutas', 'remover_verificacao', 'marcar_destaque']
     
-    fieldsets = [
-        ('Informações Básicas', {
-            'fields': (
-                'user', 'nome_completo', 'nome_exibicao', 'slug'
+    def get_fieldsets(self, request, obj=None):
+        """
+        Fieldsets dinâmicos baseados em permissões
+        ADMIN: Vê tudo, pode atribuir qualquer usuário
+        TERAPEUTA: Apenas campos que pode editar
+        """
+        if self.is_admin_user(request.user):
+            # ADMIN VÊ TUDO
+            return [
+                ('Atribuição de Usuário', {
+                    'fields': ('user', 'user_info'),
+                    'description': '⚠️ APENAS ADMIN: Selecione o usuário que será o terapeuta. Cada usuário pode ter apenas 1 perfil.'
+                }),
+                ('Informações Básicas', {
+                    'fields': ('nome_completo', 'nome_exibicao', 'slug')
+                }),
+                ('Contato', {
+                    'fields': ('email_profissional', 'telefone', 'whatsapp')
+                }),
+                ('Localização', {
+                    'fields': ('cidade', 'bairro', 'endereco')
+                }),
+                ('Informações Profissionais', {
+                    'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
+                }),
+                ('Configurações de Atendimento', {
+                    'fields': ('tipos_sessao', 'para_quem', 'acessibilidade')
+                }),
+                ('Descrições', {
+                    'fields': ('bio_curta', 'bio_completa', 'metodologia')
+                }),
+                ('Mídia', {
+                    'fields': ('foto_perfil', 'foto_capa'),
+                    'classes': ('collapse',)
+                }),
+                ('Status e Verificação (ADMIN)', {
+                    'fields': ('verificado', 'destaque', 'premium', 'data_verificacao'),
+                    'classes': ('collapse',),
+                    'description': '🔒 Configurações exclusivas para administradores'
+                }),
+                ('Métricas', {
+                    'fields': ('visualizacoes', 'total_contatos', 'rating_medio', 'total_avaliacoes'),
+                    'classes': ('collapse',)
+                }),
+                ('Sistema', {
+                    'fields': ('is_active', 'created_at', 'updated_at'),
+                    'classes': ('collapse',)
+                })
+            ]
+        else:
+            # TERAPEUTA VÊ APENAS O NECESSÁRIO
+            return [
+                ('Informações do Usuário', {
+                    'fields': ('user_info',),
+                    'description': 'Usuário associado a este perfil (não editável)'
+                }),
+                ('Informações Básicas', {
+                    'fields': ('nome_completo', 'nome_exibicao', 'slug')
+                }),
+                ('Contato', {
+                    'fields': ('email_profissional', 'telefone', 'whatsapp')
+                }),
+                ('Localização', {
+                    'fields': ('cidade', 'bairro', 'endereco')
+                }),
+                ('Informações Profissionais', {
+                    'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
+                }),
+                ('Configurações de Atendimento', {
+                    'fields': ('tipos_sessao', 'para_quem', 'acessibilidade')
+                }),
+                ('Descrições', {
+                    'fields': ('bio_curta', 'bio_completa', 'metodologia')
+                }),
+                ('Mídia', {
+                    'fields': ('foto_perfil', 'foto_capa'),
+                    'classes': ('collapse',)
+                }),
+            ]
+    
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Campos readonly baseados em permissões
+        """
+        base_readonly = [
+            'slug', 'visualizacoes', 'total_contatos', 
+            'rating_medio', 'total_avaliacoes', 'created_at', 'updated_at'
+        ]
+        
+        if self.is_admin_user(request.user):
+            # ADMIN: Apenas user_info é readonly (mas pode alterar o user em si)
+            base_readonly.append('user_info')
+        else:
+            # TERAPEUTA: Não pode alterar campos administrativos
+            base_readonly.extend([
+                'user_info', 'verificado', 'destaque', 'premium', 
+                'data_verificacao', 'is_active'
+            ])
+        
+        return base_readonly
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Customizar formulário baseado em permissões
+        """
+        form = super().get_form(request, obj, **kwargs)
+        
+        if self.is_admin_user(request.user):
+            # ADMIN: Pode escolher qualquer usuário que ainda não tem perfil
+            if 'user' in form.base_fields:
+                # Filtrar usuários que já têm perfil de terapeuta
+                from django.contrib.auth.models import User
+                
+                existing_users = Terapeuta.objects.values_list('user_id', flat=True)
+                available_users = User.objects.exclude(id__in=existing_users)
+                
+                # Se estamos editando, incluir o usuário atual
+                if obj and obj.user:
+                    available_users = available_users | User.objects.filter(id=obj.user.id)
+                
+                form.base_fields['user'].queryset = available_users
+                form.base_fields['user'].help_text = (
+                    'Selecione o usuário que será associado a este perfil de terapeuta. '
+                    'Apenas usuários que ainda não possuem perfil aparecem na lista.'
+                )
+        else:
+            # TERAPEUTA: Não pode alterar o usuário
+            if 'user' in form.base_fields:
+                del form.base_fields['user']
+        
+        return form
+    
+    def get_queryset(self, request):
+        """
+        Filtrar queryset baseado em permissões
+        """
+        qs = super().get_queryset(request)
+        
+        if self.is_admin_user(request.user):
+            # ADMIN: Vê todos os terapeutas
+            return qs
+        else:
+            # TERAPEUTA: Vê apenas seu próprio perfil
+            return qs.filter(user=request.user)
+    
+    def has_add_permission(self, request):
+        """
+        Controlar permissão de adicionar
+        """
+        if self.is_admin_user(request.user):
+            # ADMIN: Pode sempre criar novos perfis
+            return True
+        
+        # TERAPEUTA: Só pode criar se não tiver perfil ainda
+        if hasattr(request.user, 'terapeuta'):
+            return False  # Já tem perfil
+        
+        # Se for do grupo Terapeutas, pode criar seu perfil
+        return request.user.groups.filter(name='Terapeutas').exists()
+    
+    def has_change_permission(self, request, obj=None):
+        """
+        Controlar permissão de editar
+        """
+        if self.is_admin_user(request.user):
+            # ADMIN: Pode editar qualquer perfil
+            return True
+        
+        # TERAPEUTA: Só pode editar seu próprio perfil
+        if obj is not None:
+            return obj.user == request.user
+        
+        return True
+    
+    def has_delete_permission(self, request, obj=None):
+        """
+        Controlar permissão de deletar
+        """
+        # APENAS ADMIN pode deletar perfis
+        return self.is_admin_user(request.user)
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Salvar modelo com validações de segurança
+        """
+        # Se for criação e não for admin, definir usuário como o logado
+        if not change and not self.is_admin_user(request.user):
+            obj.user = request.user
+        
+        # Validação extra: Verificar se o usuário já tem perfil
+        if hasattr(form, 'cleaned_data') and 'user' in form.cleaned_data:
+            user_selecionado = form.cleaned_data['user']
+            
+            # Verificar se já existe um terapeuta para este usuário
+            existing_terapeuta = Terapeuta.objects.filter(user=user_selecionado).exclude(pk=obj.pk).first()
+            if existing_terapeuta:
+                from django.core.exceptions import ValidationError
+                raise ValidationError(
+                    f'O usuário {user_selecionado.username} já possui um perfil de terapeuta. '
+                    f'Cada usuário pode ter apenas 1 perfil de terapeuta.'
+                )
+        
+        super().save_model(request, obj, form, change)
+        
+        # Log de ações administrativas
+        if self.is_admin_user(request.user):
+            action = 'criado' if not change else 'editado'
+            self.message_user(
+                request,
+                f'Perfil de terapeuta {action} com sucesso para o usuário {obj.user.username}.',
+                level='SUCCESS'
             )
-        }),
-        ('Contato', {
-            'fields': (
-                'email_profissional', 'telefone', 'whatsapp'
+    
+    # ===============================================================
+    # MÉTODOS DE EXIBIÇÃO
+    # ===============================================================
+    
+    def user_display(self, obj):
+        """
+        Exibe informações do usuário na listagem
+        """
+        if obj.user:
+            groups = obj.user.groups.all()
+            groups_text = ', '.join([g.name for g in groups]) if groups else 'Nenhum grupo'
+            
+            return format_html(
+                '<div style="line-height: 1.4;">'
+                '<strong>{}</strong><br>'
+                '<small style="color: #666;">{}</small><br>'
+                '<small style="color: #059669; font-size: 10px;">{}</small>'
+                '</div>',
+                obj.user.get_full_name() or obj.user.username,
+                obj.user.email,
+                groups_text
             )
-        }),
-        ('Localização', {
-            'fields': (
-                'cidade', 'bairro', 'endereco'
+        return '-'
+    user_display.short_description = 'Usuário'
+    
+    def user_info(self, obj):
+        """
+        Exibe informações detalhadas do usuário (readonly)
+        """
+        if obj and obj.user:
+            user = obj.user
+            groups = user.groups.all()
+            
+            # Verificar se é o único perfil deste usuário
+            profile_count = Terapeuta.objects.filter(user=user).count()
+            uniqueness_info = ''
+            if profile_count == 1:
+                uniqueness_info = (
+                    '<div style="margin-top: 8px; padding: 8px; background: #f0fdf4; '
+                    'border-radius: 4px; border-left: 3px solid #059669;">'
+                    '<small style="color: #059669; font-weight: bold;">✅ Perfil único: '
+                    'Este é o único perfil de terapeuta deste usuário.</small>'
+                    '</div>'
+                )
+            
+            # Formatação dos grupos
+            groups_html = ''
+            if groups:
+                group_colors = {
+                    'Administradores': '#dc2626',
+                    'Terapeutas': '#059669',
+                    'Gestores de Espaços': '#7c3aed',
+                    'Editores de Conteúdo': '#2563eb'
+                }
+                
+                group_tags = []
+                for group in groups:
+                    color = group_colors.get(group.name, '#6b7280')
+                    group_tags.append(
+                        '<span style="background-color: {}; color: white; '
+                        'padding: 4px 8px; border-radius: 12px; font-size: 12px; '
+                        'margin-right: 6px; margin-bottom: 4px; display: inline-block; '
+                        'font-weight: 500;">{}</span>'.format(color, group.name)
+                    )
+                groups_html = (
+                    '<div style="margin-top: 12px;">'
+                    '<strong style="color: #374151; display: block; margin-bottom: 6px;">Grupos de Permissão:</strong>'
+                    '<div style="line-height: 1.6;">{}</div>'
+                    '</div>'.format(''.join(group_tags))
+                )
+            
+            # Status do usuário
+            status_color = '#10b981' if user.is_active else '#ef4444'
+            status_text = '✅ Ativo' if user.is_active else '❌ Inativo'
+            
+            html_content = '''
+            <div style="padding: 16px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+            border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                
+                <div>
+                <strong style="color: #374151; display: block; margin-bottom: 4px;">👤 Nome de usuário:</strong>
+                <span style="color: #6b7280; font-family: monospace; background: #f9fafb; 
+                padding: 2px 6px; border-radius: 4px;">{}</span>
+                </div>
+                
+                <div>
+                <strong style="color: #374151; display: block; margin-bottom: 4px;">📧 E-mail:</strong>
+                <span style="color: #6b7280;">{}</span>
+                </div>
+                
+                <div>
+                <strong style="color: #374151; display: block; margin-bottom: 4px;">📝 Nome completo:</strong>
+                <span style="color: #6b7280;">{}</span>
+                </div>
+                
+                <div>
+                <strong style="color: #374151; display: block; margin-bottom: 4px;">📅 Data de cadastro:</strong>
+                <span style="color: #6b7280;">{}</span>
+                </div>
+                
+                </div>
+                
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                <strong style="color: #374151; display: block; margin-bottom: 6px;">🔒 Status da conta:</strong>
+                <span style="color: {}; font-weight: 600;">{}</span>
+                </div>
+                
+                {}
+                {}
+            </div>
+            '''.format(
+                user.username,
+                user.email or 'Não informado',
+                user.get_full_name() or 'Não informado',
+                user.date_joined.strftime('%d/%m/%Y às %H:%M') if user.date_joined else 'Não informado',
+                status_color,
+                status_text,
+                groups_html,
+                uniqueness_info
             )
-        }),
-        ('Informações Profissionais', {
-            'fields': (
-                'registro_profissional', 'formacao', 'experiencia_anos'
-            )
-        }),
-        ('Configurações de Atendimento', {
-            'fields': (
-                'tipos_sessao', 'tipo_perfil', 'para_quem', 'acessibilidade'
-            )
-        }),
-        ('Descrições', {
-            'fields': (
-                'bio_curta', 'bio_completa', 'metodologia'
-            )
-        }),
-        ('Mídia', {
-            'fields': (
-                'foto_perfil', 'foto_capa'
-            )
-        }),
-        ('Status e Verificação', {
-            'fields': (
-                'verificado', 'data_verificacao', 'destaque', 'premium'
-            )
-        }),
-        ('Métricas', {
-            'fields': (
-                'visualizacoes', 'total_contatos', 'rating_medio', 'total_avaliacoes'
-            ),
-            'classes': ('collapse',)
-        }),
-        ('Sistema', {
-            'fields': (
-                'is_active', 'created_at', 'updated_at'
-            ),
-            'classes': ('collapse',)
-        })
-    ]
+            
+            return format_html(html_content)
+        
+        return format_html(
+            '<div style="padding: 16px; background: #fef2f2; border: 1px solid #fecaca; '
+            'border-radius: 8px; color: #dc2626; text-align: center;">'
+            '⚠️ Nenhum usuário associado'
+            '</div>'
+        )
+    user_info.short_description = 'Informações do Usuário'
     
     def status_display(self, obj):
         """
-        Exibe status do terapeuta com cores
+        Status com ícones e cores
         """
-        status = []
+        status_parts = []
         
         if obj.verificado:
-            status.append('<span style="color: green; font-weight: bold;">✓ Verificado</span>')
+            status_parts.append(
+                '<span style="color: #10b981; font-weight: bold;">✓ Verificado</span>'
+            )
         else:
-            status.append('<span style="color: red;">✗ Não Verificado</span>')
-        
-        if obj.premium:
-            status.append('<span style="color: gold;">👑 Premium</span>')
+            status_parts.append(
+                '<span style="color: #f59e0b;">⏳ Pendente</span>'
+            )
         
         if obj.destaque:
-            status.append('<span style="color: purple;">⭐ Destaque</span>')
+            status_parts.append(
+                '<span style="color: #dc2626;">★ Destaque</span>'
+            )
         
-        return format_html(' | '.join(status))
+        if obj.premium:
+            status_parts.append(
+                '<span style="color: #7c3aed;">💎 Premium</span>'
+            )
+        
+        if not obj.is_active:
+            status_parts.append(
+                '<span style="color: #6b7280;">💤 Inativo</span>'
+            )
+        
+        return format_html('<br>'.join(status_parts))
     status_display.short_description = 'Status'
     
     def rating_display(self, obj):
         """
-        Exibe rating com estrelas
+        Avaliação com estrelas
         """
-        rating = obj.rating_medio
-        if rating > 0:
-            stars = '⭐' * int(rating)
+        if obj.rating_medio:
+            stars = '⭐' * int(obj.rating_medio)
             return format_html(
-                '<span title="{} estrelas">{} ({})</span>',
-                rating, stars, rating
+                '<span title="Média: {}">{} ({})</span>',
+                obj.rating_medio, stars, obj.rating_medio
             )
-        return format_html('<span style="color: gray;">Sem avaliações</span>')
+        return '📊 Sem avaliações'
     rating_display.short_description = 'Avaliação'
+    
+    # ===============================================================
+    # AÇÕES PERSONALIZADAS (APENAS ADMIN)
+    # ===============================================================
     
     def verificar_terapeutas(self, request, queryset):
         """
-        Ação para verificar terapeutas selecionados
+        Ação para verificar terapeutas (apenas admin)
         """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem verificar terapeutas.',
+                level='ERROR'
+            )
+            return
+        
         updated = queryset.update(
             verificado=True,
             data_verificacao=timezone.now()
@@ -344,29 +617,58 @@ class TerapeutaAdmin(admin.ModelAdmin):
     
     def remover_verificacao(self, request, queryset):
         """
-        Ação para remover verificação
+        Ação para remover verificação (apenas admin)
         """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem remover verificação.',
+                level='ERROR'
+            )
+            return
+        
         updated = queryset.update(
             verificado=False,
             data_verificacao=None
         )
         self.message_user(
             request,
-            f'Verificação removida de {updated} terapeuta(s).'
+            f'{updated} terapeuta(s) teve(ram) verificação removida.'
         )
     remover_verificacao.short_description = 'Remover verificação'
     
     def marcar_destaque(self, request, queryset):
         """
-        Ação para marcar como destaque
+        Ação para marcar como destaque (apenas admin)
         """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem marcar destaques.',
+                level='ERROR'
+            )
+            return
+        
         updated = queryset.update(destaque=True)
         self.message_user(
             request,
             f'{updated} terapeuta(s) marcado(s) como destaque.'
         )
     marcar_destaque.short_description = 'Marcar como destaque'
+    
+    # ===============================================================
+    # MÉTODOS UTILITÁRIOS
+    # ===============================================================
+    
+    def is_admin_user(self, user):
+        """
+        Verifica se o usuário é administrador
+        """
+        return user.is_superuser or user.groups.filter(name='Administradores').exists()
 
+# ===============================================================
+# ADMINS PARA AVALIAÇÕES E CONTATOS
+# ===============================================================
 
 @admin.register(Avaliacao)
 class AvaliacaoAdmin(admin.ModelAdmin):
@@ -386,37 +688,17 @@ class AvaliacaoAdmin(admin.ModelAdmin):
     ]
     readonly_fields = ['created_at', 'updated_at']
     
-    fieldsets = [
-        ('Avaliação', {
-            'fields': ('terapeuta', 'cliente', 'nota', 'comentario')
-        }),
-        ('Detalhes', {
-            'fields': ('data_sessao', 'recomenda', 'verificada')
-        }),
-        ('Sistema', {
-            'fields': ('is_active', 'created_at', 'updated_at'),
-            'classes': ('collapse',)
-        })
-    ]
-    
     def cliente_nome(self, obj):
-        """
-        Nome do cliente
-        """
         return obj.cliente.get_full_name() or obj.cliente.username
     cliente_nome.short_description = 'Cliente'
     
     def nota_display(self, obj):
-        """
-        Nota com estrelas
-        """
         stars = '⭐' * obj.nota
         return format_html(
             '<span title="{} estrelas">{} ({})</span>',
             obj.nota, stars, obj.nota
         )
     nota_display.short_description = 'Nota'
-
 
 @admin.register(Contato)
 class ContatoAdmin(admin.ModelAdmin):
@@ -436,40 +718,18 @@ class ContatoAdmin(admin.ModelAdmin):
     ]
     readonly_fields = ['created_at', 'updated_at', 'ip_origem']
     
-    fieldsets = [
-        ('Informações do Contato', {
-            'fields': ('nome', 'email', 'telefone')
-        }),
-        ('Destinatário', {
-            'fields': ('terapeuta', 'especialidade_interesse')
-        }),
-        ('Mensagem', {
-            'fields': ('assunto', 'mensagem', 'status')
-        }),
-        ('Informações Técnicas', {
-            'fields': ('ip_origem', 'created_at', 'updated_at'),
-            'classes': ('collapse',)
-        })
-    ]
-    
     def assunto_truncado(self, obj):
-        """
-        Assunto truncado
-        """
         if len(obj.assunto) > 50:
             return f'{obj.assunto[:50]}...'
         return obj.assunto
     assunto_truncado.short_description = 'Assunto'
     
     def status_display(self, obj):
-        """
-        Status com cores
-        """
         colors = {
-            'enviado': '#fbbf24',      # amarelo
-            'lido': '#3b82f6',         # azul
-            'respondido': '#10b981',   # verde
-            'arquivado': '#6b7280',    # cinza
+            'enviado': '#fbbf24',
+            'lido': '#3b82f6',
+            'respondido': '#10b981',
+            'arquivado': '#6b7280',
         }
         color = colors.get(obj.status, '#6b7280')
         return format_html(
@@ -478,7 +738,6 @@ class ContatoAdmin(admin.ModelAdmin):
             color, obj.get_status_display()
         )
     status_display.short_description = 'Status'
-
 
 # ===============================================================
 # CONFIGURAÇÕES EXTRAS DO ADMIN
