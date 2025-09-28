@@ -62,7 +62,7 @@ class HomeView(TemplateView):
             terapeutas_destaque = Terapeuta.objects.filter(
                 is_active=True,
                 destaque=True  # APENAS os marcados como destaque
-            ).select_related('cidade', 'cidade__estado').prefetch_related('especialidades')
+            ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
             
             print(f"=== CARROSSEL DESTAQUE ===")
             print(f"Terapeutas em destaque encontrados: {terapeutas_destaque.count()}")
@@ -73,7 +73,7 @@ class HomeView(TemplateView):
                 terapeutas_destaque = Terapeuta.objects.filter(
                     is_active=True,
                     premium=True
-                ).select_related('cidade', 'cidade__estado').prefetch_related('especialidades')
+                ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
                 print(f"Terapeutas premium encontrados: {terapeutas_destaque.count()}")
             
             # Se ainda não há, buscar verificados
@@ -82,7 +82,7 @@ class HomeView(TemplateView):
                 terapeutas_destaque = Terapeuta.objects.filter(
                     is_active=True,
                     verificado=True
-                ).select_related('cidade', 'cidade__estado').prefetch_related('especialidades')
+                ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
                 print(f"Terapeutas verificados encontrados: {terapeutas_destaque.count()}")
             
             # Aplicar ordem aleatória baseada na seed rotativa
@@ -108,7 +108,7 @@ class HomeView(TemplateView):
                     'id': terapeuta.id,
                     'name': terapeuta.nome_exibicao or terapeuta.nome_completo,
                     'specialties': especialidades_str,
-                    'location': f"{terapeuta.cidade.nome}, {terapeuta.cidade.estado.sigla}",
+                    'location': f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}" if terapeuta.cidade_principal else '',
                     'verified': terapeuta.verificado,
                     'premium': terapeuta.premium,
                     'destaque': terapeuta.destaque,

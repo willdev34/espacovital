@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Count, Avg
 from django.contrib.admin import SimpleListFilter
+from django.db import models
 from .models import (
     Estado, Cidade, Especialidade, Terapeuta, 
     TerapeutaEspecialidade, Avaliacao, Contato
@@ -124,7 +125,13 @@ class CidadeAdmin(admin.ModelAdmin):
     ordering = ['estado__nome', 'nome']
     
     def total_terapeutas(self, obj):
-        return obj.terapeuta_set.filter(is_active=True).count()
+        # Contar terapeutas que têm esta cidade como principal OU adicional
+        from .models import Terapeuta
+        return Terapeuta.objects.filter(
+            models.Q(cidade_principal=obj) |
+            models.Q(cidades_atendimento=obj),
+            is_active=True
+        ).distinct().count()
     total_terapeutas.short_description = 'Terapeutas'
 
 @admin.register(Especialidade)
@@ -678,6 +685,22 @@ class TerapeutaAdmin(admin.ModelAdmin):
 
     get_cidade_principal_display.short_description = 'Cidade Principal'
     get_cidade_principal_display.admin_order_field = 'cidade_principal__nome'
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """
+        Customiza o widget para o campo tipos_sessao
+        """
+        if db_field.name == 'tipos_sessao':
+            from django import forms
+            kwargs['widget'] = forms.CheckboxSelectMultiple(
+                choices=[
+                    ('presencial', 'Presencial'),
+                    ('online', 'On-line'), 
+                    ('domicilio', 'Domicílio')
+                ]
+            )
+            kwargs['help_text'] = 'Selecione os tipos de sessão que você oferece'
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 # ===============================================================
 # ADMINS PARA AVALIAÇÕES E CONTATOS
