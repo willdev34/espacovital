@@ -83,6 +83,26 @@ class TerapeutaEspecialidadeInline(admin.TabularInline):
     verbose_name = 'Especialidade'
     verbose_name_plural = 'Especialidades do Terapeuta'
 
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        # Diminuir largura do campo observações
+        if 'observacoes' in formset.form.base_fields:
+            formset.form.base_fields['observacoes'].widget.attrs.update({
+                'style': 'width: 250px;',
+                'rows': 2
+            })
+        # Diminuir largura do campo preço da sessão
+        if 'preco_sessao' in formset.form.base_fields:
+            formset.form.base_fields['preco_sessao'].widget.attrs.update({
+                'style': 'width: 80px;'
+            })
+        # Diminuir largura do campo experiencia_anos
+        if 'experiencia_anos' in formset.form.base_fields:
+            formset.form.base_fields['experiencia_anos'].widget.attrs.update({
+                'style': 'width: 50px;'
+            })
+        return formset
+
 class AvaliacaoInline(admin.TabularInline):
     """
     Inline para avaliações do terapeuta
@@ -177,7 +197,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     Admin principal para Terapeutas com controle total para admin
     """
     list_display = [
-        'nome_exibicao', 'user_display', 'get_cidade_principal_display', 'verificado',  # ← NOVO
+        'nome_exibicao', 'user_display', 'cidade_principal_display', 'verificado',
         'premium', 'destaque', 'is_active'
     ]
     list_filter = [
@@ -270,7 +290,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('email_profissional', 'telefone', 'whatsapp')
                 }),
                 ('Localização', {
-                    'fields': ('get_cidade_principal_display', 'bairro', 'endereco')
+                    'fields': ('cidade_principal', 'cidades_atendimento', 'bairro', 'endereco')
                 }),
                 ('Informações Profissionais', {
                     'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
@@ -686,20 +706,74 @@ class TerapeutaAdmin(admin.ModelAdmin):
     get_cidade_principal_display.short_description = 'Cidade Principal'
     get_cidade_principal_display.admin_order_field = 'cidade_principal__nome'
 
+    def cidade_principal_display(self, obj):
+        """
+        Exibe a cidade principal formatada na listagem
+        """
+        return obj.get_cidade_principal_display()
+    cidade_principal_display.short_description = 'Cidade'
+
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """
-        Customiza o widget para o campo tipos_sessao
+        Customiza widgets para campos com múltipla seleção (JSONField)
         """
+        from django import forms
+        import json
+        
         if db_field.name == 'tipos_sessao':
-            from django import forms
-            kwargs['widget'] = forms.CheckboxSelectMultiple(
+            # Criar um campo customizado para JSONField
+            class TiposSessaoField(forms.MultipleChoiceField):
+                def prepare_value(self, value):
+                    # Converter JSONField para lista
+                    if isinstance(value, str):
+                        return json.loads(value) if value else []
+                    return value or []
+                
+                def to_python(self, value):
+                    # Retorna lista (será salva como JSON automaticamente)
+                    if not value:
+                        return []
+                    return list(value)
+            
+            return TiposSessaoField(
                 choices=[
                     ('presencial', 'Presencial'),
                     ('online', 'On-line'), 
                     ('domicilio', 'Domicílio')
-                ]
+                ],
+                widget=forms.CheckboxSelectMultiple(),
+                help_text='Selecione os tipos de sessão que você oferece',
+                required=False
             )
-            kwargs['help_text'] = 'Selecione os tipos de sessão que você oferece'
+        
+        elif db_field.name == 'para_quem':
+            # Criar um campo customizado para JSONField
+            class ParaQuemField(forms.MultipleChoiceField):
+                def prepare_value(self, value):
+                    # Converter JSONField para lista
+                    if isinstance(value, str):
+                        return json.loads(value) if value else []
+                    return value or []
+                
+                def to_python(self, value):
+                    # Retorna lista (será salva como JSON automaticamente)
+                    if not value:
+                        return []
+                    return list(value)
+            
+            return ParaQuemField(
+                choices=[
+                    ('adultos', 'Adultos'),
+                    ('criancas', 'Crianças'),
+                    ('idosos', 'Idosos'),
+                    ('casais', 'Casais'),
+                    ('grupos', 'Grupos')
+                ],
+                widget=forms.CheckboxSelectMultiple(),
+                help_text='Selecione os públicos que você atende',
+                required=False
+            )
+        
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 # ===============================================================

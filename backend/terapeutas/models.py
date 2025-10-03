@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator, RegexValidator
 from django.utils.text import slugify
 from core.models import TimeStampedModel, BaseModel
+from ckeditor.fields import RichTextField
 
 
 # ===============================================================
@@ -313,13 +314,35 @@ class Terapeuta(BaseModel):
         help_text='Individual ou Espaços'
     )
     
-    para_quem = models.CharField(
+    para_quem = models.JSONField(
         'Para Quem',
-        max_length=20,
-        choices=ClientType.choices,
-        default=ClientType.QUALQUER_UM,
-        help_text='Público-alvo dos atendimentos'
+        default=list,
+        help_text='Público-alvo dos atendimentos (múltipla seleção): adultos, criancas, idosos, casais, grupos'
     )
+    
+    def get_para_quem_display(self):
+        """
+        Retorna os públicos-alvo formatados para exibição
+        """
+        if not self.para_quem:
+            return "Qualquer público"
+        
+        publicos_map = {
+            'adultos': 'Adultos',
+            'criancas': 'Crianças',
+            'idosos': 'Idosos',
+            'casais': 'Casais',
+            'grupos': 'Grupos'
+        }
+        
+        publicos_formatados = [publicos_map.get(pub, pub.title()) for pub in self.para_quem]
+        return ', '.join(publicos_formatados)
+    
+    def atende_publico(self, publico):
+        """
+        Verifica se o terapeuta atende um público específico
+        """
+        return publico in self.para_quem if self.para_quem else False
     
     acessibilidade = models.BooleanField(
         'Acessibilidade',
@@ -334,9 +357,10 @@ class Terapeuta(BaseModel):
         help_text='Descrição breve para listagens (máx 300 chars)'
     )
     
-    bio_completa = models.TextField(
+    bio_completa = RichTextField(
         'Bio Completa',
-        help_text='Descrição detalhada do perfil profissional'
+        help_text='Descrição detalhada do perfil profissional',
+        config_name='terapeuta_bio'
     )
     
     metodologia = models.TextField(
