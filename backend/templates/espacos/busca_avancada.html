@@ -1,0 +1,693 @@
+<!-- 
+===============================================================
+Título: Template Busca Avançada de Espaços - Espaço Vital
+Descrição: Página de busca e listagem de espaços terapêuticos com filtros
+Autor: Will
+Data: 04/10/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar Espaços Terapêuticos - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
+=============================================================== -->
+<div class="min-h-screen bg-light-bg">
+    <!-- Header da página -->
+    <div class="bg-primary py-8 md:py-12">
+        <div class="container mx-auto px-4 lg:px-6">
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-white text-center">
+                Encontre um espaço usando nossa busca avançada
+            </h1>
+            <p class="text-white/90 text-center mt-3 text-sm md:text-base">
+                Use a ferramenta de busca abaixo para encontrar um espaço específico para suas necessidades
+            </p>
+        </div>
+    </div>
+
+    <!-- Container principal com filtros e resultados -->
+    <div class="container mx-auto px-4 lg:px-6 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- ===============================================================
+            SIDEBAR - FILTROS DE BUSCA
+            =============================================================== -->
+            <aside class="lg:w-80">
+                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+                    <h2 class="text-xl font-poppins font-semibold text-primary mb-6">
+                        Refina sua busca
+                    </h2>
+                    
+                    <form id="filtro-espacos" 
+                          hx-post="{% url 'espacos:busca_avancada' %}" 
+                          hx-target="#lista-espacos" 
+                          hx-swap="innerHTML"
+                          hx-indicator="#loading-indicator"
+                          class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Filtro: Tipo de Espaço -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Que tipo de espaço está buscando?
+                            </label>
+                            <select name="tipo_espaco" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="todos">Todos</option>
+                                <option value="consultorio">Consultório</option>
+                                <option value="clinica">Clínica</option>
+                                <option value="studio">Studio</option>
+                                <option value="espaco_holistico">Espaço Holístico</option>
+                                <option value="spa">Spa</option>
+                                <option value="centro_terapeutico">Centro Terapêutico</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro: Localização -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Localização? <span class="text-red-500">*</span>
+                            </label>
+                            
+                            <!-- Estado -->
+                            <select name="estado" 
+                                    id="select-estado"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors mb-3">
+                                <option value="">Selecione o Estado</option>
+                                {% for estado in estados %}
+                                    <option value="{{ estado.id }}">{{ estado.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                            <!-- Cidade -->
+                            <select name="cidade" 
+                                    id="select-cidade"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Selecione a Cidade</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro: Terapias disponíveis -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Terapias disponíveis
+                            </label>
+                            <div class="relative">
+                                <select name="terapias" 
+                                        multiple
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                    <option value="todas">Todas</option>
+                                    {% for terapia in terapias %}
+                                        <option value="{{ terapia.id }}">{{ terapia.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Selecione várias</p>
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Acessibilidade -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Espaço com acessibilidade?
+                            </label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="acessibilidade" value="sim" 
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Sim</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="acessibilidade" value="nao" 
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Não</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="acessibilidade" value="" checked
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Indiferente</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Aceita locação -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Aceita locação?
+                            </label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="aceita_locacao" value="sim" 
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Sim</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="aceita_locacao" value="nao" 
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Não</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="aceita_locacao" value="" checked
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span>Indiferente</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Disponibilidade por período -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Disponibilidade por período
+                            </label>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="disponibilidade" value="manha" 
+                                           class="mr-2 text-primary focus:ring-primary rounded">
+                                    <span>Manhã</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="disponibilidade" value="tarde" 
+                                           class="mr-2 text-primary focus:ring-primary rounded">
+                                    <span>Tarde</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="disponibilidade" value="noite" 
+                                           class="mr-2 text-primary focus:ring-primary rounded">
+                                    <span>Noite</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="disponibilidade" value="finais_semana" 
+                                           class="mr-2 text-primary focus:ring-primary rounded">
+                                    <span>Finais de semana</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Comodidades -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Comodidades desejadas
+                            </label>
+                            <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                                <!-- Comodidades Essenciais -->
+                                <div class="pb-2 mb-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500 font-medium mb-2">CONFORTO</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="ar_condicionado"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Ar-condicionado</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="ventilador"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Ventilador</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="aquecedor"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Aquecedor</span>
+                                    </label>
+                                </div>
+
+                                <!-- Higiene e Limpeza -->
+                                <div class="pb-2 mb-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500 font-medium mb-2">HIGIENE</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="chuveiro"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Chuveiro</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="toalhas_limpas"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Toalhas limpas</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="lencois_descartaveis"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Lençóis descartáveis</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="produtos_higiene"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Produtos de higiene</span>
+                                    </label>
+                                </div>
+
+                                <!-- Privacidade -->
+                                <div class="pb-2 mb-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500 font-medium mb-2">PRIVACIDADE</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="espaco_privativo"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Espaço privativo</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="salas_independentes"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Salas independentes</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="isolamento_acustico"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Isolamento acústico</span>
+                                    </label>
+                                </div>
+
+                                <!-- Equipamentos -->
+                                <div class="pb-2 mb-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500 font-medium mb-2">EQUIPAMENTOS</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="maca"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Maca</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="tatame"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Tatame/Futon/Colchão</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="banheira"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Banheira</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="cadeira_massagem"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Cadeira de massagem</span>
+                                    </label>
+                                </div>
+
+                                <!-- Conveniências -->
+                                <div class="pb-2 mb-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500 font-medium mb-2">CONVENIÊNCIAS</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="cafe"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Café/Chá</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="agua"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Água disponível</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="wi_fi"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Wi-Fi</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="recepcao"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Recepção</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="sala_espera"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Sala de espera</span>
+                                    </label>
+                                </div>
+
+                                <!-- Acessibilidade e Estacionamento -->
+                                <div>
+                                    <p class="text-xs text-gray-500 font-medium mb-2">ACESSO</p>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="estacionamento"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Estacionamento</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="espaco_trabalho_grupo"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Espaço para trabalho em grupo</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="vestiario"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Vestiário</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                        <input type="checkbox" 
+                                               name="comodidades" 
+                                               value="armarios"
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">Armários</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Selecione as comodidades desejadas</p>
+                        </div>
+
+                        <!-- Botão Buscar -->
+                        <button type="submit" 
+                                class="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200 shadow-sm">
+                            Buscar
+                        </button>
+
+                        <!-- Limpar filtros -->
+                        <button type="reset" 
+                                class="w-full text-primary text-sm hover:underline">
+                            Limpar filtros
+                        </button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- ===============================================================
+            ÁREA DE RESULTADOS
+            =============================================================== -->
+            <main class="flex-1">
+                <!-- Cabeçalho dos resultados -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900">
+                                Locais no <span class="text-primary">Rio de Janeiro</span> e região
+                            </h2>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Todos os espaços seguem nossas políticas de verificação
+                            </p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-semibold">{{ espacos.count }}</span> espaços encontrados
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de carregamento -->
+                <div id="loading-indicator" class="hidden">
+                    <div class="flex justify-center items-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                    </div>
+                </div>
+
+                <!-- Lista de espaços -->
+                <div id="lista-espacos" class="space-y-6">
+                    {% for espaco in espacos %}
+                    <!-- Card de Espaço -->
+                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div class="flex flex-col md:flex-row">
+                            <!-- Imagem do espaço -->
+                            <div class="md:w-64 h-48 md:h-auto">
+                                {% if espaco.foto_principal %}
+                                <img src="{{ espaco.foto_principal.url }}" 
+                                     alt="{{ espaco.nome }}"
+                                     class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+                                {% else %}
+                                <div class="w-full h-full bg-gray-200 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+                                    <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Informações do espaço -->
+                            <div class="flex-1 p-6">
+                                <div class="flex flex-col lg:flex-row lg:justify-between">
+                                    <!-- Detalhes principais -->
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-poppins font-semibold text-gray-900 mb-2">
+                                            {{ espaco.nome }}
+                                        </h3>
+                                        
+                                        <!-- Localização -->
+                                        <p class="text-sm text-gray-600 mb-3">
+                                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
+                                            {{ espaco.bairro }}, {{ espaco.cidade.nome }} - {{ espaco.cidade.estado.sigla }}
+                                        </p>
+
+                                        <!-- Descrição -->
+                                        <p class="text-gray-700 mb-4 line-clamp-2">
+                                            {{ espaco.descricao_breve }}
+                                        </p>
+
+                                        <!-- Tags de especialidades -->
+                                        <div class="flex flex-wrap gap-2 mb-4">
+                                            {% for especialidade in espaco.especialidades.all|slice:":4" %}
+                                            <span class="px-3 py-1 bg-mint/20 text-primary text-xs font-medium rounded-full">
+                                                {{ especialidade.nome }}
+                                            </span>
+                                            {% endfor %}
+                                            {% if espaco.especialidades.count > 4 %}
+                                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                                                +{{ espaco.especialidades.count|add:"-4" }} mais
+                                            </span>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Características -->
+                                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                                            {% if espaco.tem_acessibilidade %}
+                                            <span class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Acessível
+                                            </span>
+                                            {% endif %}
+                                            {% if espaco.aceita_locacao %}
+                                            <span class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Aceita locação
+                                            </span>
+                                            {% endif %}
+                                            <span>{{ espaco.get_tipo_espaco_display }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ações e avaliação -->
+                                    <div class="mt-4 lg:mt-0 lg:ml-6 lg:text-right">
+                                        <!-- Avaliação -->
+                                        {% if espaco.media_avaliacoes %}
+                                        <div class="flex items-center lg:justify-end mb-3">
+                                            <div class="flex text-yellow-400">
+                                                {% for i in "12345"|make_list %}
+                                                    {% if forloop.counter <= espaco.media_avaliacoes %}
+                                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                                    </svg>
+                                                    {% else %}
+                                                    <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                                    </svg>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <span class="ml-2 text-sm text-gray-600">
+                                                ({{ espaco.total_avaliacoes }})
+                                            </span>
+                                        </div>
+                                        {% endif %}
+
+                                        <!-- Botão Acessar Perfil -->
+                                        <a href="{% url 'espacos:detalhe' espaco.slug %}" 
+                                           class="inline-block bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200 shadow-sm">
+                                            Acessar Perfil
+                                        </a>
+
+                                        <!-- Redes sociais -->
+                                        <div class="flex items-center gap-3 mt-4 lg:justify-end">
+                                            {% if espaco.whatsapp %}
+                                            <a href="https://wa.me/55{{ espaco.whatsapp|slice:'1:' }}" 
+                                               target="_blank"
+                                               class="text-gray-400 hover:text-green-600 transition-colors">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-.014.002c-.408.02-4.106.212-4.823.257-.44.028-.803.283-.959.672-.124.31-.077.678.126.93.365.453.862.832 1.482 1.129.248.119.477.223.655.295.363.147.608.246.608.246s-.255.149-.634.34c-.216.109-.484.242-.773.39-.602.308-1.074.63-1.405 1.019-.184.216-.264.5-.212.757.064.316.29.57.582.663.474.151 4.631.72 5.089.752.542.038 1.014-.279 1.163-.78.092-.309.06-.647-.088-.926-.266-.501-.638-.924-1.106-1.26a8.034 8.034 0 00-.719-.38c-.342-.161-.562-.264-.562-.264s.232-.135.585-.3c.201-.094.452-.21.724-.338.567-.266 1.016-.565 1.336-.943.178-.21.271-.483.25-.745-.025-.322-.212-.6-.486-.725-.446-.203-5.025-.959-5.481-.997-.542-.045-1.039.245-1.227.714-.115.289-.083.621.084.889.3.479.731.875 1.285 1.18.222.122.426.231.583.312.319.164.535.276.535.276s-.228.124-.572.276c-.195.087-.438.194-.703.312-.551.245-.987.503-1.297.84-.173.188-.25.438-.204.662.056.275.252.498.507.576.413.127 4.04.574 4.437.601z"/>
+                                                </svg>
+                                            </a>
+                                            {% endif %}
+                                            {% if espaco.instagram %}
+                                            <a href="https://instagram.com/{{ espaco.instagram }}" 
+                                               target="_blank"
+                                               class="text-gray-400 hover:text-pink-600 transition-colors">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                                                </svg>
+                                            </a>
+                                            {% endif %}
+                                            {% if espaco.website %}
+                                            <a href="{{ espaco.website }}" 
+                                               target="_blank"
+                                               class="text-gray-400 hover:text-primary transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                          d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                                </svg>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Mensagem quando não há resultados -->
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+                        <svg class="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum espaço encontrado</h3>
+                        <p class="text-gray-600 mb-6">
+                            Tente ajustar seus filtros para encontrar mais resultados.
+                        </p>
+                        <button type="button"
+                                onclick="document.getElementById('filtro-espacos').reset(); document.getElementById('filtro-espacos').submit();"
+                                class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200">
+                            Limpar filtros e buscar novamente
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <div class="mt-8 flex justify-center">
+                    <nav class="flex items-center space-x-2">
+                        {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Anterior
+                        </a>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <span class="px-4 py-2 bg-primary text-white rounded-lg font-medium">
+                                {{ num }}
+                            </span>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                               class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                {{ num }}
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Próxima
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- ===============================================================
+SCRIPTS JAVASCRIPT
+=============================================================== -->
+<script>
+    // Inicialização do HTMX
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        // Ocultar indicador de carregamento após carregar
+        document.getElementById('loading-indicator').classList.add('hidden');
+    });
+    
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        // Mostrar indicador de carregamento
+        document.getElementById('loading-indicator').classList.remove('hidden');
+    });
+
+    // Reset dos filtros
+    document.getElementById('filtro-espacos').addEventListener('reset', function() {
+        setTimeout(() => {
+            // Limpar select de cidades
+            document.getElementById('select-cidade').innerHTML = '<option value="">Selecione a Cidade</option>';
+            // Desmarcar todos os checkboxes
+            this.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            // Resetar radio buttons para padrão
+            this.querySelectorAll('input[type="radio"][value=""]').forEach(rb => rb.checked = true);
+            // Resetar selects múltiplos
+            this.querySelectorAll('select[multiple]').forEach(select => {
+                Array.from(select.options).forEach(option => option.selected = false);
+            });
+        }, 0);
+    });
+
+    // Carregar cidades quando estado for selecionado
+    document.getElementById('select-estado').addEventListener('change', function() {
+        const estadoId = this.value;
+        const cidadeSelect = document.getElementById('select-cidade');
+        
+        if (estadoId) {
+            fetch(`/espacos/api/cidades/${estadoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
+                    data.cidades.forEach(cidade => {
+                        const option = document.createElement('option');
+                        option.value = cidade.id;
+                        option.textContent = cidade.nome;
+                        cidadeSelect.appendChild(option);
+                    });
+                });
+        } else {
+            cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
+        }
+    });
+</script>
+{% endblock %}

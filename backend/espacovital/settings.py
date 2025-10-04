@@ -212,3 +212,33 @@ DEFAULT_FROM_EMAIL = 'noreply@espacovital.com.br'
 # ===============================================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ===============================================================
+# CONFIGURAÇÃO DO CKEDITOR
+# ===============================================================
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+    'terapeuta_bio': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Strike'],
+            ['TextColor', 'BGColor'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Format'],
+            ['RemoveFormat'],
+            ['Smiley'],
+            ['Source'],
+        ],
+        'format_tags': 'p;h1;h2;h3;h4',
+        'height': 400,
+        'width': '100%',
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+    },
+}
