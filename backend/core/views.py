@@ -108,7 +108,7 @@ class HomeView(TemplateView):
                     'id': terapeuta.id,
                     'name': terapeuta.nome_exibicao or terapeuta.nome_completo,
                     'specialties': especialidades_str,
-                    'location': f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}" if terapeuta.cidade_principal else '',
+                    'location': terapeuta.get_cidade_principal_display(),
                     'verified': terapeuta.verificado,
                     'premium': terapeuta.premium,
                     'destaque': terapeuta.destaque,
@@ -315,3 +315,54 @@ class HomeView(TemplateView):
             }
         
         return context
+    
+# ===============================================================
+# APIs DE LOCALIZAÇÃO (AJAX)
+# ===============================================================
+
+from django.http import JsonResponse
+from .models import Estado, Cidade
+
+def api_estados(request):
+    """
+    API para buscar estados por país
+    Uso: /api/estados/?pais=1
+    """
+    pais_id = request.GET.get('pais')
+    
+    if not pais_id:
+        return JsonResponse({'error': 'País não informado'}, status=400)
+    
+    estados = Estado.objects.filter(
+        pais_id=pais_id,
+        ativo=True
+    ).values('id', 'nome', 'sigla').order_by('nome')
+    
+    return JsonResponse(list(estados), safe=False)
+
+
+def api_cidades(request):
+    """
+    API para buscar cidades por estado OU por país
+    Uso: /api/cidades/?estado=1  OU  /api/cidades/?pais=1
+    """
+    estado_id = request.GET.get('estado')
+    pais_id = request.GET.get('pais')
+    
+    if estado_id:
+        # Buscar cidades por estado (Brasil e países com estados)
+        cidades = Cidade.objects.filter(
+            estado_id=estado_id,
+            ativo=True
+        ).values('id', 'nome').order_by('nome')
+    elif pais_id:
+        # Buscar cidades diretas do país (países sem estados)
+        cidades = Cidade.objects.filter(
+            pais_id=pais_id,
+            estado__isnull=True,
+            ativo=True
+        ).values('id', 'nome').order_by('nome')
+    else:
+        return JsonResponse({'error': 'Estado ou País não informado'}, status=400)
+    
+    return JsonResponse(list(cidades), safe=False)

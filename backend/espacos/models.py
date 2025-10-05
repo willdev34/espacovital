@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator, RegexValidator
 from django.utils.text import slugify
-from core.models import TimeStampedModel, BaseModel
+from core.models import TimeStampedModel, BaseModel, Estado, Cidade
 
 
 # ===============================================================
@@ -40,91 +40,6 @@ class DisponibilidadePeriodo(models.TextChoices):
     TARDE = 'tarde', 'Tarde'
     NOITE = 'noite', 'Noite'
     FINAIS_DE_SEMANA = 'finais_de_semana', 'Finais de semana'
-
-
-# ===============================================================
-# MODELS DE LOCALIZACAO (REAPROVEITADOS DE TERAPEUTAS)
-# ===============================================================
-
-class Estado(BaseModel):
-    """
-    Model para estados brasileiros
-    Reutilizado do app terapeutas para consistência
-    """
-    nome = models.CharField(
-        max_length=100,
-        unique=True,
-        validators=[MinLengthValidator(2)],
-        help_text="Nome completo do estado"
-    )
-    sigla = models.CharField(
-        max_length=2,
-        unique=True,
-        help_text="Sigla do estado (ex: RJ, SP)"
-    )
-    slug = models.SlugField(
-        max_length=120,
-        unique=True,
-        blank=True,
-        help_text="Slug para URLs amigáveis"
-    )
-
-    class Meta:
-        verbose_name = 'Estado'
-        verbose_name_plural = 'Estados'
-        ordering = ['nome']
-
-    def __str__(self):
-        return f"{self.nome} ({self.sigla})"
-
-    def save(self, *args, **kwargs):
-        """
-        Gera slug automático baseado no nome
-        """
-        if not self.slug:
-            self.slug = slugify(self.nome)
-        super().save(*args, **kwargs)
-
-
-class Cidade(BaseModel):
-    """
-    Model para cidades brasileiras
-    Reutilizado do app terapeutas para consistência
-    """
-    nome = models.CharField(
-        max_length=100,
-        validators=[MinLengthValidator(2)],
-        help_text="Nome da cidade"
-    )
-    estado = models.ForeignKey(
-        Estado,
-        on_delete=models.CASCADE,
-        related_name='cidades_espacos',
-        help_text="Estado ao qual a cidade pertence"
-    )
-    slug = models.SlugField(
-        max_length=120,
-        blank=True,
-        help_text="Slug para URLs amigáveis"
-    )
-
-    class Meta:
-        verbose_name = 'Cidade'
-        verbose_name_plural = 'Cidades'
-        unique_together = ['nome', 'estado']
-        ordering = ['estado__nome', 'nome']
-
-    def __str__(self):
-        return f"{self.nome} - {self.estado.sigla}"
-
-    def save(self, *args, **kwargs):
-        """
-        Gera slug automático baseado no nome e estado
-        """
-        if not self.slug:
-            self.slug = slugify(f"{self.nome}-{self.estado.sigla}")
-        super().save(*args, **kwargs)
-
 
 # ===============================================================
 # MODELS DE COMODIDADES E ESPECIALIDADES

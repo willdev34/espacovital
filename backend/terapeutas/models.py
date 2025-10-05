@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator, RegexValidator
 from django.utils.text import slugify
-from core.models import TimeStampedModel, BaseModel
 from ckeditor.fields import RichTextField
+from core.models import TimeStampedModel, BaseModel, Estado, Cidade
 
 
 # ===============================================================
@@ -53,54 +53,6 @@ class ClientType(models.TextChoices):
 # ===============================================================
 # MODELS PRINCIPAIS
 # ===============================================================
-
-class Estado(models.Model):
-    """
-    Modelo para Estados brasileiros
-    """
-    nome = models.CharField(
-        'Nome do Estado',
-        max_length=100
-    )
-    sigla = models.CharField(
-        'Sigla',
-        max_length=2,
-        unique=True
-    )
-    
-    class Meta:
-        verbose_name = 'Estado'
-        verbose_name_plural = 'Estados'
-        ordering = ['nome']
-    
-    def __str__(self):
-        return f'{self.nome} ({self.sigla})'
-
-
-class Cidade(models.Model):
-    """
-    Modelo para Cidades brasileiras
-    """
-    nome = models.CharField(
-        'Nome da Cidade',
-        max_length=100
-    )
-    estado = models.ForeignKey(
-        Estado,
-        on_delete=models.CASCADE,
-        related_name='cidades',
-        verbose_name='Estado'
-    )
-    
-    class Meta:
-        verbose_name = 'Cidade'
-        verbose_name_plural = 'Cidades'
-        ordering = ['nome']
-        unique_together = ['nome', 'estado']
-    
-    def __str__(self):
-        return f'{self.nome} - {self.estado.sigla}'
-
 
 class Especialidade(BaseModel):
     """
@@ -243,13 +195,44 @@ class Terapeuta(BaseModel):
         help_text='Número do WhatsApp (opcional)'
     )
     
-    # Localização
+   # Localização
+    pais = models.ForeignKey(
+        'core.Pais',
+        on_delete=models.PROTECT,
+        verbose_name='País',
+        help_text='País onde atua',
+        related_name='terapeutas',
+        null=True,
+        blank=True
+    )
+
+    estado = models.ForeignKey(
+        'core.Estado',
+        on_delete=models.PROTECT,
+        verbose_name='Estado/Província',
+        help_text='Estado onde atua (apenas Brasil)',
+        related_name='terapeutas',
+        null=True,
+        blank=True
+    )
+
+    # Para Brasil - cidade do banco de dados
     cidade_principal = models.ForeignKey(
         Cidade,
         on_delete=models.PROTECT,
-        verbose_name='Cidade Principal',
-        help_text='Cidade principal onde atua',
-        related_name='terapeutas_principal'
+        verbose_name='Cidade Principal (Brasil)',
+        help_text='Cidade principal onde atua - apenas para Brasil',
+        related_name='terapeutas_principal',
+        null=True,  # ADICIONADO
+        blank=True  # ADICIONADO
+    )
+
+    # Para outros países - texto livre
+    cidade_texto = models.CharField(
+        'Cidade (outros países)',
+        max_length=100,
+        blank=True,
+        help_text='Nome da cidade para países fora do Brasil'
     )
 
     cidades_atendimento = models.ManyToManyField(
@@ -259,14 +242,14 @@ class Terapeuta(BaseModel):
         help_text='Outras cidades onde também atende (além da principal)',
         related_name='terapeutas_adicionais'
     )
-    
+
     bairro = models.CharField(
         'Bairro',
         max_length=100,
         blank=True,
         help_text='Bairro onde atua'
     )
-    
+
     endereco = models.TextField(
         'Endereço',
         blank=True,
@@ -508,11 +491,31 @@ class Terapeuta(BaseModel):
 
     def get_cidade_principal_display(self):
         """
-        Retorna apenas a cidade principal formatada
+        Retorna cidade formatada - Brasil ou outros países
         """
-        if hasattr(self, 'cidade_principal') and self.cidade_principal:
-            return f"{self.cidade_principal.nome} - {self.cidade_principal.estado.sigla}"
-        return "Não informado"    
+        print(f"=== DEBUG LOCALIZAÇÃO ===")
+        print(f"Terapeuta: {self.nome_exibicao}")
+        print(f"Pais: {self.pais}")
+        print(f"Estado: {self.estado}")
+        print(f"Cidade Principal: {self.cidade_principal}")
+        print(f"Cidade Texto: {self.cidade_texto}")
+        
+        # Brasil - cidade do banco com estado
+        if self.cidade_principal and self.cidade_principal.estado:
+            resultado = f"{self.cidade_principal.nome} - {self.cidade_principal.estado.sigla}"
+            print(f"Retornando (Brasil): {resultado}")
+            return resultado
+        
+        # Outros países - cidade texto
+        elif self.cidade_texto:
+            pais_nome = self.pais.nome if self.pais else ""
+            resultado = f"{self.cidade_texto} - {pais_nome}"
+            print(f"Retornando (Outros): {resultado}")
+            return resultado
+        
+        # Fallback
+        print("Retornando: Não informado")
+        return "Não informado"
 # Fim classe Terapeutas
 
 class TerapeutaEspecialidade(BaseModel):

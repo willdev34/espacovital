@@ -13,9 +13,17 @@ from django.db.models import Count, Avg
 from django.contrib.admin import SimpleListFilter
 from django.db import models
 from .models import (
-    Estado, Cidade, Especialidade, Terapeuta, 
+    Especialidade, Terapeuta, 
     TerapeutaEspecialidade, Avaliacao, Contato
 )
+
+from django import forms
+from core.models import Pais, Estado, Cidade
+
+class TerapeutaAdminForm(forms.ModelForm):
+    class Meta:
+        model = Terapeuta
+        fields = '__all__'
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -121,39 +129,6 @@ class AvaliacaoInline(admin.TabularInline):
 # ADMINS PRINCIPAIS
 # ===============================================================
 
-@admin.register(Estado)
-class EstadoAdmin(admin.ModelAdmin):
-    """
-    Admin para Estados
-    """
-    list_display = ['nome', 'sigla', 'total_cidades']
-    search_fields = ['nome', 'sigla']
-    ordering = ['nome']
-    
-    def total_cidades(self, obj):
-        return obj.cidades.count()
-    total_cidades.short_description = 'Cidades'
-
-@admin.register(Cidade)
-class CidadeAdmin(admin.ModelAdmin):
-    """
-    Admin para Cidades
-    """
-    list_display = ['nome', 'estado', 'total_terapeutas']
-    list_filter = ['estado']
-    search_fields = ['nome', 'estado__nome']
-    ordering = ['estado__nome', 'nome']
-    
-    def total_terapeutas(self, obj):
-        # Contar terapeutas que têm esta cidade como principal OU adicional
-        from .models import Terapeuta
-        return Terapeuta.objects.filter(
-            models.Q(cidade_principal=obj) |
-            models.Q(cidades_atendimento=obj),
-            is_active=True
-        ).distinct().count()
-    total_terapeutas.short_description = 'Terapeutas'
-
 @admin.register(Especialidade)
 class EspecialidadeAdmin(admin.ModelAdmin):
     """
@@ -196,6 +171,8 @@ class TerapeutaAdmin(admin.ModelAdmin):
     """
     Admin principal para Terapeutas com controle total para admin
     """
+    form = TerapeutaAdminForm    
+
     list_display = [
         'nome_exibicao', 'user_display', 'cidade_principal_display', 'verificado',
         'premium', 'destaque', 'is_active'
@@ -247,7 +224,12 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('email_profissional', 'telefone', 'whatsapp')
                 }),
                 ('Localização', {
-                    'fields': ('cidade_principal', 'cidades_atendimento', 'bairro', 'endereco')
+                    'fields': ('pais', 'estado', 'cidade_principal', 'cidade_texto', 'cidades_atendimento', 'bairro', 'endereco'),
+                    'description': '''
+                        <strong>🌎 Como preencher:</strong><br>
+                        • <strong>Brasil:</strong> País → Estado → Cidade<br>
+                        • <strong>Outros países:</strong> País → digite a cidade
+                    '''
                 }),
                 ('Informações Profissionais', {
                     'fields': ('registro_profissional', 'formacao', 'experiencia_anos')
@@ -707,9 +689,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     get_cidade_principal_display.admin_order_field = 'cidade_principal__nome'
 
     def cidade_principal_display(self, obj):
-        """
-        Exibe a cidade principal formatada na listagem
-        """
+        """Exibe cidade principal ou cidade texto"""
         return obj.get_cidade_principal_display()
     cidade_principal_display.short_description = 'Cidade'
 

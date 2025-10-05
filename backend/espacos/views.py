@@ -15,9 +15,9 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import (
-    Espaco, Comodidade, Especialidade, Estado, Cidade,
-    AvaliacaoEspaco, ContatoEspaco, TipoEspaco, DisponibilidadePeriodo
+    Espaco, Comodidade, Especialidade, AvaliacaoEspaco, ContatoEspaco, TipoEspaco, DisponibilidadePeriodo
 )
+from core.models import Estado, Cidade
 from .forms import ContatoEspacoForm, AvaliacaoEspacoForm
 import json
 

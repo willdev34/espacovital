@@ -1,0 +1,96 @@
+<!-- ===============================================================
+     Título: Template customizado para formulário de Terapeuta no Admin
+     Descrição: Adiciona JavaScript para seleção em cascata País → Estado → Cidade
+     Autor: Will
+     Data: 04/10/2025
+     =============================================================== -->
+
+{% extends "admin/change_form.html" %}
+
+{% block after_field_sets %}
+{{ block.super }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paisSelect = document.querySelector('select[name="pais"]');
+    const estadoRow = document.querySelector('.form-row.field-estado');
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const cidadeRow = document.querySelector('.form-row.field-cidade_principal');
+    const cidadeSelect = document.querySelector('select[name="cidade_principal"]');
+    const cidadeTextoRow = document.querySelector('.form-row.field-cidade_texto');
+    
+    if (!paisSelect) return;
+    
+    // Eventos
+    paisSelect.addEventListener('change', () => paisMudou());
+    if (estadoSelect) estadoSelect.addEventListener('change', () => estadoMudou());
+    
+    // Inicializar
+    paisMudou();
+    
+    function paisMudou() {
+        const isBrasil = paisSelect.options[paisSelect.selectedIndex]?.text.includes('Brasil');
+        
+        if (isBrasil) {
+            // Brasil: mostrar estado e cidade select
+            if (estadoRow) estadoRow.style.display = '';
+            if (cidadeRow) cidadeRow.style.display = '';
+            if (cidadeTextoRow) cidadeTextoRow.style.display = 'none';
+            
+            carregarEstados();
+        } else {
+            // Outros: esconder estado/cidade, mostrar texto
+            if (estadoRow) estadoRow.style.display = 'none';
+            if (cidadeRow) cidadeRow.style.display = 'none';
+            if (cidadeTextoRow) cidadeTextoRow.style.display = '';
+        }
+    }
+    
+    function carregarEstados() {
+        const paisId = paisSelect.value;
+        if (!paisId || !estadoSelect) return;
+        
+        estadoSelect.innerHTML = '<option value="">---------</option>';
+        cidadeSelect.innerHTML = '<option value="">Primeiro selecione o estado</option>';
+        cidadeSelect.disabled = true;
+        
+        fetch(`/api/estados/?pais=${paisId}`)
+            .then(r => r.json())
+            .then(data => {
+                data.forEach(e => {
+                    estadoSelect.add(new Option(`${e.nome} (${e.sigla})`, e.id));
+                });
+            });
+    }
+    
+    function estadoMudou() {
+        const estadoId = estadoSelect.value;
+        if (!estadoId) {
+            cidadeSelect.innerHTML = '<option value="">Primeiro selecione o estado</option>';
+            cidadeSelect.disabled = true;
+            return;
+        }
+        
+        cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+        
+        fetch(`/api/cidades/?estado=${estadoId}`)
+            .then(r => r.json())
+            .then(data => {
+                cidadeSelect.innerHTML = '<option value="">---------</option>';
+                cidadeSelect.disabled = false;
+                data.forEach(c => {
+                    cidadeSelect.add(new Option(c.nome, c.id));
+                });
+            });
+    }
+});
+</script>
+
+<style>
+.field-pais, .field-estado, .field-cidade_principal, .field-cidade_texto {
+    background-color: #f0f9ff;
+    padding: 10px;
+    border-left: 4px solid #0B5259;
+}
+</style>
+{% endblock %}

@@ -9,6 +9,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views import api_estados, api_cidades
 
 urlpatterns = [
     # Admin do Django
@@ -24,6 +25,10 @@ urlpatterns = [
     path('terapeutas/', include('terapeutas.urls')),
 
     path('espacos/', include('espacos.urls')),
+
+    path('api/estados/', api_estados, name='api_estados'),
+
+    path('api/cidades/', api_cidades, name='api_cidades'),
 
     
     # URLs futuras

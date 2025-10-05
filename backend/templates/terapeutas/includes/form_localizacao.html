@@ -1,8 +1,8 @@
 <!-- ===============================================================
-     Título: Template - Formulário Múltiplas Cidades
-     Descrição: Seção de localização com botão + para adicionar cidades
+     Título: Template - Formulário Múltiplas Cidades com País
+     Descrição: Seção de localização internacional com cascata País → Estado → Cidade
      Autor: Will | Empresa: Espaço Vital
-     Data: 28/09/2025
+     Data: 04/10/2025
      Arquivo: backend/templates/terapeutas/includes/form_localizacao.html
      =============================================================== -->
 
@@ -19,177 +19,350 @@
     </h3>
     
     <p class="text-gray-600 mb-6">
-        Informe onde você atende seus clientes. Você pode adicionar múltiplas cidades.
+        🌎 Informe onde você atende. Sistema internacional - terapeutas brasileiros podem cadastrar atendimento em qualquer país.
     </p>
     
-    <!-- Container das Cidades -->
-    <div id="cidades-container">
+    <!-- ===== LOCALIZAÇÃO PRINCIPAL ===== -->
+    <div class="border-l-4 border-primary pl-4 mb-6">
+        <h4 class="font-poppins font-medium text-gray-800 mb-4 text-lg">
+            📍 Localização Principal <span class="text-red-500">*</span>
+        </h4>
         
-        <!-- Cidade Principal (obrigatória) -->
-        <div class="cidade-principal">
-            <h4 class="font-poppins font-medium text-gray-800 mb-3">
-                Cidade Principal <span class="text-red-500">*</span>
-            </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <!-- País Principal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    País <span class="text-red-500">*</span>
+                </label>
+                <select name="pais" 
+                        id="pais-principal"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        onchange="carregarEstadosPrincipal(this.value)"
+                        required>
+                    <option value="">Selecione o País</option>
+                    {% for pais in paises %}
+                        <option value="{{ pais.id }}" 
+                                {% if form.instance.pais_id == pais.id %}selected{% endif %}>
+                            {{ pais.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <!-- Estado Principal -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Estado
-                    </label>
-                    <select name="estado_principal" 
-                            id="estado-principal"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
-                            onchange="carregarCidadesPrincipal(this.value)"
-                            required>
-                        <option value="">Selecione o Estado</option>
-                        {% for estado in estados %}
-                            <option value="{{ estado.id }}" 
-                                    {% if form.instance.cidade_principal.estado_id == estado.id %}selected{% endif %}>
-                                {{ estado.nome }} ({{ estado.sigla }})
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <!-- Cidade Principal -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Cidade
-                    </label>
-                    <select name="cidade_principal" 
-                            id="cidade-principal"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
-                            required
-                            {% if not form.instance.cidade_principal %}disabled{% endif %}>
-                        {% if form.instance.cidade_principal %}
-                            <option value="{{ form.instance.cidade_principal.id }}" selected>
-                                {{ form.instance.cidade_principal.nome }}
-                            </option>
-                        {% else %}
-                            <option value="">Primeiro selecione o estado</option>
-                        {% endif %}
-                    </select>
-                </div>
+            <!-- Estado Principal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Estado/Província <span class="text-red-500">*</span>
+                </label>
+                <select name="estado_principal" 
+                        id="estado-principal"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        onchange="carregarCidadesPrincipal(this.value)"
+                        required
+                        disabled>
+                    <option value="">Selecione o Estado</option>
+                </select>
+            </div>
+            
+            <!-- Cidade Principal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Cidade <span class="text-red-500">*</span>
+                </label>
+                <select name="cidade_principal" 
+                        id="cidade-principal"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        required
+                        disabled>
+                    <option value="">Selecione a Cidade</option>
+                </select>
             </div>
         </div>
         
-        <!-- Cidades Adicionais (se existirem) -->
-        {% if form.instance.cidades_atendimento.exists %}
-            <div class="cidades-existentes mt-6">
-                <h4 class="font-poppins font-medium text-gray-800 mb-3">
-                    Outras Cidades de Atendimento
-                </h4>
-                
+        <!-- Bairro (opcional) -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                Bairro (opcional)
+            </label>
+            <input type="text" 
+                   name="bairro" 
+                   value="{{ form.instance.bairro }}"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                   placeholder="Ex: Copacabana, Centro">
+        </div>
+    </div>
+    
+    <!-- ===== OUTRAS CIDADES DE ATENDIMENTO ===== -->
+    <div class="border-l-4 border-green-500 pl-4 mb-4">
+        <h4 class="font-poppins font-medium text-gray-800 mb-4 text-lg flex items-center justify-between">
+            <span>🗺️ Outras Cidades de Atendimento (opcional)</span>
+            <button type="button" 
+                    onclick="adicionarCidade()"
+                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm flex items-center gap-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Adicionar Cidade
+            </button>
+        </h4>
+        
+        <p class="text-sm text-gray-600 mb-4">
+            Adicione outras cidades onde você também atende clientes (mesmo país ou outros países).
+        </p>
+        
+        <!-- Container para cidades adicionais -->
+        <div id="cidades-adicionais-container">
+            <!-- Cidades existentes serão carregadas aqui -->
+            {% if form.instance.cidades_atendimento.exists %}
                 {% for cidade in form.instance.cidades_atendimento.all %}
-                    <div class="cidade-adicional flex items-center space-x-3 mt-3" data-cidade="existente-{{ forloop.counter }}">
-                        <!-- Estado -->
-                        <div class="flex-1">
-                            <select name="estado_adicional_existente_{{ forloop.counter }}" 
-                                    class="estado-select w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    onchange="carregarCidadesPorEstado(this, 'existente_{{ forloop.counter }}')">
-                                {% for estado in estados %}
-                                    <option value="{{ estado.id }}" 
-                                            {% if cidade.estado_id == estado.id %}selected{% endif %}>
-                                        {{ estado.nome }} ({{ estado.sigla }})
-                                    </option>
-                                {% endfor %}
-                            </select>
+                <div class="cidade-adicional bg-gray-50 p-4 rounded-lg mb-3">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium text-gray-800">{{ cidade.nome }}</p>
+                            <p class="text-sm text-gray-600">{{ cidade.estado.nome }} - {{ cidade.estado.pais.nome }}</p>
                         </div>
-                        
-                        <!-- Cidade -->
-                        <div class="flex-1">
-                            <select name="cidade_adicional_existente_{{ forloop.counter }}" 
-                                    class="cidade-select w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <option value="{{ cidade.id }}" selected>{{ cidade.nome }}</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Botão Remover -->
                         <button type="button" 
-                                class="btn-remover-cidade bg-red-500 hover:bg-red-600 text-white px-3 py-3 rounded-lg transition-colors"
-                                onclick="removerCampoCity('existente_{{ forloop.counter }}')"
-                                title="Remover cidade">
+                                onclick="removerCidade(this, {{ cidade.id }})"
+                                class="text-red-500 hover:text-red-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
+                    <input type="hidden" name="cidades_atendimento" value="{{ cidade.id }}">
+                </div>
                 {% endfor %}
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
         
-        <!-- Botão para Adicionar Cidade -->
-        <button type="button" 
-                id="btn-adicionar-cidade"
-                class="flex items-center justify-center w-full mt-4 px-4 py-3 border-2 border-dashed border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-colors font-medium">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Adicionar Outra Cidade de Atendimento
-        </button>
-        
-    </div>
-    
-    <!-- Informação Adicional -->
-    <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <div class="flex items-start">
-            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <div class="text-sm text-blue-700">
-                <p class="font-medium mb-1">Dica:</p>
-                <p>Adicione todas as cidades onde você atende para aparecer nas buscas dos clientes dessas regiões. Isso aumenta sua visibilidade na plataforma.</p>
+        <!-- Template para nova cidade (hidden) -->
+        <div id="template-nova-cidade" class="hidden">
+            <div class="cidade-adicional bg-blue-50 border-2 border-blue-200 p-4 rounded-lg mb-3">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                    <!-- País -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">País</label>
+                        <select class="pais-adicional w-full px-3 py-2 text-sm rounded border border-gray-300 focus:ring-2 focus:ring-primary"
+                                onchange="carregarEstadosAdicional(this)">
+                            <option value="">Selecione</option>
+                            {% for pais in paises %}
+                                <option value="{{ pais.id }}">{{ pais.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Estado -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Estado</label>
+                        <select class="estado-adicional w-full px-3 py-2 text-sm rounded border border-gray-300 focus:ring-2 focus:ring-primary"
+                                onchange="carregarCidadesAdicional(this)"
+                                disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Cidade -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Cidade</label>
+                        <select class="cidade-adicional-select w-full px-3 py-2 text-sm rounded border border-gray-300 focus:ring-2 focus:ring-primary"
+                                disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Botões -->
+                    <div class="flex items-end gap-2">
+                        <button type="button" 
+                                onclick="confirmarCidadeAdicional(this)"
+                                class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded text-sm flex-1">
+                            ✓ OK
+                        </button>
+                        <button type="button" 
+                                onclick="cancelarCidadeAdicional(this)"
+                                class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-sm">
+                            ✕
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript para Estados (populado pelo Django) -->
 <script>
-    // Opções de estados disponíveis para os campos dinâmicos
-    window.estadosOptions = `
-        {% for estado in estados %}
-            <option value="{{ estado.id }}">{{ estado.nome }} ({{ estado.sigla }})</option>
-        {% endfor %}
-    `;
-    
-    /**
-     * Carrega cidades para o campo principal
-     */
-    function carregarCidadesPrincipal(estadoId) {
-        const selectCidade = document.getElementById('cidade-principal');
-        
-        if (!estadoId) {
-            selectCidade.innerHTML = '<option value="">Primeiro selecione o estado</option>';
-            selectCidade.disabled = true;
-            return;
-        }
-        
-        // Loading state
-        selectCidade.innerHTML = '<option value="">Carregando cidades...</option>';
-        selectCidade.disabled = true;
-        
-        // AJAX para buscar cidades
-        fetch(`/terapeutas/api/cidades-por-estado/?estado_id=${estadoId}`)
-            .then(response => response.json())
-            .then(data => {
-                let opcoesCidades = '<option value="">Selecione a cidade</option>';
-                
-                data.cidades.forEach(cidade => {
-                    opcoesCidades += `<option value="${cidade.id}">${cidade.nome}</option>`;
-                });
-                
-                selectCidade.innerHTML = opcoesCidades;
-                selectCidade.disabled = false;
-            })
-            .catch(error => {
-                console.error('Erro ao carregar cidades:', error);
-                selectCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
-            });
-    }
-</script>
+// ===============================================================
+// JAVASCRIPT - SELEÇÃO EM CASCATA INTERNACIONAL
+// ===============================================================
 
-<!-- Incluir JavaScript de múltiplas cidades -->
-<script src="{% static 'js/multiplas_cidades.js' %}"></script>
+// Carregar estados do país principal
+function carregarEstadosPrincipal(paisId) {
+    const estadoSelect = document.getElementById('estado-principal');
+    const cidadeSelect = document.getElementById('cidade-principal');
+    
+    // Limpar selects
+    estadoSelect.innerHTML = '<option value="">Selecione o Estado</option>';
+    cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
+    cidadeSelect.disabled = true;
+    
+    if (!paisId) {
+        estadoSelect.disabled = true;
+        return;
+    }
+    
+    // Buscar estados via AJAX
+    fetch(`/api/estados/?pais=${paisId}`)
+        .then(response => response.json())
+        .then(data => {
+            estadoSelect.disabled = false;
+            data.forEach(estado => {
+                const option = new Option(`${estado.nome} (${estado.sigla})`, estado.id);
+                estadoSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar estados:', error);
+            alert('Erro ao carregar estados. Tente novamente.');
+        });
+}
+
+// Carregar cidades do estado principal
+function carregarCidadesPrincipal(estadoId) {
+    const cidadeSelect = document.getElementById('cidade-principal');
+    
+    cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
+    
+    if (!estadoId) {
+        cidadeSelect.disabled = true;
+        return;
+    }
+    
+    // Buscar cidades via AJAX
+    fetch(`/api/cidades/?estado=${estadoId}`)
+        .then(response => response.json())
+        .then(data => {
+            cidadeSelect.disabled = false;
+            data.forEach(cidade => {
+                const option = new Option(cidade.nome, cidade.id);
+                cidadeSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar cidades:', error);
+            alert('Erro ao carregar cidades. Tente novamente.');
+        });
+}
+
+// Adicionar nova cidade adicional
+function adicionarCidade() {
+    const template = document.getElementById('template-nova-cidade');
+    const container = document.getElementById('cidades-adicionais-container');
+    const novaCidade = template.cloneNode(true);
+    novaCidade.classList.remove('hidden');
+    novaCidade.removeAttribute('id');
+    container.appendChild(novaCidade.firstElementChild);
+}
+
+// Carregar estados para cidade adicional
+function carregarEstadosAdicional(selectPais) {
+    const container = selectPais.closest('.cidade-adicional');
+    const estadoSelect = container.querySelector('.estado-adicional');
+    const cidadeSelect = container.querySelector('.cidade-adicional-select');
+    
+    estadoSelect.innerHTML = '<option value="">Selecione</option>';
+    cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+    cidadeSelect.disabled = true;
+    
+    const paisId = selectPais.value;
+    if (!paisId) {
+        estadoSelect.disabled = true;
+        return;
+    }
+    
+    fetch(`/api/estados/?pais=${paisId}`)
+        .then(response => response.json())
+        .then(data => {
+            estadoSelect.disabled = false;
+            data.forEach(estado => {
+                const option = new Option(`${estado.nome} (${estado.sigla})`, estado.id);
+                estadoSelect.add(option);
+            });
+        });
+}
+
+// Carregar cidades para cidade adicional
+function carregarCidadesAdicional(selectEstado) {
+    const container = selectEstado.closest('.cidade-adicional');
+    const cidadeSelect = container.querySelector('.cidade-adicional-select');
+    
+    cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+    
+    const estadoId = selectEstado.value;
+    if (!estadoId) {
+        cidadeSelect.disabled = true;
+        return;
+    }
+    
+    fetch(`/api/cidades/?estado=${estadoId}`)
+        .then(response => response.json())
+        .then(data => {
+            cidadeSelect.disabled = false;
+            data.forEach(cidade => {
+                const option = new Option(cidade.nome, cidade.id);
+                cidadeSelect.add(option);
+            });
+        });
+}
+
+// Confirmar cidade adicional
+function confirmarCidadeAdicional(button) {
+    const container = button.closest('.cidade-adicional');
+    const paisSelect = container.querySelector('.pais-adicional');
+    const estadoSelect = container.querySelector('.estado-adicional');
+    const cidadeSelect = container.querySelector('.cidade-adicional-select');
+    
+    if (!cidadeSelect.value) {
+        alert('Por favor, selecione uma cidade');
+        return;
+    }
+    
+    // Pegar textos selecionados
+    const paisNome = paisSelect.options[paisSelect.selectedIndex].text;
+    const estadoNome = estadoSelect.options[estadoSelect.selectedIndex].text;
+    const cidadeNome = cidadeSelect.options[cidadeSelect.selectedIndex].text;
+    const cidadeId = cidadeSelect.value;
+    
+    // Substituir pelo formato confirmado
+    container.classList.remove('bg-blue-50', 'border-2', 'border-blue-200');
+    container.classList.add('bg-gray-50');
+    container.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="font-medium text-gray-800">${cidadeNome}</p>
+                <p class="text-sm text-gray-600">${estadoNome} - ${paisNome}</p>
+            </div>
+            <button type="button" 
+                    onclick="removerCidade(this, ${cidadeId})"
+                    class="text-red-500 hover:text-red-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <input type="hidden" name="cidades_atendimento" value="${cidadeId}">
+    `;
+}
+
+// Cancelar adição de cidade
+function cancelarCidadeAdicional(button) {
+    const container = button.closest('.cidade-adicional');
+    container.remove();
+}
+
+// Remover cidade adicional
+function removerCidade(button, cidadeId) {
+    if (confirm('Deseja remover esta cidade?')) {
+        const container = button.closest('.cidade-adicional');
+        container.remove();
+    }
+}
+</script>

@@ -11,9 +11,9 @@ from django.contrib.auth.models import User, Group, Permission
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.contrib.admin import SimpleListFilter
-from .models import Contact, Newsletter, FAQ, SiteConfiguration
+from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -637,3 +637,130 @@ admin.site.site_header = "Espaço Vital - Administração"
 admin.site.site_title = "Espaço Vital Admin"
 admin.site.index_title = "Painel de Controle"
 admin.site.site_url = "/"  # Link para voltar ao site
+
+# ===============================================================
+# ADMINS DE LOCALIZAÇÃO
+# ===============================================================
+
+@admin.register(Pais)
+class PaisAdmin(admin.ModelAdmin):
+    """
+    Admin para Países
+    Sistema internacional de localização
+    """
+    list_display = ['nome', 'codigo', 'ddi', 'total_estados', 'ativo', 'created_at']
+    list_filter = ['ativo']
+    search_fields = ['nome', 'codigo', 'ddi']
+    ordering = ['nome']
+    list_editable = ['ativo']
+    
+    fieldsets = [
+        ('Informações do País', {
+            'fields': ('nome', 'codigo', 'ddi')
+        }),
+        ('Status', {
+            'fields': ('ativo',)
+        }),
+    ]
+    
+    def total_estados(self, obj):
+        """Conta total de estados/províncias do país"""
+        return obj.estados.count()
+    total_estados.short_description = 'Estados/Províncias'
+
+@admin.register(Estado)
+class EstadoAdmin(admin.ModelAdmin):
+    """
+    Admin para Estados/Províncias
+    Compartilhado entre todos os apps - Sistema Internacional
+    """
+    list_display = ['nome', 'sigla', 'pais', 'total_cidades', 'ativo', 'created_at']
+    list_filter = ['pais', 'ativo']
+    search_fields = ['nome', 'sigla', 'pais__nome']
+    ordering = ['pais__nome', 'nome']
+    list_editable = ['ativo']
+    
+    fieldsets = [
+        ('Informações do Estado/Província', {
+            'fields': ('pais', 'nome', 'sigla'),
+            'description': '''
+                <strong>🗺️ Como cadastrar estados:</strong><br>
+                • <strong>Brasil:</strong> Use siglas oficiais (RJ, SP, MG, etc.)<br>
+                • <strong>EUA:</strong> Use siglas dos estados (CA, NY, FL, etc.)<br>
+                • <strong>Portugal:</strong> Use distritos (Lisboa, Porto, Faro, etc.) ou crie um genérico "PT"<br>
+                • <strong>Países pequenos sem estados:</strong> Crie um estado genérico com sigla do país (ex: "Uruguai" - "UY")
+            '''
+        }),
+        ('Status', {
+            'fields': ('ativo',)
+        }),
+    ]
+    
+    def total_cidades(self, obj):
+        """Conta total de cidades do estado"""
+        return obj.cidades.count()
+    total_cidades.short_description = 'Cidades'
+
+@admin.register(Cidade)
+class CidadeAdmin(admin.ModelAdmin):
+    """
+    Admin para Cidades
+    Compartilhado entre todos os apps - Sistema Internacional
+    Com suporte para países sem estados
+    """
+    search_fields = ['nome', 'estado__nome', 'estado__sigla']
+    list_display = ['nome', 'get_estado', 'get_pais', 'total_terapeutas', 'total_espacos', 'ativo', 'created_at']
+    list_filter = ['estado__pais', 'estado', 'ativo']
+    search_fields = ['nome', 'estado__nome', 'estado__sigla', 'estado__pais__nome']
+    ordering = ['estado__pais__nome', 'estado__nome', 'nome']
+    list_editable = ['ativo']
+    
+    fieldsets = [
+        ('Informações da Cidade', {
+            'fields': ('nome', 'estado'),
+            'description': '''
+                <strong>📍 Como cadastrar cidades:</strong><br>
+                • <strong>Brasil e países com estados:</strong> Selecione o Estado/Província<br>
+                • <strong>Países sem estados:</strong> Primeiro crie um estado "genérico" para o país (ex: "Portugal - Lisboa" ou "Uruguai - Nacional")
+            '''
+        }),
+        ('Status', {
+            'fields': ('ativo',)
+        }),
+    ]
+    
+    def get_estado(self, obj):
+        """Retorna estado com sigla"""
+        return f'{obj.estado.nome} ({obj.estado.sigla})'
+    get_estado.short_description = 'Estado/Província'
+    get_estado.admin_order_field = 'estado__nome'
+    
+    def get_pais(self, obj):
+        """Retorna país"""
+        return obj.estado.pais.nome
+    get_pais.short_description = 'País'
+    get_pais.admin_order_field = 'estado__pais__nome'
+    
+    def total_terapeutas(self, obj):
+        """Conta terapeutas que atendem nesta cidade"""
+        try:
+            from terapeutas.models import Terapeuta
+            return Terapeuta.objects.filter(
+                Q(cidade_principal=obj) | Q(cidades_atendimento=obj),
+                is_active=True
+            ).distinct().count()
+        except:
+            return 0
+    total_terapeutas.short_description = 'Terapeutas'
+    
+    def total_espacos(self, obj):
+        """Conta espaços nesta cidade"""
+        try:
+            from espacos.models import Espaco
+            return Espaco.objects.filter(
+                cidade=obj,
+                is_active=True
+            ).count()
+        except:
+            return 0
+    total_espacos.short_description = 'Espaços'

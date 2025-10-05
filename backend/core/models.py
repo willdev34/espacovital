@@ -396,3 +396,176 @@ class SiteConfiguration(models.Model):
         """
         config, created = cls.objects.get_or_create(pk=1)
         return config
+    
+# ===============================================================
+# MODELS DE LOCALIZAÇÃO (COMPARTILHADOS)
+# ===============================================================
+
+class Pais(models.Model):
+    """
+    Modelo para Países
+    Sistema preparado para terapeutas em qualquer país
+    """
+    nome = models.CharField(
+        'Nome do País',
+        max_length=100,
+        unique=True
+    )
+    codigo = models.CharField(
+        'Código ISO',
+        max_length=3,
+        unique=True,
+        help_text='Código ISO do país (ex: BRA, USA, PRT)'
+    )
+    ddi = models.CharField(
+        'DDI',
+        max_length=5,
+        blank=True,
+        help_text='Código de discagem internacional (ex: +55, +1, +351)'
+    )
+    ativo = models.BooleanField(
+        'Ativo',
+        default=True,
+        help_text='País ativo no sistema'
+    )
+    created_at = models.DateTimeField(
+        'Criado em',
+        auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        'Atualizado em',
+        auto_now=True
+    )
+    
+    class Meta:
+        verbose_name = 'País'
+        verbose_name_plural = 'Países'
+        ordering = ['nome']
+    
+    def __str__(self):
+        return self.nome
+
+
+class Estado(models.Model):
+    """
+    Modelo para Estados/Províncias/Regiões
+    Compartilhado entre Terapeutas, Espaços e outros apps
+    """
+    nome = models.CharField(
+        'Nome do Estado/Província',
+        max_length=100
+    )
+    sigla = models.CharField(
+        'Sigla/Código',
+        max_length=10,
+        help_text='Sigla do estado (ex: RJ, SP, CA, NY)'
+    )
+    pais = models.ForeignKey(
+        Pais,
+        on_delete=models.CASCADE,
+        related_name='estados',
+        verbose_name='País',
+        null=True,  # Temporário para migration
+        blank=True
+    )
+    ativo = models.BooleanField(
+        'Ativo',
+        default=True,
+        help_text='Estado ativo no sistema'
+    )
+    created_at = models.DateTimeField(
+        'Criado em',
+        auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        'Atualizado em',
+        auto_now=True
+    )
+    
+    class Meta:
+        verbose_name = 'Estado/Província'
+        verbose_name_plural = 'Estados/Províncias'
+        ordering = ['nome']  # Temporário - vamos ajustar depois
+    
+    def __str__(self):
+        return f'{self.nome} ({self.sigla}) - {self.pais.nome}'
+
+
+class Cidade(models.Model):
+    """
+    Modelo para Cidades
+    Compartilhado entre Terapeutas, Espaços e outros apps
+    Suporta cidades com ou sem estado (país direto)
+    """
+    nome = models.CharField(
+        'Nome da Cidade',
+        max_length=100
+    )
+    estado = models.ForeignKey(
+        Estado,
+        on_delete=models.CASCADE,
+        related_name='cidades',
+        verbose_name='Estado/Província',
+        null=True,  # Permite cidade sem estado
+        blank=True
+    )
+    pais = models.ForeignKey(
+        Pais,
+        on_delete=models.CASCADE,
+        related_name='cidades_diretas',
+        verbose_name='País',
+        null=True,  # Obrigatório se não tiver estado
+        blank=True,
+        help_text='Para países sem estados, vincule a cidade direto ao país'
+    )
+    ativo = models.BooleanField(
+        'Ativo',
+        default=True,
+        help_text='Cidade ativa no sistema'
+    )
+    created_at = models.DateTimeField(
+        'Criado em',
+        auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        'Atualizado em',
+        auto_now=True
+    )
+    
+    class Meta:
+        verbose_name = 'Cidade'
+        verbose_name_plural = 'Cidades'
+        ordering = ['nome']
+    
+    def __str__(self):
+        if self.estado:
+            return f'{self.nome} - {self.estado.sigla}, {self.estado.pais.codigo}'
+        elif self.pais:
+            return f'{self.nome} - {self.pais.codigo}'
+        return self.nome
+    
+    def get_localizacao_completa(self):
+        """Retorna localização completa: Cidade - Estado, País ou Cidade - País"""
+        if self.estado:
+            return f'{self.nome} - {self.estado.sigla}, {self.estado.pais.nome}'
+        elif self.pais:
+            return f'{self.nome} - {self.pais.nome}'
+        return self.nome
+    
+    def get_pais(self):
+        """Retorna o país da cidade (via estado ou direto)"""
+        if self.estado:
+            return self.estado.pais
+        return self.pais
+    
+    def clean(self):
+        """Validação: cidade deve ter estado OU país"""
+        from django.core.exceptions import ValidationError
+        
+        if not self.estado and not self.pais:
+            raise ValidationError('Cidade deve ter um Estado ou um País vinculado.')
+        
+        if self.estado and self.pais:
+            # Se tem estado, o país deve ser o mesmo do estado
+            if self.estado.pais != self.pais:
+                self.pais = self.estado.pais

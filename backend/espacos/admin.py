@@ -134,45 +134,6 @@ class AvaliacaoEspacoInline(admin.TabularInline):
 # ADMINS PARA MODELS AUXILIARES
 # ===============================================================
 
-@admin.register(Estado)
-class EstadoEspacoAdmin(admin.ModelAdmin):
-    """
-    Admin para Estados (espaços)
-    """
-    list_display = ['nome', 'sigla', 'total_espacos', 'total_cidades']
-    search_fields = ['nome', 'sigla']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
-    
-    def total_espacos(self, obj):
-        """
-        Total de espaços no estado
-        """
-        return obj.cidades_espacos.aggregate(
-            total=Count('espacos')
-        )['total'] or 0
-    total_espacos.short_description = 'Espaços'
-    
-    def total_cidades(self, obj):
-        """
-        Total de cidades no estado
-        """
-        return obj.cidades_espacos.count()
-    total_cidades.short_description = 'Cidades'
-
-
-@admin.register(Cidade)
-class CidadeEspacoAdmin(admin.ModelAdmin):
-    """
-    Admin para Cidades (espaços)
-    """
-    list_display = ['nome', 'estado', 'total_espacos']
-    list_filter = ['estado']
-    search_fields = ['nome', 'estado__nome']
-    ordering = ['estado__nome', 'nome']
-    
-    def total_espacos(self, obj):
-        return obj.espacos.filter(is_active=True).count()
-    total_espacos.short_description = 'Espaços'
 
 
 @admin.register(Comodidade)

@@ -13,9 +13,10 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils import timezone
 from .models import (
-    Terapeuta, Especialidade, Estado, Cidade, 
+    Terapeuta, Especialidade, 
     Avaliacao, Contato, SessionType, ProfileType, ClientType
 )
+from core.models import Estado, Cidade
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
@@ -643,13 +644,17 @@ class TerapeutaCreateView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs):
         """
-        Adiciona estados e cidades ao contexto
+        Adiciona países, estados e cidades ao contexto
         """
+        from core.models import Pais
+        
         context = super().get_context_data(**kwargs)
-        context['estados'] = Estado.objects.all().order_by('nome')
-        context['cidades'] = Cidade.objects.all().order_by('nome')
+        context['paises'] = Pais.objects.filter(ativo=True).order_by('nome')
+        context['estados'] = Estado.objects.filter(ativo=True).order_by('nome')
+        context['cidades'] = Cidade.objects.filter(ativo=True).order_by('nome')
         context['page_title'] = 'Cadastrar Terapeuta - Espaço Vital'
         return context
+
     
     def form_valid(self, form):
         """
@@ -705,13 +710,17 @@ class TerapeutaUpdateView(LoginRequiredMixin, UpdateView):
     
     def get_context_data(self, **kwargs):
         """
-        Adiciona estados e cidades ao contexto
+        Adiciona países, estados e cidades ao contexto
         """
+        from core.models import Pais
+        
         context = super().get_context_data(**kwargs)
-        context['estados'] = Estado.objects.all().order_by('nome')
-        context['cidades'] = Cidade.objects.all().order_by('nome')
+        context['paises'] = Pais.objects.filter(ativo=True).order_by('nome')
+        context['estados'] = Estado.objects.filter(ativo=True).order_by('nome')
+        context['cidades'] = Cidade.objects.filter(ativo=True).order_by('nome')
         context['page_title'] = f'Editar Perfil - {self.object.nome_exibicao}'
         return context
+
     
     def form_valid(self, form):
         """
