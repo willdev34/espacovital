@@ -1,0 +1,23 @@
+# ===============================================================
+# Título: Configuração Nixpacks - Espaço Vital
+# Descrição: Configuração de build para Railway
+# Autor: Will
+# Data: 05/10/2025
+# ===============================================================
+
+[phases.setup]
+nixPkgs = ["python312", "postgresql"]
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip",
+    "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+    "python manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "gunicorn espacovital.wsgi:application --bind 0.0.0.0:$PORT"

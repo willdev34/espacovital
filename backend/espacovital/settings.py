@@ -7,6 +7,7 @@
 
 import os
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,13 +16,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # CONFIGURAÇÕES DE SEGURANÇA
 # ===============================================================
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(t7=7fk2#ji(003x0*72g3^kpyx@-b=b26t@!r0in-dgj&nb59'
+# Build paths inside the project
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# ==============================================================
+# CONFIGURAÇÕES DE AMBIENTE
+# ==============================================================
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+# Identifica qual ambiente está rodando
+ENVIRONMENT = config('ENVIRONMENT', default='development')
+
+# Security
+SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
+DEBUG = config('DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:8000',
+    cast=Csv()
+)
+
 
 # ===============================================================
 # APLICAÇÕES INSTALADAS
@@ -60,6 +76,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -100,12 +117,12 @@ WSGI_APPLICATION = 'espacovital.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'espacovital',
-        'USER': 'postgres',
-        'PASSWORD': 'W*#3514',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_NAME', default='espacovital_dev'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default='postgres'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432', cast=int),
     }
 }
 
@@ -142,13 +159,33 @@ USE_TZ = True
 # ===============================================================
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Configuração para S3 (preparado para futuro)
+USE_S3 = config('USE_S3', default=False, cast=bool)
+
+if USE_S3:
+    # AWS S3 Settings (configurar quando for usar)
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# ===============================================================
+# CONFIGURAÇÕES DO WHITENOISE (Para servir static files)
+# ===============================================================
+
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_ALLOW_ALL_ORIGINS = True
+
 
 # ===============================================================
 # CONFIGURAÇÕES DO CRISPY FORMS
@@ -242,3 +279,39 @@ CKEDITOR_CONFIGS = {
         'resize_enabled': False,
     },
 }
+
+# ==============================================================
+# CONFIGURAÇÕES ESPECÍFICAS POR AMBIENTE
+# ==============================================================
+
+if ENVIRONMENT == 'development':
+    # Configurações apenas para DEV
+    print("🔧 Rodando em modo DESENVOLVIMENTO")
+    
+    # Django Debug Toolbar (opcional)
+    if config('ENABLE_DEBUG_TOOLBAR', default=False, cast=bool):
+        INSTALLED_APPS += ['debug_toolbar']
+        MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+        INTERNAL_IPS = ['127.0.0.1']
+
+elif ENVIRONMENT == 'qa':
+    # Configurações para QA (Railway)
+    print("🧪 Rodando em modo QA (Railway)")
+    
+    # Segurança adicional
+    SECURE_SSL_REDIRECT = False  # Railway já faz isso
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+elif ENVIRONMENT == 'production':
+    # Configurações para Produção (futuro)
+    print("🚀 Rodando em modo PRODUÇÃO")
+    
+    # Segurança máxima
+    DEBUG = False
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
