@@ -111,20 +111,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'espacovital.wsgi.application'
 
-# ===============================================================
-# CONFIGURAÇÕES DE BANCO DE DADOS
-# ===============================================================
+# ==============================================================
+# DATABASE - PostgreSQL com suporte Railway e Local
+# ==============================================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('PGDATABASE', default=config('DB_NAME', default='espacovital_dev')),
-        'USER': config('PGUSER', default=config('DB_USER', default='postgres')),
-        'PASSWORD': config('PGPASSWORD', default=config('DB_PASSWORD', default='postgres')),
-        'HOST': config('PGHOST', default=config('DB_HOST', default='localhost')),
-        'PORT': config('PGPORT', default=config('DB_PORT', default='5432'), cast=int),
+import dj_database_url
+
+# Railway fornece DATABASE_URL automaticamente
+# Local usa as variáveis individuais
+DATABASE_URL = config('DATABASE_URL', default=None)
+
+if DATABASE_URL:
+    # Produção/QA (Railway) - usa DATABASE_URL
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    # Desenvolvimento local - usa variáveis individuais
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='espacovital_dev'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default='postgres'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432', cast=int),
+        }
+    }
 
 # ===============================================================
 # VALIDAÇÃO DE SENHAS
