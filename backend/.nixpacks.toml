@@ -20,4 +20,4 @@ cmds = [
 ]
 
 [start]
-cmd = "gunicorn espacovital.wsgi:application --bind 0.0.0.0:$PORT"
+cmd = "python manage.py migrate --noinput && gunicorn espacovital.wsgi:application --bind 0.0.0.0:$PORT"
