@@ -117,12 +117,12 @@ WSGI_APPLICATION = 'espacovital.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': config('DB_NAME', default='espacovital_dev'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD', default='postgres'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432', cast=int),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('PGDATABASE', default=config('DB_NAME', default='espacovital_dev')),
+        'USER': config('PGUSER', default=config('DB_USER', default='postgres')),
+        'PASSWORD': config('PGPASSWORD', default=config('DB_PASSWORD', default='postgres')),
+        'HOST': config('PGHOST', default=config('DB_HOST', default='localhost')),
+        'PORT': config('PGPORT', default=config('DB_PORT', default='5432'), cast=int),
     }
 }
 
