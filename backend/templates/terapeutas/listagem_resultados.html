@@ -1,0 +1,241 @@
+<!-- 
+===============================================================
+Título: Template Busca Avançada de Terapeutas - Espaço Vital
+Descrição: Página de busca e listagem de terapeutas com filtros
+Autor: Will
+Data: 12/10/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar Terapeutas - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO PRINCIPAL - BUSCA DE TERAPEUTAS
+=============================================================== -->
+<div class="min-h-screen bg-light-bg">
+    <!-- Header da página -->
+    <div class="bg-primary py-8 md:py-12">
+        <div class="container mx-auto px-4 lg:px-6">
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-white text-center">
+                Encontre um terapeuta usando nossa busca avançada
+            </h1>
+            <p class="text-white/90 text-center mt-3 text-sm md:text-base">
+                Use a ferramenta de busca abaixo para encontrar um terapeuta específico para suas necessidades
+            </p>
+        </div>
+    </div>
+
+    <!-- Container principal com filtros e resultados -->
+    <div class="container mx-auto px-4 lg:px-6 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- ===============================================================
+            SIDEBAR - FILTROS DE BUSCA
+            =============================================================== -->
+            <aside class="lg:w-80">
+                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+                    <h2 class="text-xl font-poppins font-semibold text-primary mb-6">
+                        Refina sua busca
+                    </h2>
+                    
+                    <form id="filtro-terapeutas" 
+                          method="get"
+                          hx-get="{% url 'terapeutas:buscar' %}" 
+                          hx-target="#lista-terapeutas" 
+                          hx-swap="innerHTML"
+                          hx-indicator="#loading-indicator"
+                          class="space-y-6">
+                        
+                        <!-- Filtro: Tipo de Sessão -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Que tipo de sessão está buscando?
+                            </label>
+                            <div class="space-y-2">
+                                {% for value, label in tipos_sessao_choices %}
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                           name="tipos_sessao" 
+                                           value="{{ value }}"
+                                           {% if value in filtros_atuais.tipos_sessao %}checked{% endif %}
+                                           class="mr-2 text-primary focus:ring-primary rounded">
+                                    <span class="text-sm">{{ label }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Localização -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Localização? <span class="text-red-500">*</span>
+                            </label>
+                            <select name="estado" 
+                                    id="id_estado"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors mb-3">
+                                <option value="">Selecione o Estado</option>
+                                {% for estado in estados %}
+                                    <option value="{{ estado.id }}" {% if estado.id|stringformat:"s" == filtros_atuais.estado %}selected{% endif %}>
+                                        {{ estado.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <select name="cidade" 
+                                    id="id_cidade"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Selecione a Cidade</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro: Terapias/Especialidades -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Terapias
+                            </label>
+                            <select name="especialidades" 
+                                    multiple
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                                    size="5">
+                                <option value="">Todas</option>
+                                {% for especialidade in especialidades %}
+                                    <option value="{{ especialidade.id }}" 
+                                            {% if especialidade.id|stringformat:"s" in filtros_atuais.especialidades %}selected{% endif %}>
+                                        {{ especialidade.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">Segure Ctrl para selecionar várias</p>
+                        </div>
+
+                        <!-- Filtro: Acessibilidade -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Acessibilidade?
+                            </label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" 
+                                           name="acessibilidade" 
+                                           value="sim"
+                                           {% if filtros_atuais.acessibilidade == 'sim' %}checked{% endif %}
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span class="text-sm">Sim</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" 
+                                           name="acessibilidade" 
+                                           value="nao"
+                                           {% if filtros_atuais.acessibilidade == 'nao' %}checked{% endif %}
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span class="text-sm">Não</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Perfil Profissional -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Perfil de profissional?
+                            </label>
+                            <div class="space-y-2">
+                                {% for value, label in perfil_profissional_choices %}
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" 
+                                           name="perfil_profissional" 
+                                           value="{{ value }}"
+                                           {% if filtros_atuais.perfil_profissional == value %}checked{% endif %}
+                                           class="mr-2 text-primary focus:ring-primary">
+                                    <span class="text-sm">{{ label }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Filtro: Para Quem -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Para quem é a terapia?
+                            </label>
+                            <select name="para_quem" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Qualquer um</option>
+                                {% for value, label in para_quem_choices %}
+                                    <option value="{{ value }}" {% if filtros_atuais.para_quem == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Botão Buscar -->
+                        <button type="submit" 
+                                class="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200 shadow-sm">
+                            Buscar
+                        </button>
+
+                        <!-- Limpar filtros -->
+                        <button type="reset" 
+                                onclick="window.location.href='{% url 'terapeutas:buscar' %}'"
+                                class="w-full text-primary text-sm hover:underline">
+                            Limpar filtros
+                        </button>
+
+                    </form>
+                </div>
+            </aside>
+
+            <!-- ===============================================================
+            ÁREA DE RESULTADOS
+            =============================================================== -->
+            <main class="flex-1">
+                <!-- Include do partial que será atualizado via HTMX -->
+                {% include 'terapeutas/partials/lista_terapeutas.html' %}
+            </main>
+
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para filtros dinâmicos -->
+{% block extra_js %}
+<script>
+    // ===============================================================
+    // Script para carregar cidades baseado no estado selecionado (AJAX)
+    // ===============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const estadoSelect = document.getElementById('id_estado');
+        const cidadeSelect = document.getElementById('id_cidade');
+        
+        if (estadoSelect && cidadeSelect) {
+            estadoSelect.addEventListener('change', function() {
+                const estadoId = this.value;
+                
+                // Limpar cidades
+                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+                cidadeSelect.disabled = true;
+                
+                if (estadoId) {
+                    // Buscar cidades via AJAX
+                    fetch(`/api/cidades/?estado=${estadoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(cidade => {
+                                const option = document.createElement('option');
+                                option.value = cidade.id;
+                                option.textContent = cidade.nome;
+                                cidadeSelect.appendChild(option);
+                            });
+                            cidadeSelect.disabled = false;
+                        })
+                        .catch(error => console.error('Erro ao carregar cidades:', error));
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

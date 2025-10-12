@@ -88,7 +88,8 @@ class TerapeutaListView(ListView):
         ).prefetch_related(
             'cidades_atendimento', 'especialidades', 'avaliacoes'
         ).annotate(
-            media_avaliacoes=Avg('avaliacoes__nota')
+            avg_avaliacoes=Avg('avaliacoes__nota'),
+            count_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
         )
         
         # ===== FILTROS DO LAYOUT =====
@@ -168,15 +169,15 @@ class TerapeutaListView(ListView):
         ordering = self.request.GET.get('ordenacao', 'relevancia')
         
         if ordering == 'melhor_avaliado':
-            queryset = queryset.order_by('-media_avaliacoes', '-total_avaliacoes')
+            queryset = queryset.order_by('-avg_avaliacoes', '-count_avaliacoes')
         elif ordering == 'mais_experiente':
             queryset = queryset.order_by('-experiencia_anos')
         elif ordering == 'nome':
             queryset = queryset.order_by('nome_exibicao')
         else:  # relevancia (padrão)
             queryset = queryset.order_by(
-                '-destaque', '-premium', '-verificado', 
-                '-media_avaliacoes', '-created_at'
+                '-destaque', '-premium', '-verificado',
+                '-avg_avaliacoes', '-created_at'
             )
         
         return queryset

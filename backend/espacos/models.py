@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator, RegexValidator
 from django.utils.text import slugify
-from core.models import TimeStampedModel, BaseModel, Estado, Cidade
+from core.models import TimeStampedModel, BaseModel, Estado, Cidade, Especialidade
 
 
 # ===============================================================
@@ -90,50 +90,6 @@ class Comodidade(BaseModel):
         if not self.slug:
             self.slug = slugify(self.nome)
         super().save(*args, **kwargs)
-
-
-class Especialidade(BaseModel):
-    """
-    Model para especialidades/terapias oferecidas no espaço
-    Conecta com as terapias disponíveis na plataforma
-    """
-    nome = models.CharField(
-        max_length=100,
-        unique=True,
-        help_text="Nome da especialidade/terapia"
-    )
-    descricao = models.TextField(
-        blank=True,
-        help_text="Descrição da especialidade"
-    )
-    categoria = models.CharField(
-        max_length=50,
-        blank=True,
-        help_text="Categoria da terapia (ex: Massagem, Energética)"
-    )
-    slug = models.SlugField(
-        max_length=120,
-        unique=True,
-        blank=True,
-        help_text="Slug para URLs amigáveis"
-    )
-
-    class Meta:
-        verbose_name = 'Especialidade'
-        verbose_name_plural = 'Especialidades'
-        ordering = ['categoria', 'nome']
-
-    def __str__(self):
-        return self.nome
-
-    def save(self, *args, **kwargs):
-        """
-        Gera slug automático baseado no nome
-        """
-        if not self.slug:
-            self.slug = slugify(self.nome)
-        super().save(*args, **kwargs)
-
 
 # ===============================================================
 # MODEL PRINCIPAL - ESPACO

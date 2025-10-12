@@ -569,3 +569,77 @@ class Cidade(models.Model):
             # Se tem estado, o país deve ser o mesmo do estado
             if self.estado.pais != self.pais:
                 self.pais = self.estado.pais
+
+# ===============================================================
+# MODEL DE ESPECIALIDADE (COMPARTILHADO)
+# ===============================================================
+
+class Especialidade(BaseModel):
+    """
+    Model para especialidades/terapias oferecidas
+    COMPARTILHADO entre apps: terapeutas e espacos
+    Centralizado no core para evitar duplicação
+    """
+    nome = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text="Nome da especialidade/terapia"
+    )
+    slug = models.SlugField(
+        max_length=120,
+        unique=True,
+        blank=True,
+        help_text="Slug para URLs amigáveis"
+    )
+    descricao_curta = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Descrição resumida da especialidade"
+    )
+    descricao_completa = models.TextField(
+        blank=True,
+        help_text="Descrição detalhada da especialidade"
+    )
+    categoria = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Categoria da terapia (ex: Massagem, Energética)"
+    )
+    cor_destaque = models.CharField(
+        max_length=7,
+        blank=True,
+        default='#6C63FF',
+        help_text="Cor em hexadecimal para destaque (#RRGGBB)"
+    )
+    ordem = models.IntegerField(
+        default=0,
+        help_text="Ordem de exibição (menor aparece primeiro)"
+    )
+    destaque = models.BooleanField(
+        default=False,
+        help_text="Especialidade aparece em destaque"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Especialidade está ativa no sistema"
+    )
+
+    class Meta:
+        verbose_name = 'Especialidade'
+        verbose_name_plural = 'Especialidades'
+        ordering = ['-destaque', 'ordem', 'nome']
+        indexes = [
+            models.Index(fields=['destaque', 'is_active']),
+            models.Index(fields=['ordem']),
+        ]
+
+    def __str__(self):
+        return self.nome
+
+    def save(self, *args, **kwargs):
+        """
+        Gera slug automático baseado no nome
+        """
+        if not self.slug:
+            self.slug = slugify(self.nome)
+        super().save(*args, **kwargs)

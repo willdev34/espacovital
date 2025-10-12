@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator, RegexValidator
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
-from core.models import TimeStampedModel, BaseModel, Estado, Cidade
+from core.models import TimeStampedModel, BaseModel, Estado, Cidade, Especialidade
 
 
 # ===============================================================
@@ -53,84 +53,6 @@ class ClientType(models.TextChoices):
 # ===============================================================
 # MODELS PRINCIPAIS
 # ===============================================================
-
-class Especialidade(BaseModel):
-    """
-    Modelo para Especialidades/Terapias
-    Baseado nos layouts compartilhados
-    """
-    nome = models.CharField(
-        'Nome da Especialidade',
-        max_length=100,
-        unique=True,
-        help_text='Nome da terapia/especialidade (ex: Massoterapia, Reiki)'
-    )
-    
-    slug = models.SlugField(
-        'Slug',
-        max_length=120,
-        unique=True,
-        blank=True,
-        help_text='URL amigável (será gerado automaticamente)'
-    )
-    
-    descricao_curta = models.TextField(
-        'Descrição Curta',
-        max_length=200,
-        help_text='Descrição breve para exibição em cards'
-    )
-    
-    descricao_completa = models.TextField(
-        'Descrição Completa',
-        help_text='Descrição detalhada da terapia'
-    )
-    
-    icone = models.ImageField(
-        'Ícone',
-        upload_to='especialidades/icones/',
-        blank=True,
-        null=True,
-        help_text='Ícone da especialidade (64x64px recomendado)'
-    )
-    
-    cor_destaque = models.CharField(
-        'Cor de Destaque',
-        max_length=7,
-        default='#0B5259',
-        help_text='Cor hex para cards e destaques'
-    )
-    
-    ordem = models.PositiveIntegerField(
-        'Ordem de Exibição',
-        default=0,
-        help_text='Ordem de exibição nas listagens'
-    )
-    
-    destaque = models.BooleanField(
-        'Em Destaque',
-        default=False,
-        help_text='Exibir na página principal'
-    )
-    
-    class Meta:
-        verbose_name = 'Especialidade'
-        verbose_name_plural = 'Especialidades'
-        ordering = ['ordem', 'nome']
-        indexes = [
-            models.Index(fields=['destaque', 'is_active']),
-            models.Index(fields=['ordem']),
-        ]
-    
-    def __str__(self):
-        return self.nome
-    
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.nome)
-        super().save(*args, **kwargs)
-    
-    def get_absolute_url(self):
-        return reverse('terapias:detail', kwargs={'slug': self.slug})
 
 # Inicio classe Terapeutas
 class Terapeuta(BaseModel):

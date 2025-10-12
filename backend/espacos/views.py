@@ -15,9 +15,9 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import (
-    Espaco, Comodidade, Especialidade, AvaliacaoEspaco, ContatoEspaco, TipoEspaco, DisponibilidadePeriodo
+    Espaco, Comodidade, AvaliacaoEspaco, ContatoEspaco, TipoEspaco, DisponibilidadePeriodo
 )
-from core.models import Estado, Cidade
+from core.models import Estado, Cidade, Especialidade
 from .forms import ContatoEspacoForm, AvaliacaoEspacoForm
 import json
 
@@ -46,8 +46,8 @@ class EspacoListView(ListView):
         ).prefetch_related(
             'comodidades', 'especialidades', 'avaliacoes'
         ).annotate(
-            media_avaliacoes=Avg('avaliacoes__nota'),
-            total_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
+            avg_avaliacoes=Avg('avaliacoes__nota'),
+            count_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
         )
         
         # ===== FILTROS DO LAYOUT =====
@@ -178,8 +178,8 @@ class EspacoListagemSimplesView(ListView):
         ).prefetch_related(
             'especialidades', 'avaliacoes'
         ).annotate(
-            media_avaliacoes=Avg('avaliacoes__nota'),
-            total_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
+            avg_avaliacoes=Avg('avaliacoes__nota'),
+            count_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
         ).order_by('-is_destaque', '-is_premium', '-is_verificado', 'nome')
     
     def get_context_data(self, **kwargs):
@@ -221,8 +221,8 @@ class EspacoPorRegiaoView(ListView):
         ).prefetch_related(
             'especialidades', 'avaliacoes'
         ).annotate(
-            media_avaliacoes=Avg('avaliacoes__nota'),
-            total_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
+            avg_avaliacoes=Avg('avaliacoes__nota'),
+            count_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
         ).order_by('-is_destaque', '-is_premium', 'nome')
     
     def get_context_data(self, **kwargs):

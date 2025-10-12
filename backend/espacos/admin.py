@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.db.models import Count, Avg
 from django.contrib.admin import SimpleListFilter
 from .models import (
-    Estado, Cidade, Comodidade, Especialidade, Espaco,
+    Estado, Cidade, Comodidade, Espaco,
     EspacoEspecialidade, AvaliacaoEspaco, ContatoEspaco
 )
 
@@ -196,58 +196,6 @@ class ComodidadeAdmin(admin.ModelAdmin):
         """
         return obj.espacos.filter(is_active=True).count()
     total_espacos.short_description = 'Espaços'
-
-
-@admin.register(Especialidade)
-class EspecialidadeEspacoAdmin(admin.ModelAdmin):
-    """
-    Admin para Especialidades (espaços)
-    """
-    list_display = [
-        'nome', 'categoria_display', 'total_espacos', 'is_active'
-    ]
-    list_filter = ['categoria', 'is_active']
-    search_fields = ['nome', 'descricao', 'categoria']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
-    
-    fieldsets = [
-        ('Informações Básicas', {
-            'fields': ('nome', 'slug', 'descricao')
-        }),
-        ('Categorização', {
-            'fields': ('categoria',)
-        }),
-        ('Sistema', {
-            'fields': ('is_active', 'created_at', 'updated_at'),
-            'classes': ('collapse',)
-        })
-    ]
-    
-    def categoria_display(self, obj):
-        """
-        Exibe categoria com cor
-        """
-        cores_categoria = {
-            'Massagem': '#10b981',    # verde
-            'Energética': '#8b5cf6',  # roxo
-            'Mental': '#3b82f6',      # azul
-            'Corporal': '#f59e0b',    # amarelo
-        }
-        cor = cores_categoria.get(obj.categoria, '#6b7280')
-        return format_html(
-            '<span style="background-color: {}; color: white; padding: 2px 8px; '
-            'border-radius: 12px; font-size: 11px; font-weight: bold;">{}</span>',
-            cor, obj.categoria or 'Sem categoria'
-        )
-    categoria_display.short_description = 'Categoria'
-    
-    def total_espacos(self, obj):
-        """
-        Total de espaços com esta especialidade
-        """
-        return obj.espacos.filter(is_active=True).count()
-    total_espacos.short_description = 'Espaços'
-
 
 # ===============================================================
 # ADMIN PRINCIPAL - ESPACOS
