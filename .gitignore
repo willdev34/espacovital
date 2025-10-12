@@ -1,33 +1,72 @@
-node_modules/
-.env
-dist/
-.DS_Store
+# ===============================================================
+# Git Ignore - Espaço Vital
+# Autor: Will
+# Data: 12/10/2025
+# ===============================================================
 
 # Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
+
+# Virtual Environment
 venv/
-.venv/
+env/
+ENV/
+.venv
 
 # Django
-/backend/staticfiles/
-/backend/media/
-*.sqlite3
+*.log
 db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/static_root/
+/media/
+
+# Ambientes (NÃO COMMITAR arquivos .env reais!)
+.env
+.env.local
+.env.*.local
+
+# Manter apenas os exemplos
+!.env.example
+!.env.dev
+!.env.qa
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Testes
+.coverage
+htmlcov/
+.pytest_cache/
 
 # Logs
 *.log
+
+# Banco de dados local
+*.sqlite3
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.cache
+test_db.py
+
+# Node (se usar no futuro)
+node_modules/

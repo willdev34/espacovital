@@ -5,18 +5,38 @@
 # Data: 07/09/2025
 # ===============================================================
 
+import sys
 import os
 from pathlib import Path
 from decouple import config, Csv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # ===============================================================
-# CONFIGURAÇÕES DE SEGURANÇA
+# FORÇA ENCODING UTF-8 NO WINDOWS (CRÍTICO!)
+# Resolve problemas com caracteres especiais no PostgreSQL
 # ===============================================================
 
+if sys.platform == 'win32':
+    import locale
+    
+    # Força encoding UTF-8 em todos os streams de I/O
+    if sys.stdout.encoding != 'utf-8':
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    
+    # Define locale padrão para UTF-8
+    try:
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+        except locale.Error:
+            pass  # Se não conseguir, continua com o padrão
+
+# ===============================================================
 # Build paths inside the project
+# ===============================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==============================================================
@@ -134,12 +154,19 @@ else:
     # Desenvolvimento local - usa variáveis individuais
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default='espacovital_dev'),
+            'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': config('DB_NAME', default='espacovital'),
             'USER': config('DB_USER', default='postgres'),
             'PASSWORD': config('DB_PASSWORD', default='postgres'),
             'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432', cast=int),
+            'PORT': config('DB_PORT', default='5432'),
+            'OPTIONS': {
+                'client_encoding': 'UTF8',
+                'connect_timeout': 10,
+            },
+            'CONN_MAX_AGE': 0,  # Não mantém conexões abertas
+            'ATOMIC_REQUESTS': False,
+            'AUTOCOMMIT': True,
         }
     }
 
@@ -303,7 +330,7 @@ CKEDITOR_CONFIGS = {
 
 if ENVIRONMENT == 'development':
     # Configurações apenas para DEV
-    print("🔧 Rodando em modo DESENVOLVIMENTO")
+    print(" Rodando em modo DESENVOLVIMENTO")
     
     # Django Debug Toolbar (opcional)
     if config('ENABLE_DEBUG_TOOLBAR', default=False, cast=bool):
@@ -313,7 +340,7 @@ if ENVIRONMENT == 'development':
 
 elif ENVIRONMENT == 'qa':
     # Configurações para QA (Railway)
-    print("🧪 Rodando em modo QA (Railway)")
+    print("Rodando em modo QA (Railway)")
     
     # Segurança adicional
     SECURE_SSL_REDIRECT = False  # Railway já faz isso
@@ -322,7 +349,7 @@ elif ENVIRONMENT == 'qa':
 
 elif ENVIRONMENT == 'production':
     # Configurações para Produção (futuro)
-    print("🚀 Rodando em modo PRODUÇÃO")
+    print("Rodando em modo PRODUÇÃO")
     
     # Segurança máxima
     DEBUG = False

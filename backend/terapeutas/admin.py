@@ -191,7 +191,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     ]
 
     filter_horizontal = [
-        'especialidades', 'cidades_atendimento'
+        #'especialidades', 'cidades_atendimento'
     ]
     
     # Inlines
