@@ -1,0 +1,16 @@
+
+/* Ajustar largura das colunas do admin de espaços */
+#result_list .field-tipo_espaco_display {
+    min-width: 120px;
+}
+
+#result_list .field-status_display {
+    min-width: 200px;
+}
+
+/* Garantir que badges não quebrem */
+#result_list .field-status_display span,
+#result_list .field-tipo_espaco_display span {
+    white-space: nowrap;
+    display: inline-block;
+}

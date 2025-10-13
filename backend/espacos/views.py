@@ -42,9 +42,8 @@ class EspacoListView(ListView):
         Exatamente como no layout espacoComFiltro.pdf
         """
         queryset = Espaco.objects.filter(is_active=True).select_related(
-            'cidade', 'cidade__estado'
-        ).prefetch_related(
-            'comodidades', 'especialidades', 'avaliacoes'
+            'cidade', 'cidade__estado', 'estado', 'pais'
+        ).prefetch_related('comodidades', 'especialidades'
         ).annotate(
             avg_avaliacoes=Avg('avaliacoes__nota'),
             count_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))

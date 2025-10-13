@@ -1,0 +1,337 @@
+<!-- ===============================================================
+     Título: Template customizado para formulário de Espaço no Admin
+     Descrição: Cascata País → Estado → Cidade + Galeria com carrossel
+     Autor: Will
+     Data: 12/10/2025
+     =============================================================== -->
+
+{% extends "admin/change_form.html" %}
+
+{% block after_field_sets %}
+{{ block.super }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ===============================================================
+    // LOCALIZAÇÃO - CASCATA PAÍS → ESTADO → CIDADE
+    // ===============================================================
+    
+    const paisSelect = document.querySelector('select[name="pais"]');
+    const estadoRow = document.querySelector('.form-row.field-estado');
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const cidadeRow = document.querySelector('.form-row.field-cidade');
+    const cidadeSelect = document.querySelector('select[name="cidade"]');
+    const cidadeTextoRow = document.querySelector('.form-row.field-cidade_texto');
+    
+    if (paisSelect) {
+        // Eventos
+        paisSelect.addEventListener('change', () => paisMudou());
+        if (estadoSelect) estadoSelect.addEventListener('change', () => estadoMudou());
+        
+        // Inicializar ao carregar
+        paisMudou();
+    }
+    
+    function paisMudou() {
+        const paisText = paisSelect.options[paisSelect.selectedIndex]?.text || '';
+        const isBrasil = paisText.includes('Brasil');
+        
+        if (isBrasil) {
+            // Brasil: mostrar estado e cidade select, esconder cidade_texto
+            if (estadoRow) estadoRow.style.display = '';
+            if (cidadeRow) cidadeRow.style.display = '';
+            if (cidadeTextoRow) cidadeTextoRow.style.display = 'none';
+            
+            carregarEstados();
+        } else {
+            // Outros países: esconder estado/cidade, mostrar cidade_texto
+            if (estadoRow) estadoRow.style.display = 'none';
+            if (cidadeRow) cidadeRow.style.display = 'none';
+            if (cidadeTextoRow) cidadeTextoRow.style.display = '';
+            
+            // Limpar selects
+            if (estadoSelect) estadoSelect.value = '';
+            if (cidadeSelect) cidadeSelect.value = '';
+        }
+    }
+    
+    function carregarEstados() {
+        const paisId = paisSelect.value;
+        if (!paisId || !estadoSelect) return;
+        
+        // Limpar e desabilitar selects
+        estadoSelect.innerHTML = '<option value="">---------</option>';
+        estadoSelect.disabled = true;
+        
+        if (cidadeSelect) {
+            cidadeSelect.innerHTML = '<option value="">Primeiro selecione o estado</option>';
+            cidadeSelect.disabled = true;
+        }
+        
+        // Buscar estados via AJAX
+        fetch(`/api/estados/?pais=${paisId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(estado => {
+                    const option = new Option(`${estado.nome} (${estado.sigla})`, estado.id);
+                    estadoSelect.add(option);
+                });
+                estadoSelect.disabled = false;
+            })
+            .catch(error => console.error('Erro ao carregar estados:', error));
+    }
+    
+    function estadoMudou() {
+        const estadoId = estadoSelect.value;
+        if (!estadoId || !cidadeSelect) return;
+        
+        // Limpar e desabilitar
+        cidadeSelect.innerHTML = '<option value="">---------</option>';
+        cidadeSelect.disabled = true;
+        
+        // Buscar cidades via AJAX
+        fetch(`/api/cidades/?estado=${estadoId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(cidade => {
+                    const option = new Option(cidade.nome, cidade.id);
+                    cidadeSelect.add(option);
+                });
+                cidadeSelect.disabled = false;
+            })
+            .catch(error => console.error('Erro ao carregar cidades:', error));
+    }
+    
+    // ===============================================================
+    // GALERIA - UPLOAD MÚLTIPLO COM CARROSSEL
+    // ===============================================================
+    
+    const galeriaInput = document.querySelector('input[name="galeria_fotos"]');
+    const galeriaRow = document.querySelector('.form-row.field-galeria_fotos');
+    
+    if (galeriaInput && galeriaRow) {
+        // Criar container de preview com carrossel
+        const previewContainer = document.createElement('div');
+        previewContainer.id = 'galeria-preview-container';
+        previewContainer.style.cssText = 'margin-top: 20px; padding: 20px; background: #f9fafb; border-radius: 8px; border: 2px dashed #d1d5db;';
+        
+        previewContainer.innerHTML = `
+            <div style="margin-bottom: 15px;">
+                <p style="margin: 0; font-weight: 600; color: #374151; font-size: 14px;">
+                    📸 Preview da Galeria: <span id="fotos-count">0</span>/7 fotos
+                    <span id="fotos-restantes" style="color: #6b7280; font-weight: 400;"></span>
+                </p>
+            </div>
+            
+            <!-- Carrossel -->
+            <div style="position: relative;">
+                <!-- Botão Anterior -->
+                <button type="button" id="carousel-prev" 
+                        style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 10; 
+                               background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; 
+                               width: 40px; height: 40px; cursor: pointer; display: none; font-size: 18px;">
+                    ‹
+                </button>
+                
+                <!-- Container do Carrossel -->
+                <div id="carousel-container" 
+                     style="overflow: hidden; border-radius: 8px; background: #fff; min-height: 200px; 
+                            display: flex; align-items: center; justify-content: center;">
+                    <div id="carousel-track" 
+                         style="display: flex; transition: transform 0.3s ease; width: 100%;">
+                        <!-- Imagens serão inseridas aqui -->
+                        <div id="empty-state" style="text-align: center; padding: 40px; color: #9ca3af; width: 100%;">
+                            <p style="margin: 0; font-size: 16px;">📷</p>
+                            <p style="margin: 10px 0 0 0;">Nenhuma foto selecionada</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px;">Selecione até 7 fotos usando o campo acima</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botão Próximo -->
+                <button type="button" id="carousel-next" 
+                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 10; 
+                               background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; 
+                               width: 40px; height: 40px; cursor: pointer; display: none; font-size: 18px;">
+                    ›
+                </button>
+            </div>
+            
+            <!-- Indicadores (thumbnails) -->
+            <div id="carousel-indicators" 
+                 style="display: flex; gap: 8px; margin-top: 15px; overflow-x: auto; padding: 10px 0;">
+                <!-- Thumbnails serão inseridos aqui -->
+            </div>
+        `;
+        
+        galeriaRow.appendChild(previewContainer);
+        
+        // Variáveis do carrossel
+        let currentIndex = 0;
+        let fotosPreview = [];
+        
+        // Event listener para mudança de arquivo
+        galeriaInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            
+            if (files.length > 7) {
+                alert('Você pode selecionar no máximo 7 fotos!');
+                e.target.value = '';
+                return;
+            }
+            
+            fotosPreview = [];
+            currentIndex = 0;
+            
+            // Limpar carrossel
+            const track = document.getElementById('carousel-track');
+            const indicators = document.getElementById('carousel-indicators');
+            track.innerHTML = '';
+            indicators.innerHTML = '';
+            
+            if (files.length === 0) {
+                track.innerHTML = `
+                    <div id="empty-state" style="text-align: center; padding: 40px; color: #9ca3af; width: 100%;">
+                        <p style="margin: 0; font-size: 16px;">📷</p>
+                        <p style="margin: 10px 0 0 0;">Nenhuma foto selecionada</p>
+                        <p style="margin: 5px 0 0 0; font-size: 12px;">Selecione até 7 fotos usando o campo acima</p>
+                    </div>
+                `;
+                atualizarContador(0);
+                return;
+            }
+            
+            // Processar cada arquivo
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    fotosPreview.push(event.target.result);
+                    
+                    // Adicionar ao carrossel
+                    const slide = document.createElement('div');
+                    slide.className = 'carousel-slide';
+                    slide.style.cssText = 'min-width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; background: #000;';
+                    slide.innerHTML = `
+                        <img src="${event.target.result}" 
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    `;
+                    track.appendChild(slide);
+                    
+                    // Adicionar thumbnail
+                    const thumb = document.createElement('div');
+                    thumb.style.cssText = `
+                        min-width: 80px; height: 80px; border-radius: 8px; overflow: hidden; 
+                        cursor: pointer; border: 3px solid ${index === 0 ? '#0ea5e9' : '#e5e7eb'};
+                        transition: border-color 0.2s;
+                    `;
+                    thumb.innerHTML = `
+                        <img src="${event.target.result}" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    `;
+                    thumb.onclick = () => goToSlide(index);
+                    indicators.appendChild(thumb);
+                    
+                    // Atualizar controles
+                    if (fotosPreview.length > 1) {
+                        document.getElementById('carousel-prev').style.display = 'block';
+                        document.getElementById('carousel-next').style.display = 'block';
+                    }
+                    
+                    atualizarContador(fotosPreview.length);
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        });
+        
+        // Função para ir para um slide específico
+        window.goToSlide = function(index) {
+            currentIndex = index;
+            const track = document.getElementById('carousel-track');
+            track.style.transform = `translateX(-${index * 100}%)`;
+            
+            // Atualizar thumbnails
+            const thumbs = document.querySelectorAll('#carousel-indicators > div');
+            thumbs.forEach((thumb, i) => {
+                thumb.style.borderColor = i === index ? '#0ea5e9' : '#e5e7eb';
+            });
+        };
+        
+        // Botão anterior
+        document.getElementById('carousel-prev').onclick = function() {
+            if (currentIndex > 0) {
+                goToSlide(currentIndex - 1);
+            }
+        };
+        
+        // Botão próximo
+        document.getElementById('carousel-next').onclick = function() {
+            if (currentIndex < fotosPreview.length - 1) {
+                goToSlide(currentIndex + 1);
+            }
+        };
+        
+        // Atualizar contador
+        function atualizarContador(count) {
+            document.getElementById('fotos-count').textContent = count;
+            const restantes = 7 - count;
+            const restantesSpan = document.getElementById('fotos-restantes');
+            
+            if (restantes > 0 && count > 0) {
+                restantesSpan.textContent = `(Você pode adicionar mais ${restantes} foto${restantes > 1 ? 's' : ''})`;
+                restantesSpan.style.color = '#0891b2';
+            } else if (count === 7) {
+                restantesSpan.textContent = '(Limite atingido ✓)';
+                restantesSpan.style.color = '#059669';
+            } else {
+                restantesSpan.textContent = '';
+            }
+        }
+    }
+});
+</script>
+
+<style>
+/* Melhorar aparência dos botões do carrossel */
+#carousel-prev:hover,
+#carousel-next:hover {
+    background: rgba(0,0,0,0.7);
+}
+
+/* Scrollbar customizada para thumbnails */
+#carousel-indicators::-webkit-scrollbar {
+    height: 6px;
+}
+
+#carousel-indicators::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#carousel-indicators::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#carousel-indicators::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
+{% endblock %}
+
+<style>
+/* Estilo para melhorar visual do inline de galeria */
+.inline-related.tabular tbody tr td:first-child {
+    width: 150px;
+}
+
+/* Preview das imagens da galeria */
+.field-imagem img {
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+</style>

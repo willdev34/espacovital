@@ -92,6 +92,46 @@ class Comodidade(BaseModel):
         super().save(*args, **kwargs)
 
 # ===============================================================
+# MODEL PARA FOTOS DA GALERIA
+# ===============================================================
+
+class FotoGaleriaEspaco(TimeStampedModel):
+    """
+    Model para fotos da galeria do espaço
+    Permite upload de até 7 fotos
+    """
+    espaco = models.ForeignKey(
+        'Espaco',
+        on_delete=models.CASCADE,
+        related_name='fotos_galeria',
+        verbose_name='Espaço'
+    )
+    imagem = models.ImageField(
+        upload_to='espacos/galeria/',
+        verbose_name='Foto',
+        help_text='Foto da galeria do espaço'
+    )
+    descricao = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Descrição',
+        help_text='Descrição opcional da foto'
+    )
+    ordem = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Ordem',
+        help_text='Ordem de exibição da foto'
+    )
+    
+    class Meta:
+        verbose_name = 'Foto da Galeria'
+        verbose_name_plural = 'Fotos da Galeria'
+        ordering = ['ordem', 'created_at']
+    
+    def __str__(self):
+        return f"{self.espaco.nome} - Foto {self.ordem}"        
+
+# ===============================================================
 # MODEL PRINCIPAL - ESPACO
 # ===============================================================
 
@@ -120,16 +160,50 @@ class Espaco(TimeStampedModel):
         help_text="Descrição completa do espaço"
     )
 
-    # Localização
-    endereco = models.CharField(
-        max_length=255,
-        help_text="Endereço completo do espaço"
+    # Localização (sistema internacional)
+    pais = models.ForeignKey(
+        'core.Pais',
+        on_delete=models.PROTECT,
+        verbose_name='País',
+        help_text='País onde o espaço está localizado',
+        related_name='espacos',
+        null=True,
+        blank=True
     )
+
+    estado = models.ForeignKey(
+        'core.Estado',
+        on_delete=models.PROTECT,
+        verbose_name='Estado/Província',
+        help_text='Estado onde o espaço está (apenas Brasil)',
+        related_name='espacos',
+        null=True,
+        blank=True
+    )
+
+    # Para Brasil - cidade do banco de dados
     cidade = models.ForeignKey(
         Cidade,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
+        verbose_name='Cidade (Brasil)',
+        help_text='Cidade onde está localizado - apenas para Brasil',
         related_name='espacos',
-        help_text="Cidade onde está localizado"
+        null=True,
+        blank=True
+    )
+
+    # Para outros países - texto livre
+    cidade_texto = models.CharField(
+        'Cidade (outros países)',
+        max_length=100,
+        blank=True,
+        help_text='Nome da cidade para países fora do Brasil'
+    )
+
+    endereco = models.CharField(
+        max_length=255,
+        help_text="Endereço completo do espaço",
+        blank=True
     )
     cep = models.CharField(
         max_length=10,
