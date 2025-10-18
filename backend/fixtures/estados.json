@@ -1,0 +1,338 @@
+[
+{
+  "model": "core.estado",
+  "pk": 1,
+  "fields": {
+    "nome": "Acre",
+    "sigla": "AC",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.268Z",
+    "updated_at": "2025-10-05T00:50:13.765Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 2,
+  "fields": {
+    "nome": "Alagoas",
+    "sigla": "AL",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.277Z",
+    "updated_at": "2025-10-05T00:50:13.767Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 3,
+  "fields": {
+    "nome": "Amapá",
+    "sigla": "AP",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.280Z",
+    "updated_at": "2025-10-05T00:50:13.768Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 4,
+  "fields": {
+    "nome": "Amazonas",
+    "sigla": "AM",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.281Z",
+    "updated_at": "2025-10-05T00:50:13.769Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 5,
+  "fields": {
+    "nome": "Bahia",
+    "sigla": "BA",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.283Z",
+    "updated_at": "2025-10-05T00:50:13.770Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 6,
+  "fields": {
+    "nome": "Ceará",
+    "sigla": "CE",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.284Z",
+    "updated_at": "2025-10-05T00:50:13.772Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 7,
+  "fields": {
+    "nome": "Distrito Federal",
+    "sigla": "DF",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.286Z",
+    "updated_at": "2025-10-05T00:50:13.773Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 8,
+  "fields": {
+    "nome": "Espirito Santo",
+    "sigla": "ES",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.287Z",
+    "updated_at": "2025-10-05T00:50:13.773Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 9,
+  "fields": {
+    "nome": "Goiás",
+    "sigla": "GO",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.289Z",
+    "updated_at": "2025-10-05T00:50:13.775Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 10,
+  "fields": {
+    "nome": "Maranhão",
+    "sigla": "MA",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.290Z",
+    "updated_at": "2025-10-05T00:50:13.775Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 11,
+  "fields": {
+    "nome": "Mato Grosso",
+    "sigla": "MT",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.293Z",
+    "updated_at": "2025-10-05T00:50:13.776Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 12,
+  "fields": {
+    "nome": "Mato Grosso do Sul",
+    "sigla": "MS",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.295Z",
+    "updated_at": "2025-10-05T00:50:13.776Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 13,
+  "fields": {
+    "nome": "Minas Gerais",
+    "sigla": "MG",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.297Z",
+    "updated_at": "2025-10-05T00:50:13.777Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 14,
+  "fields": {
+    "nome": "Pará",
+    "sigla": "PA",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.299Z",
+    "updated_at": "2025-10-05T00:50:13.778Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 15,
+  "fields": {
+    "nome": "Paraíba",
+    "sigla": "PB",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.300Z",
+    "updated_at": "2025-10-05T00:50:13.778Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 16,
+  "fields": {
+    "nome": "Paraná",
+    "sigla": "PR",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.301Z",
+    "updated_at": "2025-10-05T00:50:13.779Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 17,
+  "fields": {
+    "nome": "Pernambuco",
+    "sigla": "PE",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.303Z",
+    "updated_at": "2025-10-05T00:50:13.779Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 18,
+  "fields": {
+    "nome": "Piauí",
+    "sigla": "PI",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.304Z",
+    "updated_at": "2025-10-05T00:50:13.780Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 19,
+  "fields": {
+    "nome": "Rio de Janeiro",
+    "sigla": "RJ",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.305Z",
+    "updated_at": "2025-10-05T00:50:13.781Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 20,
+  "fields": {
+    "nome": "Rio Grande do Norte",
+    "sigla": "RN",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.306Z",
+    "updated_at": "2025-10-05T00:50:13.781Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 21,
+  "fields": {
+    "nome": "Rio Grande do Sul",
+    "sigla": "RS",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.310Z",
+    "updated_at": "2025-10-05T00:50:13.782Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 22,
+  "fields": {
+    "nome": "Rondônia",
+    "sigla": "RO",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.313Z",
+    "updated_at": "2025-10-05T00:50:13.783Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 23,
+  "fields": {
+    "nome": "Roraima",
+    "sigla": "RR",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.315Z",
+    "updated_at": "2025-10-05T00:50:13.783Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 24,
+  "fields": {
+    "nome": "Santa Catarina",
+    "sigla": "SC",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.316Z",
+    "updated_at": "2025-10-05T00:50:13.784Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 25,
+  "fields": {
+    "nome": "São Paulo",
+    "sigla": "SP",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.317Z",
+    "updated_at": "2025-10-05T00:50:13.785Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 26,
+  "fields": {
+    "nome": "Sergipe",
+    "sigla": "SE",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.319Z",
+    "updated_at": "2025-10-05T00:50:13.785Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 27,
+  "fields": {
+    "nome": "Tocantins",
+    "sigla": "TO",
+    "pais": 1,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.320Z",
+    "updated_at": "2025-10-05T00:50:13.786Z"
+  }
+},
+{
+  "model": "core.estado",
+  "pk": 39,
+  "fields": {
+    "nome": "Argentina - BA",
+    "sigla": "ARG",
+    "pais": 10,
+    "ativo": true,
+    "created_at": "2025-10-05T01:33:53.388Z",
+    "updated_at": "2025-10-05T01:33:53.388Z"
+  }
+}
+]

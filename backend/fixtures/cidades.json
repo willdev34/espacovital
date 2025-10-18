@@ -1,0 +1,3362 @@
+[
+{
+  "model": "core.cidade",
+  "pk": 1,
+  "fields": {
+    "nome": "Abaetetuba",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.331Z",
+    "updated_at": "2025-10-04T23:17:07.331Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 2,
+  "fields": {
+    "nome": "Açailândia",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.334Z",
+    "updated_at": "2025-10-04T23:17:07.334Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 3,
+  "fields": {
+    "nome": "Águas Claras",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.337Z",
+    "updated_at": "2025-10-04T23:17:07.337Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 4,
+  "fields": {
+    "nome": "Águas Lindas de Goiás",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.339Z",
+    "updated_at": "2025-10-04T23:17:07.339Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 5,
+  "fields": {
+    "nome": "Alto Alegre",
+    "estado": 23,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.343Z",
+    "updated_at": "2025-10-04T23:17:07.343Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 6,
+  "fields": {
+    "nome": "Altos",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.346Z",
+    "updated_at": "2025-10-04T23:17:07.346Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 7,
+  "fields": {
+    "nome": "Alvorada",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.349Z",
+    "updated_at": "2025-10-04T23:17:07.349Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 8,
+  "fields": {
+    "nome": "Ananindeua",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.351Z",
+    "updated_at": "2025-10-04T23:17:07.351Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 9,
+  "fields": {
+    "nome": "Anápolis",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.353Z",
+    "updated_at": "2025-10-04T23:17:07.353Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 10,
+  "fields": {
+    "nome": "Angra dos Reis",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.356Z",
+    "updated_at": "2025-10-04T23:17:07.356Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 11,
+  "fields": {
+    "nome": "Aparecida de Goiânia",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.360Z",
+    "updated_at": "2025-10-04T23:17:07.360Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 12,
+  "fields": {
+    "nome": "Apucarana",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.364Z",
+    "updated_at": "2025-10-04T23:17:07.364Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 13,
+  "fields": {
+    "nome": "Aracaju",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.367Z",
+    "updated_at": "2025-10-04T23:17:07.367Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 14,
+  "fields": {
+    "nome": "Araguaína",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.369Z",
+    "updated_at": "2025-10-04T23:17:07.369Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 15,
+  "fields": {
+    "nome": "Arapiraca",
+    "estado": 2,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.371Z",
+    "updated_at": "2025-10-04T23:17:07.371Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 16,
+  "fields": {
+    "nome": "Araucária",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.373Z",
+    "updated_at": "2025-10-04T23:17:07.373Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 17,
+  "fields": {
+    "nome": "Ariquemes",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.379Z",
+    "updated_at": "2025-10-04T23:17:07.379Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 18,
+  "fields": {
+    "nome": "Assu",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.382Z",
+    "updated_at": "2025-10-04T23:17:07.382Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 19,
+  "fields": {
+    "nome": "Balneário Camboriú",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.384Z",
+    "updated_at": "2025-10-04T23:17:07.384Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 20,
+  "fields": {
+    "nome": "Barra Mansa",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.386Z",
+    "updated_at": "2025-10-04T23:17:07.386Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 21,
+  "fields": {
+    "nome": "Barras",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.389Z",
+    "updated_at": "2025-10-04T23:17:07.389Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 22,
+  "fields": {
+    "nome": "Barreiras",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.393Z",
+    "updated_at": "2025-10-04T23:17:07.393Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 23,
+  "fields": {
+    "nome": "Barueri",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.397Z",
+    "updated_at": "2025-10-04T23:17:07.397Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 24,
+  "fields": {
+    "nome": "Bauru",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.399Z",
+    "updated_at": "2025-10-04T23:17:07.399Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 25,
+  "fields": {
+    "nome": "Bayeux",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.401Z",
+    "updated_at": "2025-10-04T23:17:07.401Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 26,
+  "fields": {
+    "nome": "Belém",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.404Z",
+    "updated_at": "2025-10-04T23:17:07.404Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 27,
+  "fields": {
+    "nome": "Belford Roxo",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.406Z",
+    "updated_at": "2025-10-04T23:17:07.406Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 28,
+  "fields": {
+    "nome": "Belo Horizonte",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.410Z",
+    "updated_at": "2025-10-04T23:17:07.410Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 29,
+  "fields": {
+    "nome": "Betim",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.413Z",
+    "updated_at": "2025-10-04T23:17:07.413Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 30,
+  "fields": {
+    "nome": "Blumenau",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.415Z",
+    "updated_at": "2025-10-04T23:17:07.416Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 31,
+  "fields": {
+    "nome": "Boa Vista",
+    "estado": 23,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.418Z",
+    "updated_at": "2025-10-04T23:17:07.418Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 32,
+  "fields": {
+    "nome": "Bragança",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.420Z",
+    "updated_at": "2025-10-04T23:17:07.420Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 33,
+  "fields": {
+    "nome": "Brasília",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.423Z",
+    "updated_at": "2025-10-04T23:17:07.423Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 34,
+  "fields": {
+    "nome": "Brusque",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.426Z",
+    "updated_at": "2025-10-04T23:17:07.426Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 35,
+  "fields": {
+    "nome": "Cabo de Santo Agostinho",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.429Z",
+    "updated_at": "2025-10-04T23:17:07.429Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 36,
+  "fields": {
+    "nome": "Cabo Frio",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.431Z",
+    "updated_at": "2025-10-04T23:17:07.431Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 37,
+  "fields": {
+    "nome": "Cáceres",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.433Z",
+    "updated_at": "2025-10-04T23:17:07.433Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 38,
+  "fields": {
+    "nome": "Cachoeiro de Itapemirim",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.435Z",
+    "updated_at": "2025-10-04T23:17:07.435Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 39,
+  "fields": {
+    "nome": "Cacoal",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.438Z",
+    "updated_at": "2025-10-04T23:17:07.438Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 40,
+  "fields": {
+    "nome": "Caicó",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.441Z",
+    "updated_at": "2025-10-04T23:17:07.441Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 41,
+  "fields": {
+    "nome": "Cajazeiras",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.445Z",
+    "updated_at": "2025-10-04T23:17:07.445Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 42,
+  "fields": {
+    "nome": "Camaçari",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.448Z",
+    "updated_at": "2025-10-04T23:17:07.448Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 43,
+  "fields": {
+    "nome": "Camaragibe",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.450Z",
+    "updated_at": "2025-10-04T23:17:07.450Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 44,
+  "fields": {
+    "nome": "Cametá",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.453Z",
+    "updated_at": "2025-10-04T23:17:07.453Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 45,
+  "fields": {
+    "nome": "Campina Grande",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.456Z",
+    "updated_at": "2025-10-04T23:17:07.456Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 46,
+  "fields": {
+    "nome": "Campinas",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.459Z",
+    "updated_at": "2025-10-04T23:17:07.459Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 47,
+  "fields": {
+    "nome": "Campo Grande",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.462Z",
+    "updated_at": "2025-10-04T23:17:07.462Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 48,
+  "fields": {
+    "nome": "Campo Maior",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.464Z",
+    "updated_at": "2025-10-04T23:17:07.464Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 49,
+  "fields": {
+    "nome": "Campos dos Goytacazes",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.466Z",
+    "updated_at": "2025-10-04T23:17:07.466Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 50,
+  "fields": {
+    "nome": "Canoas",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.469Z",
+    "updated_at": "2025-10-04T23:17:07.469Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 51,
+  "fields": {
+    "nome": "Caracaraí",
+    "estado": 23,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.471Z",
+    "updated_at": "2025-10-04T23:17:07.471Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 52,
+  "fields": {
+    "nome": "Carapicuíba",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.473Z",
+    "updated_at": "2025-10-04T23:17:07.473Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 53,
+  "fields": {
+    "nome": "Cariacica",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.478Z",
+    "updated_at": "2025-10-04T23:17:07.478Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 54,
+  "fields": {
+    "nome": "Caruaru",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.480Z",
+    "updated_at": "2025-10-04T23:17:07.480Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 55,
+  "fields": {
+    "nome": "Cascavel",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.483Z",
+    "updated_at": "2025-10-04T23:17:07.483Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 56,
+  "fields": {
+    "nome": "Castanhal",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.485Z",
+    "updated_at": "2025-10-04T23:17:07.485Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 57,
+  "fields": {
+    "nome": "Caucaia",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.488Z",
+    "updated_at": "2025-10-04T23:17:07.488Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 58,
+  "fields": {
+    "nome": "Caxias",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.490Z",
+    "updated_at": "2025-10-04T23:17:07.490Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 59,
+  "fields": {
+    "nome": "Caxias do Sul",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.494Z",
+    "updated_at": "2025-10-04T23:17:07.494Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 60,
+  "fields": {
+    "nome": "Ceará-Mirim",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.497Z",
+    "updated_at": "2025-10-04T23:17:07.497Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 61,
+  "fields": {
+    "nome": "Ceilândia",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.500Z",
+    "updated_at": "2025-10-04T23:17:07.500Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 62,
+  "fields": {
+    "nome": "Chapecó",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.502Z",
+    "updated_at": "2025-10-04T23:17:07.502Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 63,
+  "fields": {
+    "nome": "Coari",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.504Z",
+    "updated_at": "2025-10-04T23:17:07.504Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 64,
+  "fields": {
+    "nome": "Codó",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.506Z",
+    "updated_at": "2025-10-04T23:17:07.506Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 65,
+  "fields": {
+    "nome": "Colatina",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.509Z",
+    "updated_at": "2025-10-04T23:17:07.509Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 66,
+  "fields": {
+    "nome": "Colinas do Tocantins",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.512Z",
+    "updated_at": "2025-10-04T23:17:07.512Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 67,
+  "fields": {
+    "nome": "Colombo",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.515Z",
+    "updated_at": "2025-10-04T23:17:07.515Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 68,
+  "fields": {
+    "nome": "Concórdia",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.518Z",
+    "updated_at": "2025-10-04T23:17:07.518Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 69,
+  "fields": {
+    "nome": "Contagem",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.520Z",
+    "updated_at": "2025-10-04T23:17:07.520Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 70,
+  "fields": {
+    "nome": "Corumbá",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.522Z",
+    "updated_at": "2025-10-04T23:17:07.522Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 71,
+  "fields": {
+    "nome": "Crato",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.526Z",
+    "updated_at": "2025-10-04T23:17:07.526Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 72,
+  "fields": {
+    "nome": "Criciúma",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.530Z",
+    "updated_at": "2025-10-04T23:17:07.530Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 73,
+  "fields": {
+    "nome": "Cruzeiro do Sul",
+    "estado": 1,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.532Z",
+    "updated_at": "2025-10-04T23:17:07.532Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 74,
+  "fields": {
+    "nome": "Cuiabá",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.534Z",
+    "updated_at": "2025-10-04T23:17:07.534Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 75,
+  "fields": {
+    "nome": "Curitiba",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.536Z",
+    "updated_at": "2025-10-04T23:17:07.536Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 76,
+  "fields": {
+    "nome": "Diadema",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.538Z",
+    "updated_at": "2025-10-04T23:17:07.538Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 77,
+  "fields": {
+    "nome": "Divinópolis",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.543Z",
+    "updated_at": "2025-10-04T23:17:07.543Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 78,
+  "fields": {
+    "nome": "Dourados",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.547Z",
+    "updated_at": "2025-10-04T23:17:07.547Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 79,
+  "fields": {
+    "nome": "Duque de Caxias",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.549Z",
+    "updated_at": "2025-10-04T23:17:07.549Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 80,
+  "fields": {
+    "nome": "Embu das Artes",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.551Z",
+    "updated_at": "2025-10-04T23:17:07.551Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 81,
+  "fields": {
+    "nome": "Estância",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.553Z",
+    "updated_at": "2025-10-04T23:17:07.553Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 82,
+  "fields": {
+    "nome": "Feira de Santana",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.555Z",
+    "updated_at": "2025-10-04T23:17:07.555Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 83,
+  "fields": {
+    "nome": "Floriano",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.559Z",
+    "updated_at": "2025-10-04T23:17:07.559Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 84,
+  "fields": {
+    "nome": "Florianópolis",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.562Z",
+    "updated_at": "2025-10-04T23:17:07.562Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 85,
+  "fields": {
+    "nome": "Formosa",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.565Z",
+    "updated_at": "2025-10-04T23:17:07.565Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 86,
+  "fields": {
+    "nome": "Fortaleza",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.567Z",
+    "updated_at": "2025-10-04T23:17:07.567Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 87,
+  "fields": {
+    "nome": "Foz do Iguaçu",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.570Z",
+    "updated_at": "2025-10-04T23:17:07.570Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 88,
+  "fields": {
+    "nome": "Franca",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.571Z",
+    "updated_at": "2025-10-04T23:17:07.571Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 89,
+  "fields": {
+    "nome": "Gama",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.575Z",
+    "updated_at": "2025-10-04T23:17:07.575Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 90,
+  "fields": {
+    "nome": "Garanhuns",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.579Z",
+    "updated_at": "2025-10-04T23:17:07.580Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 91,
+  "fields": {
+    "nome": "Goiânia",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.582Z",
+    "updated_at": "2025-10-04T23:17:07.582Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 92,
+  "fields": {
+    "nome": "Governador Valadares",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.584Z",
+    "updated_at": "2025-10-04T23:17:07.584Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 93,
+  "fields": {
+    "nome": "Gravataí",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.587Z",
+    "updated_at": "2025-10-04T23:17:07.587Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 94,
+  "fields": {
+    "nome": "Guajará-Mirim",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.588Z",
+    "updated_at": "2025-10-04T23:17:07.588Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 95,
+  "fields": {
+    "nome": "Guarabira",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.592Z",
+    "updated_at": "2025-10-04T23:17:07.592Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 96,
+  "fields": {
+    "nome": "Guaraí",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.596Z",
+    "updated_at": "2025-10-04T23:17:07.596Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 97,
+  "fields": {
+    "nome": "Guarapari",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.598Z",
+    "updated_at": "2025-10-04T23:17:07.598Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 98,
+  "fields": {
+    "nome": "Guarapuava",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.601Z",
+    "updated_at": "2025-10-04T23:17:07.601Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 99,
+  "fields": {
+    "nome": "Guarujá",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.603Z",
+    "updated_at": "2025-10-04T23:17:07.603Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 100,
+  "fields": {
+    "nome": "Guarulhos",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.605Z",
+    "updated_at": "2025-10-04T23:17:07.605Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 101,
+  "fields": {
+    "nome": "Gurupi",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.609Z",
+    "updated_at": "2025-10-04T23:17:07.609Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 102,
+  "fields": {
+    "nome": "Iguatu",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.612Z",
+    "updated_at": "2025-10-04T23:17:07.612Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 103,
+  "fields": {
+    "nome": "Ilhéus",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.614Z",
+    "updated_at": "2025-10-04T23:17:07.614Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 104,
+  "fields": {
+    "nome": "Imperatriz",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.616Z",
+    "updated_at": "2025-10-04T23:17:07.616Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 105,
+  "fields": {
+    "nome": "Ipatinga",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.619Z",
+    "updated_at": "2025-10-04T23:17:07.619Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 106,
+  "fields": {
+    "nome": "Itabaiana",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.621Z",
+    "updated_at": "2025-10-04T23:17:07.621Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 107,
+  "fields": {
+    "nome": "Itaboraí",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.624Z",
+    "updated_at": "2025-10-04T23:17:07.624Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 108,
+  "fields": {
+    "nome": "Itabuna",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.629Z",
+    "updated_at": "2025-10-04T23:17:07.629Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 109,
+  "fields": {
+    "nome": "Itacoatiara",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.632Z",
+    "updated_at": "2025-10-04T23:17:07.632Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 110,
+  "fields": {
+    "nome": "Itaituba",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.634Z",
+    "updated_at": "2025-10-04T23:17:07.634Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 111,
+  "fields": {
+    "nome": "Itajaí",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.636Z",
+    "updated_at": "2025-10-04T23:17:07.636Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 112,
+  "fields": {
+    "nome": "Itapipoca",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.638Z",
+    "updated_at": "2025-10-04T23:17:07.638Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 113,
+  "fields": {
+    "nome": "Itaquaquecetuba",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.643Z",
+    "updated_at": "2025-10-04T23:17:07.643Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 114,
+  "fields": {
+    "nome": "Jaboatão dos Guararapes",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.646Z",
+    "updated_at": "2025-10-04T23:17:07.646Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 115,
+  "fields": {
+    "nome": "Jaraguá do Sul",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.648Z",
+    "updated_at": "2025-10-04T23:17:07.648Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 116,
+  "fields": {
+    "nome": "Jaru",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.650Z",
+    "updated_at": "2025-10-04T23:17:07.650Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 117,
+  "fields": {
+    "nome": "Jequié",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.652Z",
+    "updated_at": "2025-10-04T23:17:07.652Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 118,
+  "fields": {
+    "nome": "Ji-Paraná",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.655Z",
+    "updated_at": "2025-10-04T23:17:07.655Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 119,
+  "fields": {
+    "nome": "João Pessoa",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.658Z",
+    "updated_at": "2025-10-04T23:17:07.658Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 120,
+  "fields": {
+    "nome": "Joinville",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.661Z",
+    "updated_at": "2025-10-04T23:17:07.661Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 121,
+  "fields": {
+    "nome": "Juazeiro",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.663Z",
+    "updated_at": "2025-10-04T23:17:07.663Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 122,
+  "fields": {
+    "nome": "Juazeiro do Norte",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.665Z",
+    "updated_at": "2025-10-04T23:17:07.666Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 123,
+  "fields": {
+    "nome": "Juiz de Fora",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.668Z",
+    "updated_at": "2025-10-04T23:17:07.668Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 124,
+  "fields": {
+    "nome": "Jundiaí",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.671Z",
+    "updated_at": "2025-10-04T23:17:07.671Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 125,
+  "fields": {
+    "nome": "Lagarto",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.673Z",
+    "updated_at": "2025-10-04T23:17:07.673Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 126,
+  "fields": {
+    "nome": "Lages",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.676Z",
+    "updated_at": "2025-10-04T23:17:07.676Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 127,
+  "fields": {
+    "nome": "Laranjal do Jari",
+    "estado": 3,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.679Z",
+    "updated_at": "2025-10-04T23:17:07.679Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 128,
+  "fields": {
+    "nome": "Lauro de Freitas",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.681Z",
+    "updated_at": "2025-10-04T23:17:07.681Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 129,
+  "fields": {
+    "nome": "Limeira",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.683Z",
+    "updated_at": "2025-10-04T23:17:07.683Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 130,
+  "fields": {
+    "nome": "Linhares",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.685Z",
+    "updated_at": "2025-10-04T23:17:07.685Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 131,
+  "fields": {
+    "nome": "Londrina",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.688Z",
+    "updated_at": "2025-10-04T23:17:07.688Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 132,
+  "fields": {
+    "nome": "Lucas do Rio Verde",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.690Z",
+    "updated_at": "2025-10-04T23:17:07.690Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 133,
+  "fields": {
+    "nome": "Luziânia",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.693Z",
+    "updated_at": "2025-10-04T23:17:07.693Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 134,
+  "fields": {
+    "nome": "Macaé",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.696Z",
+    "updated_at": "2025-10-04T23:17:07.696Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 135,
+  "fields": {
+    "nome": "Macaíba",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.698Z",
+    "updated_at": "2025-10-04T23:17:07.698Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 136,
+  "fields": {
+    "nome": "Macapá",
+    "estado": 3,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.700Z",
+    "updated_at": "2025-10-04T23:17:07.700Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 137,
+  "fields": {
+    "nome": "Maceió",
+    "estado": 2,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.704Z",
+    "updated_at": "2025-10-04T23:17:07.704Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 138,
+  "fields": {
+    "nome": "Magé",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.707Z",
+    "updated_at": "2025-10-04T23:17:07.707Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 139,
+  "fields": {
+    "nome": "Manacapuru",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.712Z",
+    "updated_at": "2025-10-04T23:17:07.712Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 140,
+  "fields": {
+    "nome": "Manaus",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.716Z",
+    "updated_at": "2025-10-04T23:17:07.716Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 141,
+  "fields": {
+    "nome": "Marabá",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.719Z",
+    "updated_at": "2025-10-04T23:17:07.719Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 142,
+  "fields": {
+    "nome": "Maracanaú",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.723Z",
+    "updated_at": "2025-10-04T23:17:07.723Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 143,
+  "fields": {
+    "nome": "Maranguape",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.728Z",
+    "updated_at": "2025-10-04T23:17:07.728Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 144,
+  "fields": {
+    "nome": "Marília",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.730Z",
+    "updated_at": "2025-10-04T23:17:07.730Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 145,
+  "fields": {
+    "nome": "Maringá",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.734Z",
+    "updated_at": "2025-10-04T23:17:07.734Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 146,
+  "fields": {
+    "nome": "Mauá",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.736Z",
+    "updated_at": "2025-10-04T23:17:07.736Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 147,
+  "fields": {
+    "nome": "Miracema do Tocantins",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.739Z",
+    "updated_at": "2025-10-04T23:17:07.739Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 148,
+  "fields": {
+    "nome": "Montes Claros",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.744Z",
+    "updated_at": "2025-10-04T23:17:07.744Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 149,
+  "fields": {
+    "nome": "Mossoró",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.747Z",
+    "updated_at": "2025-10-04T23:17:07.747Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 150,
+  "fields": {
+    "nome": "Natal",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.752Z",
+    "updated_at": "2025-10-04T23:17:07.752Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 151,
+  "fields": {
+    "nome": "Naviraí",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.754Z",
+    "updated_at": "2025-10-04T23:17:07.755Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 152,
+  "fields": {
+    "nome": "Niterói",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.757Z",
+    "updated_at": "2025-10-04T23:17:07.757Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 153,
+  "fields": {
+    "nome": "Nossa Senhora do Socorro",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.762Z",
+    "updated_at": "2025-10-04T23:17:07.762Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 154,
+  "fields": {
+    "nome": "Nova Andradina",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.765Z",
+    "updated_at": "2025-10-04T23:17:07.765Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 155,
+  "fields": {
+    "nome": "Nova Friburgo",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.768Z",
+    "updated_at": "2025-10-04T23:17:07.768Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 156,
+  "fields": {
+    "nome": "Nova Iguaçu",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.770Z",
+    "updated_at": "2025-10-04T23:17:07.770Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 157,
+  "fields": {
+    "nome": "Novo Hamburgo",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.772Z",
+    "updated_at": "2025-10-04T23:17:07.772Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 158,
+  "fields": {
+    "nome": "Oiapoque",
+    "estado": 3,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.776Z",
+    "updated_at": "2025-10-04T23:17:07.776Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 159,
+  "fields": {
+    "nome": "Olinda",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.779Z",
+    "updated_at": "2025-10-04T23:17:07.779Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 160,
+  "fields": {
+    "nome": "Osasco",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.782Z",
+    "updated_at": "2025-10-04T23:17:07.782Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 161,
+  "fields": {
+    "nome": "Paço do Lumiar",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.784Z",
+    "updated_at": "2025-10-04T23:17:07.784Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 162,
+  "fields": {
+    "nome": "Palhoça",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.787Z",
+    "updated_at": "2025-10-04T23:17:07.787Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 163,
+  "fields": {
+    "nome": "Palmas",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.789Z",
+    "updated_at": "2025-10-04T23:17:07.789Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 164,
+  "fields": {
+    "nome": "Palmeira dos Índios",
+    "estado": 2,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.793Z",
+    "updated_at": "2025-10-04T23:17:07.793Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 165,
+  "fields": {
+    "nome": "Paraíso do Tocantins",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.796Z",
+    "updated_at": "2025-10-04T23:17:07.796Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 166,
+  "fields": {
+    "nome": "Paranaguá",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.798Z",
+    "updated_at": "2025-10-04T23:17:07.798Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 167,
+  "fields": {
+    "nome": "Parauapebas",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.801Z",
+    "updated_at": "2025-10-04T23:17:07.801Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 168,
+  "fields": {
+    "nome": "Parintins",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.803Z",
+    "updated_at": "2025-10-04T23:17:07.803Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 169,
+  "fields": {
+    "nome": "Parnaíba",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.804Z",
+    "updated_at": "2025-10-04T23:17:07.804Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 170,
+  "fields": {
+    "nome": "Parnamirim",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.808Z",
+    "updated_at": "2025-10-04T23:17:07.809Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 171,
+  "fields": {
+    "nome": "Passo Fundo",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.812Z",
+    "updated_at": "2025-10-04T23:17:07.812Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 172,
+  "fields": {
+    "nome": "Patos",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.815Z",
+    "updated_at": "2025-10-04T23:17:07.815Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 173,
+  "fields": {
+    "nome": "Patos de Minas",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.817Z",
+    "updated_at": "2025-10-04T23:17:07.817Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 174,
+  "fields": {
+    "nome": "Paulista",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.820Z",
+    "updated_at": "2025-10-04T23:17:07.820Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 175,
+  "fields": {
+    "nome": "Pelotas",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.821Z",
+    "updated_at": "2025-10-04T23:17:07.821Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 176,
+  "fields": {
+    "nome": "Penedo",
+    "estado": 2,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.828Z",
+    "updated_at": "2025-10-04T23:17:07.828Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 177,
+  "fields": {
+    "nome": "Petrolina",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.830Z",
+    "updated_at": "2025-10-04T23:17:07.830Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 178,
+  "fields": {
+    "nome": "Petrópolis",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.833Z",
+    "updated_at": "2025-10-04T23:17:07.833Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 179,
+  "fields": {
+    "nome": "Picos",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.835Z",
+    "updated_at": "2025-10-04T23:17:07.835Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 180,
+  "fields": {
+    "nome": "Pinhais",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.838Z",
+    "updated_at": "2025-10-04T23:17:07.838Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 181,
+  "fields": {
+    "nome": "Piracicaba",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.840Z",
+    "updated_at": "2025-10-04T23:17:07.840Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 182,
+  "fields": {
+    "nome": "Piripiri",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.846Z",
+    "updated_at": "2025-10-04T23:17:07.846Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 183,
+  "fields": {
+    "nome": "Planaltina",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.848Z",
+    "updated_at": "2025-10-04T23:17:07.848Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 184,
+  "fields": {
+    "nome": "Poços de Caldas",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.851Z",
+    "updated_at": "2025-10-04T23:17:07.851Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 185,
+  "fields": {
+    "nome": "Ponta Grossa",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.853Z",
+    "updated_at": "2025-10-04T23:17:07.853Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 186,
+  "fields": {
+    "nome": "Ponta Porã",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.856Z",
+    "updated_at": "2025-10-04T23:17:07.856Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 187,
+  "fields": {
+    "nome": "Porto Alegre",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.861Z",
+    "updated_at": "2025-10-04T23:17:07.861Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 188,
+  "fields": {
+    "nome": "Porto Nacional",
+    "estado": 27,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.864Z",
+    "updated_at": "2025-10-04T23:17:07.864Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 189,
+  "fields": {
+    "nome": "Porto Seguro",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.867Z",
+    "updated_at": "2025-10-04T23:17:07.867Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 190,
+  "fields": {
+    "nome": "Porto Velho",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.870Z",
+    "updated_at": "2025-10-04T23:17:07.870Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 191,
+  "fields": {
+    "nome": "Pouso Alegre",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.872Z",
+    "updated_at": "2025-10-04T23:17:07.872Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 192,
+  "fields": {
+    "nome": "Quixadá",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.875Z",
+    "updated_at": "2025-10-04T23:17:07.875Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 193,
+  "fields": {
+    "nome": "Recife",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.879Z",
+    "updated_at": "2025-10-04T23:17:07.879Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 194,
+  "fields": {
+    "nome": "Ribeirão das Neves",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.881Z",
+    "updated_at": "2025-10-04T23:17:07.881Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 195,
+  "fields": {
+    "nome": "Ribeirão Preto",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.884Z",
+    "updated_at": "2025-10-04T23:17:07.884Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 196,
+  "fields": {
+    "nome": "Rio Branco",
+    "estado": 1,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.886Z",
+    "updated_at": "2025-10-04T23:17:07.886Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 197,
+  "fields": {
+    "nome": "Rio de Janeiro",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.888Z",
+    "updated_at": "2025-10-04T23:17:07.888Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 198,
+  "fields": {
+    "nome": "Rio Grande",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.892Z",
+    "updated_at": "2025-10-04T23:17:07.892Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 199,
+  "fields": {
+    "nome": "Rio Largo",
+    "estado": 2,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.896Z",
+    "updated_at": "2025-10-04T23:17:07.896Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 200,
+  "fields": {
+    "nome": "Rio Verde",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.898Z",
+    "updated_at": "2025-10-04T23:17:07.898Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 201,
+  "fields": {
+    "nome": "Rolim de Moura",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.900Z",
+    "updated_at": "2025-10-04T23:17:07.900Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 202,
+  "fields": {
+    "nome": "Rondonópolis",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.903Z",
+    "updated_at": "2025-10-04T23:17:07.903Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 203,
+  "fields": {
+    "nome": "Rorainópolis",
+    "estado": 23,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.905Z",
+    "updated_at": "2025-10-04T23:17:07.905Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 204,
+  "fields": {
+    "nome": "Salvador",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.909Z",
+    "updated_at": "2025-10-04T23:17:07.909Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 205,
+  "fields": {
+    "nome": "Samambaia",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.912Z",
+    "updated_at": "2025-10-04T23:17:07.912Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 206,
+  "fields": {
+    "nome": "Santa Cruz do Sul",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.914Z",
+    "updated_at": "2025-10-04T23:17:07.914Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 207,
+  "fields": {
+    "nome": "Santa Luzia",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.916Z",
+    "updated_at": "2025-10-04T23:17:07.916Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 208,
+  "fields": {
+    "nome": "Santa Maria",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.918Z",
+    "updated_at": "2025-10-04T23:17:07.918Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 209,
+  "fields": {
+    "nome": "Santa Maria",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.921Z",
+    "updated_at": "2025-10-04T23:17:07.921Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 210,
+  "fields": {
+    "nome": "Santa Rita",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.924Z",
+    "updated_at": "2025-10-04T23:17:07.924Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 211,
+  "fields": {
+    "nome": "Santana",
+    "estado": 3,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.927Z",
+    "updated_at": "2025-10-04T23:17:07.927Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 212,
+  "fields": {
+    "nome": "Santarém",
+    "estado": 14,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.930Z",
+    "updated_at": "2025-10-04T23:17:07.930Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 213,
+  "fields": {
+    "nome": "Santo André",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.932Z",
+    "updated_at": "2025-10-04T23:17:07.932Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 214,
+  "fields": {
+    "nome": "Santos",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.935Z",
+    "updated_at": "2025-10-04T23:17:07.935Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 215,
+  "fields": {
+    "nome": "São Bernardo do Campo",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.937Z",
+    "updated_at": "2025-10-04T23:17:07.937Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 216,
+  "fields": {
+    "nome": "São Carlos",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.939Z",
+    "updated_at": "2025-10-04T23:17:07.939Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 217,
+  "fields": {
+    "nome": "São Cristóvão",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.943Z",
+    "updated_at": "2025-10-04T23:17:07.943Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 218,
+  "fields": {
+    "nome": "São Gonçalo",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.946Z",
+    "updated_at": "2025-10-04T23:17:07.946Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 219,
+  "fields": {
+    "nome": "São Gonçalo do Amarante",
+    "estado": 20,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.947Z",
+    "updated_at": "2025-10-04T23:17:07.947Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 220,
+  "fields": {
+    "nome": "São João de Meriti",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.949Z",
+    "updated_at": "2025-10-04T23:17:07.949Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 221,
+  "fields": {
+    "nome": "São José",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.952Z",
+    "updated_at": "2025-10-04T23:17:07.952Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 222,
+  "fields": {
+    "nome": "São José de Ribamar",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.954Z",
+    "updated_at": "2025-10-04T23:17:07.954Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 223,
+  "fields": {
+    "nome": "São José do Rio Preto",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.957Z",
+    "updated_at": "2025-10-04T23:17:07.957Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 224,
+  "fields": {
+    "nome": "São José dos Campos",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.961Z",
+    "updated_at": "2025-10-04T23:17:07.961Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 225,
+  "fields": {
+    "nome": "São José dos Pinhais",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.963Z",
+    "updated_at": "2025-10-04T23:17:07.963Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 226,
+  "fields": {
+    "nome": "São Leopoldo",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.965Z",
+    "updated_at": "2025-10-04T23:17:07.965Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 227,
+  "fields": {
+    "nome": "São Luís",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.969Z",
+    "updated_at": "2025-10-04T23:17:07.969Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 228,
+  "fields": {
+    "nome": "São Paulo",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.971Z",
+    "updated_at": "2025-10-04T23:17:07.971Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 229,
+  "fields": {
+    "nome": "São Vicente",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.973Z",
+    "updated_at": "2025-10-04T23:17:07.973Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 230,
+  "fields": {
+    "nome": "Sapucaia do Sul",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.976Z",
+    "updated_at": "2025-10-04T23:17:07.976Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 231,
+  "fields": {
+    "nome": "Sena Madureira",
+    "estado": 1,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.979Z",
+    "updated_at": "2025-10-04T23:17:07.979Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 232,
+  "fields": {
+    "nome": "Serra",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.981Z",
+    "updated_at": "2025-10-04T23:17:07.981Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 233,
+  "fields": {
+    "nome": "Sete Lagoas",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.984Z",
+    "updated_at": "2025-10-04T23:17:07.984Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 234,
+  "fields": {
+    "nome": "Sidrolândia",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.986Z",
+    "updated_at": "2025-10-04T23:17:07.986Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 235,
+  "fields": {
+    "nome": "Simão Dias",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.988Z",
+    "updated_at": "2025-10-04T23:17:07.988Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 236,
+  "fields": {
+    "nome": "Sinop",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.992Z",
+    "updated_at": "2025-10-04T23:17:07.992Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 237,
+  "fields": {
+    "nome": "Sobral",
+    "estado": 6,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.995Z",
+    "updated_at": "2025-10-04T23:17:07.995Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 238,
+  "fields": {
+    "nome": "Sorocaba",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:07.998Z",
+    "updated_at": "2025-10-04T23:17:07.998Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 239,
+  "fields": {
+    "nome": "Sorriso",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.000Z",
+    "updated_at": "2025-10-04T23:17:08.000Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 240,
+  "fields": {
+    "nome": "Sousa",
+    "estado": 15,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.003Z",
+    "updated_at": "2025-10-04T23:17:08.003Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 241,
+  "fields": {
+    "nome": "Sumaré",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.005Z",
+    "updated_at": "2025-10-04T23:17:08.005Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 242,
+  "fields": {
+    "nome": "Suzano",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.008Z",
+    "updated_at": "2025-10-04T23:17:08.008Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 243,
+  "fields": {
+    "nome": "Taboão da Serra",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.011Z",
+    "updated_at": "2025-10-04T23:17:08.011Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 244,
+  "fields": {
+    "nome": "Taguatinga",
+    "estado": 7,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.013Z",
+    "updated_at": "2025-10-04T23:17:08.013Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 245,
+  "fields": {
+    "nome": "Tangará da Serra",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.016Z",
+    "updated_at": "2025-10-04T23:17:08.016Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 246,
+  "fields": {
+    "nome": "Tarauacá",
+    "estado": 1,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.018Z",
+    "updated_at": "2025-10-04T23:17:08.018Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 247,
+  "fields": {
+    "nome": "Taubaté",
+    "estado": 25,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.020Z",
+    "updated_at": "2025-10-04T23:17:08.020Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 248,
+  "fields": {
+    "nome": "Tefé",
+    "estado": 4,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.022Z",
+    "updated_at": "2025-10-04T23:17:08.022Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 249,
+  "fields": {
+    "nome": "Teixeira de Freitas",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.027Z",
+    "updated_at": "2025-10-04T23:17:08.027Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 250,
+  "fields": {
+    "nome": "Teófilo Otoni",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.030Z",
+    "updated_at": "2025-10-04T23:17:08.030Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 251,
+  "fields": {
+    "nome": "Teresina",
+    "estado": 18,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.033Z",
+    "updated_at": "2025-10-04T23:17:08.033Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 252,
+  "fields": {
+    "nome": "Teresópolis",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.035Z",
+    "updated_at": "2025-10-04T23:17:08.035Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 253,
+  "fields": {
+    "nome": "Timon",
+    "estado": 10,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.037Z",
+    "updated_at": "2025-10-04T23:17:08.037Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 254,
+  "fields": {
+    "nome": "Tobias Barreto",
+    "estado": 26,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.039Z",
+    "updated_at": "2025-10-04T23:17:08.039Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 255,
+  "fields": {
+    "nome": "Toledo",
+    "estado": 16,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.044Z",
+    "updated_at": "2025-10-04T23:17:08.044Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 256,
+  "fields": {
+    "nome": "Três Lagoas",
+    "estado": 12,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.047Z",
+    "updated_at": "2025-10-04T23:17:08.047Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 257,
+  "fields": {
+    "nome": "Trindade",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.050Z",
+    "updated_at": "2025-10-04T23:17:08.050Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 258,
+  "fields": {
+    "nome": "Tubarão",
+    "estado": 24,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.052Z",
+    "updated_at": "2025-10-04T23:17:08.052Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 259,
+  "fields": {
+    "nome": "Uberaba",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.054Z",
+    "updated_at": "2025-10-04T23:17:08.054Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 260,
+  "fields": {
+    "nome": "Uberlândia",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.056Z",
+    "updated_at": "2025-10-04T23:17:08.056Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 261,
+  "fields": {
+    "nome": "Uruguaiana",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.062Z",
+    "updated_at": "2025-10-04T23:17:08.062Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 262,
+  "fields": {
+    "nome": "Valparaíso de Goiás",
+    "estado": 9,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.064Z",
+    "updated_at": "2025-10-04T23:17:08.064Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 263,
+  "fields": {
+    "nome": "Varginha",
+    "estado": 13,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.067Z",
+    "updated_at": "2025-10-04T23:17:08.067Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 264,
+  "fields": {
+    "nome": "Várzea Grande",
+    "estado": 11,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.070Z",
+    "updated_at": "2025-10-04T23:17:08.070Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 265,
+  "fields": {
+    "nome": "Viamão",
+    "estado": 21,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.072Z",
+    "updated_at": "2025-10-04T23:17:08.072Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 266,
+  "fields": {
+    "nome": "Vila Velha",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.075Z",
+    "updated_at": "2025-10-04T23:17:08.075Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 267,
+  "fields": {
+    "nome": "Vilhena",
+    "estado": 22,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.079Z",
+    "updated_at": "2025-10-04T23:17:08.079Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 268,
+  "fields": {
+    "nome": "Vitória",
+    "estado": 8,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.082Z",
+    "updated_at": "2025-10-04T23:17:08.082Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 269,
+  "fields": {
+    "nome": "Vitória da Conquista",
+    "estado": 5,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.084Z",
+    "updated_at": "2025-10-04T23:17:08.084Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 270,
+  "fields": {
+    "nome": "Vitória de Santo Antão",
+    "estado": 17,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.086Z",
+    "updated_at": "2025-10-04T23:17:08.086Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 271,
+  "fields": {
+    "nome": "Volta Redonda",
+    "estado": 19,
+    "pais": null,
+    "ativo": true,
+    "created_at": "2025-10-04T23:17:08.088Z",
+    "updated_at": "2025-10-04T23:17:08.088Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 273,
+  "fields": {
+    "nome": "Lisboa",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.883Z",
+    "updated_at": "2025-10-05T01:53:55.883Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 274,
+  "fields": {
+    "nome": "Porto",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.886Z",
+    "updated_at": "2025-10-05T01:53:55.886Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 275,
+  "fields": {
+    "nome": "Braga",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.887Z",
+    "updated_at": "2025-10-05T01:53:55.887Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 276,
+  "fields": {
+    "nome": "Coimbra",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.891Z",
+    "updated_at": "2025-10-05T01:53:55.891Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 277,
+  "fields": {
+    "nome": "Faro",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.895Z",
+    "updated_at": "2025-10-05T01:53:55.895Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 278,
+  "fields": {
+    "nome": "Aveiro",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.897Z",
+    "updated_at": "2025-10-05T01:53:55.897Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 279,
+  "fields": {
+    "nome": "Setúbal",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.899Z",
+    "updated_at": "2025-10-05T01:53:55.899Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 280,
+  "fields": {
+    "nome": "Funchal",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.900Z",
+    "updated_at": "2025-10-05T01:53:55.900Z"
+  }
+},
+{
+  "model": "core.cidade",
+  "pk": 281,
+  "fields": {
+    "nome": "Ponta Delgada",
+    "estado": null,
+    "pais": 3,
+    "ativo": true,
+    "created_at": "2025-10-05T01:53:55.902Z",
+    "updated_at": "2025-10-05T01:53:55.902Z"
+  }
+}
+]

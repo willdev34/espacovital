@@ -18,6 +18,9 @@ class Command(BaseCommand):
         """
         # Lista de fixtures na ordem correta
         fixtures = [
+            ('paises.json', 'Países'),
+            ('estados.json', 'Estados'),
+            ('cidades.json', 'Cidades'),
             ('users.json', 'Usuários'),
             ('especialidades.json', 'Especialidades'),
             ('terapeutas.json', 'Terapeutas'),

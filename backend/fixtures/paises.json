@@ -1,0 +1,182 @@
+[
+{
+  "model": "core.pais",
+  "pk": 1,
+  "fields": {
+    "nome": "Brasil",
+    "codigo": "BRA",
+    "ddi": "+55",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.734Z",
+    "updated_at": "2025-10-05T00:50:13.734Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 2,
+  "fields": {
+    "nome": "Estados Unidos",
+    "codigo": "USA",
+    "ddi": "+1",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.740Z",
+    "updated_at": "2025-10-05T00:50:13.740Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 3,
+  "fields": {
+    "nome": "Portugal",
+    "codigo": "PRT",
+    "ddi": "+351",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.743Z",
+    "updated_at": "2025-10-05T00:50:13.743Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 4,
+  "fields": {
+    "nome": "Espanha",
+    "codigo": "ESP",
+    "ddi": "+34",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.744Z",
+    "updated_at": "2025-10-05T00:50:13.744Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 5,
+  "fields": {
+    "nome": "França",
+    "codigo": "FRA",
+    "ddi": "+33",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.746Z",
+    "updated_at": "2025-10-05T00:50:13.746Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 6,
+  "fields": {
+    "nome": "Reino Unido",
+    "codigo": "GBR",
+    "ddi": "+44",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.747Z",
+    "updated_at": "2025-10-05T00:50:13.747Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 7,
+  "fields": {
+    "nome": "Alemanha",
+    "codigo": "DEU",
+    "ddi": "+49",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.749Z",
+    "updated_at": "2025-10-05T00:50:13.749Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 8,
+  "fields": {
+    "nome": "Itália",
+    "codigo": "ITA",
+    "ddi": "+39",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.750Z",
+    "updated_at": "2025-10-05T00:50:13.750Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 9,
+  "fields": {
+    "nome": "Canadá",
+    "codigo": "CAN",
+    "ddi": "+1",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.751Z",
+    "updated_at": "2025-10-05T00:50:13.751Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 10,
+  "fields": {
+    "nome": "Argentina",
+    "codigo": "ARG",
+    "ddi": "+54",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.753Z",
+    "updated_at": "2025-10-05T00:50:13.753Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 11,
+  "fields": {
+    "nome": "Uruguai",
+    "codigo": "URY",
+    "ddi": "+598",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.756Z",
+    "updated_at": "2025-10-05T00:50:13.756Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 12,
+  "fields": {
+    "nome": "Chile",
+    "codigo": "CHL",
+    "ddi": "+56",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.758Z",
+    "updated_at": "2025-10-05T00:50:13.758Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 13,
+  "fields": {
+    "nome": "Austrália",
+    "codigo": "AUS",
+    "ddi": "+61",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.759Z",
+    "updated_at": "2025-10-05T00:50:13.759Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 14,
+  "fields": {
+    "nome": "Japão",
+    "codigo": "JPN",
+    "ddi": "+81",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.760Z",
+    "updated_at": "2025-10-05T00:50:13.760Z"
+  }
+},
+{
+  "model": "core.pais",
+  "pk": 15,
+  "fields": {
+    "nome": "México",
+    "codigo": "MEX",
+    "ddi": "+52",
+    "ativo": true,
+    "created_at": "2025-10-05T00:50:13.762Z",
+    "updated_at": "2025-10-05T00:50:13.762Z"
+  }
+}
+]
