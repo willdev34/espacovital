@@ -1,0 +1,59 @@
+﻿ Rodando em modo DESENVOLVIMENTO
+[
+{
+  "model": "espacos.espaco",
+  "pk": 1,
+  "fields": {
+    "created_at": "2025-10-04T15:22:24.861Z",
+    "updated_at": "2025-10-18T00:42:28.716Z",
+    "nome": "Espa├ºo Vila Madalena",
+    "slug": "espaco-vila-madalena-sao-paulo",
+    "descricao_breve": "O Espa├ºo Vila Madalena, em S├úo Paulo, ├® um centro de terapias t├óntricas coordenado por Evandro Palma. Localizado pr├│ximo ao metr├┤ Vila Madalena, oferece sess├Áes de massagem t├óntrica, cursos, workshops e encontros de Tantra, para indiv├¡duos e casais.",
+    "descricao_completa": "O que oferece\r\n\r\nTerapia T├óntrica: sess├Áes privativas terap├¬uticas de massagem t├óntrica, com ambientes preparados para confian├ºa, respeito e intimidade. \r\n\r\nForma├º├Áes e Workshops de Tantra: para casais, individualmente, com v├írios temas, como ÔÇ£Tantra para CasaisÔÇØ, ÔÇ£Caminho do AmorÔÇØ, encontros ligados ├á respira├º├úo, medita├º├úo ativa etc. \r\n\r\nEventos regulares: encontros de respira├º├úo circular, Forr├│ Consentimento, entre outros. \r\n\r\nFilosofia e valores\r\n\r\nBusca resgatar vitalidade e poder pessoal por meio do corpo, atrav├®s de massagens e medita├º├Áes criadas para esse prop├│sito. \r\n\r\nO corpo ├® visto como possuidor de chaves para viver com mais prazer e alegria ÔÇö h├í um forte apelo para autoconhecimento, conex├úo corpo-mente, autenticidade e liberdade sexual consciente. \r\n\r\nTerapeutas\r\n\r\nEvandro Palma tem longa trajet├│ria: trabalha h├í v├írios anos com desenvolvimento de mulheres e reconex├úo de casais; forma├º├úo em Psicologia. \r\nRede Metamorfose\r\n\r\nP├║blico-alvo\r\n\r\nIndiv├¡duos interessados em terapia corporal, tantra para casais, pr├íticas de expans├úo da consci├¬ncia corporal, prazer consciente.\r\n\r\nQuem busca reconectar-se com o pr├│prio corpo, superar bloqueios, expandir a sexualidade de forma saud├ível e consciente.\r\n\r\nInfraestrutura e acessibilidade\r\n\r\nLocal de f├ícil acesso (metr├┤ Vila Madalena). \r\n\r\nContatos via WhatsApp, e-mail e redes sociais.\r\n\r\nAmbiente pautado no respeito, confian├ºa e na reconex├úo com o corpo, com foco em vitalidade, autoconhecimento e prazer consciente.",
+    "pais": 1,
+    "estado": 25,
+    "cidade": 228,
+    "cidade_texto": "",
+    "endereco": "Rua Padre Agostinho Mendicute, 172",
+    "cep": "01257-090",
+    "bairro": "Vila Madalena",
+    "tipo_espaco": "centro_holistico",
+    "aceita_locacao": true,
+    "tem_acessibilidade": true,
+    "disponibilidade": [
+      "manha",
+      "tarde",
+      "noite",
+      "finais_de_semana"
+    ],
+    "telefone": "(11) 95984-6319",
+    "email": "evandro.palma.tantra@gmail.com",
+    "whatsapp": "(11) 95984-6319",
+    "website": "",
+    "instagram": "https://www.instagram.com/evandropalma/",
+    "is_verificado": true,
+    "is_premium": true,
+    "is_destaque": true,
+    "data_verificacao": null,
+    "is_active": true,
+    "foto_principal": "espacos/fotos/Captura_de_tela_2025-10-04_121956.png",
+    "foto_galeria": [],
+    "responsavel": 1,
+    "comodidades": [
+      1,
+      9,
+      8,
+      7,
+      4,
+      3,
+      6,
+      17,
+      12,
+      14,
+      10,
+      15
+    ],
+    "especialidades": []
+  }
+}
+]

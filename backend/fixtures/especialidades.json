@@ -1,0 +1,495 @@
+[
+{
+  "model": "core.especialidade",
+  "pk": 1,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Massoterapia",
+    "slug": "massoterapia",
+    "descricao_curta": "Técnicas de massagem para relaxamento, alívio de dores e melhoria da circulação",
+    "descricao_completa": "A massoterapia é uma técnica terapêutica que utiliza manipulações manuais dos tecidos moles do corpo para promover relaxamento, alívio da dor e melhoria da circulação sanguínea. Através de diferentes técnicas de pressão e movimento, a massoterapia ajuda a liberar tensões musculares, reduzir o estresse e promover o bem-estar geral.",
+    "categoria": "",
+    "cor_destaque": "#0B5259",
+    "ordem": 1,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 2,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Reiki",
+    "slug": "reiki",
+    "descricao_curta": "Terapia energética japonesa que promove relaxamento e equilíbrio através da imposição de mãos",
+    "descricao_completa": "O Reiki é uma técnica japonesa de cura energética que utiliza a imposição de mãos para canalizar energia vital universal. Esta prática milenar promove o relaxamento profundo, reduz o estresse e auxilia nos processos naturais de cura do corpo. O Reiki trabalha com os chakras e o campo energético, proporcionando equilíbrio e harmonia.",
+    "categoria": "",
+    "cor_destaque": "#56C596",
+    "ordem": 2,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 3,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Yoga",
+    "slug": "yoga",
+    "descricao_curta": "Prática que combina posturas físicas, respiração e meditação para bem-estar integral",
+    "descricao_completa": "O Yoga é uma prática milenar que combina posturas físicas (asanas), técnicas de respiração (pranayamas) e meditação para promover o equilíbrio entre corpo, mente e espírito. Através da prática regular, o Yoga desenvolve flexibilidade, força, concentração e paz interior, contribuindo significativamente para a saúde física e mental.",
+    "categoria": "",
+    "cor_destaque": "#FFB4A2",
+    "ordem": 3,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 4,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Aromaterapia",
+    "slug": "aromaterapia",
+    "descricao_curta": "Uso de óleos essenciais para promover saúde física, mental e emocional",
+    "descricao_completa": "A aromaterapia é uma terapia holística que utiliza óleos essenciais extraídos de plantas para promover saúde física, mental e emocional. Os óleos podem ser aplicados através de massagem, inalação ou banhos aromáticos. Esta prática milenar ajuda a reduzir o estresse, melhorar o humor, aliviar dores e promover o relaxamento profundo.",
+    "categoria": "",
+    "cor_destaque": "#D8E2DC",
+    "ordem": 4,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 5,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Cristaloterapia",
+    "slug": "cristaloterapia",
+    "descricao_curta": "Terapia vibracional que utiliza cristais para promover cura e equilíbrio energético",
+    "descricao_completa": "A Cristaloterapia é uma terapia vibracional que utiliza as propriedades energéticas dos cristais e pedras preciosas para promover cura e equilíbrio. Cada cristal possui frequências específicas que interagem com os chakras e o campo energético humano, ajudando a desbloquear energias estagnadas, promover clareza mental e estimular os processos naturais de cura do organismo.",
+    "categoria": "",
+    "cor_destaque": "#E8B4CB",
+    "ordem": 5,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 6,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Terapia Tântrica",
+    "slug": "terapia-tantrica",
+    "descricao_curta": "A Terapia Tântrica promove autoconhecimento, cura emocional e expansão da consciência através de práticas sagradas ancestrais.",
+    "descricao_completa": "A Terapia Tântrica é uma abordagem terapêutica profunda que integra os ensinamentos milenares do Tantra para promover cura emocional, autoconhecimento e expansão da consciência. Vai muito além dos aspectos sexuais, trabalhando com a integração do masculino e feminino sagrados, desbloqueio de traumas, desenvolvimento da presença e conexão com a energia vital. Através de técnicas de respiração consciente, meditação, movimento corporal e trabalho energético, esta terapia facilita a transformação de padrões limitantes, promove maior intimidade consigo mesmo e com outros, e desperta o potencial criativo e espiritual latente.",
+    "categoria": "",
+    "cor_destaque": "#C44569",
+    "ordem": 6,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 7,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Thetahealing",
+    "slug": "thetahealing",
+    "descricao_curta": "Thetahealing é uma técnica de cura energética que trabalha com ondas cerebrais theta para transformar crenças limitantes.",
+    "descricao_completa": "O Thetahealing é uma técnica de cura holística desenvolvida por Vianna Stibal que combina ciência e espiritualidade para facilitar cura física, emocional, mental e espiritual. Através da conexão com as ondas cerebrais theta (estado profundo de meditação), o terapeuta acessa a energia criativa universal para identificar e transformar crenças limitantes, padrões negativos e bloqueios energéticos. Esta prática trabalha com a reprogramação do subconsciente, permitindo mudanças profundas e duradouras na vida da pessoa. O Thetahealing é eficaz para tratar traumas, fobias, depressão, ansiedade, questões de relacionamento e manifestação de objetivos, promovendo maior clareza, autoestima e bem-estar geral.",
+    "categoria": "",
+    "cor_destaque": "#4A90E2",
+    "ordem": 7,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 8,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Pompoarismo Tântrico",
+    "slug": "pompoarismo-tantrico",
+    "descricao_curta": "É um caminho de autoconhecimento e vitalidade sexual, que trabalha corpo, energia e presença de forma integrada.",
+    "descricao_completa": "É uma prática que une as técnicas tradicionais de pompoarismo (exercícios para fortalecer, controlar e sensibilizar a musculatura pélvica) com a visão do Tantra.\r\nNo contexto tântrico, ele vai além do aspecto físico: busca expandir a consciência corporal, intensificar a energia sexual, aumentar o prazer e promover uma conexão mais profunda consigo mesmo(a) e com o(a) parceiro(a).",
+    "categoria": "",
+    "cor_destaque": "#C71585",
+    "ordem": 14,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 9,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Acupuntura",
+    "slug": "acupuntura",
+    "descricao_curta": "Acupuntura é uma terapia chinesa que usa agulhas em pontos do corpo para aliviar dores e equilibrar a energia.",
+    "descricao_completa": "A acupuntura é uma técnica milenar da Medicina Tradicional Chinesa que busca promover equilíbrio físico, mental e energético. Baseia-se no princípio de que a energia vital, chamada Qi, circula pelo corpo através de canais conhecidos como meridianos. Quando esse fluxo sofre bloqueios ou desequilíbrios, podem surgir dores, doenças ou distúrbios emocionais.\r\n\r\nO tratamento consiste na aplicação de agulhas muito finas e estéreis em pontos específicos do corpo, selecionados de acordo com a queixa ou necessidade de cada pessoa. Esses pontos têm ligação direta com órgãos, sistemas e funções vitais, estimulando o organismo a restaurar seu equilíbrio natural.\r\n\r\nAlém de auxiliar no alívio de dores crônicas e agudas, a acupuntura é amplamente utilizada para tratar ansiedade, insônia, estresse, problemas digestivos, respiratórios, hormonais e até como apoio em tratamentos de dependências. Reconhecida pela Organização Mundial da Saúde (OMS), é considerada uma prática segura quando realizada por profissionais qualificados.\r\n\r\nNo Ocidente, a acupuntura também ganhou respaldo científico, sendo frequentemente integrada a tratamentos médicos convencionais como uma terapia complementar eficaz e natural.",
+    "categoria": "",
+    "cor_destaque": "#DC143C",
+    "ordem": 29,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 10,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Ayurveda",
+    "slug": "ayurveda",
+    "descricao_curta": "O Ayurveda é uma medicina tradicional indiana que promove equilíbrio entre corpo, mente e espírito através de hábitos saudáveis.",
+    "descricao_completa": "O ChatGPT disse:\r\n\r\nO Ayurveda é um sistema de saúde e filosofia de vida originado na Índia há mais de 5 mil anos, considerado um dos mais antigos métodos de cuidado integral do ser humano. A palavra vem do sânscrito e significa “ciência da vida” (Ayur = vida, Veda = conhecimento).\r\n\r\nSua base é o entendimento de que cada pessoa possui uma constituição única, chamada dosha (Vata, Pitta e Kapha), formada pela combinação de elementos naturais (ar, fogo, água, terra e éter). O equilíbrio ou desequilíbrio desses doshas influencia diretamente na saúde física, mental e emocional.\r\n\r\nAs práticas ayurvédicas incluem:\r\n\r\nAlimentação personalizada de acordo com a constituição individual;\r\n\r\nUso de ervas e especiarias medicinais;\r\n\r\nRotinas de autocuidado (dinacharya), como óleo no corpo (abhyanga), práticas de purificação e meditação;\r\n\r\nExercícios respiratórios e yoga, para fortalecer corpo e mente;\r\n\r\nTerapias de desintoxicação (Panchakarma), que ajudam a eliminar toxinas e restaurar a vitalidade.\r\n\r\nMais do que tratar sintomas, o Ayurveda busca prevenir doenças e promover longevidade, incentivando um estilo de vida em harmonia com a natureza e com a essência individual de cada pessoa. Reconhecido pela OMS como sistema de saúde tradicional, hoje é praticado em todo o mundo como complemento à medicina moderna.",
+    "categoria": "",
+    "cor_destaque": "#CD853F",
+    "ordem": 27,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 11,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Remédios florais de Bach",
+    "slug": "remedios-florais-de-bach",
+    "descricao_curta": "Os florais de Bach são essências naturais desenvolvidas pelo Dr. Edward Bach que atuam no equilíbrio das emoções, ajudando a reduzir ansiedade, medo, estresse e promover bem-estar mental e emocional.",
+    "descricao_completa": "Os remédios florais de Bach são um sistema terapêutico criado pelo médico britânico Dr. Edward Bach na década de 1930, com o objetivo de tratar o ser humano de forma integral, considerando não apenas o corpo físico, mas principalmente o campo emocional e mental.\r\n\r\nDr. Bach acreditava que muitas doenças surgem do desequilíbrio emocional e que, ao harmonizar sentimentos como medo, insegurança, tristeza, raiva ou preocupação, o organismo teria melhores condições de se recuperar e manter a saúde.\r\n\r\nO sistema é composto por 38 essências florais, cada uma ligada a um estado emocional específico. Elas são obtidas a partir de flores silvestres e preparadas de forma natural, em água e conservadas em brandy. O uso é simples: algumas gotas diluídas em água ou diretamente na boca, de acordo com a necessidade individual.\r\n\r\nOs florais não têm contraindicações, não causam efeitos colaterais e podem ser usados por adultos, crianças, idosos, gestantes e até animais. Por isso, são considerados uma terapia segura e complementar, que pode ser associada a outros tratamentos convencionais ou naturais.\r\n\r\nO mais conhecido é o Rescue Remedy, uma combinação de cinco essências utilizada em momentos de crise, ansiedade ou situações de estresse intenso.\r\n\r\nMais do que aliviar sintomas, os florais de Bach promovem autoconhecimento, equilíbrio emocional e bem-estar integral, auxiliando na reconexão com a essência positiva de cada indivíduo.",
+    "categoria": "",
+    "cor_destaque": "#9370DB",
+    "ordem": 11,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 12,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Quiropraxia",
+    "slug": "quiropraxia",
+    "descricao_curta": "A quiropraxia trata problemas da coluna e articulações com ajustes manuais para aliviar dores e melhorar a mobilidade.",
+    "descricao_completa": "A quiropraxia é uma área da saúde que se dedica ao diagnóstico, tratamento e prevenção de disfunções do sistema neuromusculoesquelético, focando na relação entre a coluna vertebral, outras articulações, e o sistema nervoso, utilizando principalmente técnicas de manipulação manual e ajustes para restaurar a função e promover a capacidade de autocura do corpo. Os objetivos incluem o alívio da dor, a correção postural, a melhoria da mobilidade e a promoção do bem-estar geral, embora haja controvérsias em relação à sua eficácia para algumas condições específicas. \r\nPrincípios e Métodos\r\nFoco no Sistema Neuromusculoesquelético:\r\nA quiropraxia considera que problemas na coluna vertebral e em outras articulações podem afetar o sistema nervoso, impactando a saúde geral do indivíduo. \r\nManipulação e Ajuste:\r\nO principal tratamento envolve manipulações articulares e ajustes da coluna vertebral para corrigir desalinhamentos e restaurar a função normal. \r\nAbordagem Holística:\r\nAlém da manipulação, os quiropráticos podem oferecer outras terapias, como exercícios, mudanças ergonômicas no estilo de vida, aplicação de frio e calor, e massagens.",
+    "categoria": "",
+    "cor_destaque": "#2F4F4F",
+    "ordem": 13,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 13,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Podologia",
+    "slug": "podologia",
+    "descricao_curta": "A podologia é a área da saúde dedicada ao diagnóstico, prevenção e tratamento de problemas nos pés.",
+    "descricao_completa": "O profissional, chamado podólogo, tem formação técnico-científica e atua para garantir a saúde e o bem-estar do paciente. \r\nPodólogo vs. Pedicure\r\nPodólogo: Trata problemas como unha encravada (onicocriptose), calos, micoses (onicomicose) e fissuras.\r\nPedicure: Foca na estética, cortando e esmaltando as unhas. \r\nÁreas e tratamentos\r\nA podologia inclui cuidados para crianças, idosos, atletas e pacientes com doenças como diabetes. Além de tratar patologias, o podólogo oferece orientações sobre higiene, hidratação e calçados, e realiza procedimentos como a podoprofilaxia (limpeza). \r\nImportância\r\nCuidar dos pés é crucial para a saúde geral, pois eles são a base do corpo. A podologia ajuda a prevenir complicações e a melhorar a qualidade de vida.",
+    "categoria": "",
+    "cor_destaque": "#F4A460",
+    "ordem": 15,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 14,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Respiração",
+    "slug": "respiracao",
+    "descricao_curta": "A terapia da respiração é o uso de exercícios de respiração controlada para acalmar o sistema nervoso, reduzir o estresse e a ansiedade, e melhorar a saúde física e mental.",
+    "descricao_completa": "A terapia da respiração utiliza exercícios e técnicas para controlar e otimizar a forma de respirar, com o objetivo de melhorar a saúde física e mental. Ao focar na respiração, é possível influenciar diretamente o sistema nervoso, promovendo relaxamento, reduzindo o estresse e a ansiedade, e aumentando a concentração e o bem-estar. \r\nComo funciona\r\nA respiração inadequada pode ativar o sistema nervoso simpático, responsável pela resposta de \"luta ou fuga\". Já a respiração consciente e controlada ativa o sistema nervoso parassimpático, que promove o relaxamento. Ao praticar a respiração terapêutica, é possível: \r\nReduzir a pressão arterial e a frequência cardíaca.\r\nDiminuir a tensão muscular.\r\nMelhorar o humor e a qualidade do sono.\r\nMelhorar a oxigenação do cérebro e a função cognitiva.",
+    "categoria": "",
+    "cor_destaque": "#00CED1",
+    "ordem": 10,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 15,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Ventosaterapia",
+    "slug": "ventosaterapia",
+    "descricao_curta": "A ventosaterapia é uma técnica chinesa milenar que usa ventosas para criar vácuo e sucção na pele, estimulando a circulação sanguínea para aliviar dores musculares, relaxar e liberar toxinas.",
+    "descricao_completa": "A ventosaterapia é uma técnica milenar da medicina chinesa que utiliza ventosas para criar vácuo e sucção sobre a pele. Esse processo estimula a circulação sanguínea, promove relaxamento muscular e ajuda a liberar toxinas do corpo. É usada para aliviar dores musculares e nas articulações, além de ajudar na recuperação muscular e no relaxamento. \r\nComo funciona\r\nSucção: O vácuo criado dentro das ventosas suga a pele e as camadas musculares superficiais.\r\nEfeitos: A sucção dilata os vasos sanguíneos, aumentando o fluxo de sangue na área tratada e promovendo a oxigenação dos tecidos.\r\nIndicações: É comumente utilizada para dores nas costas, ombros e pescoço, além de auxiliar no alívio de estresse, ansiedade e outros problemas.\r\nMarcas: As manchas arroxeadas que podem surgir na pele são resultado da ruptura de pequenos vasos capilares e desaparecem em poucos dias.",
+    "categoria": "",
+    "cor_destaque": "#8B0000",
+    "ordem": 8,
+    "destaque": true,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 16,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Cura por cristais",
+    "slug": "cura-por-cristais",
+    "descricao_curta": "A cura por cristais é uma prática holística que usa as energias vibracionais de pedras e minerais para equilibrar e harmonizar o corpo e a mente.",
+    "descricao_completa": "A cura por cristais, também conhecida como cristaloterapia, é uma prática holística que utiliza as propriedades energéticas de pedras e minerais para harmonizar e equilibrar a saúde física, mental e emocional. Acredita-se que cada cristal possui uma vibração única, capaz de interagir com o campo energético do corpo, os chakras, para promover o bem-estar e restaurar o fluxo de energia. \r\nO terapeuta pode colocar os cristais em pontos específicos do corpo ou ao redor do paciente durante uma sessão, e eles também podem ser usados no dia a dia, como amuletos ou para energizar ambientes. Alguns dos objetivos da terapia incluem a redução do estresse, o alívio de dores, a melhoria do sono e o estímulo do autoconhecimento",
+    "categoria": "",
+    "cor_destaque": "#DA70D6",
+    "ordem": 22,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 17,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Meditação Guiada",
+    "slug": "meditacao-guiada",
+    "descricao_curta": "Meditação guiada é uma prática onde um instrutor verbal conduz uma pessoa a um estado de relaxamento e atenção plena, ajudando a focar a mente para reduzir o estresse e a ansiedade.",
+    "descricao_completa": "A meditação guiada é uma prática em que uma pessoa é conduzida por uma voz, que pode ser de um instrutor ou uma gravação, para alcançar um estado de relaxamento e atenção plena. É uma forma acessível de meditação, especialmente para iniciantes, pois oferece instruções claras sobre o que fazer e como focar a mente. \r\nComo funciona\r\nO guia verbal conduz o praticante por etapas, que podem incluir:\r\nFoco na respiração: Observar o fluxo natural do ar que entra e sai do corpo.\r\nVisualização: Imaginar cenários tranquilos, como uma praia ou uma floresta.\r\nConsciência corporal: Levar a atenção a diferentes partes do corpo para liberar tensões. \r\nBenefícios\r\nA prática regular traz benefícios como: \r\nRedução do estresse e da ansiedade.\r\nMelhora da concentração e do foco.\r\nPromoção do relaxamento profundo e do bem-estar emocional.\r\nMelhora da qualidade do sono.",
+    "categoria": "",
+    "cor_destaque": "#6A5ACD",
+    "ordem": 18,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 18,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Homeopatia",
+    "slug": "homeopatia",
+    "descricao_curta": "A homeopatia é um sistema de medicina alternativa que usa substâncias naturais, extremamente diluídas, para estimular a capacidade de autocura do organismo.",
+    "descricao_completa": "A homeopatia é um sistema de medicina alternativa que usa substâncias naturais, extremamente diluídas, para tratar doenças. Criada no século XVIII por Samuel Hahnemann, baseia-se em dois princípios principais: \r\nLei dos semelhantes: A ideia de que \"o semelhante cura o semelhante\". Uma substância que causa sintomas em uma pessoa saudável pode ser usada, em doses muito pequenas, para tratar sintomas semelhantes em uma pessoa doente.\r\nUltradiuluições: Os medicamentos são preparados através de diluições repetidas, seguidas de agitação vigorosa, até que a substância original esteja presente em quantidades mínimas, ou até mesmo inexistentes. \r\nO tratamento homeopático é individualizado e holístico, considerando o paciente como um todo — aspectos físicos, mentais e emocionais. O objetivo é estimular a capacidade de autocura do próprio organismo, buscando o equilíbrio da saúde.",
+    "categoria": "",
+    "cor_destaque": "#20B2AA",
+    "ordem": 20,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 19,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Terapia craniossacral",
+    "slug": "terapia-craniossacral",
+    "descricao_curta": "A Terapia Craniossacral é uma abordagem manual e suave que usa um toque leve para avaliar e melhorar o sistema que envolve o cérebro e a medula espinhal, promovendo a capacidade de autocura do corpo.",
+    "descricao_completa": "A Terapia Craniossacral é uma abordagem manual e suave que utiliza um toque leve para avaliar e aprimorar o sistema craniossacral. Esse sistema é formado pelas membranas e pelo líquido cefalorraquidiano que envolvem e protegem o cérebro e a medula espinhal. A técnica é usada para liberar restrições e equilibrar o sistema nervoso central. \r\nComo funciona\r\nO terapeuta utiliza as mãos para aplicar uma pressão sutil (geralmente não mais pesada do que o peso de uma moeda) em áreas como a cabeça, pescoço, costas e sacro.\r\nEssa manipulação leve ajuda a liberar tensões profundas no sistema craniossacral, melhorando o fluxo do líquido cefalorraquidiano e a capacidade de autocura do corpo. \r\nBenefícios e indicações\r\nAlívio da dor: É indicada para dores crônicas, enxaquecas, dores de cabeça e disfunções na articulação temporomandibular (ATM).\r\nRedução do estresse e ansiedade: Promove relaxamento profundo e bem-estar físico e emocional.\r\nMelhora da qualidade de vida: Ajuda a equilibrar o sistema nervoso, melhorar o sono e aumentar a capacidade de recuperação do corpo.\r\nDiversas indicações: Pode tratar uma variedade de problemas, incluindo tonturas, zumbido no ouvido, sinusite e problemas em recém-nascidos.",
+    "categoria": "",
+    "cor_destaque": "#6495ED",
+    "ordem": 9,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 20,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Naturopatia",
+    "slug": "naturopatia",
+    "descricao_curta": "A naturopatia é uma medicina alternativa que utiliza terapias naturais e holísticas, como fitoterapia e dietoterapia, para estimular a capacidade de autocura do corpo e promover o equilíbrio geral.",
+    "descricao_completa": "A naturopatia é um sistema de medicina alternativa que se baseia no poder de autocura do corpo, utilizando métodos terapêuticos naturais e não invasivos. O tratamento é holístico e individualizado, levando em consideração o indivíduo como um todo — seus aspectos físicos, mentais, emocionais e até espirituais. \r\nComo funciona\r\nA abordagem da naturopatia concentra-se na promoção da saúde, prevenção de doenças e na identificação e tratamento das causas subjacentes dos problemas, e não apenas nos sintomas. Utiliza uma variedade de técnicas e recursos, como: \r\nFitoterapia: Uso de plantas medicinais.\r\nHidroterapia: Aplicação de água para fins terapêuticos.\r\nDietoterapia: Tratamento por meio da alimentação.\r\nAcupuntura: Estimulação de pontos específicos do corpo.\r\nOrientação sobre estilo de vida: Foco em hábitos saudáveis, como exercícios físicos e gerenciamento do estresse. \r\nPrincípios e foco\r\nBaseada em princípios que remontam à Grécia Antiga, a naturopatia enfatiza a importância de elementos naturais como água, sol e exercícios. Ela busca educar o paciente para que ele se torne corresponsável pela sua própria saúde e bem-estar, promovendo a autonomia e a prevenção",
+    "categoria": "",
+    "cor_destaque": "#6B8E23",
+    "ordem": 17,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 21,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Massagem Tântrica",
+    "slug": "massagem-tantrica",
+    "descricao_curta": "A massagem tântrica é uma prática terapêutica que utiliza toques suaves e conscientes para despertar e direcionar a energia vital, promove autoconhecimento, relaxamento e cura de bloqueios.",
+    "descricao_completa": "A massagem tântrica é uma prática terapêutica e meditativa que busca expandir a consciência corporal e sexual, trabalhando a energia vital (kundalini) através de toques suaves e conscientes. Baseada na filosofia tântrica, originada na Índia, a técnica vai além do foco genital, visando o despertar da sensualidade e do prazer em todo o corpo. \r\nPrincipais características\r\nAutoconhecimento: A massagem ajuda a reeducar o sistema neurológico e aumentar a sensibilidade, promovendo uma maior conexão entre corpo e mente.\r\nTerapêutica: É utilizada para tratar bloqueios emocionais, traumas, ansiedade e disfunções sexuais, como ejaculação precoce e dificuldade de orgasmo.\r\nMeditação e respiração: A prática é acompanhada por exercícios respiratórios e meditação, que intensificam a experiência e movem a energia sexual de forma consciente pelo corpo.\r\nConexão: Fortalece o vínculo e a intimidade, podendo ser praticada por casais para aprofundar o relacionamento.\r\nProcesso holístico: Embora possa ter um caráter erótico, o objetivo principal não é a relação sexual, mas sim promover a cura emocional e o bem-estar integral.",
+    "categoria": "",
+    "cor_destaque": "#FF4500",
+    "ordem": 19,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 22,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Fitoterapia",
+    "slug": "fitoterapia",
+    "descricao_curta": "A fitoterapia é uma prática terapêutica que utiliza plantas medicinais para prevenir, tratar ou aliviar doenças, com base em conhecimentos tradicionais e evidências científicas.",
+    "descricao_completa": "A fitoterapia é o estudo e a utilização de plantas medicinais para prevenir, tratar ou aliviar doenças. É uma das formas de medicina mais antigas do mundo, baseada no conhecimento tradicional e, atualmente, com comprovação científica sobre a eficácia e segurança de muitos fitoterápicos. \r\nPrincípios e características\r\nComposição natural: Os fitoterápicos contêm extratos ou partes de plantas que possuem princípios ativos com ação terapêutica.\r\nMenos efeitos colaterais: Por serem de origem natural, muitas vezes apresentam menos efeitos adversos em comparação com medicamentos sintéticos, embora a dosagem correta seja crucial.\r\nTratamento individualizado: Na fitoterapia, o tratamento é muitas vezes adaptado às necessidades específicas de cada pessoa, considerando seu quadro geral de saúde.\r\nDiversas formas de uso: As plantas medicinais podem ser usadas de várias maneiras, como chás, tinturas, cápsulas e extratos. \r\nReconhecimento oficial\r\nNo Brasil, a fitoterapia é reconhecida como uma Prática Integrativa e Complementar (PIC) pelo Sistema Único de Saúde (SUS), sendo oferecida na Atenção Básica. Apesar disso, é fundamental que o uso de fitoterápicos seja orientado por um profissional de saúde qualificado para garantir a segurança e a eficácia.",
+    "categoria": "",
+    "cor_destaque": "#228B22",
+    "ordem": 21,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 23,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Reflexologia",
+    "slug": "reflexologia",
+    "descricao_curta": "A reflexologia é uma terapia complementar que aplica pressão em pontos específicos nos pés, mãos e orelhas para estimular a cura, promover relaxamento e reequilibrar o corpo.",
+    "descricao_completa": "A reflexologia é uma terapia complementar que se baseia no princípio de que existem pontos \"reflexos\" nos pés, mãos e orelhas que correspondem a diferentes órgãos, glândulas e partes do corpo. Ao aplicar pressão nesses pontos, o terapeuta busca estimular o processo de autocura do corpo, promovendo o relaxamento, aliviando dores e reequilibrando as energias do organismo. \r\nComo funciona\r\nMapa dos pontos: A técnica utiliza um \"mapa\" detalhado dos pés para identificar os pontos de pressão que precisam ser trabalhados.\r\nEstímulo neurológico: A pressão exercida em pontos específicos envia estímulos ao sistema nervoso, que, por sua vez, age sobre os órgãos ou sistemas correspondentes.\r\nRelaxamento profundo: A massagem nos pés e mãos promove um relaxamento intenso, que ajuda a reduzir o estresse, a ansiedade e a tensão muscular.\r\nMelhora da circulação: A manipulação da área tratada também contribui para melhorar a circulação sanguínea e a oxigenação dos tecidos. \r\nBenefícios e indicações\r\nAlívio de dores, como enxaquecas e problemas de coluna.\r\nMelhora da qualidade do sono.\r\nAuxílio no tratamento de problemas digestivos.\r\nEstímulo à eliminação de toxinas do corpo.\r\nPrevenção de doenças e promoção do bem-estar geral.",
+    "categoria": "",
+    "cor_destaque": "#228B22",
+    "ordem": 12,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 24,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Osteopatia",
+    "slug": "osteopatia",
+    "descricao_curta": "A osteopatia é um sistema de medicina manual que utiliza um toque leve e preciso para diagnosticar e tratar problemas de saúde, buscando restabelecer o equilíbrio do corpo como um todo.",
+    "descricao_completa": "A osteopatia é um sistema de medicina manual que busca diagnosticar, tratar e prevenir problemas de saúde através da manipulação de articulações, músculos, fáscias, nervos e vísceras. Baseada na filosofia de que o corpo é um todo interconectado, a terapia visa restabelecer o equilíbrio e a mobilidade das estruturas para que o organismo possa se autociclar. \r\nComo funciona\r\nAbordagem holística: O osteopata busca a causa-raiz da disfunção, e não apenas o sintoma, por meio de uma avaliação minuciosa da postura, movimento e histórico do paciente.\r\nTécnicas manuais: A terapia utiliza uma variedade de técnicas suaves e precisas para liberar bloqueios e tensões, incluindo mobilizações articulares, alongamentos, massagens e técnicas para tecidos moles.\r\nTratamento de diferentes sistemas: A osteopatia pode atuar sobre o sistema musculoesquelético (ossos e músculos), visceral (órgãos internos) e craniano (cabeça e sistema nervoso central). \r\nBenefícios e indicações\r\nAlívio de dores: Eficaz para tratar dores nas costas, pescoço, ombros, ciáticas e enxaquecas.\r\nMelhora da mobilidade: Restaura a amplitude de movimento em articulações e tecidos rígidos.\r\nRedução de estresse: As técnicas manuais ajudam a relaxar a tensão muscular e promover o bem-estar geral.\r\nTratamento para bebês: Pode ajudar com refluxo, cólicas e dificuldade de mamar em bebês.",
+    "categoria": "",
+    "cor_destaque": "#708090",
+    "ordem": 16,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 25,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Auriculoterapia",
+    "slug": "auriculoterapia",
+    "descricao_curta": "A auriculoterapia é uma técnica que usa a estimulação de pontos específicos na orelha para tratar problemas em outras partes do corpo, buscando o equilíbrio e alívio de sintomas.",
+    "descricao_completa": "A auriculoterapia, parte da medicina tradicional chinesa, é uma técnica que estimula pontos específicos na orelha para tratar problemas em outras partes do corpo. Baseia-se no princípio de que a orelha é um \"microssistema\" que reflete o corpo inteiro. \r\nComo funciona\r\nUm profissional estimula os pontos auriculares com sementes de mostarda, agulhas, esferas de metal ou plástico.\r\nEssa estimulação busca restaurar o equilíbrio energético do corpo e aliviar sintomas.\r\nA técnica é usada para tratar uma variedade de condições, como dores, ansiedade, estresse e problemas gastrointestinais.\r\nA Organização Mundial da Saúde (OMS) reconheceu a técnica em 1990 e ela é oferecida em alguns serviços do Sistema Único de Saúde (SUS) no Brasil.",
+    "categoria": "",
+    "cor_destaque": "#B8860B",
+    "ordem": 28,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 26,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Cromoterapia",
+    "slug": "cromoterapia",
+    "descricao_curta": "A cromoterapia é uma terapia complementar que utiliza a energia vibracional das cores para harmonizar e equilibrar o corpo, a mente e as emoções.",
+    "descricao_completa": "A cromoterapia é uma terapia complementar que utiliza a energia luminosa das cores para harmonizar e equilibrar o corpo, a mente e as emoções. Baseada no princípio de que cada cor possui uma frequência vibracional específica, a prática busca restaurar o fluxo de energia nos chakras, os centros energéticos do corpo. \r\nComo funciona \r\nAplicação de cores: O cromoterapeuta pode utilizar diversas técnicas para aplicar as cores, como bastões luminosos, banhos cromáticos, ou simplesmente através da visualização e do ambiente.\r\nEfeito vibracional: Acredita-se que as cores, por meio de suas ondas e frequências, atuam diretamente sobre as células, influenciando o sistema nervoso e o estado emocional.\r\nEquilíbrio: A terapia busca corrigir desequilíbrios energéticos que podem se manifestar como problemas físicos ou emocionais. Por exemplo, cores quentes como o vermelho e o amarelo são estimulantes, enquanto as frias como o azul e o verde são calmantes. \r\nBenefícios e indicações\r\nRelaxamento e bem-estar: Ajuda a reduzir o estresse, a ansiedade e a insônia.\r\nAlívio de dores: Pode ser usada para aliviar enxaquecas, dores de cabeça e outras dores físicas.\r\nEstímulo ao organismo: Certas cores podem auxiliar em tratamentos para problemas de digestão e outras patologias.\r\nHarmonia emocional: Promove a harmonia dos pensamentos e das emoções, melhorando o humor e o estado mental.",
+    "categoria": "",
+    "cor_destaque": "#FFD700",
+    "ordem": 23,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 27,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Bioenergética",
+    "slug": "bioenergetica",
+    "descricao_curta": "A bioenergética é uma terapia que une corpo e mente, utilizando exercícios físicos e verbais, liberando bloqueios emocionais e tensões musculares, permitindo o fluxo natural de energia no corpo.",
+    "descricao_completa": "A bioenergética, ou análise bioenergética, é uma abordagem terapêutica que une o trabalho corporal e verbal, partindo do princípio de que mente e corpo são uma unidade. Desenvolvida por Alexander Lowen a partir dos estudos de Wilhelm Reich, a terapia busca liberar bloqueios emocionais e tensões musculares crônicas, que são vistas como reflexos de conflitos internos. \r\nComo funciona\r\nConexão mente-corpo: O terapeuta trabalha a partir da observação da história de vida do indivíduo e de sua postura corporal, que expressa seus bloqueios emocionais.\r\nExercícios corporais: A terapia utiliza exercícios físicos, de respiração e movimentos expressivos para liberar a tensão e a energia retida no corpo, permitindo a expressão de sentimentos reprimidos.\r\nGrounding: Um dos conceitos centrais é o grounding, que se refere à sensação de enraizamento, de estar firme e seguro no próprio corpo e na realidade.\r\nIntegração: O objetivo final é integrar a mente e o corpo, promovendo uma maior consciência de si, mais espontaneidade e a liberação do fluxo natural de energia no organismo. \r\nBenefícios\r\nAjuda a reorganizar pensamentos, sentimentos e emoções.\r\nPromove a autoexpressão e o autodomínio pessoal.\r\nAuxilia no tratamento de traumas, ansiedade e outros problemas emocionais.\r\nMelhora a percepção e a consciência corporal.",
+    "categoria": "",
+    "cor_destaque": "#FF6347",
+    "ordem": 25,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 28,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Biodança",
+    "slug": "biodanca",
+    "descricao_curta": "A Biodança é um sistema de desenvolvimento humano que utiliza música, movimento e encontro em grupo para promover a integração entre o sentir, o pensar e o agir, promovendo o bem-estar.",
+    "descricao_completa": "A Biodança é um sistema de desenvolvimento humano que utiliza a música, o movimento e o encontro em grupo para promover a integração entre o sentir, o pensar e o agir. Criada na década de 1960 pelo psicólogo e antropólogo chileno Rolando Toro, ela busca estimular o desenvolvimento de potenciais genéticos como vitalidade, sexualidade, criatividade, afetividade e transcendência. \r\nComo funciona\r\nVivências: As sessões de Biodança são baseadas em vivências, que são experiências intensas no momento presente, envolvendo emoções e movimentos.\r\nMúsica e movimento: Utiliza um conjunto de músicas e exercícios de dança semiestruturados para induzir estados de bem-estar e renovação orgânica. Não é necessário saber dançar, pois a prática busca a expressão espontânea e pessoal.\r\nEncontro em grupo: O processo é coletivo e afetivo, valorizando a comunicação não verbal, o olhar e o toque para fortalecer os vínculos humanos e a solidariedade. \r\nBenefícios\r\nBem-estar: Promove relaxamento, alegria de viver e o aumento da energia vital.\r\nSaúde: Ajuda a combater o estresse, a ansiedade e fortalece o sistema imunológico.\r\nAutoconhecimento: Permite uma maior conexão com o próprio corpo e a expressão da identidade.\r\nIntegração: Estimula a harmonização do indivíduo consigo mesmo, com o outro e com a natureza. \r\nA Biodança é uma prática reconhecida pelo Ministério da Saúde como Prática Integrativa e Complementar (PIC).",
+    "categoria": "",
+    "cor_destaque": "#FF69B4",
+    "ordem": 26,
+    "destaque": false,
+    "is_active": true
+  }
+},
+{
+  "model": "core.especialidade",
+  "pk": 29,
+  "fields": {
+    "created_at": "2025-10-12T21:51:10.206Z",
+    "updated_at": "2025-10-12T21:51:10.206Z",
+    "nome": "Constelação Familiar",
+    "slug": "constelacao-familiar",
+    "descricao_curta": "A constelação familiar é um método terapêutico que revela e harmoniza padrões inconscientes e dinâmicas ocultas no sistema familiar para resolver conflitos e promover o bem-estar.",
+    "descricao_completa": "A constelação familiar é um método terapêutico que busca revelar e harmonizar dinâmicas ocultas e padrões inconscientes que influenciam a vida de um indivíduo e suas relações. Desenvolvida por Bert Hellinger, a técnica se baseia na filosofia de que os problemas de uma pessoa podem ter origem em emaranhamentos e traumas de seu sistema familiar (passado e presente), e não apenas em sua história pessoal. \r\nComo funciona\r\nA constelação pode ser realizada individualmente (usando bonecos ou outros objetos) ou em grupo, onde pessoas representam membros da família do cliente. Através dessa representação simbólica: \r\nA dinâmica familiar inconsciente e as leis sistêmicas do amor (pertencimento, ordem e equilíbrio) são reveladas.\r\nO cliente pode tomar consciência das lealdades invisíveis ou repetições de destino que o afetam.\r\nBusca-se uma nova \"imagem de solução\", que promove a reconciliação e o equilíbrio no sistema familiar, resultando em alívio e bem-estar para o indivíduo. \r\nBenefícios e considerações\r\nIdentificação de padrões: Ajuda a identificar comportamentos repetitivos e conflitos que podem ter origem em gerações passadas.\r\nMelhora nos relacionamentos: Pode auxiliar na resolução de problemas familiares, profissionais e amorosos.\r\nCríticas e controvérsias: Embora seja uma terapia popular, a constelação familiar é vista por muitos como uma prática sem comprovação científica, gerando debates e críticas, especialmente por parte de profissionais da psicologia.",
+    "categoria": "",
+    "cor_destaque": "#8B4513",
+    "ordem": 24,
+    "destaque": false,
+    "is_active": true
+  }
+}
+]

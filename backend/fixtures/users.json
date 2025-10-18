@@ -1,0 +1,200 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$M0v8tacWzXENGYTkXnfAyY$Q44vfGXASfpi13R+dhcms9UPWUY5CXSmyiLYmamhvZ4=",
+    "last_login": "2025-10-18T00:10:43.543Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "depaulaprogrammer@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-25T02:50:31Z",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$hHB9UGPDp5mv74xvj28A9F$PGxl5Ej+cAbiXWl3ifIxAtmiO3Lb+XfnuFi9k9OGBN8=",
+    "last_login": "2025-10-04T13:54:48.966Z",
+    "is_superuser": true,
+    "username": "willp",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@espacovital.com.br",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-14T02:11:13Z",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$0GK6nfQ32pLoj3U2bhEcVa$pqXgoihqAmFb6/bS8eq5OUjnLx1yRTMDFqi0IRrdsQo=",
+    "last_login": "2025-10-03T02:14:57.366Z",
+    "is_superuser": false,
+    "username": "ana.silva",
+    "first_name": "Ana Carolina",
+    "last_name": "Silva Santos",
+    "email": "ana.silva@espacovital.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-14T20:21:01Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$dwvXGa4SxIerXj50dpk6wh$0uh3vNd/e+99O6YcPvoaDWZw7yNfckxUjKzdg3jHGoU=",
+    "last_login": "2025-09-28T15:23:08.250Z",
+    "is_superuser": false,
+    "username": "carlos.mendes",
+    "first_name": "Carlos Alberto",
+    "last_name": "Mendes Costa",
+    "email": "carlos.mendes@espacovital.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-14T23:26:02Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$lHl6wUYsk2cEyuKD8I0Y1j$uvuF93KRWC9H4/OjnHfPtkzQ7KV0E07abBq2FXHFPs4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "marina.costa",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-14T23:26:23Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$hS510MQ0yRhnTHlo7EA13R$5xPot30U7y8VSAS6Mke11kWch2gWkYGL7N/3FCdMKFw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "thais.devamani",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-21T03:28:24Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$ZrsW3QZqkgWElnIHvPf8uB$iIyChGyvUeJiy8QXXNbuS9ecTrbv/+DC904pUDZXpX0=",
+    "last_login": "2025-09-27T21:49:08.897Z",
+    "is_superuser": false,
+    "username": "Michelle.Salim41",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-27T21:39:58Z",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 8,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teste_terapeuta",
+    "first_name": "",
+    "last_name": "",
+    "email": "teste@teste.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-28T18:35:30.883Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$MdjYjVc6JsGzvw6PHG1XEb$GwWmpdtojRj8vQYJQczi0F0xDFxoK77r7sZIRIsD7c8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "deva-bigyt",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-10-04T16:31:13Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$6k9vTJ8QSifxU3eYGOa0Yc$+hhVf82Fi9otYZ9lykFvRGtDM2ZPRshA8NE1VwZmOvI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "alberto-santagueda",
+    "first_name": "Alberto",
+    "last_name": "Santágueda",
+    "email": "aescoladeluz@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-10-04T16:44:06Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+}
+]
