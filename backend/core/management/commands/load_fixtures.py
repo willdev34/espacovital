@@ -27,14 +27,11 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('🚀 Iniciando carga de fixtures...'))
         
         for fixture_file, description in fixtures:
-            # Detectar o caminho correto dos fixtures
-            import sys
-            if 'railway' in os.environ.get('RAILWAY_ENVIRONMENT', '').lower() or os.path.exists('/app'):
-                # Ambiente Railway
-                fixture_path = os.path.join('backend', 'fixtures', fixture_file)
-            else:
-                # Ambiente local
-                fixture_path = os.path.join('fixtures', fixture_file)
+            # Detectar o caminho base do backend
+            # __file__ está em: backend/core/management/commands/load_fixtures.py
+            # Precisamos subir 4 níveis para chegar em backend/
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            fixture_path = os.path.join(base_dir, 'fixtures', fixture_file)
             
             # Verificar se o arquivo existe
             if not os.path.exists(fixture_path):
