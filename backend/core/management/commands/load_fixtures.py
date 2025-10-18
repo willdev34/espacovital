@@ -12,6 +12,24 @@ import os
 class Command(BaseCommand):
     help = 'Carrega todos os fixtures de dados'
 
+    def load_fixture_with_encoding(self, fixture_path):
+        """
+        Carrega fixture forçando encoding UTF-8
+        """
+        import json
+        from django.core import serializers
+        
+        # Ler o arquivo com encoding UTF-8 forçado
+        with open(fixture_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Desserializar os objetos
+        objects = serializers.deserialize('json', json.dumps(data))
+        
+        # Salvar os objetos
+        for obj in objects:
+            obj.save()
+
     def handle(self, *args, **options):
         """
         Carrega os fixtures na ordem correta para evitar erros de dependência
@@ -46,7 +64,7 @@ class Command(BaseCommand):
             # Carregar o fixture
             self.stdout.write(f'📦 Carregando {description}...')
             try:
-                call_command('loaddata', fixture_path, verbosity=0)
+                self.load_fixture_with_encoding(fixture_path)
                 self.stdout.write(
                     self.style.SUCCESS(f'✅ {description} carregado com sucesso!')
                 )
