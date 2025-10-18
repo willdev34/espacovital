@@ -1,1 +1,1 @@
-web: cd backend && python manage.py migrate --noinput && gunicorn espacovital.wsgi:application --log-file -
+web: cd backend && python manage.py migrate --noinput && python manage.py popular_localizacoes && gunicorn espacovital.wsgi:application --log-file -
