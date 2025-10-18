@@ -592,7 +592,7 @@ class Especialidade(BaseModel):
         help_text="Slug para URLs amigáveis"
     )
     descricao_curta = models.CharField(
-        max_length=200,
+        max_length=700,
         blank=True,
         help_text="Descrição resumida da especialidade"
     )
