@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espaço Vital</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fefcf9;
+      color: #3a2e2e;
+    }
+
+    header, footer {
+      background: #fff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #8b3f4d;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #d46a78;
+    }
+
+    .login-button {
+      background-color: #d4af37;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    main {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    section {
+      margin-bottom: 3rem;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .search-banner,
+    .report-section {
+      background: #fff6f0;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .professional-card {
+      background: #fff;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    input, select, button, textarea {
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #8b3f4d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #a65463;
+    }
+
+    .filters, .form-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .login-button {
+        align-self: flex-end;
+        margin-top: 0.5rem;
+      }
+    }
+    </style>
+    </head>
+    <body>
+
+    <header>
+    <div>
+    <h1>Espaço Vital</h1>
+    </div>
+    <nav>
+    <ul>
+    <li><a href="#home">Início</a></li>
+    <li><a href="#find">Encontre um Terapeuta</a></li>
+    <li><a href="#spaces">Espaços Cadastrados</a></li>
+    <li><a href="#become">Seja um Profissional Verificado</a></li>
+    <li><a href="#about">Sobre</a></li>
+    <li><a href="#terms">Termos & Denúncias</a></li>
+    </ul>
+    </nav>
+    <button class="login-button">Entrar / Cadastrar</button>
+    </header>
+
+    <main>
+    <section id="home">
+    <div class="search-banner">
+    <h2>Busque por cidade e técnica</h2>
+    <div class="filters">
+    <select id="city">
+    <option value="">Selecione a cidade</option>
+    <option value="rio">Rio de Janeiro</option>
+    </select>
+    <select id="technique">
+    <option value="">Selecione a técnica</option>
+    <option value="tantrica">Tântrica</option>
+    <option value="ayurveda">Ayurvédica</option>
+    </select>
+    <button onclick="window.location.href='encontreterapeuta.html'">Buscar</button>
+    </div>
+    </div>
+    </section>
+
+    <section id="find">
+    <h2>Encontre um Terapeuta</h2>
+    <div class="filters">
+    <select id="gender">
+    <option value="">Gênero do profissional</option>
+    <option value="feminino">Feminino</option>
+    <option value="masculino">Masculino</option>
+    </select>
+    <select id="type">
+    <option value="">Tipo de atendimento</option>
+    <option value="presencial">Presencial</option>
+    <option value="online">Online</option>
+    </select>
+    <button onclick="window.location.href='encontreterapeuta.html'">Buscar</button>
+    </div>
+    </section>
+
+    <section id="spaces">
+    <h2>Espaços Cadastrados</h2>
+    <div class="filters">
+    <select id="state">
+    <option value="">Selecione o estado</option>
+    <option value="rj">Rio de Janeiro</option>
+    </select>
+    <select id="neighborhood">
+    <option value="">Selecione o bairro</option>
+    <option value="recreio">Recreio</option>
+    <option value="ipanema">Ipanema</option>
+    </select>
+    <button onclick="window.location.href='encontreespaco.html'">Buscar Espaços</button>
+    </div>
+    </section>
+
+    <section id="become">
+    <h2>Seja um Profissional Verificado</h2>
+    <div class="form-section">
+    <p>Cadastre-se gratuitamente ou escolha um plano premium para mais visibilidade.</p>
+    <input type="text" placeholder="Nome ou Apelido">
+    <input type="email" placeholder="E-mail">
+    <input type="text" placeholder="Cidade">
+    <textarea placeholder="Descrição do trabalho"></textarea>
+    <button>Enviar Cadastro</button>
+    </div>
+    </section>
+
+    <section id="about">
+    <h2>Sobre o Espaço Vital</h2>
+    <p style="text-align: center;">Nossa missão é conectar terapeutas holísticos a pessoas que buscam bem-estar, respeito e profissionalismo. Valorizamos a ética, o cuidado e a transformação pessoal.</p>
+    </section>
+
+    <section id="terms">
+    <div class="report-section">
+    <h2>Termos & Denúncias</h2>
+    <p style="text-align:center;">O uso sexual desta plataforma é proibido. Oferecemos um canal anônimo para denúncias de assédio e comportamentos inadequados.</p>
+    <textarea placeholder="Descreva a denúncia de forma anônima"></textarea>
+    <button>Enviar Denúncia</button>
+    </div>
+    </section>
+    </main>
+
+    <footer>
+    <p>&copy; 2025 Espaço Vital - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+     function searchTherapists() {
+      const results = document.getElementById("results");
+    if (results) {
+      results.innerHTML = `
+      <div class='professional-card'>
+      <h3>"Ana Vital"</h3>
+      <p>Massagem Tântrica e Sensitiva - Rio de Janeiro</p>
+      <button>Entrar em contato</button>
+      </div>
+      <div class='professional-card'>
+      <h3>"Espaço Conexão"</h3>
+      <p>Ayurvédica e Relaxante - Atende Online</p>
+      <button>Entrar em contato</button>
+      </div>
+      `;
+    }
+    }
+    </script>
+
+    </body>
+    </html>

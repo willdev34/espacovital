@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espaços Cadastrados - Espaço Vital</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f1ec; margin: 0; color: #333; }
+    header, footer { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    nav ul { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+    nav li { display: inline; }
+    nav a { text-decoration: none; color: #333; font-weight: bold; }
+    .login-button { background: #8b4c4c; color: #fff; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .container { max-width: 900px; margin: auto; padding: 2rem; }
+    h2 { color: #8b4c4c; }
+    .filters { background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    select, button { width: 100%; max-width: 300px; margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc; }
+    .space-card { background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+    .space-card h3 { margin-top: 0; color: #6d3e3e; }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Espaço Vital</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="encontreterapeuta.html">Encontre um Terapeuta</a></li>
+        <li><a href="encontreespaco.html">Espaços Cadastrados</a></li>
+      </ul>
+    </nav>
+  </div>
+  <button class="login-button">Entrar / Cadastrar</button>
+</header>
+
+<div class="container">
+  <h2>Busque Espaços Cadastrados</h2>
+  <div class="filters">
+    <select>
+      <option>Selecione o Estado</option>
+      <option>RJ</option>
+      <option>SP</option>
+    </select>
+    <select>
+      <option>Selecione o Bairro</option>
+      <option>Copacabana</option>
+      <option>Barra da Tijuca</option>
+    </select>
+    <select>
+      <option>Tipo de Terapia</option>
+      <option>Tântrica</option>
+      <option>Ayurvédica</option>
+      <option>Relaxante</option>
+    </select>
+    <button>Buscar Espaços</button>
+  </div>
+
+  <div class="space-card">
+    <h3>Espaço Harmonia</h3>
+    <p>Local: Copacabana, Rio de Janeiro</p>
+    <p>Especialidades: Massagem Tântrica, Relaxante</p>
+    <p>Terapeutas vinculados: 4</p>
+  </div>
+
+  <div class="space-card">
+    <h3>Centro Equilíbrio</h3>
+    <p>Local: Barra da Tijuca, Rio de Janeiro</p>
+    <p>Especialidades: Ayurvédica, Bioenergética</p>
+    <p>Terapeutas vinculados: 3</p>
+  </div>
+
+  <div class="space-card">
+    <h3>Espaço Vital Zen</h3>
+    <p>Local: Ipanema, Rio de Janeiro</p>
+    <p>Especialidades: Massagem Tântrica, Reiki</p>
+    <p>Terapeutas vinculados: 5</p>
+  </div>
+</div>
+
+<footer>
+  <p style="text-align:center">&copy; 2025 Espaço Vital - Todos os direitos reservados</p>
+</footer>
+</body>
+</html>
