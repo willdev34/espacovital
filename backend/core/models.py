@@ -452,7 +452,7 @@ class Estado(models.Model):
     Compartilhado entre Terapeutas, Espaços e outros apps
     """
     nome = models.CharField(
-        'Nome do Estado/Província',
+        'Nome do Estado',
         max_length=100
     )
     sigla = models.CharField(
@@ -483,8 +483,8 @@ class Estado(models.Model):
     )
     
     class Meta:
-        verbose_name = 'Estado/Província'
-        verbose_name_plural = 'Estados/Províncias'
+        verbose_name = 'Estado'
+        verbose_name_plural = 'Estados'
         ordering = ['nome']  # Temporário - vamos ajustar depois
     
     def __str__(self):
@@ -505,7 +505,7 @@ class Cidade(models.Model):
         Estado,
         on_delete=models.CASCADE,
         related_name='cidades',
-        verbose_name='Estado/Província',
+        verbose_name='Estado',
         null=True,  # Permite cidade sem estado
         blank=True
     )

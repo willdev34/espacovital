@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='espaco',
             name='estado',
-            field=models.ForeignKey(blank=True, help_text='Estado onde o espaço está (apenas Brasil)', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='espacos', to='core.estado', verbose_name='Estado/Província'),
+            field=models.ForeignKey(blank=True, help_text='Estado onde o espaço está (apenas Brasil)', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='espacos', to='core.estado', verbose_name='Estado'),
         ),
         migrations.AddField(
             model_name='espaco',

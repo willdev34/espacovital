@@ -131,7 +131,7 @@ class Terapeuta(BaseModel):
     estado = models.ForeignKey(
         'core.Estado',
         on_delete=models.PROTECT,
-        verbose_name='Estado/Província',
+        verbose_name='Estado',
         help_text='Estado onde atua (apenas Brasil)',
         related_name='terapeutas',
         null=True,

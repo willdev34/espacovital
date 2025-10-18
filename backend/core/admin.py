@@ -681,7 +681,7 @@ class EstadoAdmin(admin.ModelAdmin):
     list_editable = ['ativo']
     
     fieldsets = [
-        ('Informações do Estado/Província', {
+        ('Informações do Estado', {
             'fields': ('pais', 'nome', 'sigla'),
             'description': '''
                 <strong>🗺️ Como cadastrar estados:</strong><br>
@@ -720,7 +720,7 @@ class CidadeAdmin(admin.ModelAdmin):
             'fields': ('nome', 'estado'),
             'description': '''
                 <strong>📍 Como cadastrar cidades:</strong><br>
-                • <strong>Brasil e países com estados:</strong> Selecione o Estado/Província<br>
+                • <strong>Brasil e países com estados:</strong> Selecione o Estado<br>
                 • <strong>Países sem estados:</strong> Primeiro crie um estado "genérico" para o país (ex: "Portugal - Lisboa" ou "Uruguai - Nacional")
             '''
         }),
@@ -732,7 +732,7 @@ class CidadeAdmin(admin.ModelAdmin):
     def get_estado(self, obj):
         """Retorna estado com sigla"""
         return f'{obj.estado.nome} ({obj.estado.sigla})'
-    get_estado.short_description = 'Estado/Província'
+    get_estado.short_description = 'Estado'
     get_estado.admin_order_field = 'estado__nome'
     
     def get_pais(self, obj):

@@ -30,17 +30,17 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='estado',
-            options={'ordering': ['nome'], 'verbose_name': 'Estado/Província', 'verbose_name_plural': 'Estados/Províncias'},
+            options={'ordering': ['nome'], 'verbose_name': 'Estado', 'verbose_name_plural': 'Estados/Províncias'},
         ),
         migrations.AlterField(
             model_name='cidade',
             name='estado',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cidades', to='core.estado', verbose_name='Estado/Província'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cidades', to='core.estado', verbose_name='Estado'),
         ),
         migrations.AlterField(
             model_name='estado',
             name='nome',
-            field=models.CharField(max_length=100, verbose_name='Nome do Estado/Província'),
+            field=models.CharField(max_length=100, verbose_name='Nome do Estado'),
         ),
         migrations.AlterField(
             model_name='estado',
