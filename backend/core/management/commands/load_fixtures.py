@@ -27,7 +27,14 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('🚀 Iniciando carga de fixtures...'))
         
         for fixture_file, description in fixtures:
-            fixture_path = os.path.join('fixtures', fixture_file)
+            # Detectar o caminho correto dos fixtures
+            import sys
+            if 'railway' in os.environ.get('RAILWAY_ENVIRONMENT', '').lower() or os.path.exists('/app'):
+                # Ambiente Railway
+                fixture_path = os.path.join('backend', 'fixtures', fixture_file)
+            else:
+                # Ambiente local
+                fixture_path = os.path.join('fixtures', fixture_file)
             
             # Verificar se o arquivo existe
             if not os.path.exists(fixture_path):
