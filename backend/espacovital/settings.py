@@ -219,6 +219,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Sempre definir MEDIA_ROOT para desenvolvimento local
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# DEBUG - Listar TODAS as variáveis de ambiente
+print("=" * 50)
+print("TODAS AS VARIÁVEIS DE AMBIENTE:")
+import os
+for key in sorted(os.environ.keys()):
+    if 'CLOUDINARY' in key or 'USE_CLOUDINARY' in key:
+        print(f"  {key} = {os.environ[key]}")
+print("=" * 50)
+
 # Lê a variável USE_CLOUDINARY do ambiente
 _use_cloudinary_env = os.environ.get('USE_CLOUDINARY', 'false').lower()
 USE_CLOUDINARY = _use_cloudinary_env in ['true', '1', 'yes', 'y', 'on']
