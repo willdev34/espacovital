@@ -463,177 +463,208 @@ Data: 07/09/2025
     
 <!-- Formulario Buscar Terapeuta -->
 <div id="modal-busca" class="fixed inset-0 z-50 hidden">
-    <!-- Overlay com fade mais escuro -->
-    <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity duration-300" onclick="fecharModalBusca()"></div>
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity duration-300" 
+         onclick="fecharModalBusca()"></div>
     
     <!-- Container do Modal -->
     <div class="fixed inset-0 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
+            
             <!-- Conteúdo do Modal -->
-            <div class="relative transform bg-white shadow-2xl transition-all w-full max-w-2xl max-h-[90vh] rounded-2xl" 
+            <div class="relative transform bg-white shadow-2xl transition-all w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl" 
                  style="border: 3px solid white; box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5), 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
                 
-                <!-- Header do Modal -->
-                <div class="bg-primary px-6 py-4 rounded-t-2xl">
+                <!-- Header -->
+                <div class="bg-primary px-6 py-5 rounded-t-2xl sticky top-0 z-10">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-2xl font-bold text-white">
+                        <h2 class="text-xl md:text-2xl font-poppins font-bold text-white">
                             Que tipo de terapeuta está buscando?
                         </h2>
-                        <button onclick="fecharModalBusca()" class="text-white hover:text-gray-200 transition-colors">
+                        <button onclick="fecharModalBusca()" 
+                                type="button"
+                                class="text-white hover:text-gray-200 transition-colors focus:outline-none">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
                 </div>
-
-                <!-- Área do Formulário com Scroll -->
-                <div class="max-h-[calc(90vh-120px)] overflow-y-auto mx-2 my-2 rounded-xl">
-                    <!-- Formulário -->
-                    <form id="form-busca-modal" onsubmit="enviarBuscaModal(event)" class="p-4 space-y-6">
+                
+                <!-- Formulário -->
+                <form onsubmit="enviarBuscaModal(event)" class="p-6 space-y-6">
                     
-                    <!-- Tipo de Sessão - Checkboxes -->
-                    <div class="space-y-3">
-                        <label class="block text-base font-medium text-gray-700">
+                    <!-- ============================================ -->
+                    <!-- TIPO DE SESSÃO -->
+                    <!-- ============================================ -->
+                    <div>
+                        <label class="block text-primary font-poppins font-semibold mb-3">
                             Tipo de Sessão
                         </label>
                         <div class="space-y-3">
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="presencial" name="tipo_sessao" value="presencial" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="presencial" class="text-gray-700 cursor-pointer">Presencial</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="online" name="tipo_sessao" value="online" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="online" class="text-gray-700 cursor-pointer">On-line</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="domicilio" name="tipo_sessao" value="domicilio" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="domicilio" class="text-gray-700 cursor-pointer">Domicílio</label>
-                            </div>
+                            <label class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <input type="checkbox" 
+                                       name="tipo_sessao" 
+                                       value="presencial" 
+                                       class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <span class="ml-3 text-gray-700">Presencial</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <input type="checkbox" 
+                                       name="tipo_sessao" 
+                                       value="online" 
+                                       class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <span class="ml-3 text-gray-700">On-line</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <input type="checkbox" 
+                                       name="tipo_sessao" 
+                                       value="domicilio" 
+                                       class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <span class="ml-3 text-gray-700">Domicílio</span>
+                            </label>
                         </div>
                     </div>
-
-                    <!-- Localização -->
-                    <div class="space-y-4">
-                        <label class="block text-base font-medium text-gray-700">
-                            Localização <span class="text-red-500">*</span>
+                    
+                    <!-- ============================================ -->
+                    <!-- LOCALIZAÇÃO -->
+                    <!-- ============================================ -->
+                    <div>
+                        <label class="block text-primary font-poppins font-semibold mb-3">
+                            Localização
                         </label>
                         
-                        <!-- Estado -->
-                        <div>
-                            <select id="estado" name="estado" onchange="carregarCidades()" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <option value="">Estado</option>
-                                <option value="RJ">Rio de Janeiro</option>
-                                <option value="SP">São Paulo</option>
-                                <option value="MG">Minas Gerais</option>
-                            </select>
-                        </div>
-
-                        <!-- Cidade -->
-                        <div>
-                            <select id="cidade" name="cidade" disabled class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100">
-                                <option value="">Cidade</option>
-                            </select>
-                        </div>
+                        <!-- País (dinâmico do banco) -->
+                        <select id="pais" 
+                                name="pais" 
+                                onchange="carregarEstadosPorPais()"
+                                class="w-full px-4 py-3 mb-3 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <option value="">Selecione o país</option>
+                            {% for pais in paises_modal %}
+                            <option value="{{ pais.id }}" data-sigla="{{ pais.sigla }}">{{ pais.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <!-- Estado (dinâmico do banco) -->
+                        <select id="estado" 
+                                name="estado" 
+                                onchange="carregarCidadesPorEstado()"
+                                disabled
+                                class="w-full px-4 py-3 mb-3 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-all">
+                            <option value="">Selecione o estado</option>
+                            {% for estado in estados_modal %}
+                            <option value="{{ estado.id }}" data-pais="{{ estado.pais.id }}">{{ estado.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <!-- Cidade (dinâmico do banco) -->
+                        <select id="cidade" 
+                                name="cidade" 
+                                disabled
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-all">
+                            <option value="">Selecione a cidade</option>
+                            {% for cidade in cidades_modal %}
+                            <option value="{{ cidade.id }}" data-estado="{{ cidade.estado.id }}">{{ cidade.nome }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-
-                    <!-- Terapias -->
-                    <div class="space-y-3">
-                        <label class="block text-base font-medium text-gray-700">
+                    
+                    <!-- ============================================ -->
+                    <!-- TERAPIAS (todas as 29 do banco) -->
+                    <!-- ============================================ -->
+                    <div>
+                        <label class="block text-primary font-poppins font-semibold mb-3">
                             Terapias
                         </label>
-                        <div class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-3">
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="aromaterapia" name="terapias" value="aromaterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="aromaterapia" class="text-gray-700 cursor-pointer text-sm">Aromaterapia</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="cristaloterapia" name="terapias" value="cristaloterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="cristaloterapia" class="text-gray-700 cursor-pointer text-sm">Cristaloterapia</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="massoterapia" name="terapias" value="massoterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="massoterapia" class="text-gray-700 cursor-pointer text-sm">Massoterapia</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="reiki" name="terapias" value="reiki" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="reiki" class="text-gray-700 cursor-pointer text-sm">Reiki</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="terapia-tantrica" name="terapias" value="terapia-tantrica" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="terapia-tantrica" class="text-gray-700 cursor-pointer text-sm">Terapia Tântrica</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="thetahealing" name="terapias" value="thetahealing" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="thetahealing" class="text-gray-700 cursor-pointer text-sm">Thetahealing</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="psicoterapia" name="terapias" value="psicoterapia" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="psicoterapia" class="text-gray-700 cursor-pointer text-sm">Psicoterapia</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="acupuntura" name="terapias" value="acupuntura" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <label for="acupuntura" class="text-gray-700 cursor-pointer text-sm">Acupuntura</label>
-                            </div>
+                        <div class="max-h-56 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2 bg-gray-50">
+                            {% if especialidades_modal %}
+                                {% for especialidade in especialidades_modal %}
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded transition-colors">
+                                    <input type="checkbox" 
+                                           name="terapias" 
+                                           value="{{ especialidade.id }}" 
+                                           class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                    <span class="ml-3 text-gray-700">{{ especialidade.nome }}</span>
+                                </label>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-sm text-gray-500 text-center py-4">Nenhuma terapia cadastrada</p>
+                            {% endif %}
                         </div>
-                        <p class="text-sm text-orange-500 mt-2">Selecione várias</p>
+                        <p class="text-xs text-gray-500 mt-2">Selecione uma ou mais terapias</p>
                     </div>
-
-                    <!-- Acessibilidade -->
-                    <div class="space-y-3">
-                        <label class="block text-base font-medium text-gray-700">
-                            Espaço com acessibilidade?
+                    
+                    <!-- ============================================ -->
+                    <!-- PARA QUEM É A TERAPIA -->
+                    <!-- ============================================ -->
+                    <div>
+                        <label class="block text-primary font-poppins font-semibold mb-3">
+                            Para quem é a terapia?
                         </label>
-                        <div class="flex flex-wrap gap-x-6 gap-y-2">
-                            <div class="flex items-center space-x-2">
-                                <input type="radio" id="acess-tanto-faz" name="acessibilidade" value="" class="text-primary focus:ring-primary border-gray-300" checked>
-                                <label for="acess-tanto-faz" class="text-gray-700 cursor-pointer">Tanto faz</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <input type="radio" id="acess-sim" name="acessibilidade" value="sim" class="text-primary focus:ring-primary border-gray-300">
-                                <label for="acess-sim" class="text-gray-700 cursor-pointer">Sim</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <input type="radio" id="acess-nao" name="acessibilidade" value="nao" class="text-primary focus:ring-primary border-gray-300">
-                                <label for="acess-nao" class="text-gray-700 cursor-pointer">Não</label>
-                            </div>
-                        </div>
+                        <select name="para_quem" 
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <option value="">Qualquer um</option>
+                            <option value="adultos">Adultos</option>
+                            <option value="criancas">Crianças</option>
+                            <option value="idosos">Idosos</option>
+                            <option value="casais">Casais</option>
+                            <option value="grupos">Grupos</option>
+                        </select>
                     </div>
-
-                    <!-- Botão de Buscar -->
-                    <div class="pt-4 pb-2">
-                        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg text-lg font-medium transition-colors">
+                    
+                    <!-- ============================================ -->
+                    <!-- BOTÃO BUSCAR -->
+                    <!-- ============================================ -->
+                    <div class="pt-4">
+                        <button type="submit" 
+                                class="w-full bg-primary text-white px-6 py-4 rounded-lg font-poppins font-bold text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
                             Buscar
                         </button>
                     </div>
+                    
                 </form>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ADICIONAR: JavaScript para controlar o modal (adicionar antes do fechamento do </body>) -->
+<!-- JavaScript para controlar o modal -->
 <script>
     // ============================================
-    // FUNÇÕES DO MODAL DE BUSCA
+    // Dados de localização carregados do Django
     // ============================================
-    
-    // Dados das cidades por estado (usando nomes exatos do banco)
-    const cidadesPorEstado = {
-        'RJ': [
-            { value: 'Rio de Janeiro', text: 'Rio de Janeiro' },
-            { value: 'Nitéroi', text: 'Niterói' },  // Banco tem 'Nitéroi', mostrar como 'Niterói'
-            { value: 'Angra dos Reis', text: 'Angra dos Reis' }
+    const dadosLocalizacao = {
+        paises: [
+            {% for pais in paises_modal %}
+            {
+                id: '{{ pais.id }}',
+                nome: '{{ pais.nome }}',
+                sigla: '{{ pais.codigo }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
         ],
-        'SP': [
-            { value: 'São Paulo', text: 'São Paulo' },
-            { value: 'Santos', text: 'Santos' }
+        estados: [
+            {% for estado in estados_modal %}
+            {
+                id: '{{ estado.id }}',
+                nome: '{{ estado.nome }}',
+                paisId: '{{ estado.pais.id }}',
+                paisSigla: '{{ estado.pais.sigla }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
         ],
-        'MG': [
-            { value: 'Belo Horizonte', text: 'Belo Horizonte' }
+        cidades: [
+            {% for cidade in cidades_modal %}
+            {
+                id: '{{ cidade.id }}',
+                nome: '{{ cidade.nome }}',
+                estadoId: '{{ cidade.estado.id }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
         ]
     };
+
+    console.log('🔍 Dados carregados:', dadosLocalizacao);
 
     // Abrir modal
     function abrirModalBusca() {
@@ -641,16 +672,13 @@ Data: 07/09/2025
         const overlay = modal.querySelector('.bg-black');
         const container = modal.querySelector('.transform');
         
-        // Resetar estados iniciais
         overlay.classList.remove('bg-opacity-70', 'bg-opacity-0');
         overlay.classList.add('bg-opacity-0');
         container.style.transform = 'scale(0.95)';
         container.style.opacity = '0';
         
-        // Mostrar modal
         modal.classList.remove('hidden');
         
-        // Adicionar classe para animação de fade suave
         setTimeout(() => {
             overlay.classList.remove('bg-opacity-0');
             overlay.classList.add('bg-opacity-70');
@@ -658,7 +686,6 @@ Data: 07/09/2025
             container.style.opacity = '1';
         }, 10);
         
-        // Prevenir scroll do body
         document.body.style.overflow = 'hidden';
     }
 
@@ -668,85 +695,149 @@ Data: 07/09/2025
         const overlay = modal.querySelector('.bg-black');
         const container = modal.querySelector('.transform');
         
-        // Animação de saída
         overlay.classList.remove('bg-opacity-70');
         overlay.classList.add('bg-opacity-0');
         container.style.transform = 'scale(0.95)';
         container.style.opacity = '0';
         
-        // Esconder modal após animação
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 300);
         
-        // Restaurar scroll do body
         document.body.style.overflow = 'auto';
         
-        // Fechar menu mobile se estiver aberto
         const mobileMenu = document.getElementById('mobile-menu');
         if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
             mobileMenu.classList.add('hidden');
         }
     }
 
-    // Carregar cidades baseado no estado selecionado
-    function carregarCidades() {
+    // Carregar estados por país
+    function carregarEstadosPorPais() {
+        const paisSelect = document.getElementById('pais');
         const estadoSelect = document.getElementById('estado');
         const cidadeSelect = document.getElementById('cidade');
-        const estadoValue = estadoSelect.value;
+        const paisId = paisSelect.value;
+        
+        console.log('🌍 País selecionado ID:', paisId);
+        
+        // Limpar estados e cidades
+        estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
+        cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+        cidadeSelect.disabled = true;
+        
+        // Se nenhum país selecionado - ESCONDER tudo
+        if (!paisId || paisId === '') {
+            console.log('❌ Nenhum país selecionado');
+            estadoSelect.classList.add('hidden');
+            cidadeSelect.classList.add('hidden');
+            estadoSelect.disabled = true;
+            return;
+        }
+        
+        // Buscar o país selecionado
+        const paisSelecionado = dadosLocalizacao.paises.find(p => p.id === paisId);
+        console.log('✅ País encontrado:', paisSelecionado);
+        
+        if (!paisSelecionado) {
+            console.log('⚠️ País não encontrado nos dados');
+            estadoSelect.classList.add('hidden');
+            cidadeSelect.classList.add('hidden');
+            estadoSelect.disabled = true;
+            return;
+        }
+        
+        // Verificar se é Brasil
+        if (paisSelecionado.sigla === 'BR') {
+            console.log('🇧🇷 BRASIL selecionado - MOSTRANDO estados e cidades');
+            
+            // MOSTRAR os selects
+            estadoSelect.classList.remove('hidden');
+            cidadeSelect.classList.remove('hidden');
+            estadoSelect.disabled = false;
+            
+            // Filtrar e adicionar estados do Brasil
+            const estadosFiltrados = dadosLocalizacao.estados.filter(e => e.paisId === paisId);
+            console.log('📍 Estados do Brasil encontrados:', estadosFiltrados.length);
+            
+            estadosFiltrados.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado.id;
+                option.textContent = estado.nome;
+                estadoSelect.appendChild(option);
+            });
+            
+        } else {
+            // País DIFERENTE do Brasil - ESCONDER estados e cidades
+            console.log('🌎 País NÃO é Brasil (' + paisSelecionado.sigla + ') - ESCONDENDO estados e cidades');
+            estadoSelect.classList.add('hidden');
+            cidadeSelect.classList.add('hidden');
+            estadoSelect.disabled = true;
+        }
+    }
+
+    // Carregar cidades por estado
+    function carregarCidadesPorEstado() {
+        const estadoSelect = document.getElementById('estado');
+        const cidadeSelect = document.getElementById('cidade');
+        const estadoId = estadoSelect.value;
+        
+        console.log('🏙️ Estado selecionado ID:', estadoId);
         
         // Limpar cidades
-        cidadeSelect.innerHTML = '<option value="">Cidade</option>';
+        cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
         
-        if (estadoValue && cidadesPorEstado[estadoValue]) {
-            // Habilitar select de cidade
+        if (estadoId) {
             cidadeSelect.disabled = false;
             
-            // Adicionar cidades
-            cidadesPorEstado[estadoValue].forEach(cidade => {
+            // Filtrar cidades do estado
+            const cidadesFiltradas = dadosLocalizacao.cidades.filter(c => c.estadoId === estadoId);
+            console.log('🏘️ Cidades filtradas:', cidadesFiltradas.length);
+            
+            cidadesFiltradas.forEach(cidade => {
                 const option = document.createElement('option');
-                option.value = cidade.value;
-                option.textContent = cidade.text;
+                option.value = cidade.id;
+                option.textContent = cidade.nome;
                 cidadeSelect.appendChild(option);
             });
         } else {
-            // Desabilitar select de cidade
             cidadeSelect.disabled = true;
         }
     }
 
-    // Enviar formulário de busca
+    // Enviar formulário
     function enviarBuscaModal(event) {
         event.preventDefault();
         
-        // Coletar dados do formulário
         const formData = new FormData(event.target);
         const params = new URLSearchParams();
         
-        // Processar checkboxes de tipo de sessão
         const tiposSessao = formData.getAll('tipo_sessao');
-        tiposSessao.forEach(tipo => params.append('tipo_sessao', tipo));
+        tiposSessao.forEach(tipo => params.append('tipos_sessao', tipo));
         
-        // Processar localização
+        if (formData.get('pais')) params.append('pais', formData.get('pais'));
         if (formData.get('estado')) params.append('estado', formData.get('estado'));
-        if (formData.get('cidade')) params.append('cidade', formData.get('cidade'));
+        if (formData.get('cidade')) {
+            const cidadeValue = formData.get('cidade');
+            if (cidadeValue && cidadeValue.trim() !== '') {
+                params.append('cidade', cidadeValue);
+            }
+        }
         
-        // Processar checkboxes de terapias
-        const terapias = formData.getAll('terapias');
-        terapias.forEach(terapia => params.append('terapias', terapia));
+        const especialidades = formData.getAll('terapias');
+        if (especialidades.length > 0) {
+            especialidades.forEach(esp => params.append('especialidades', esp));
+        }
         
-        // Processar acessibilidade
-        if (formData.get('acessibilidade')) params.append('acessibilidade', formData.get('acessibilidade'));
+        if (formData.get('para_quem')) params.append('para_quem', formData.get('para_quem'));
         
-        // Fechar modal
         fecharModalBusca();
         
-        // Redirecionar para página de listagem com parâmetros
-        const urlBusca = '/terapeutas/lista/?' + params.toString();
+        const urlBusca = '/terapeutas/buscar/?' + params.toString();
         window.location.href = urlBusca;
     }
 
-    // Fechar modal com tecla ESC
+    // Fechar com ESC
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const modal = document.getElementById('modal-busca');

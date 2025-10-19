@@ -21,7 +21,7 @@ Data: 13/09/2025
                 <ol class="flex items-center space-x-2 text-gray-600">
                     <li><a href="{% url 'core:home' %}" class="hover:text-primary">Início</a></li>
                     <li><span class="mx-2">›</span></li>
-                    <li><a href="{% url 'terapeutas:listagem_simples' %}" class="hover:text-primary">Terapeutas</a></li>
+                    <li><a href="{% url 'terapeutas:buscar' %}" class="hover:text-primary">Terapeutas</a></li>
                     <li><span class="mx-2">›</span></li>
                     <li><a href="{% url 'terapeutas:profile' terapeuta.slug %}" class="hover:text-primary">{{ terapeuta.nome_exibicao }}</a></li>
                     <li><span class="mx-2">›</span></li>

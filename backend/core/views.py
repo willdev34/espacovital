@@ -50,102 +50,82 @@ class HomeView(TemplateView):
         """
         context = super().get_context_data(**kwargs)
         
+        # Importar models necessários
+        from terapeutas.models import Terapeuta, Especialidade
+        from espacos.models import Espaco
+        from core.models import Pais, Estado, Cidade
+        
+        # Terapeutas em destaque com ordem rotativa
+        seed = self.get_carousel_seed()
+        terapeutas_qs = Terapeuta.objects.filter(
+            is_active=True,
+            destaque=True,
+            verificado=True
+        ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
+
+        # Converter para lista e embaralhar
+        terapeutas_list = list(terapeutas_qs)
+        import random
+        random.seed(seed)
+        random.shuffle(terapeutas_list)
+
+        # Converter para formato do template (igual ao que o template espera)
+        context['featured_therapists'] = []
+        for terapeuta in terapeutas_list:
+            # Buscar especialidades
+            especialidades = list(terapeuta.especialidades.all()[:2])
+            especialidades_str = ' • '.join([esp.nome for esp in especialidades]) if especialidades else 'Terapeuta Holístico'
+            
+            # Montar objeto no formato esperado pelo template
+            context['featured_therapists'].append({
+                'id': terapeuta.id,
+                'name': terapeuta.nome_exibicao or terapeuta.nome_completo,
+                'specialties': especialidades_str,
+                'location': f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}" if terapeuta.cidade_principal else '',
+                'verified': terapeuta.verificado,
+                'premium': terapeuta.premium,
+                'destaque': terapeuta.destaque,
+                'photo': terapeuta.foto_perfil.url if terapeuta.foto_perfil else None,
+                'rating': 4.8,
+                'total_reviews': 85,
+                'url': f'/terapeutas/perfil/{terapeuta.slug}/' if terapeuta.slug else '#'
+            })
+        
+        # Espaços em destaque
+        context['espacos_destaque'] = Espaco.objects.filter(
+            is_active=True,
+            is_destaque=True
+        ).select_related('cidade')[:6]
+        
+        # ============================================
+        # DADOS PARA O MODAL DE BUSCA
+        # ============================================
+        
+        # TODAS as especialidades/terapias (29 cadastradas)
+        context['especialidades_modal'] = Especialidade.objects.filter(
+            is_active=True
+        ).order_by('nome')
+
+        # Todos os países cadastrados
+        context['paises_modal'] = Pais.objects.filter(
+            ativo=True
+        ).order_by('nome')
+
+        # Todos os estados cadastrados
+        context['estados_modal'] = Estado.objects.filter(
+            ativo=True
+        ).order_by('nome')
+
+        # Todas as cidades cadastradas (para popular dinamicamente)
+        context['cidades_modal'] = Cidade.objects.filter(
+            ativo=True
+        ).select_related('estado').order_by('nome')
+        
         # Meta dados da página
         context['page_title'] = 'Espaço Vital - Conectando você ao cuidado terapêutico'
         context['meta_description'] = 'Encontre terapeutas e espaços terapêuticos verificados. Conectamos você ao cuidado que transforma sua vida.'
         
-        # ===== BUSCAR TODOS OS TERAPEUTAS EM DESTAQUE =====
-        try:
-            from terapeutas.models import Terapeuta
-            
-            # Buscar TODOS os terapeutas em destaque (não limitar quantidade)
-            terapeutas_destaque = Terapeuta.objects.filter(
-                is_active=True,
-                destaque=True  # APENAS os marcados como destaque
-            ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
-            
-            print(f"=== CARROSSEL DESTAQUE ===")
-            print(f"Terapeutas em destaque encontrados: {terapeutas_destaque.count()}")
-            
-            # Se não há terapeutas em destaque, buscar premium
-            if not terapeutas_destaque.exists():
-                print("Nenhum destaque encontrado, buscando premium...")
-                terapeutas_destaque = Terapeuta.objects.filter(
-                    is_active=True,
-                    premium=True
-                ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
-                print(f"Terapeutas premium encontrados: {terapeutas_destaque.count()}")
-            
-            # Se ainda não há, buscar verificados
-            if not terapeutas_destaque.exists():
-                print("Nenhum premium encontrado, buscando verificados...")
-                terapeutas_destaque = Terapeuta.objects.filter(
-                    is_active=True,
-                    verificado=True
-                ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
-                print(f"Terapeutas verificados encontrados: {terapeutas_destaque.count()}")
-            
-            # Aplicar ordem aleatória baseada na seed rotativa
-            seed = self.get_carousel_seed()
-            print(f"Seed atual para ordem: {seed}")
-            
-            # Converter para lista e embaralhar de forma determinística
-            terapeutas_list = list(terapeutas_destaque)
-            
-            # Embaralhar usando a seed (sempre a mesma ordem durante 5h)
-            import random
-            random.seed(seed)
-            random.shuffle(terapeutas_list)
-            
-            # Converter para formato do template
-            context['featured_therapists'] = []
-            for terapeuta in terapeutas_list:
-                # Buscar especialidades do terapeuta
-                especialidades = list(terapeuta.especialidades.all()[:2])
-                especialidades_str = ' • '.join([esp.nome for esp in especialidades]) if especialidades else 'Terapeuta Holístico'
-                
-                context['featured_therapists'].append({
-                    'id': terapeuta.id,
-                    'name': terapeuta.nome_exibicao or terapeuta.nome_completo,
-                    'specialties': especialidades_str,
-                    'location': terapeuta.get_cidade_principal_display(),
-                    'verified': terapeuta.verificado,
-                    'premium': terapeuta.premium,
-                    'destaque': terapeuta.destaque,
-                    'photo': terapeuta.foto_perfil.url if terapeuta.foto_perfil else None,
-                    'rating': 4.8,
-                    'total_reviews': 85,
-                    'url': f'/terapeutas/perfil/{terapeuta.slug}/' if terapeuta.slug else '#'
-                })
-            
-            print(f"Terapeutas no carrossel: {len(context['featured_therapists'])}")
-            for i, t in enumerate(context['featured_therapists']):
-                status = []
-                if t['destaque']: status.append('DESTAQUE')
-                if t['premium']: status.append('PREMIUM')
-                if t['verified']: status.append('VERIFICADO')
-                print(f"{i+1}. {t['name']} ({' | '.join(status)})")
-            print("=== FIM DEBUG ===")
-                
-        except Exception as e:
-            print(f"ERRO na busca de terapeutas: {str(e)}")
-            context['featured_therapists'] = [
-                {
-                    'id': 1,
-                    'name': 'ERRO - Verifique os terapeutas',
-                    'specialties': f'Erro: {str(e)[:50]}',
-                    'location': 'Debug Mode',
-                    'verified': False,
-                    'premium': False,
-                    'destaque': False,
-                    'photo': None,
-                    'rating': 0,
-                    'total_reviews': 0,
-                    'url': '/admin/terapeutas/terapeuta/'
-                }
-            ]
-        
-        # ===== DADOS ESTÁTICOS (resto da página) =====
+        return context
         
         # Dados de espaços (estático por enquanto)
         context['featured_spaces'] = [

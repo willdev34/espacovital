@@ -58,19 +58,19 @@ Data: 12/10/2025
                         {% endif %}
                         
                         <!-- Badges -->
-                        <div class="absolute top-3 left-3 flex gap-2">
+                        <div class="absolute bottom-3 left-3 flex gap-2">
                             {% if terapeuta.verificado %}
-                                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
                                     ✓ Verificado
                                 </span>
                             {% endif %}
                             {% if terapeuta.premium %}
-                                <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                                <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
                                     ⭐ Premium
                                 </span>
                             {% endif %}
                             {% if terapeuta.destaque %}
-                                <span class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                                <span class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
                                     ★ Destaque
                                 </span>
                             {% endif %}

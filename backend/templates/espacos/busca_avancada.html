@@ -42,12 +42,9 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                     </h2>
                     
                     <form id="filtro-espacos" 
-                          hx-post="{% url 'espacos:busca_avancada' %}" 
-                          hx-target="#lista-espacos" 
-                          hx-swap="innerHTML"
-                          hx-indicator="#loading-indicator"
-                          class="space-y-6">
-                        {% csrf_token %}
+                        method="get"
+                        action="{% url 'espacos:busca_avancada' %}"
+                        class="space-y-6">
                         
                         <!-- Filtro: Tipo de Espaço -->
                         <div>
@@ -57,55 +54,91 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                             <select name="tipo_espaco" 
                                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
                                 <option value="todos">Todos</option>
-                                <option value="consultorio">Consultório</option>
-                                <option value="clinica">Clínica</option>
-                                <option value="studio">Studio</option>
-                                <option value="espaco_holistico">Espaço Holístico</option>
-                                <option value="spa">Spa</option>
-                                <option value="centro_terapeutico">Centro Terapêutico</option>
+                                {% for value, label in tipos_espaco %}
+                                <option value="{{ value }}" {% if filtros_aplicados.tipo_espaco == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
 
-                        <!-- Filtro: Localização -->
+                        <!-- ============================================ -->
+                        <!-- FILTRO: LOCALIZAÇÃO (País, Estado, Cidade) -->
+                        <!-- ============================================ -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Localização? <span class="text-red-500">*</span>
+                                Localização
                             </label>
+                            
+                            <!-- País -->
+                            <select name="pais" 
+                                    id="pais-espaco"
+                                    onchange="carregarEstadosPorPaisEspaco()"
+                                    class="w-full px-4 py-3 mb-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Selecione o país</option>
+                                {% for pais in paises %}
+                                <option value="{{ pais.id }}" 
+                                        data-codigo="{{ pais.codigo }}"
+                                        {% if filtros_aplicados.pais == pais.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ pais.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
                             
                             <!-- Estado -->
                             <select name="estado" 
-                                    id="select-estado"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors mb-3">
-                                <option value="">Selecione o Estado</option>
+                                    id="estado-espaco"
+                                    onchange="carregarCidadesPorEstadoEspaco()"
+                                    disabled
+                                    class="w-full px-4 py-3 mb-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors disabled:bg-gray-100">
+                                <option value="">Selecione o estado</option>
                                 {% for estado in estados %}
-                                    <option value="{{ estado.id }}">{{ estado.nome }}</option>
+                                <option value="{{ estado.id }}" 
+                                        data-pais="{{ estado.pais.id }}"
+                                        {% if filtros_aplicados.estado == estado.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ estado.nome }}
+                                </option>
                                 {% endfor %}
                             </select>
                             
                             <!-- Cidade -->
                             <select name="cidade" 
-                                    id="select-cidade"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
-                                <option value="">Selecione a Cidade</option>
+                                    id="cidade-espaco"
+                                    disabled
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors disabled:bg-gray-100">
+                                <option value="">Selecione a cidade</option>
+                                {% for cidade in cidades %}
+                                <option value="{{ cidade.id }}" 
+                                        data-estado="{{ cidade.estado.id }}"
+                                        {% if filtros_aplicados.cidade == cidade.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ cidade.nome }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
 
-                        <!-- Filtro: Terapias disponíveis -->
+                        <!-- Filtro: Terapias disponíveis (TODAS as especialidades) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Terapias disponíveis
                             </label>
-                            <div class="relative">
-                                <select name="terapias" 
-                                        multiple
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
-                                    <option value="todas">Todas</option>
-                                    {% for terapia in terapias %}
-                                        <option value="{{ terapia.id }}">{{ terapia.nome }}</option>
+                            <div class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3 space-y-2">
+                                {% if todas_especialidades %}
+                                    {% for especialidade in todas_especialidades %}
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+                                        <input type="checkbox" 
+                                               name="terapias" 
+                                               value="{{ especialidade.id }}"
+                                               {% if especialidade.id|stringformat:"s" in filtros_aplicados.terapias %}checked{% endif %}
+                                               class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm">{{ especialidade.nome }}</span>
+                                    </label>
                                     {% endfor %}
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Selecione várias</p>
+                                {% else %}
+                                    <p class="text-sm text-gray-500 italic">Nenhuma terapia cadastrada</p>
+                                {% endif %}
                             </div>
+                            <p class="text-xs text-gray-500 mt-1">Selecione uma ou mais terapias</p>
                         </div>
 
                         <!-- Filtro: Acessibilidade -->
@@ -116,18 +149,21 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                             <div class="flex gap-4">
                                 <label class="flex items-center cursor-pointer">
                                     <input type="radio" name="acessibilidade" value="sim" 
+                                           {% if filtros_aplicados.acessibilidade == 'sim' %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Sim</span>
+                                    <span class="text-sm">Sim</span>
                                 </label>
                                 <label class="flex items-center cursor-pointer">
                                     <input type="radio" name="acessibilidade" value="nao" 
+                                           {% if filtros_aplicados.acessibilidade == 'nao' %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Não</span>
+                                    <span class="text-sm">Não</span>
                                 </label>
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="acessibilidade" value="" checked
+                                    <input type="radio" name="acessibilidade" value="" 
+                                           {% if not filtros_aplicados.acessibilidade %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Indiferente</span>
+                                    <span class="text-sm">Tanto faz</span>
                                 </label>
                             </div>
                         </div>
@@ -139,19 +175,22 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                             </label>
                             <div class="flex gap-4">
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="aceita_locacao" value="sim" 
+                                    <input type="radio" name="locacao" value="sim" 
+                                           {% if filtros_aplicados.locacao == 'sim' %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Sim</span>
+                                    <span class="text-sm">Sim</span>
                                 </label>
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="aceita_locacao" value="nao" 
+                                    <input type="radio" name="locacao" value="nao" 
+                                           {% if filtros_aplicados.locacao == 'nao' %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Não</span>
+                                    <span class="text-sm">Não</span>
                                 </label>
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="aceita_locacao" value="" checked
+                                    <input type="radio" name="locacao" value="" 
+                                           {% if not filtros_aplicados.locacao %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary">
-                                    <span>Indiferente</span>
+                                    <span class="text-sm">Tanto faz</span>
                                 </label>
                             </div>
                         </div>
@@ -162,26 +201,14 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                                 Disponibilidade por período
                             </label>
                             <div class="space-y-2">
+                                {% for value, label in periodos_disponibilidade %}
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="disponibilidade" value="manha" 
+                                    <input type="checkbox" name="disponibilidade" value="{{ value }}" 
+                                           {% if value in filtros_aplicados.disponibilidade %}checked{% endif %}
                                            class="mr-2 text-primary focus:ring-primary rounded">
-                                    <span>Manhã</span>
+                                    <span class="text-sm">{{ label }}</span>
                                 </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="disponibilidade" value="tarde" 
-                                           class="mr-2 text-primary focus:ring-primary rounded">
-                                    <span>Tarde</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="disponibilidade" value="noite" 
-                                           class="mr-2 text-primary focus:ring-primary rounded">
-                                    <span>Noite</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="disponibilidade" value="finais_semana" 
-                                           class="mr-2 text-primary focus:ring-primary rounded">
-                                    <span>Finais de semana</span>
-                                </label>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -193,19 +220,19 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                             <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3">
                                 {% if todas_comodidades %}
                                     {% for comodidade in todas_comodidades %}
-                                        <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
-                                            <input type="checkbox" 
-                                                name="comodidades" 
-                                                value="{{ comodidade.id }}"
-                                                {% if comodidade.id|stringformat:"s" in filtros_aplicados.comodidades %}checked{% endif %}
-                                                class="mr-2 text-primary focus:ring-primary rounded">
-                                            <span class="text-sm {% if comodidade.is_destaque %}font-medium{% endif %}">
-                                                {{ comodidade.nome }}
-                                            </span>
-                                            {% if comodidade.is_destaque %}
-                                                <span class="ml-auto text-xs text-primary">★</span>
-                                            {% endif %}
-                                        </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+                                        <input type="checkbox" 
+                                            name="comodidades" 
+                                            value="{{ comodidade.id }}"
+                                            {% if comodidade.id|stringformat:"s" in filtros_aplicados.comodidades %}checked{% endif %}
+                                            class="mr-2 text-primary focus:ring-primary rounded">
+                                        <span class="text-sm {% if comodidade.is_destaque %}font-medium{% endif %}">
+                                            {{ comodidade.nome }}
+                                        </span>
+                                        {% if comodidade.is_destaque %}
+                                            <span class="ml-auto text-xs text-primary">★</span>
+                                        {% endif %}
+                                    </label>
                                     {% endfor %}
                                 {% else %}
                                     <p class="text-sm text-gray-500 italic">Nenhuma comodidade cadastrada</p>
@@ -214,17 +241,18 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
                             <p class="text-xs text-gray-500 mt-1">Selecione as comodidades desejadas</p>
                         </div>
 
-                        <!-- Botão Buscar -->
-                        <button type="submit" 
-                                class="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200 shadow-sm">
-                            Buscar
-                        </button>
-
-                        <!-- Limpar filtros -->
-                        <button type="reset" 
-                                class="w-full text-primary text-sm hover:underline">
-                            Limpar filtros
-                        </button>
+                        <!-- Botões de ação -->
+                        <div class="pt-4 space-y-3">
+                            <button type="submit" 
+                                    class="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200 shadow-sm">
+                                Aplicar Filtros
+                            </button>
+                            
+                            <a href="{% url 'espacos:busca_avancada' %}" 
+                               class="block w-full text-center border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                Limpar Filtros
+                            </a>
+                        </div>
                     </form>
                 </div>
             </aside>
@@ -241,54 +269,118 @@ SEÇÃO PRINCIPAL - BUSCA DE ESPAÇOS
     </div>
 </div>
 
-<!-- Scripts para filtros dinâmicos -->
+<!-- ============================================ -->
+<!-- JAVASCRIPT PARA FILTROS DINÂMICOS -->
+<!-- ============================================ -->
 <script>
-    // ===============================================================
-    // Script para carregar cidades baseado no estado selecionado (AJAX)
-    // ===============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        const estadoSelect = document.getElementById('id_estado');
-        const cidadeSelect = document.getElementById('id_cidade');
+    // Dados de localização para espaços
+    const dadosLocalizacaoEspaco = {
+        paises: [
+            {% for pais in paises_modal %}
+            {
+                id: '{{ pais.id }}',
+                nome: '{{ pais.nome }}',
+                codigo: '{{ pais.codigo }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        estados: [
+            {% for estado in estados_modal %}
+            {
+                id: '{{ estado.id }}',
+                nome: '{{ estado.nome }}',
+                paisId: '{{ estado.pais.id }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        cidades: [
+            {% for cidade in cidades_modal %}
+            {
+                id: '{{ cidade.id }}',
+                nome: '{{ cidade.nome }}',
+                estadoId: '{{ cidade.estado.id }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    };
+
+    // Carregar estados por país (para espaços)
+    function carregarEstadosPorPaisEspaco() {
+        const paisSelect = document.getElementById('pais-espaco');
+        const estadoSelect = document.getElementById('estado-espaco');
+        const cidadeSelect = document.getElementById('cidade-espaco');
+        const paisId = paisSelect.value;
         
-        if (estadoSelect && cidadeSelect) {
-            estadoSelect.addEventListener('change', function() {
-                const estadoId = this.value;
-                
-                // Limpar cidades
-                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
-                cidadeSelect.disabled = true;
-                
-                if (estadoId) {
-                    // Buscar cidades via AJAX
-                    fetch(`/api/cidades/?estado=${estadoId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(cidade => {
-                                const option = document.createElement('option');
-                                option.value = cidade.id;
-                                option.textContent = cidade.nome;
-                                cidadeSelect.appendChild(option);
-                            });
-                            cidadeSelect.disabled = false;
-                        })
-                        .catch(error => console.error('Erro ao carregar cidades:', error));
-                }
-            });
+        estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
+        cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+        cidadeSelect.disabled = true;
+        
+        if (!paisId) {
+            estadoSelect.classList.add('hidden');
+            cidadeSelect.classList.add('hidden');
+            estadoSelect.disabled = true;
+            return;
         }
         
-        // Auto-submit do formulário ao mudar filtros (opcional)
-        const form = document.getElementById('filtro-espacos');
-        const autoSubmitElements = form.querySelectorAll('select, input[type="checkbox"], input[type="radio"]');
+        const paisSelecionado = dadosLocalizacaoEspaco.paises.find(p => p.id === paisId);
         
-        autoSubmitElements.forEach(element => {
-            element.addEventListener('change', function() {
-                // Delay de 500ms para evitar múltiplos submits rápidos
-                clearTimeout(window.filterTimeout);
-                window.filterTimeout = setTimeout(() => {
-                    htmx.trigger(form, 'submit');
-                }, 500);
+        if (paisSelecionado && paisSelecionado.codigo === 'BR') {
+            estadoSelect.classList.remove('hidden');
+            cidadeSelect.classList.remove('hidden');
+            estadoSelect.disabled = false;
+            
+            const estadosFiltrados = dadosLocalizacaoEspaco.estados.filter(e => e.paisId === paisId);
+            
+            estadosFiltrados.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado.id;
+                option.textContent = estado.nome;
+                estadoSelect.appendChild(option);
             });
-        });
+        } else {
+            estadoSelect.classList.add('hidden');
+            cidadeSelect.classList.add('hidden');
+            estadoSelect.disabled = true;
+        }
+    }
+
+    // Carregar cidades por estado (para espaços)
+    function carregarCidadesPorEstadoEspaco() {
+        const estadoSelect = document.getElementById('estado-espaco');
+        const cidadeSelect = document.getElementById('cidade-espaco');
+        const estadoId = estadoSelect.value;
+        
+        cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+        
+        if (estadoId) {
+            cidadeSelect.disabled = false;
+            
+            const cidadesFiltradas = dadosLocalizacaoEspaco.cidades.filter(c => c.estadoId === estadoId);
+            
+            cidadesFiltradas.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade.id;
+                option.textContent = cidade.nome;
+                cidadeSelect.appendChild(option);
+            });
+        } else {
+            cidadeSelect.disabled = true;
+        }
+    }
+
+    // Inicializar selects se houver valores selecionados
+    document.addEventListener('DOMContentLoaded', function() {
+        const paisSelect = document.getElementById('pais-espaco');
+        if (paisSelect && paisSelect.value) {
+            carregarEstadosPorPaisEspaco();
+            
+            const estadoSelect = document.getElementById('estado-espaco');
+            setTimeout(() => {
+                if (estadoSelect && estadoSelect.value) {
+                    carregarCidadesPorEstadoEspaco();
+                }
+            }, 100);
+        }
     });
 </script>
 

@@ -105,6 +105,15 @@ class TerapeutaListView(ListView):
                     )
         
         # Filtro: Localização
+        pais_id = self.request.GET.get('pais')
+        if pais_id:
+            try:
+                # Filtra pelo campo 'pais' direto do terapeuta
+                queryset = queryset.filter(pais_id=pais_id)
+            except ValueError:
+                pass
+
+        # Filtro por Cidade
         cidade_id = self.request.GET.get('cidade')
         if cidade_id:
             try:
@@ -114,7 +123,8 @@ class TerapeutaListView(ListView):
                 ).distinct()
             except ValueError:
                 pass
-        
+
+        # Filtro por Estado
         estado_id = self.request.GET.get('estado')
         if estado_id:
             try:
@@ -203,6 +213,7 @@ class TerapeutaListView(ListView):
         # Valores atuais dos filtros (para manter selecionado)
         context['filtros_atuais'] = {
             'tipos_sessao': self.request.GET.getlist('tipos_sessao'),
+            'pais': self.request.GET.get('pais', ''),
             'cidade': self.request.GET.get('cidade', ''),
             'estado': self.request.GET.get('estado', ''),
             'especialidades': self.request.GET.getlist('especialidades'),

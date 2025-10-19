@@ -36,157 +36,276 @@ SEÇÃO PRINCIPAL - BUSCA DE TERAPEUTAS
             SIDEBAR - FILTROS DE BUSCA
             =============================================================== -->
             <aside class="lg:w-80">
-                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
-                    <h2 class="text-xl font-poppins font-semibold text-primary mb-6">
-                        Refina sua busca
-                    </h2>
-                    
-                    <form id="filtro-terapeutas" 
-                          method="get"
-                          hx-get="{% url 'terapeutas:buscar' %}" 
-                          hx-target="#lista-terapeutas" 
-                          hx-swap="innerHTML"
-                          hx-indicator="#loading-indicator"
-                          class="space-y-6">
-                        
-                        <!-- Filtro: Tipo de Sessão -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Que tipo de sessão está buscando?
-                            </label>
-                            <div class="space-y-2">
-                                {% for value, label in tipos_sessao_choices %}
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" 
-                                           name="tipos_sessao" 
-                                           value="{{ value }}"
-                                           {% if value in filtros_atuais.tipos_sessao %}checked{% endif %}
-                                           class="mr-2 text-primary focus:ring-primary rounded">
-                                    <span class="text-sm">{{ label }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Filtro: Localização -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Localização? <span class="text-red-500">*</span>
-                            </label>
-                            <select name="estado" 
-                                    id="id_estado"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors mb-3">
-                                <option value="">Selecione o Estado</option>
-                                {% for estado in estados %}
-                                    <option value="{{ estado.id }}" {% if estado.id|stringformat:"s" == filtros_atuais.estado %}selected{% endif %}>
-                                        {{ estado.nome }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-
-                            <select name="cidade" 
-                                    id="id_cidade"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
-                                <option value="">Selecione a Cidade</option>
-                            </select>
-                        </div>
-
-                        <!-- Filtro: Terapias/Especialidades -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Terapias
-                            </label>
-                            <select name="especialidades" 
-                                    multiple
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                                    size="5">
-                                <option value="">Todas</option>
-                                {% for especialidade in especialidades %}
-                                    <option value="{{ especialidade.id }}" 
-                                            {% if especialidade.id|stringformat:"s" in filtros_atuais.especialidades %}selected{% endif %}>
-                                        {{ especialidade.nome }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">Segure Ctrl para selecionar várias</p>
-                        </div>
-
-                        <!-- Filtro: Acessibilidade -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">
-                                Acessibilidade?
-                            </label>
-                            <div class="flex gap-4">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" 
-                                           name="acessibilidade" 
-                                           value="sim"
-                                           {% if filtros_atuais.acessibilidade == 'sim' %}checked{% endif %}
-                                           class="mr-2 text-primary focus:ring-primary">
-                                    <span class="text-sm">Sim</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" 
-                                           name="acessibilidade" 
-                                           value="nao"
-                                           {% if filtros_atuais.acessibilidade == 'nao' %}checked{% endif %}
-                                           class="mr-2 text-primary focus:ring-primary">
-                                    <span class="text-sm">Não</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Filtro: Perfil Profissional -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Perfil de profissional?
-                            </label>
-                            <div class="space-y-2">
-                                {% for value, label in perfil_profissional_choices %}
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" 
-                                           name="perfil_profissional" 
-                                           value="{{ value }}"
-                                           {% if filtros_atuais.perfil_profissional == value %}checked{% endif %}
-                                           class="mr-2 text-primary focus:ring-primary">
-                                    <span class="text-sm">{{ label }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Filtro: Para Quem -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Para quem é a terapia?
-                            </label>
-                            <select name="para_quem" 
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
-                                <option value="">Qualquer um</option>
-                                {% for value, label in para_quem_choices %}
-                                    <option value="{{ value }}" {% if filtros_atuais.para_quem == value %}selected{% endif %}>
-                                        {{ label }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Botão Buscar -->
-                        <button type="submit" 
-                                class="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200 shadow-sm">
-                            Buscar
-                        </button>
-
-                        <!-- Limpar filtros -->
-                        <button type="reset" 
-                                onclick="window.location.href='{% url 'terapeutas:buscar' %}'"
-                                class="w-full text-primary text-sm hover:underline">
-                            Limpar filtros
-                        </button>
-
-                    </form>
+    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+        <h2 class="text-xl font-poppins font-semibold text-primary mb-6">
+            Refina sua busca
+        </h2>
+        
+        <form id="filtro-terapeutas" 
+              method="get"
+              hx-get="{% url 'terapeutas:buscar' %}" 
+              hx-target="#lista-terapeutas" 
+              hx-swap="innerHTML"
+              hx-indicator="#loading-indicator"
+              class="space-y-6">
+            
+            <!-- ============================================ -->
+            <!-- FILTRO: TIPO DE SESSÃO -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Que tipo de sessão está buscando?
+                </label>
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="tipos_sessao" 
+                               value="presencial"
+                               {% if 'presencial' in filtros_atuais.tipos_sessao %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Presencial</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="tipos_sessao" 
+                               value="online"
+                               {% if 'online' in filtros_atuais.tipos_sessao %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">On-line</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="tipos_sessao" 
+                               value="domicilio"
+                               {% if 'domicilio' in filtros_atuais.tipos_sessao %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Domicílio</span>
+                    </label>
                 </div>
-            </aside>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: LOCALIZAÇÃO -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Localização
+                </label>
+                
+                <!-- Estado -->
+                <select name="estado" 
+                        id="filtro-estado"
+                        class="w-full px-3 py-2 mb-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Todos os estados</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado.id }}" 
+                            {% if filtros_atuais.estado == estado.id|stringformat:"s" %}selected{% endif %}>
+                        {{ estado.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <!-- Cidade -->
+                <select name="cidade" 
+                        id="filtro-cidade"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Todas as cidades</option>
+                    {% for cidade in cidades %}
+                    <option value="{{ cidade.id }}"
+                            {% if filtros_atuais.cidade == cidade.id|stringformat:"s" %}selected{% endif %}>
+                        {{ cidade.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: TERAPIAS/ESPECIALIDADES -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Terapias
+                </label>
+                <div class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3 space-y-2">
+                    {% for especialidade in especialidades %}
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                        <input type="checkbox" 
+                               name="especialidades" 
+                               value="{{ especialidade.id }}"
+                               {% if especialidade.id|stringformat:"s" in filtros_atuais.especialidades %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">{{ especialidade.nome }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: GÊNERO DO TERAPEUTA (NOVO) -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Gênero do terapeuta
+                </label>
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="genero" 
+                               value=""
+                               {% if not filtros_atuais.genero %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Qualquer um</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="genero" 
+                               value="masculino"
+                               {% if filtros_atuais.genero == 'masculino' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Masculino</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="genero" 
+                               value="feminino"
+                               {% if filtros_atuais.genero == 'feminino' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Feminino</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="genero" 
+                               value="nao_binario"
+                               {% if filtros_atuais.genero == 'nao_binario' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Não-binário</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="genero" 
+                               value="outro"
+                               {% if filtros_atuais.genero == 'outro' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Outro</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: HORÁRIOS DE ATENDIMENTO (NOVO) -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Horários de atendimento
+                </label>
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="atende_manha" 
+                               value="sim"
+                               {% if filtros_atuais.atende_manha %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Manhã</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="atende_tarde" 
+                               value="sim"
+                               {% if filtros_atuais.atende_tarde %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Tarde</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="atende_noite" 
+                               value="sim"
+                               {% if filtros_atuais.atende_noite %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Noite</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" 
+                               name="atende_final_semana" 
+                               value="sim"
+                               {% if filtros_atuais.atende_final_semana %}checked{% endif %}
+                               class="text-primary focus:ring-primary rounded">
+                        <span class="ml-2 text-sm">Finais de semana</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: LOCAL PRIVATIVO (NOVO) -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Atende em local privativo?
+                </label>
+                <div class="flex gap-4">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="local_privativo" 
+                               value="sim"
+                               {% if filtros_atuais.local_privativo == 'sim' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Sim</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="local_privativo" 
+                               value="nao"
+                               {% if filtros_atuais.local_privativo == 'nao' %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Não</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" 
+                               name="local_privativo" 
+                               value=""
+                               {% if not filtros_atuais.local_privativo %}checked{% endif %}
+                               class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm">Tanto faz</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- FILTRO: PARA QUEM É A TERAPIA -->
+            <!-- ============================================ -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Para quem é a terapia?
+                </label>
+                <select name="para_quem" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Qualquer um</option>
+                    {% for value, label in para_quem_choices %}
+                        {% if value != 'qualquer_um' %}
+                        <option value="{{ value }}"
+                                {% if filtros_atuais.para_quem == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- BOTÕES DE AÇÃO -->
+            <!-- ============================================ -->
+            <div class="pt-4 space-y-3">
+                <button type="submit" 
+                        class="w-full bg-primary text-white px-4 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    Aplicar Filtros
+                </button>
+                <a href="{% url 'terapeutas:buscar' %}" 
+                   class="block w-full text-center border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    Limpar Filtros
+                </a>
+            </div>
+        </form>
+    </div>
+</aside>
 
             <!-- ===============================================================
             ÁREA DE RESULTADOS

@@ -56,11 +56,22 @@ class EspacoListView(ListView):
         if tipo_espaco and tipo_espaco != 'todos':
             queryset = queryset.filter(tipo_espaco=tipo_espaco)
         
-        # Filtro: Localização (Estado e Cidade)
+        # Filtro: Localização (País, Estado e Cidade)
+        # Filtro por País
+        pais_id = self.request.GET.get('pais')
+        if pais_id:
+            try:
+                # Filtra pelo campo 'pais' direto do espaço
+                queryset = queryset.filter(pais_id=pais_id)
+            except ValueError:
+                pass
+
+        # Filtro por Estado
         estado = self.request.GET.get('estado')
         if estado and estado != '':
             queryset = queryset.filter(cidade__estado_id=estado)
-        
+
+        # Filtro por Cidade
         cidade = self.request.GET.get('cidade')
         if cidade and cidade != '':
             queryset = queryset.filter(cidade_id=cidade)
@@ -130,16 +141,21 @@ class EspacoListView(ListView):
         """
         context = super().get_context_data(**kwargs)
         
+        # Importar Pais
+        from core.models import Pais
+        
         # Dados para dropdowns e filtros
-        context['estados'] = Estado.objects.all().order_by('nome')
+        context['paises'] = Pais.objects.filter(ativo=True).order_by('nome')
+        context['estados'] = Estado.objects.filter(ativo=True).order_by('nome')
         context['tipos_espaco'] = TipoEspaco.choices
         context['periodos_disponibilidade'] = DisponibilidadePeriodo.choices
-        context['todas_especialidades'] = Especialidade.objects.filter(is_active=True).order_by('categoria', 'nome')
+        context['todas_especialidades'] = Especialidade.objects.filter(is_active=True).order_by('nome')  # Todas as 29
         context['todas_comodidades'] = Comodidade.objects.filter(is_active=True).order_by('-is_destaque', 'nome')
         
         # Manter valores dos filtros aplicados
         context['filtros_aplicados'] = {
             'tipo_espaco': self.request.GET.get('tipo_espaco', ''),
+            'pais': self.request.GET.get('pais', ''),
             'estado': self.request.GET.get('estado', ''),
             'cidade': self.request.GET.get('cidade', ''),
             'terapias': self.request.GET.getlist('terapias'),
