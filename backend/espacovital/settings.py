@@ -220,7 +220,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary Configuration
-USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
+SE_CLOUDINARY = config('USE_CLOUDINARY', default='False') in ['true', 'True', '1', 'yes', 'Yes', 'YES']
 
 # DEBUG TEMPORÁRIO - REMOVER DEPOIS
 print("=" * 50)
