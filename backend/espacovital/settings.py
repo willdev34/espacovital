@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # Third-party apps
-    'cloudinary_storage',  # Cloudinary para as imagens
+    'cloudinary_storage',  # IMPORTANTE: antes de 'cloudinary'
     'cloudinary',
     'allauth',
     'allauth.account',
@@ -243,7 +243,7 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Configuração para S3 (preparado para futuro)
+# Configuração para S3 (preparado para futuro)git branch
 USE_S3 = config('USE_S3', default=False, cast=bool)
 
 if USE_S3:
