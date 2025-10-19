@@ -219,20 +219,20 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Sempre definir MEDIA_ROOT para desenvolvimento local
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cloudinary Configuration
-SE_CLOUDINARY = config('USE_CLOUDINARY', default='False') in ['true', 'True', '1', 'yes', 'Yes', 'YES']
+# Define USE_CLOUDINARY baseado na variável de ambiente
+USE_CLOUDINARY = config('USE_CLOUDINARY', default='False') in ['true', 'True', '1', 'yes', 'Yes', 'YES']
 
 # DEBUG TEMPORÁRIO - REMOVER DEPOIS
 print("=" * 50)
 print("DEBUG MEDIA CONFIGURATION")
 print(f"ENVIRONMENT: {ENVIRONMENT}")
 print(f"USE_CLOUDINARY: {USE_CLOUDINARY}")
-print(f"MEDIA_ROOT: {MEDIA_ROOT}")
+print(f"Type: {type(USE_CLOUDINARY)}")
 print("=" * 50)
 
 if USE_CLOUDINARY:
-    print("✓ USANDO CLOUDINARY (PRODUÇÃO)")
-    # Usar Cloudinary para mídia (produção/Railway)
+    print("✓ USANDO CLOUDINARY!")
+    # Usar Cloudinary para mídia (produção)
     import cloudinary
     import cloudinary.uploader
     import cloudinary.api
@@ -251,15 +251,14 @@ if USE_CLOUDINARY:
     )
     
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'  # Cloudinary gerencia automaticamente
+    MEDIA_URL = '/media/'  # Cloudinary vai gerenciar automaticamente
     print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
-    print(f"MEDIA_URL: {MEDIA_URL}")
 else:
-    print("✓ USANDO ARMAZENAMENTO LOCAL (DESENVOLVIMENTO)")
+    print("✗ USANDO ARMAZENAMENTO LOCAL (DESENVOLVIMENTO)")
     # Armazenamento local (desenvolvimento)
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
-    print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE if 'DEFAULT_FILE_STORAGE' in dir() else 'django.core.files.storage.FileSystemStorage'}")
     print(f"MEDIA_URL: {MEDIA_URL}")
 
 # Configuração para S3 (preparado para futuro)
