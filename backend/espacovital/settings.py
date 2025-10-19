@@ -220,7 +220,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Define USE_CLOUDINARY baseado na variável de ambiente
-USE_CLOUDINARY = config('USE_CLOUDINARY', default='False') in ['true', 'True', '1', 'yes', 'Yes', 'YES']
+# Lê a variável e converte para boolean
+_use_cloudinary_env = config('USE_CLOUDINARY', default='false').lower()
+USE_CLOUDINARY = _use_cloudinary_env in ['true', '1', 'yes', 'y', 'on']
 
 # DEBUG TEMPORÁRIO - REMOVER DEPOIS
 print("=" * 50)
