@@ -72,6 +72,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
+    # Third-party apps
+    'cloudinary_storage',  # C00loudinary para as imagens
+    'cloudinary',           
+    'allauth',
     
     # Third-party apps
     'cloudinary_storage',  # Cloudinary para as imagens
