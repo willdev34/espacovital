@@ -219,11 +219,22 @@ USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
 
 if USE_CLOUDINARY:
     # Usar Cloudinary para mídia (produção)
+    import cloudinary
+    import cloudinary.uploader
+    import cloudinary.api
+    
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
         'API_KEY': config('CLOUDINARY_API_KEY'),
         'API_SECRET': config('CLOUDINARY_API_SECRET'),
     }
+    
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+        api_key=CLOUDINARY_STORAGE['API_KEY'],
+        api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+        secure=True
+    )
     
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     MEDIA_URL = '/media/'  # Cloudinary vai gerenciar automaticamente
