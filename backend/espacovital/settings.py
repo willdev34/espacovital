@@ -7,12 +7,6 @@
 
 import sys
 import os
-print("=" * 50)
-print("DEBUG CLOUDINARY CONFIGURATION")
-print(f"ENVIRONMENT: {config('ENVIRONMENT', default='development')}")
-print(f"USE_CLOUDINARY from env: {os.getenv('USE_CLOUDINARY', 'NOT SET')}")
-print(f"CLOUDINARY_CLOUD_NAME from env: {os.getenv('CLOUDINARY_CLOUD_NAME', 'NOT SET')}")
-print("=" * 50)
 from pathlib import Path
 from decouple import config, Csv
 
@@ -222,7 +216,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cloudinary Configuration
 USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
-print(f"USE_CLOUDINARY final value: {USE_CLOUDINARY}")
+
+# DEBUG TEMPORÁRIO - REMOVER DEPOIS
+print("=" * 50)
+print("DEBUG CLOUDINARY CONFIGURATION")
+print(f"ENVIRONMENT: {ENVIRONMENT}")
+print(f"USE_CLOUDINARY value: {USE_CLOUDINARY}")
+print(f"Type: {type(USE_CLOUDINARY)}")
 print("=" * 50)
 
 if USE_CLOUDINARY:
