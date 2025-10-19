@@ -57,11 +57,17 @@ if settings.DEBUG:
 # Servir arquivos estáticos e media em desenvolvimento
 # ===============================================================
 
-# Arquivos estáticos apenas em desenvolvimento
 if settings.DEBUG:
+    from django.conf.urls.static import static
+    
     # Arquivos estáticos (CSS, JS, imagens do projeto)
-    # Verifica se STATICFILES_DIRS existe e tem conteúdo antes de usar
-    if hasattr(settings, 'STATICFILES_DIRS') and settings.STATICFILES_DIRS:
-        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
-    else:
-        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    
+    # ✅ ARQUIVOS DE MEDIA (UPLOADS) - CRÍTICO PARA IMAGENS
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    print("=" * 50)
+    print("DEBUG - SERVING MEDIA FILES")
+    print(f"MEDIA_URL: {settings.MEDIA_URL}")
+    print(f"MEDIA_ROOT: {settings.MEDIA_ROOT}")
+    print("=" * 50)

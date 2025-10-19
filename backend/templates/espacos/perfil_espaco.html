@@ -29,14 +29,14 @@ SEÇÃO HERO - APRESENTAÇÃO DO ESPAÇO
         </nav>
 
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div class="lg:flex">
-                <!-- Galeria de Imagens -->
-                <div class="lg:w-2/5">
-                    <div class="relative h-96 lg:h-full">
-                        {% if espaco.foto_principal %}
-                        <img src="{{ espaco.foto_principal.url }}" 
-                             alt="{{ espaco.nome }}"
-                             class="w-full h-full object-cover">
+        <div class="lg:flex">
+            <!-- Galeria de Imagens -->
+            <div class="lg:w-2/5">
+                <div class="relative h-64 lg:h-96">
+                    {% if espaco.foto_principal %}
+                    <img src="{{ espaco.foto_principal.url }}" 
+                        alt="{{ espaco.nome }}"
+                        class="w-full h-full object-cover">
                         {% else %}
                         <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                             <svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

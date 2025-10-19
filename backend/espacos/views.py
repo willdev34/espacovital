@@ -253,10 +253,10 @@ class EspacoPorRegiaoView(ListView):
 
 class EspacoDetailView(DetailView):
     """
-    View para página de perfil completo do espaço
+    View para exibir perfil completo do espaço
     """
     model = Espaco
-    template_name = 'espacos/detalhe.html'
+    template_name = 'espacos/perfil_espaco.html'
     context_object_name = 'espaco'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'

@@ -204,6 +204,7 @@ USE_TZ = True
 # ARQUIVOS ESTÁTICOS E MEDIA
 # ===============================================================
 
+# ===== STATIC FILES =====
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -214,20 +215,24 @@ STATICFILES_DIRS = [
 # WhiteNoise configuração
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# ===== MEDIA FILES =====
+# Sempre definir MEDIA_ROOT para desenvolvimento local
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Cloudinary Configuration
 USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
 
 # DEBUG TEMPORÁRIO - REMOVER DEPOIS
 print("=" * 50)
-print("DEBUG CLOUDINARY CONFIGURATION")
+print("DEBUG MEDIA CONFIGURATION")
 print(f"ENVIRONMENT: {ENVIRONMENT}")
-print(f"USE_CLOUDINARY value: {USE_CLOUDINARY}")
-print(f"Type: {type(USE_CLOUDINARY)}")
+print(f"USE_CLOUDINARY: {USE_CLOUDINARY}")
+print(f"MEDIA_ROOT: {MEDIA_ROOT}")
 print("=" * 50)
 
 if USE_CLOUDINARY:
-    print("✓ USANDO CLOUDINARY!")
-    # Usar Cloudinary para mídia (produção)
+    print("✓ USANDO CLOUDINARY (PRODUÇÃO)")
+    # Usar Cloudinary para mídia (produção/Railway)
     import cloudinary
     import cloudinary.uploader
     import cloudinary.api
@@ -246,24 +251,31 @@ if USE_CLOUDINARY:
     )
     
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'  # Cloudinary vai gerenciar automaticamente
+    MEDIA_URL = '/media/'  # Cloudinary gerencia automaticamente
     print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+    print(f"MEDIA_URL: {MEDIA_URL}")
 else:
-    print("✗ USANDO ARMAZENAMENTO LOCAL")
+    print("✓ USANDO ARMAZENAMENTO LOCAL (DESENVOLVIMENTO)")
     # Armazenamento local (desenvolvimento)
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+    print(f"MEDIA_URL: {MEDIA_URL}")
 
-# Configuração para S3 (preparado para futuro)git branch
+# Configuração para S3 (preparado para futuro)
 USE_S3 = config('USE_S3', default=False, cast=bool)
 
 if USE_S3:
+    print("✓ USANDO AWS S3")
     # AWS S3 Settings (configurar quando for usar)
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 # ===============================================================
 # CONFIGURAÇÕES DO WHITENOISE (Para servir static files)
