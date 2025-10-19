@@ -115,3 +115,7 @@ dj-database-url==2.1.0
 # jupyter==1.0.0
 # django-silk==5.0.4  # Para profiling
 # pre-commit==3.6.0   # Para hooks de git
+
+# Cloud Storage
+cloudinary==1.36.0
+django-cloudinary-storage==0.3.0
