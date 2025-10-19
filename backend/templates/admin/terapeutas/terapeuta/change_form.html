@@ -21,12 +21,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!paisSelect) return;
     
+    // Salvar valores iniciais (ao editar)
+    const valorInicialEstado = estadoSelect?.value;
+    const valorInicialCidade = cidadeSelect?.value;
+    
     // Eventos
     paisSelect.addEventListener('change', () => paisMudou());
     if (estadoSelect) estadoSelect.addEventListener('change', () => estadoMudou());
     
     // Inicializar
     paisMudou();
+    
+    // Se estiver editando (tem valores salvos), carregar os dados
+    if (valorInicialEstado && valorInicialCidade) {
+        setTimeout(() => {
+            console.log('Carregando dados salvos...', {
+                estado: valorInicialEstado,
+                cidade: valorInicialCidade
+            });
+            carregarCidadesSalvas(valorInicialEstado, valorInicialCidade);
+        }, 500);
+    }
     
     function paisMudou() {
         const isBrasil = paisSelect.options[paisSelect.selectedIndex]?.text.includes('Brasil');
@@ -43,12 +58,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (estadoRow) estadoRow.style.display = 'none';
             if (cidadeRow) cidadeRow.style.display = 'none';
             if (cidadeTextoRow) cidadeTextoRow.style.display = '';
+            
+            // Limpar selects
+            if (estadoSelect) {
+                estadoSelect.innerHTML = '<option value="">---------</option>';
+            }
+            if (cidadeSelect) {
+                cidadeSelect.innerHTML = '<option value="">Primeiro selecione o estado</option>';
+                cidadeSelect.disabled = true;
+            }
         }
     }
     
     function carregarEstados() {
         const paisId = paisSelect.value;
         if (!paisId || !estadoSelect) return;
+        
+        const estadoAtual = estadoSelect.value; // Guardar valor antes de limpar
         
         estadoSelect.innerHTML = '<option value="">---------</option>';
         cidadeSelect.innerHTML = '<option value="">Primeiro selecione o estado</option>';
@@ -58,8 +84,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(r => r.json())
             .then(data => {
                 data.forEach(e => {
-                    estadoSelect.add(new Option(`${e.nome} (${e.sigla})`, e.id));
+                    const option = new Option(`${e.nome} (${e.sigla})`, e.id);
+                    // Manter estado selecionado se tinha valor
+                    if (estadoAtual && e.id == estadoAtual) {
+                        option.selected = true;
+                    }
+                    estadoSelect.add(option);
                 });
+                
+                // Se tinha estado selecionado, disparar mudança para carregar cidades
+                if (estadoAtual) {
+                    estadoSelect.value = estadoAtual;
+                }
             });
     }
     
@@ -71,6 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        const cidadeAtual = cidadeSelect.value; // Guardar valor antes de limpar
+        
         cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
         
         fetch(`/api/cidades/?estado=${estadoId}`)
@@ -79,8 +117,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 cidadeSelect.innerHTML = '<option value="">---------</option>';
                 cidadeSelect.disabled = false;
                 data.forEach(c => {
-                    cidadeSelect.add(new Option(c.nome, c.id));
+                    const option = new Option(c.nome, c.id);
+                    // Manter cidade selecionada se tinha valor
+                    if (cidadeAtual && c.id == cidadeAtual) {
+                        option.selected = true;
+                    }
+                    cidadeSelect.add(option);
                 });
+                
+                // Restaurar seleção se tinha
+                if (cidadeAtual) {
+                    cidadeSelect.value = cidadeAtual;
+                }
+            });
+    }
+    
+    // Nova função para carregar cidades ao editar
+    function carregarCidadesSalvas(estadoId, cidadeId) {
+        fetch(`/api/cidades/?estado=${estadoId}`)
+            .then(r => r.json())
+            .then(data => {
+                cidadeSelect.innerHTML = '<option value="">---------</option>';
+                cidadeSelect.disabled = false;
+                data.forEach(c => {
+                    const option = new Option(c.nome, c.id);
+                    if (c.id == cidadeId) {
+                        option.selected = true;
+                        console.log('Cidade selecionada:', c.nome);
+                    }
+                    cidadeSelect.add(option);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar cidades salvas:', error);
             });
     }
 });

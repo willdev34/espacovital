@@ -57,10 +57,8 @@ if settings.DEBUG:
 # Servir arquivos estáticos e media em desenvolvimento
 # ===============================================================
 
+# Arquivos estáticos apenas em desenvolvimento
 if settings.DEBUG:
-    # Arquivos de media (uploads de usuários)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    
     # Arquivos estáticos (CSS, JS, imagens do projeto)
     # Verifica se STATICFILES_DIRS existe e tem conteúdo antes de usar
     if hasattr(settings, 'STATICFILES_DIRS') and settings.STATICFILES_DIRS:
