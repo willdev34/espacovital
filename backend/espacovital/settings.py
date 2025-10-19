@@ -219,8 +219,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Sempre definir MEDIA_ROOT para desenvolvimento local
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# TESTE TEMPORÁRIO - FORÇAR CLOUDINARY
-USE_CLOUDINARY = True  # ← HARDCODED para testar
+# Lê a variável USE_CLOUDINARY do ambiente
+_use_cloudinary_env = os.environ.get('USE_CLOUDINARY', 'false').lower()
+USE_CLOUDINARY = _use_cloudinary_env in ['true', '1', 'yes', 'y', 'on']
 
 # DEBUG TEMPORÁRIO - REMOVER DEPOIS
 print("=" * 50)
@@ -236,12 +237,17 @@ if USE_CLOUDINARY:
     import cloudinary
     import cloudinary.uploader
     import cloudinary.api
+    import os
     
+    # Ler DIRETO do ambiente, sem usar decouple
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': config('CLOUDINARY_API_KEY'),
-        'API_SECRET': config('CLOUDINARY_API_SECRET'),
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'do0uq7w4n'),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '429922328497991'),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '000FaH_7fi181cdDR0XX-g4oqqU'),
     }
+    
+    print(f"DEBUG - Cloud Name: {CLOUDINARY_STORAGE['CLOUD_NAME']}")
+    print(f"DEBUG - API Key: {CLOUDINARY_STORAGE['API_KEY'][:10]}...")
     
     cloudinary.config(
         cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
