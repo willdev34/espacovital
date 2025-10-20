@@ -186,6 +186,189 @@ SEÇÃO HERO - APRESENTAÇÃO DO ESPAÇO
 </section>
 
 <!-- ===============================================================
+SEÇÃO GALERIA DE FOTOS
+=============================================================== -->
+{% if espaco.fotos_galeria.exists %}
+<section class="bg-gray-50 py-12">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="mb-8">
+            <h2 class="text-2xl lg:text-3xl font-poppins font-bold text-gray-900 mb-2">
+                Galeria de Fotos
+            </h2>
+            <p class="text-gray-600">
+                Conheça melhor o espaço através das nossas fotos
+            </p>
+        </div>
+
+        <!-- Grid de Fotos -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for foto in espaco.fotos_galeria.all %}
+            <div class="relative group cursor-pointer rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
+                 onclick="abrirGaleria({{ forloop.counter0 }})">
+                <img src="{{ foto.imagem.url }}" 
+                     alt="{{ foto.descricao|default:'Foto do espaço' }}"
+                     class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                
+                <!-- Overlay ao passar mouse -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                    </svg>
+                </div>
+                
+                {% if foto.descricao %}
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                    <p class="text-white text-sm font-medium">{{ foto.descricao }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+MODAL LIGHTBOX DA GALERIA
+=============================================================== -->
+<div id="galeria-modal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center">
+    <!-- Botão Fechar -->
+    <button onclick="fecharGaleria()" 
+            class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+
+    <!-- Contador de Fotos -->
+    <div class="absolute top-4 left-4 text-white text-lg font-medium z-10">
+        <span id="foto-atual">1</span> / <span id="total-fotos">{{ espaco.fotos_galeria.count }}</span>
+    </div>
+
+    <!-- Botão Anterior -->
+    <button onclick="navegarGaleria(-1)" 
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </button>
+
+    <!-- Imagem Principal -->
+    <div class="max-w-6xl max-h-screen px-20 py-16">
+        <img id="galeria-imagem" 
+             src="" 
+             alt=""
+             class="max-w-full max-h-full object-contain">
+        <p id="galeria-descricao" class="text-white text-center mt-4 text-lg"></p>
+    </div>
+
+    <!-- Botão Próximo -->
+    <button onclick="navegarGaleria(1)" 
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+
+    <!-- Miniaturas na parte inferior -->
+    <div class="absolute bottom-4 left-0 right-0 px-4">
+        <div class="flex justify-center gap-2 overflow-x-auto max-w-4xl mx-auto pb-2">
+            {% for foto in espaco.fotos_galeria.all %}
+            <img src="{{ foto.imagem.url }}" 
+                 alt="Miniatura {{ forloop.counter }}"
+                 onclick="abrirGaleria({{ forloop.counter0 }})"
+                 class="w-20 h-20 object-cover rounded cursor-pointer opacity-60 hover:opacity-100 transition-opacity border-2 border-transparent hover:border-white miniatura-galeria"
+                 data-index="{{ forloop.counter0 }}">
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ===============================================================
+JAVASCRIPT DA GALERIA
+=============================================================== -->
+<script>
+// Array com todas as fotos da galeria
+const fotosGaleria = [
+    {% for foto in espaco.fotos_galeria.all %}
+    {
+        url: "{{ foto.imagem.url }}",
+        descricao: "{{ foto.descricao|default:'' }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
+let indiceAtual = 0;
+
+// Abrir galeria em uma foto específica
+function abrirGaleria(indice) {
+    indiceAtual = indice;
+    document.getElementById('galeria-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevenir scroll da página
+    atualizarFoto();
+}
+
+// Fechar galeria
+function fecharGaleria() {
+    document.getElementById('galeria-modal').classList.add('hidden');
+    document.body.style.overflow = ''; // Restaurar scroll
+}
+
+// Navegar entre fotos
+function navegarGaleria(direcao) {
+    indiceAtual += direcao;
+    
+    // Loop circular
+    if (indiceAtual < 0) {
+        indiceAtual = fotosGaleria.length - 1;
+    } else if (indiceAtual >= fotosGaleria.length) {
+        indiceAtual = 0;
+    }
+    
+    atualizarFoto();
+}
+
+// Atualizar foto exibida
+function atualizarFoto() {
+    const foto = fotosGaleria[indiceAtual];
+    document.getElementById('galeria-imagem').src = foto.url;
+    document.getElementById('galeria-descricao').textContent = foto.descricao;
+    document.getElementById('foto-atual').textContent = indiceAtual + 1;
+    
+    // Destacar miniatura atual
+    document.querySelectorAll('.miniatura-galeria').forEach((miniatura, index) => {
+        if (index === indiceAtual) {
+            miniatura.classList.add('border-white', 'opacity-100');
+            miniatura.classList.remove('opacity-60');
+        } else {
+            miniatura.classList.remove('border-white', 'opacity-100');
+            miniatura.classList.add('opacity-60');
+        }
+    });
+}
+
+// Fechar com tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        fecharGaleria();
+    } else if (e.key === 'ArrowLeft') {
+        navegarGaleria(-1);
+    } else if (e.key === 'ArrowRight') {
+        navegarGaleria(1);
+    }
+});
+
+// Fechar ao clicar fora da imagem
+document.getElementById('galeria-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharGaleria();
+    }
+});
+</script>
+{% endif %}
+
+<!-- ===============================================================
 SEÇÃO DE INFORMAÇÕES DETALHADAS
 =============================================================== -->
 <section class="py-12 bg-gray-50">
@@ -384,7 +567,7 @@ SEÇÃO DE INFORMAÇÕES DETALHADAS
             <div class="lg:col-span-1 space-y-6">
                 
                 <!-- Card de Contato Rápido -->
-                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+                <div class="bg-white rounded-xl shadow-sm p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Informações de Contato</h3>
                     
                     <div class="space-y-3">

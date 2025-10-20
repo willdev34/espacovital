@@ -16,6 +16,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
 *.so
 .Python
 env/
@@ -36,6 +39,12 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Cache
+*.log
+*.pot
+db.sqlite3
+db.sqlite3-journal
 
 # Django
 *.log

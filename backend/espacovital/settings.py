@@ -15,23 +15,32 @@ from decouple import config, Csv
 # Resolve problemas com caracteres especiais no PostgreSQL
 # ===============================================================
 
-if sys.platform == 'win32':
-    import locale
-    
-    # Força encoding UTF-8 em todos os streams de I/O
-    if sys.stdout.encoding != 'utf-8':
-        import io
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-    
-    # Define locale padrão para UTF-8
+import locale
+import io
+
+# Força encoding UTF-8 em todos os sistemas operacionais
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+# Define locale padrão para UTF-8
+# Tenta pt_BR.UTF-8 primeiro, senão usa C.UTF-8
+try:
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+except locale.Error:
     try:
-        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
     except locale.Error:
+        # Em ambientes restritivos (como Railway), usa o padrão
         try:
-            locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+            locale.setlocale(locale.LC_ALL, '')
         except locale.Error:
-            pass  # Se não conseguir, continua com o padrão
+            pass
+
+# Define variáveis de ambiente para garantir UTF-8
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+os.environ['LANG'] = 'C.UTF-8'
+os.environ['LC_ALL'] = 'C.UTF-8'
 
 # ===============================================================
 # Build paths inside the project
@@ -151,6 +160,11 @@ if DATABASE_URL:
             conn_max_age=600,
             conn_health_checks=True,
         )
+    }
+    # FORÇA encoding UTF-8 no PostgreSQL (CRÍTICO para acentos!)
+    DATABASES['default']['OPTIONS'] = {
+        'client_encoding': 'UTF8',
+        'connect_timeout': 10,
     }
 else:
     # Desenvolvimento local - usa variáveis individuais

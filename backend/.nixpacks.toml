@@ -20,4 +20,4 @@ cmds = [
 ]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn espacovital.wsgi:application --bind 0.0.0.0:$PORT"
+cmd = "PYTHONIOENCODING=utf-8 LANG=C.UTF-8 LC_ALL=C.UTF-8 python manage.py migrate --noinput && PYTHONIOENCODING=utf-8 LANG=C.UTF-8 LC_ALL=C.UTF-8 gunicorn espacovital.wsgi:application --bind 0.0.0.0:$PORT"
