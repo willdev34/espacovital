@@ -11,6 +11,10 @@
 .env.qa
 .env.production
 *.env
+backend/venv/
+venv/
+env/
+ENV/
 
 # Python
 __pycache__/
