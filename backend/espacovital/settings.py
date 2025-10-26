@@ -57,7 +57,8 @@ ENVIRONMENT = config('ENVIRONMENT', default='development')
 
 # Security
 SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
-DEBUG = config('DEBUG', default=False, cast=bool)
+# TEMPORÁRIO - para ver erro em produção
+DEBUG = True  # config('DEBUG', default=False, cast=bool)
 
 # Configuração de ALLOWED_HOSTS
 ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='localhost,127.0.0.1')
