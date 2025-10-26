@@ -57,8 +57,18 @@ ENVIRONMENT = config('ENVIRONMENT', default='development')
 
 # Security
 SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Configuração de ALLOWED_HOSTS
+ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='localhost,127.0.0.1')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',')]
+
+# Adiciona automaticamente o domínio do Railway se existir
+RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
+if RAILWAY_STATIC_URL:
+    railway_domain = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')
+    if railway_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(railway_domain)
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = config(

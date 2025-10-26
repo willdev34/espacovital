@@ -23,13 +23,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const cidadeSelect = document.querySelector('select[name="cidade"]');
     const cidadeTextoRow = document.querySelector('.form-row.field-cidade_texto');
     
-    if (paisSelect) {
-        // Eventos
-        paisSelect.addEventListener('change', () => paisMudou());
-        if (estadoSelect) estadoSelect.addEventListener('change', () => estadoMudou());
-        
-        // Inicializar ao carregar
-        paisMudou();
+    if (!paisSelect) return;
+    
+    // ===== ADICIONAR: Salvar valores iniciais ao editar =====
+    const valorInicialEstado = estadoSelect?.value;
+    const valorInicialCidade = cidadeSelect?.value;
+    
+    // Eventos
+    paisSelect.addEventListener('change', () => paisMudou());
+    if (estadoSelect) estadoSelect.addEventListener('change', () => estadoMudou());
+    
+    // Inicializar ao carregar
+    paisMudou();
+    
+    // ===== ADICIONAR: Se estiver editando, carregar dados salvos =====
+    if (valorInicialEstado && valorInicialCidade) {
+        setTimeout(() => {
+            console.log('🔄 Carregando dados salvos do espaço...', {
+                estado: valorInicialEstado,
+                cidade: valorInicialCidade
+            });
+            carregarCidadesSalvas(valorInicialEstado, valorInicialCidade);
+        }, 500);
     }
     
     function paisMudou() {
@@ -59,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const paisId = paisSelect.value;
         if (!paisId || !estadoSelect) return;
         
+        const estadoAtual = estadoSelect.value; // Guardar valor antes de limpar
+        
         // Limpar e desabilitar selects
         estadoSelect.innerHTML = '<option value="">---------</option>';
         estadoSelect.disabled = true;
@@ -77,6 +94,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     estadoSelect.add(option);
                 });
                 estadoSelect.disabled = false;
+                
+                // Restaurar valor se estava selecionado
+                if (estadoAtual) {
+                    estadoSelect.value = estadoAtual;
+                    if (estadoSelect.value === estadoAtual) {
+                        estadoMudou();
+                    }
+                }
             })
             .catch(error => console.error('Erro ao carregar estados:', error));
     }
@@ -84,6 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function estadoMudou() {
         const estadoId = estadoSelect.value;
         if (!estadoId || !cidadeSelect) return;
+        
+        const cidadeAtual = cidadeSelect.value; // Guardar valor antes de limpar
         
         // Limpar e desabilitar
         cidadeSelect.innerHTML = '<option value="">---------</option>';
@@ -98,8 +125,56 @@ document.addEventListener('DOMContentLoaded', function() {
                     cidadeSelect.add(option);
                 });
                 cidadeSelect.disabled = false;
+                
+                // Restaurar valor se estava selecionado
+                if (cidadeAtual) {
+                    cidadeSelect.value = cidadeAtual;
+                }
             })
             .catch(error => console.error('Erro ao carregar cidades:', error));
+    }
+    
+    // ===== ADICIONAR: Função para carregar cidades quando está editando =====
+    function carregarCidadesSalvas(estadoId, cidadeId) {
+        if (!estadoSelect || !cidadeSelect) return;
+        
+        console.log('📍 Restaurando localização salva...');
+        
+        // Primeiro carregar os estados
+        const paisId = paisSelect.value;
+        if (!paisId) return;
+        
+        fetch(`/api/estados/?pais=${paisId}`)
+            .then(response => response.json())
+            .then(data => {
+                estadoSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(estado => {
+                    const option = new Option(`${estado.nome} (${estado.sigla})`, estado.id);
+                    estadoSelect.add(option);
+                });
+                
+                // Selecionar o estado salvo
+                estadoSelect.value = estadoId;
+                estadoSelect.disabled = false;
+                
+                // Agora carregar as cidades do estado
+                return fetch(`/api/cidades/?estado=${estadoId}`);
+            })
+            .then(response => response.json())
+            .then(data => {
+                cidadeSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(cidade => {
+                    const option = new Option(cidade.nome, cidade.id);
+                    cidadeSelect.add(option);
+                });
+                
+                // Selecionar a cidade salva
+                cidadeSelect.value = cidadeId;
+                cidadeSelect.disabled = false;
+                
+                console.log('✅ Localização restaurada!');
+            })
+            .catch(error => console.error('❌ Erro ao restaurar localização:', error));
     }
     
     // ===============================================================

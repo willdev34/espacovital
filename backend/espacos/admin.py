@@ -31,6 +31,14 @@ class EspacoAdminForm(forms.ModelForm):
     Formulário customizado com campos de disponibilidade como checkboxes
     e upload de galeria com até 7 fotos
     """
+    # ===== ADICIONAR ESTE CAMPO ESTADO (mesmo que já exista no model) =====
+    estado = forms.ModelChoiceField(
+        queryset=Estado.objects.none(),
+        required=False,
+        label='Estado',
+        help_text='Selecione o estado (apenas Brasil)'
+    )
+    
     # Checkboxes para disponibilidade
     disponibilidade_manha = forms.BooleanField(
         required=False,
@@ -67,6 +75,21 @@ class EspacoAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        # ===== CORREÇÃO: POPULAR VALORES AO EDITAR =====
+        # Se está editando e tem cidade cadastrada
+        if self.instance.pk and self.instance.cidade:
+            if self.instance.cidade.estado:
+                estado = self.instance.cidade.estado
+                pais = estado.pais
+                
+                # Carregar estados do país
+                self.fields['estado'].queryset = Estado.objects.filter(pais=pais, ativo=True).order_by('nome')
+                # IMPORTANTE: Setar o valor inicial do estado
+                self.fields['estado'].initial = estado
+                
+                # Filtrar cidades do estado
+                self.fields['cidade'].queryset = Cidade.objects.filter(estado=estado, ativo=True).order_by('nome')
+        
         # Preencher checkboxes de disponibilidade baseado no JSON
         if self.instance.pk and self.instance.disponibilidade:
             self.fields['disponibilidade_manha'].initial = 'manha' in self.instance.disponibilidade
@@ -78,10 +101,8 @@ class EspacoAdminForm(forms.ModelForm):
         if 'pais' in self.fields:
             self.fields['pais'].queryset = Pais.objects.filter(ativo=True).order_by('nome')
             
+        # Estado: configurar queryset dinamicamente
         if 'estado' in self.fields:
-            self.fields['estado'].queryset = Estado.objects.none()
-            self.fields['estado'].required = False
-            
             if self.instance.pk and self.instance.pais:
                 self.fields['estado'].queryset = Estado.objects.filter(
                     pais=self.instance.pais,
@@ -97,6 +118,7 @@ class EspacoAdminForm(forms.ModelForm):
                 except (ValueError, TypeError):
                     pass
         
+        # Cidade: configurar queryset dinamicamente
         if 'cidade' in self.fields:
             self.fields['cidade'].queryset = Cidade.objects.none()
             self.fields['cidade'].required = False
