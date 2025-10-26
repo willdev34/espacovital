@@ -379,8 +379,21 @@ class EspacoAdmin(admin.ModelAdmin):
         }),
         ('Contato', {
             'fields': (
-                'telefone', 'email', 'whatsapp', 'website', 'instagram'
-            )
+                'email',
+                'whatsapp',
+                'whatsapp_ativo',
+                'website',
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Redes Sociais', {
+            'fields': (
+                'instagram',
+                'facebook',
+                'youtube',
+                'tiktok',
+            ),
+            'classes': ('collapse',),
         }),
         ('Foto Principal', {
             'fields': (
@@ -582,8 +595,15 @@ class EspacoAdmin(admin.ModelAdmin):
         return form
     
     class Media:
+        """
+        Adiciona arquivos estáticos customizados para o admin de Espaços
+        """
+        js = ('admin/js/espaco_admin.js',)
         css = {
-            'all': ('admin/css/custom_espacos.css',)
+            'all': (
+                'admin/css/custom_espacos.css',
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+            )
         }
 
 

@@ -13,8 +13,9 @@ from django.db.models import Count, Avg
 from django.contrib.admin import SimpleListFilter
 from django.db import models
 from .models import (
-    Especialidade, Terapeuta, 
-    TerapeutaEspecialidade, Avaliacao, Contato
+    Terapeuta, TerapeutaEspecialidade, Especialidade, 
+    Avaliacao, Contato, SessionType, ProfileType, ClientType,
+    FotoGaleriaTerapeuta
 )
 
 from django import forms
@@ -81,6 +82,27 @@ class AvaliacaoFilter(SimpleListFilter):
 # ===============================================================
 # INLINES
 # ===============================================================
+
+# ===============================================================
+# INLINE PARA GALERIA DE FOTOS
+# ===============================================================
+
+class FotoGaleriaTerapeutaInline(admin.TabularInline):
+    """
+    Inline para fotos da galeria do terapeuta
+    Permite upload de até 7 fotos
+    """
+    model = FotoGaleriaTerapeuta
+    extra = 1
+    max_num = 7
+    fields = ['imagem', 'descricao', 'ordem']
+    verbose_name = 'Foto da Galeria'
+    verbose_name_plural = '📸 Galeria de Fotos (até 7 fotos)'
+    
+    class Media:
+        css = {
+            'all': ('admin/css/custom_gallery.css',)
+        }
 
 class TerapeutaEspecialidadeInline(admin.TabularInline):
     """
@@ -195,7 +217,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     ]
     
     # Inlines
-    inlines = [TerapeutaEspecialidadeInline, AvaliacaoInline]
+    inlines = [FotoGaleriaTerapeutaInline , TerapeutaEspecialidadeInline, AvaliacaoInline]
     
     # Configurações da lista
     list_per_page = 25
@@ -221,7 +243,13 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('nome_completo', 'nome_exibicao', 'slug')
                 }),
                 ('Contato', {
-                    'fields': ('email_profissional', 'telefone', 'whatsapp')
+                    'fields': ('email_profissional', 'whatsapp','whatsapp_ativo', ),
+                    'classes': ('collapse',),
+                }),
+                
+                ('Redes Sociais', {
+                    'fields': ('instagram', 'facebook', 'youtube', 'tiktok', ),
+                    'classes': ('collapse',),
                 }),
                 ('Localização', {
                     'fields': ('pais', 'estado', 'cidade_principal', 'cidade_texto', 'cidades_atendimento', 'bairro', 'endereco'),
@@ -353,6 +381,15 @@ class TerapeutaAdmin(admin.ModelAdmin):
         else:
             # TERAPEUTA: Vê apenas seu próprio perfil
             return qs.filter(user=request.user)
+    
+    class Media:
+        """
+        Adiciona JavaScript customizado para máscara de telefone e ícones de redes sociais
+        """
+        js = ('admin/js/terapeuta_admin.js',)
+        css = {
+            'all': ('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',)
+        }
     
     def has_add_permission(self, request):
         """

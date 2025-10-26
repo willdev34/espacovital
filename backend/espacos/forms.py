@@ -317,7 +317,8 @@ class EspacoForm(forms.ModelForm):
             'nome', 'descricao_breve', 'descricao_completa',
             'endereco', 'cidade', 'cep', 'bairro',
             'tipo_espaco', 'aceita_locacao', 'tem_acessibilidade',
-            'telefone', 'email', 'whatsapp', 'website', 'instagram',
+            'email', 'whatsapp', 'whatsapp_ativo', 'website', 
+            'instagram', 'facebook', 'youtube', 'tiktok',
             'comodidades', 'especialidades', 'foto_principal'
         ]
     
@@ -353,11 +354,13 @@ class EspacoForm(forms.ModelForm):
         self.fields['descricao_breve'].widget.attrs['placeholder'] = 'Descrição breve para aparecer nos cards (máx 300 caracteres)'
         self.fields['endereco'].widget.attrs['placeholder'] = 'Endereço completo com número'
         self.fields['cep'].widget.attrs['placeholder'] = '12345-678'
-        self.fields['telefone'].widget.attrs['placeholder'] = '(11) 99999-9999'
         self.fields['email'].widget.attrs['placeholder'] = 'contato@seuespacovital.com'
-        self.fields['whatsapp'].widget.attrs['placeholder'] = '(11) 99999-9999'
+        self.fields['whatsapp'].widget.attrs['placeholder'] = 'Digite apenas números: 21987654321'
         self.fields['website'].widget.attrs['placeholder'] = 'https://www.seuespacovital.com'
         self.fields['instagram'].widget.attrs['placeholder'] = 'seuespacovital (sem @)'
+        self.fields['facebook'].widget.attrs['placeholder'] = 'https://facebook.com/seuperfil'
+        self.fields['youtube'].widget.attrs['placeholder'] = 'https://youtube.com/@seucanal'
+        self.fields['tiktok'].widget.attrs['placeholder'] = 'seuperfil (sem @)'
     
     def clean_cep(self):
         """
@@ -388,12 +391,18 @@ class EspacoForm(forms.ModelForm):
 class ComodidadeForm(forms.ModelForm):
     """
     Formulário para cadastro/edição de comodidades no admin
-    Inclui o campo slug para URLs amigáveis
+    Inclui o campo slug para URLs amigáveis e dropdown de ícones
     """
     
     class Meta:
         model = Comodidade
         fields = ['nome', 'slug', 'icone', 'descricao', 'is_active', 'is_destaque']
+        widgets = {
+            'icone': forms.Select(attrs={
+                'class': 'vTextField',
+                'style': 'font-size: 14px;'
+            })
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -409,32 +418,37 @@ class ComodidadeForm(forms.ModelForm):
             'placeholder': 'slug-da-comodidade'
         })
         
+        # Icone já é dropdown automático pelo choices do model
+        # Apenas garantimos o estilo
         self.fields['icone'].widget.attrs.update({
             'class': 'vTextField',
-            'placeholder': 'Nome do ícone (ex: wifi, parking, etc)'
+            'style': 'font-size: 14px;'
         })
         
         self.fields['descricao'].widget.attrs.update({
             'class': 'vLargeTextField',
             'rows': '3',
-            'placeholder': 'Descrição da comodidade'
+            'placeholder': 'Descrição detalhada da comodidade'
         })
         
-        # Labels
+        # Labels personalizados
         self.fields['nome'].label = 'Nome da Comodidade'
         self.fields['slug'].label = 'Slug (URL amigável)'
-        self.fields['icone'].label = 'Ícone'
+        self.fields['icone'].label = 'Ícone Representativo'
         self.fields['descricao'].label = 'Descrição'
         self.fields['is_active'].label = 'Ativo?'
-        self.fields['is_destaque'].label = 'Destaque?'
+        self.fields['is_destaque'].label = 'Destaque nos Filtros?'
         
-        # Help texts
+        # Help texts informativos
         self.fields['slug'].help_text = 'URL amigável (será gerado automaticamente se deixar em branco)'
-        self.fields['icone'].help_text = 'Nome do ícone a ser usado na interface'
+        self.fields['icone'].help_text = 'Selecione o ícone que melhor representa esta comodidade'
+        self.fields['descricao'].help_text = 'Descrição detalhada que aparecerá nos detalhes da comodidade'
+        self.fields['is_destaque'].help_text = 'Comodidades em destaque aparecem no topo dos filtros'
     
     def clean_slug(self):
         """
         Validação do slug
+        Garante formato correto: apenas letras minúsculas, números e hífens
         """
         slug = self.cleaned_data.get('slug')
         if slug:

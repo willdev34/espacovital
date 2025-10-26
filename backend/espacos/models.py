@@ -49,30 +49,71 @@ class Comodidade(BaseModel):
     """
     Model para comodidades disponíveis nos espaços
     Baseado no layout de filtros com checkboxes
+    Incluindo opções predefinidas de ícones para facilitar escolha
     """
+    
+    # Opções de ícones predefinidos para comodidades
+    ICONE_CHOICES = [
+        ('wifi', '📶 Wi-Fi / Internet'),
+        ('parking', '🅿️ Estacionamento'),
+        ('coffee', '☕ Café / Cozinha'),
+        ('wheelchair', '♿ Acessibilidade'),
+        ('air-conditioner', '❄️ Ar Condicionado'),
+        ('music', '🎵 Música Ambiente'),
+        ('book', '📚 Biblioteca'),
+        ('meditation', '🧘 Sala de Meditação'),
+        ('shower', '🚿 Banheiro Privativo'),
+        ('tv', '📺 TV / Projetor'),
+        ('plant', '🌿 Jardim / Área Verde'),
+        ('reception', '👥 Recepção'),
+        ('waiting-room', '🪑 Sala de Espera'),
+        ('tea', '🍵 Chá / Infusões'),
+        ('water', '💧 Água / Bebedouro'),
+        ('printer', '🖨️ Impressora'),
+        ('blanket', '🛋️ Divã / Poltronas'),
+        ('candle', '🕯️ Aromaterapia'),
+        ('soundproof', '🔇 Sala Insonorizada'),
+        ('natural-light', '☀️ Luz Natural'),
+        ('mirror', '🪞 Espelho Grande'),
+        ('storage', '🗄️ Armário / Guarda Volumes'),
+        ('pet-friendly', '🐕 Pet Friendly'),
+        ('children', '👶 Espaço Kids'),
+        ('sink', '🚰 Pia / Lavabo'),
+        ('emergency', '🚨 Kit Primeiros Socorros'),
+        ('security', '🔒 Sistema de Segurança'),
+        ('pharmacy', '💊 Farmácia Próxima'),
+        ('elevator', '🛗 Elevador'),
+        ('ramp', '♿ Rampa de Acesso'),
+    ]
+    
     nome = models.CharField(
         max_length=100,
         unique=True,
+        verbose_name='Nome da Comodidade',
         help_text="Nome da comodidade (ex: Ar-condicionado, Maca)"
     )
     icone = models.CharField(
         max_length=50,
-        blank=True,
-        help_text="Nome do ícone (ex: 'air-conditioning', 'bed')"
+        choices=ICONE_CHOICES,
+        verbose_name='Ícone',
+        help_text="Selecione o ícone que melhor representa esta comodidade"
     )
     descricao = models.TextField(
         blank=True,
+        verbose_name='Descrição',
         help_text="Descrição detalhada da comodidade"
     )
     is_destaque = models.BooleanField(
         default=False,
+        verbose_name='Destaque',
         help_text="Comodidade aparece em destaque nos filtros"
     )
     slug = models.SlugField(
         max_length=120,
         unique=True,
         blank=True,
-        help_text="Slug para URLs amigáveis"
+        verbose_name='Slug',
+        help_text="Slug para URLs amigáveis (gerado automaticamente)"
     )
 
     class Meta:
@@ -82,6 +123,16 @@ class Comodidade(BaseModel):
 
     def __str__(self):
         return self.nome
+    
+    def get_icone_display_emoji(self):
+        """
+        Retorna apenas o emoji do ícone escolhido
+        """
+        for choice_value, choice_label in self.ICONE_CHOICES:
+            if choice_value == self.icone:
+                # Extrai apenas o emoji (primeira parte antes do espaço)
+                return choice_label.split()[0]
+        return '📋'  # Ícone padrão se não encontrar
 
     def save(self, *args, **kwargs):
         """
@@ -240,6 +291,13 @@ class Espaco(TimeStampedModel):
         blank=True,
         help_text="Períodos de disponibilidade (lista de períodos)"
     )
+    
+    horarios_funcionamento = models.TextField(
+        'Horários de Funcionamento',
+        blank=True,
+        max_length=500,
+        help_text='Descreva os horários de funcionamento do espaço. Ex: Segunda a Sexta: 08h às 18h | Sábado: 09h às 14h'
+    )
 
     # Relacionamentos Many-to-Many
     comodidades = models.ManyToManyField(
@@ -255,36 +313,64 @@ class Espaco(TimeStampedModel):
         help_text="Terapias oferecidas no espaço"
     )
 
-    # Contato
-    telefone = models.CharField(
-        max_length=20,
-        validators=[RegexValidator(
-            regex=r'^\(\d{2}\)\s\d{4,5}-\d{4}$',
-            message='Telefone deve estar no formato (11) 99999-9999'
-        )],
-        help_text="Telefone para contato"
-    )
+    # === CONTATO ===
     email = models.EmailField(
+        'E-mail',
         validators=[EmailValidator()],
-        help_text="Email para contato"
+        help_text='E-mail para contato do espaço'
     )
+    
     whatsapp = models.CharField(
+        'Telefone/WhatsApp',
         max_length=20,
         blank=True,
         validators=[RegexValidator(
-            regex=r'^\(\d{2}\)\s\d{4,5}-\d{4}$',
-            message='WhatsApp deve estar no formato (11) 99999-9999'
+            regex=r'^\d{10,11}$',
+            message="Digite apenas números (DDD + telefone). Ex: 21987654321"
         )],
-        help_text="WhatsApp para contato"
+        help_text='Telefone com DDD (somente números). Ex: 21987654321'
     )
+    
+    whatsapp_ativo = models.BooleanField(
+        'Este número é WhatsApp?',
+        default=False,
+        help_text='Marque se este número possui WhatsApp ativo'
+    )
+    
     website = models.URLField(
+        'Site',
+        max_length=200,
         blank=True,
-        help_text="Site oficial do espaço"
+        help_text='URL completa do site oficial do espaço'
     )
+    
+    # === REDES SOCIAIS ===
     instagram = models.CharField(
-        max_length=50,
+        'Instagram',
+        max_length=100,
         blank=True,
-        help_text="Usuário do Instagram (sem @)"
+        help_text='Usuário do Instagram sem @ (ex: espacovital)'
+    )
+    
+    facebook = models.URLField(
+        'Facebook',
+        max_length=200,
+        blank=True,
+        help_text='URL completa da página no Facebook'
+    )
+    
+    youtube = models.URLField(
+        'YouTube',
+        max_length=200,
+        blank=True,
+        help_text='URL completa do canal no YouTube'
+    )
+    
+    tiktok = models.CharField(
+        'TikTok',
+        max_length=100,
+        blank=True,
+        help_text='Usuário do TikTok sem @ (ex: espacovital)'
     )
 
     # Sistema de verificação e destaque

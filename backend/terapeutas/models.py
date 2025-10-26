@@ -89,32 +89,57 @@ class Terapeuta(BaseModel):
         help_text='URL amigável do perfil'
     )
     
-    # Informações de contato
+    # === CONTATOS ===
     email_profissional = models.EmailField(
         'E-mail Profissional',
         validators=[EmailValidator()],
         help_text='E-mail para contato profissional'
     )
     
-    telefone = models.CharField(
-        'Telefone',
-        max_length=20,
-        validators=[RegexValidator(
-            regex=r'^\+?1?\d{9,15}$',
-            message="Formato: '+999999999'. Até 15 dígitos."
-        )],
-        help_text='Telefone para contato'
-    )
-    
     whatsapp = models.CharField(
-        'WhatsApp',
+        'Telefone/WhatsApp',
         max_length=20,
         blank=True,
         validators=[RegexValidator(
-            regex=r'^\+?1?\d{9,15}$',
-            message="Formato: '+999999999'. Até 15 dígitos."
+            regex=r'^\d{10,11}$',
+            message="Digite apenas números (DDD + telefone). Ex: 21987654321"
         )],
-        help_text='Número do WhatsApp (opcional)'
+        help_text='Telefone com DDD (somente números). Ex: 21987654321'
+    )
+    
+    whatsapp_ativo = models.BooleanField(
+        'Este número é WhatsApp?',
+        default=False,
+        help_text='Marque se este número possui WhatsApp ativo'
+    )
+    
+    # === REDES SOCIAIS ===
+    instagram = models.CharField(
+        'Instagram',
+        max_length=100,
+        blank=True,
+        help_text='Usuário do Instagram sem @ (ex: espacovital)'
+    )
+    
+    facebook = models.URLField(
+        'Facebook',
+        max_length=200,
+        blank=True,
+        help_text='URL completa do perfil no Facebook'
+    )
+    
+    youtube = models.URLField(
+        'YouTube',
+        max_length=200,
+        blank=True,
+        help_text='URL completa do canal no YouTube'
+    )
+    
+    tiktok = models.CharField(
+        'TikTok',
+        max_length=100,
+        blank=True,
+        help_text='Usuário do TikTok sem @ (ex: espacovital)'
     )
     
    # Localização
@@ -145,8 +170,8 @@ class Terapeuta(BaseModel):
         verbose_name='Cidade Principal (Brasil)',
         help_text='Cidade principal onde atua - apenas para Brasil',
         related_name='terapeutas_principal',
-        null=True,  # ADICIONADO
-        blank=True  # ADICIONADO
+        null=True,
+        blank=True  
     )
 
     # Para outros países - texto livre
@@ -653,3 +678,43 @@ class Contato(TimeStampedModel):
     
     def __str__(self):
         return f'{self.nome} → {self.terapeuta.nome_exibicao}'
+    
+# ===============================================================
+# MODEL PARA FOTOS DA GALERIA DO TERAPEUTA
+# ===============================================================
+
+class FotoGaleriaTerapeuta(TimeStampedModel):
+    """
+    Model para fotos da galeria do terapeuta
+    Permite upload de até 7 fotos
+    """
+    terapeuta = models.ForeignKey(
+        'Terapeuta',
+        on_delete=models.CASCADE,
+        related_name='fotos_galeria',
+        verbose_name='Terapeuta'
+    )
+    imagem = models.ImageField(
+        upload_to='terapeutas/galeria/',
+        verbose_name='Foto',
+        help_text='Foto da galeria do terapeuta'
+    )
+    descricao = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Descrição',
+        help_text='Descrição opcional da foto'
+    )
+    ordem = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Ordem',
+        help_text='Ordem de exibição da foto'
+    )
+    
+    class Meta:
+        verbose_name = 'Foto da Galeria'
+        verbose_name_plural = 'Fotos da Galeria'
+        ordering = ['ordem', 'created_at']
+    
+    def __str__(self):
+        return f"{self.terapeuta.nome_completo} - Foto {self.ordem}"
