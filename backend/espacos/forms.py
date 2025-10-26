@@ -7,7 +7,7 @@
 
 from django import forms
 from django.core.validators import EmailValidator, RegexValidator
-from .models import ContatoEspaco, AvaliacaoEspaco, Espaco
+from .models import ContatoEspaco, AvaliacaoEspaco, Espaco, Comodidade
 
 
 # ===============================================================
@@ -380,3 +380,68 @@ class EspacoForm(forms.ModelForm):
         if instagram:
             return instagram.replace('@', '')
         return instagram
+    
+# ===============================================================
+# FORM PARA CADASTRO/EDIÇÃO DE COMODIDADE (ADMIN)
+# ===============================================================
+
+class ComodidadeForm(forms.ModelForm):
+    """
+    Formulário para cadastro/edição de comodidades no admin
+    Inclui o campo slug para URLs amigáveis
+    """
+    
+    class Meta:
+        model = Comodidade
+        fields = ['nome', 'slug', 'icone', 'descricao', 'is_active', 'is_destaque']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Aplicar classes CSS
+        self.fields['nome'].widget.attrs.update({
+            'class': 'vTextField',
+            'placeholder': 'Nome da comodidade'
+        })
+        
+        self.fields['slug'].widget.attrs.update({
+            'class': 'vTextField',
+            'placeholder': 'slug-da-comodidade'
+        })
+        
+        self.fields['icone'].widget.attrs.update({
+            'class': 'vTextField',
+            'placeholder': 'Nome do ícone (ex: wifi, parking, etc)'
+        })
+        
+        self.fields['descricao'].widget.attrs.update({
+            'class': 'vLargeTextField',
+            'rows': '3',
+            'placeholder': 'Descrição da comodidade'
+        })
+        
+        # Labels
+        self.fields['nome'].label = 'Nome da Comodidade'
+        self.fields['slug'].label = 'Slug (URL amigável)'
+        self.fields['icone'].label = 'Ícone'
+        self.fields['descricao'].label = 'Descrição'
+        self.fields['is_active'].label = 'Ativo?'
+        self.fields['is_destaque'].label = 'Destaque?'
+        
+        # Help texts
+        self.fields['slug'].help_text = 'URL amigável (será gerado automaticamente se deixar em branco)'
+        self.fields['icone'].help_text = 'Nome do ícone a ser usado na interface'
+    
+    def clean_slug(self):
+        """
+        Validação do slug
+        """
+        slug = self.cleaned_data.get('slug')
+        if slug:
+            # Validar formato do slug
+            import re
+            if not re.match(r'^[a-z0-9-]+$', slug):
+                raise forms.ValidationError(
+                    'Slug deve conter apenas letras minúsculas, números e hífens.'
+                )
+        return slug

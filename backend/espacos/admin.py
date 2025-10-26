@@ -16,6 +16,7 @@ from .models import (
     Espaco, Comodidade, AvaliacaoEspaco, 
     ContatoEspaco, EspacoEspecialidade, FotoGaleriaEspaco
 )
+from .forms import ComodidadeForm
 
 
 # ===============================================================
@@ -593,6 +594,7 @@ class EspacoAdmin(admin.ModelAdmin):
 @admin.register(Comodidade)
 class ComodidadeAdmin(admin.ModelAdmin):
     """Admin para Comodidades"""
+    form = ComodidadeForm 
     list_display = [
         'nome', 'icone_display', 'destaque_display', 
         'total_espacos', 'is_destaque', 'is_active'
@@ -600,8 +602,8 @@ class ComodidadeAdmin(admin.ModelAdmin):
     list_filter = ['is_destaque', 'is_active']
     search_fields = ['nome', 'descricao']
     list_editable = ['is_destaque', 'is_active']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
-    prepopulated_fields = {'slug': ('nome',)}
+    readonly_fields = ['created_at', 'updated_at'] 
+    prepopulated_fields = {'slug': ('nome',)} 
     
     fieldsets = [
         ('Informações Básicas', {
