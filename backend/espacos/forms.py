@@ -317,6 +317,10 @@ class EspacoForm(forms.ModelForm):
             'nome', 'descricao_breve', 'descricao_completa',
             'endereco', 'cidade', 'cep', 'bairro',
             'tipo_espaco', 'aceita_locacao', 'tem_acessibilidade',
+            'horario_manha_abertura', 'horario_manha_fechamento',
+            'horario_tarde_abertura', 'horario_tarde_fechamento',
+            'horario_noite_abertura', 'horario_noite_fechamento',
+            'horario_fds_abertura', 'horario_fds_fechamento',
             'email', 'whatsapp', 'whatsapp_ativo', 'website', 
             'instagram', 'facebook', 'youtube', 'tiktok',
             'comodidades', 'especialidades', 'foto_principal'
@@ -340,6 +344,7 @@ class EspacoForm(forms.ModelForm):
                 field.widget.attrs.update({
                     'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent'
                 })
+        
         
         # Widgets especiais
         self.fields['comodidades'].widget = forms.CheckboxSelectMultiple(attrs={

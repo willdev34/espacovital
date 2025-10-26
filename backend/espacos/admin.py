@@ -362,14 +362,23 @@ class EspacoAdmin(admin.ModelAdmin):
                 'tipo_espaco', 'aceita_locacao', 'tem_acessibilidade'
             )
         }),
-        ('Disponibilidade', {
+        ('Disponibilidade e Horários', {
             'fields': (
-                'disponibilidade_manha', 
-                'disponibilidade_tarde', 
-                'disponibilidade_noite', 
-                'disponibilidade_finais_semana'
+                'disponibilidade_manha',
+                ('horario_manha_abertura', 'horario_manha_fechamento'),
+                'disponibilidade_tarde',
+                ('horario_tarde_abertura', 'horario_tarde_fechamento'),
+                'disponibilidade_noite',
+                ('horario_noite_abertura', 'horario_noite_fechamento'),
+                'disponibilidade_finais_semana',
+                ('horario_fds_abertura', 'horario_fds_fechamento'),
             ),
-            'description': 'Marque os períodos em que o espaço está disponível'
+            'description': '''
+                <strong>📅 Como preencher:</strong><br>
+                • Marque os checkboxes dos períodos disponíveis<br>
+                • Preencha os horários de abertura e fechamento para cada período marcado<br>
+                • Deixe em branco os períodos que não funcionam
+            '''
         }),
         ('Comodidades', {
             'fields': (

@@ -292,11 +292,60 @@ class Espaco(TimeStampedModel):
         help_text="Períodos de disponibilidade (lista de períodos)"
     )
     
-    horarios_funcionamento = models.TextField(
-        'Horários de Funcionamento',
+    # Horários de Funcionamento - Manhã
+    horario_manha_abertura = models.TimeField(
+        'Manhã - Abertura',
+        null=True,
         blank=True,
-        max_length=500,
-        help_text='Descreva os horários de funcionamento do espaço. Ex: Segunda a Sexta: 08h às 18h | Sábado: 09h às 14h'
+        help_text='Horário de abertura no período da manhã'
+    )
+    horario_manha_fechamento = models.TimeField(
+        'Manhã - Fechamento',
+        null=True,
+        blank=True,
+        help_text='Horário de fechamento no período da manhã'
+    )
+    
+    # Horários de Funcionamento - Tarde
+    horario_tarde_abertura = models.TimeField(
+        'Tarde - Abertura',
+        null=True,
+        blank=True,
+        help_text='Horário de abertura no período da tarde'
+    )
+    horario_tarde_fechamento = models.TimeField(
+        'Tarde - Fechamento',
+        null=True,
+        blank=True,
+        help_text='Horário de fechamento no período da tarde'
+    )
+    
+    # Horários de Funcionamento - Noite
+    horario_noite_abertura = models.TimeField(
+        'Noite - Abertura',
+        null=True,
+        blank=True,
+        help_text='Horário de abertura no período da noite'
+    )
+    horario_noite_fechamento = models.TimeField(
+        'Noite - Fechamento',
+        null=True,
+        blank=True,
+        help_text='Horário de fechamento no período da noite'
+    )
+    
+    # Horários de Funcionamento - Finais de Semana
+    horario_fds_abertura = models.TimeField(
+        'Finais de Semana - Abertura',
+        null=True,
+        blank=True,
+        help_text='Horário de abertura nos finais de semana'
+    )
+    horario_fds_fechamento = models.TimeField(
+        'Finais de Semana - Fechamento',
+        null=True,
+        blank=True,
+        help_text='Horário de fechamento nos finais de semana'
     )
 
     # Relacionamentos Many-to-Many
