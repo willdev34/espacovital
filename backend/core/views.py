@@ -49,17 +49,25 @@ class HomeView(TemplateView):
         Retorna localização formatada do terapeuta
         Funciona para Brasil (cidade + estado) e Internacional (cidade_texto + país)
         """
-        if terapeuta.cidade_principal and terapeuta.cidade_principal.estado:
-            # Terapeuta do Brasil (tem cidade e estado)
-            return f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}"
-        elif terapeuta.cidade_texto and terapeuta.pais:
-            # Terapeuta internacional (tem cidade_texto e país)
-            return f"{terapeuta.cidade_texto}, {terapeuta.pais.nome}"
-        elif terapeuta.cidade_texto:
-            # Só tem cidade_texto sem país
+        # Brasil - cidade do banco com estado
+        if terapeuta.cidade_principal:
+            if hasattr(terapeuta.cidade_principal, 'estado') and terapeuta.cidade_principal.estado:
+                return f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}"
+            else:
+                return terapeuta.cidade_principal.nome
+        
+        # Outros países - cidade texto com país
+        if terapeuta.cidade_texto:
+            if terapeuta.pais:
+                return f"{terapeuta.cidade_texto}/{terapeuta.pais.codigo}"
             return terapeuta.cidade_texto
-        else:
-            return 'Localização não informada'
+        
+        # Se tem estado mas não tem cidade
+        if terapeuta.estado:
+            return terapeuta.estado.sigla if hasattr(terapeuta.estado, 'sigla') else terapeuta.estado.nome
+        
+        # Última opção: retornar vazio (o template pode mostrar mensagem padrão se quiser)
+        return ""
     
     def get_context_data(self, **kwargs):
         """

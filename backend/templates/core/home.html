@@ -135,15 +135,7 @@ Data: 07/09/2025
                         <div class="p-6 text-center">
                             <h3 class="font-poppins font-semibold text-gray-900 mb-2">{{ therapist.name }}</h3>
                             <p class="text-sm text-gray-600 mb-4">{{ therapist.specialties }}</p>
-                            <p class="text-xs text-gray-500 mb-4">
-                                {% if terapeuta.cidade %}
-                                    {{ terapeuta.cidade.nome }}, {{ terapeuta.cidade.estado.sigla }}
-                                {% elif terapeuta.cidade_texto %}
-                                    {{ terapeuta.cidade_texto }}{% if terapeuta.pais %}, {{ terapeuta.pais.nome }}{% endif %}
-                                {% else %}
-                                    Localização não informada
-                                {% endif %}
-                            </p>
+                            <p class="text-xs text-gray-500 mb-4">{{ therapist.location }}</p>
                             <a href="{{ therapist.url }}" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full inline-block">
                                 Ver perfil
                             </a>
