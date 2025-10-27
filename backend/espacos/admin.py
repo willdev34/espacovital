@@ -91,13 +91,6 @@ class EspacoAdminForm(forms.ModelForm):
                 # Filtrar cidades do estado
                 self.fields['cidade'].queryset = Cidade.objects.filter(estado=estado, ativo=True).order_by('nome')
         
-        # Preencher checkboxes de disponibilidade baseado no JSON
-        if self.instance.pk and self.instance.disponibilidade:
-            self.fields['disponibilidade_manha'].initial = 'manha' in self.instance.disponibilidade
-            self.fields['disponibilidade_tarde'].initial = 'tarde' in self.instance.disponibilidade
-            self.fields['disponibilidade_noite'].initial = 'noite' in self.instance.disponibilidade
-            self.fields['disponibilidade_finais_semana'].initial = 'finais_de_semana' in self.instance.disponibilidade
-        
         # Configurar campos de país, estado e cidade com cascata
         if 'pais' in self.fields:
             self.fields['pais'].queryset = Pais.objects.filter(ativo=True).order_by('nome')
@@ -138,28 +131,6 @@ class EspacoAdminForm(forms.ModelForm):
                     ).order_by('nome')
                 except (ValueError, TypeError):
                     pass
-    
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        
-        # Salvar disponibilidade como lista no JSON
-        disponibilidade = []
-        if self.cleaned_data.get('disponibilidade_manha'):
-            disponibilidade.append('manha')
-        if self.cleaned_data.get('disponibilidade_tarde'):
-            disponibilidade.append('tarde')
-        if self.cleaned_data.get('disponibilidade_noite'):
-            disponibilidade.append('noite')
-        if self.cleaned_data.get('disponibilidade_finais_semana'):
-            disponibilidade.append('finais_de_semana')
-        
-        instance.disponibilidade = disponibilidade
-        
-        if commit:
-            instance.save()
-            self.save_m2m()
-        
-        return instance
     
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -362,23 +333,11 @@ class EspacoAdmin(admin.ModelAdmin):
                 'tipo_espaco', 'aceita_locacao', 'tem_acessibilidade'
             )
         }),
-        ('Disponibilidade e Horários', {
+        ('Horários de Funcionamento', {
             'fields': (
-                'disponibilidade_manha',
-                ('horario_manha_abertura', 'horario_manha_fechamento'),
-                'disponibilidade_tarde',
-                ('horario_tarde_abertura', 'horario_tarde_fechamento'),
-                'disponibilidade_noite',
-                ('horario_noite_abertura', 'horario_noite_fechamento'),
-                'disponibilidade_finais_semana',
-                ('horario_fds_abertura', 'horario_fds_fechamento'),
+                'horarios_semana',
             ),
-            'description': '''
-                <strong>📅 Como preencher:</strong><br>
-                • Marque os checkboxes dos períodos disponíveis<br>
-                • Preencha os horários de abertura e fechamento para cada período marcado<br>
-                • Deixe em branco os períodos que não funcionam
-            '''
+            'description': '<strong>📅 Marque os dias e defina os horários de funcionamento do espaço</strong>'
         }),
         ('Comodidades', {
             'fields': (
@@ -607,10 +566,14 @@ class EspacoAdmin(admin.ModelAdmin):
         """
         Adiciona arquivos estáticos customizados para o admin de Espaços
         """
-        js = ('admin/js/espaco_admin.js',)
+        js = (
+            'admin/js/espaco_admin.js',
+            'admin/js/horarios_widget.js',  # ← Adicionar esta linha
+        )
         css = {
             'all': (
                 'admin/css/custom_espacos.css',
+                'admin/css/horarios_widget.css',  # ← Adicionar esta linha
                 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
             )
         }

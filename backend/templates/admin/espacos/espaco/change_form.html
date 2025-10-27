@@ -365,6 +365,125 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+// ===============================================================
+    // HORÁRIOS DE FUNCIONAMENTO - WIDGET VISUAL
+    // ===============================================================
+    
+    setTimeout(function() {
+        const $ = django && django.jQuery ? django.jQuery : (window.jQuery || window.$);
+        if (!$) return;
+        
+        const $textarea = $('#id_horarios_semana');
+        if (!$textarea.length) return;
+        
+        console.log('🕐 Inicializando widget de horários...');
+        
+        // Esconde o textarea
+        $textarea.hide();
+        $textarea.closest('.form-row').find('p.help').hide();
+        
+        // Cria a interface visual
+        const dias = [
+            ['domingo', 'Domingo'],
+            ['segunda', 'Segunda-feira'],
+            ['terca', 'Terça-feira'],
+            ['quarta', 'Quarta-feira'],
+            ['quinta', 'Quinta-feira'],
+            ['sexta', 'Sexta-feira'],
+            ['sabado', 'Sábado']
+        ];
+        
+        let html = '<div class="horarios-widget-visual">';
+        
+        dias.forEach(function(dia) {
+            const key = dia[0];
+            const nome = dia[1];
+            html += '<div class="horario-row" data-dia="' + key + '">';
+            html += '  <label>';
+            html += '    <input type="checkbox" class="dia-toggle" data-dia="' + key + '">';
+            html += '    <strong>' + nome + '</strong>';
+            html += '  </label>';
+            html += '  <div class="horario-inputs" style="display:none;">';
+            html += '    <input type="time" class="hora-inicio" value="09:00">';
+            html += '    <span>às</span>';
+            html += '    <input type="time" class="hora-fim" value="18:00">';
+            html += '  </div>';
+            html += '</div>';
+        });
+        
+        html += '</div>';
+        
+        const $widget = $(html);
+        $textarea.after($widget);
+        
+        // Event handlers
+        $widget.find('.dia-toggle').on('change', function() {
+            const $row = $(this).closest('.horario-row');
+            const $inputs = $row.find('.horario-inputs');
+            
+            if ($(this).is(':checked')) {
+                $inputs.show();
+            } else {
+                $inputs.hide();
+            }
+            
+            saveHorarios();
+        });
+        
+        $widget.find('input[type="time"]').on('change', saveHorarios);
+        
+        // Carregar dados iniciais
+        loadHorarios();
+        
+        function loadHorarios() {
+            let data = {};
+            
+            try {
+                const value = $textarea.val();
+                if (value && value !== '{}') {
+                    data = JSON.parse(value);
+                }
+            } catch (e) {
+                console.error('Erro ao parsear JSON:', e);
+            }
+            
+            for (let dia in data) {
+                const periodos = data[dia];
+                if (periodos && periodos.length > 0) {
+                    const periodo = periodos[0];
+                    const $row = $('.horario-row[data-dia="' + dia + '"]');
+                    
+                    $row.find('.dia-toggle').prop('checked', true);
+                    $row.find('.horario-inputs').show();
+                    $row.find('.hora-inicio').val(periodo.inicio || '09:00');
+                    $row.find('.hora-fim').val(periodo.fim || '18:00');
+                }
+            }
+        }
+        
+        function saveHorarios() {
+            const data = {};
+            
+            $('.horario-row').each(function() {
+                const dia = $(this).data('dia');
+                const isChecked = $(this).find('.dia-toggle').is(':checked');
+                
+                if (isChecked) {
+                    const inicio = $(this).find('.hora-inicio').val();
+                    const fim = $(this).find('.hora-fim').val();
+                    
+                    data[dia] = [{
+                        inicio: inicio,
+                        fim: fim
+                    }];
+                }
+            });
+            
+            $textarea.val(JSON.stringify(data));
+        }
+        
+        console.log('✅ Widget de horários inicializado!');
+    }, 1000);
 </script>
 
 <style>
@@ -391,6 +510,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
 #carousel-indicators::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* ===============================================================
+   HORÁRIOS DE FUNCIONAMENTO - WIDGET VISUAL
+   =============================================================== */
+
+.horarios-widget-visual {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.horario-row {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.horario-row:last-child {
+    border-bottom: none;
+}
+
+.horario-row label {
+    min-width: 180px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dia-toggle {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.horario-row strong {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.horario-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.horario-inputs input[type="time"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.horario-inputs span {
+    color: #666;
+    font-size: 14px;
 }
 </style>
 {% endblock %}

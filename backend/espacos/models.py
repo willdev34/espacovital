@@ -285,67 +285,12 @@ class Espaco(TimeStampedModel):
         help_text="Espaço possui acessibilidade"
     )
 
-    # Disponibilidade
-    disponibilidade = models.JSONField(
-        default=list,
+    # Horários de Funcionamento (estilo WhatsApp Business)
+    horarios_semana = models.JSONField(
+        'Horários da Semana',
+        default=dict,
         blank=True,
-        help_text="Períodos de disponibilidade (lista de períodos)"
-    )
-    
-    # Horários de Funcionamento - Manhã
-    horario_manha_abertura = models.TimeField(
-        'Manhã - Abertura',
-        null=True,
-        blank=True,
-        help_text='Horário de abertura no período da manhã'
-    )
-    horario_manha_fechamento = models.TimeField(
-        'Manhã - Fechamento',
-        null=True,
-        blank=True,
-        help_text='Horário de fechamento no período da manhã'
-    )
-    
-    # Horários de Funcionamento - Tarde
-    horario_tarde_abertura = models.TimeField(
-        'Tarde - Abertura',
-        null=True,
-        blank=True,
-        help_text='Horário de abertura no período da tarde'
-    )
-    horario_tarde_fechamento = models.TimeField(
-        'Tarde - Fechamento',
-        null=True,
-        blank=True,
-        help_text='Horário de fechamento no período da tarde'
-    )
-    
-    # Horários de Funcionamento - Noite
-    horario_noite_abertura = models.TimeField(
-        'Noite - Abertura',
-        null=True,
-        blank=True,
-        help_text='Horário de abertura no período da noite'
-    )
-    horario_noite_fechamento = models.TimeField(
-        'Noite - Fechamento',
-        null=True,
-        blank=True,
-        help_text='Horário de fechamento no período da noite'
-    )
-    
-    # Horários de Funcionamento - Finais de Semana
-    horario_fds_abertura = models.TimeField(
-        'Finais de Semana - Abertura',
-        null=True,
-        blank=True,
-        help_text='Horário de abertura nos finais de semana'
-    )
-    horario_fds_fechamento = models.TimeField(
-        'Finais de Semana - Fechamento',
-        null=True,
-        blank=True,
-        help_text='Horário de fechamento nos finais de semana'
+        help_text='Horários de funcionamento organizados por dia da semana.'
     )
 
     # Relacionamentos Many-to-Many
@@ -467,6 +412,47 @@ class Espaco(TimeStampedModel):
         related_name='espacos_gerenciados',
         help_text="Usuário responsável pelo espaço"
     )
+
+    def get_horarios_formatados(self):
+        """
+        Retorna horários formatados para exibição
+        """
+        dias_semana = {
+            'domingo': 'Domingo',
+            'segunda': 'Segunda-feira',
+            'terca': 'Terça-feira',
+            'quarta': 'Quarta-feira',
+            'quinta': 'Quinta-feira',
+            'sexta': 'Sexta-feira',
+            'sabado': 'Sábado'
+        }
+        
+        horarios_formatados = []
+        
+        for dia_key, dia_nome in dias_semana.items():
+            if dia_key in self.horarios_semana and self.horarios_semana[dia_key]:
+                periodos = self.horarios_semana[dia_key]
+                horarios_list = []
+                
+                for periodo in periodos:
+                    inicio = periodo.get('inicio', '')
+                    fim = periodo.get('fim', '')
+                    if inicio and fim:
+                        horarios_list.append(f"{inicio} - {fim}")
+                
+                if horarios_list:
+                    horarios_formatados.append({
+                        'dia': dia_nome,
+                        'horarios': ' e '.join(horarios_list)
+                    })
+        
+        return horarios_formatados
+
+    def tem_horarios(self):
+        """
+        Verifica se o espaço tem algum horário cadastrado
+        """
+        return bool(self.horarios_semana and any(self.horarios_semana.values()))
 
     class Meta:
         verbose_name = 'Espaço Terapêutico'

@@ -1,0 +1,44 @@
+/**
+ * CSS Widget Horários - Versão Simples
+ */
+
+.horarios-widget-visual {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    max-width: 600px;
+}
+
+.horario-row {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.horario-row:last-child {
+    border-bottom: none;
+}
+
+.horario-row label {
+    min-width: 150px;
+    margin: 0;
+}
+
+.horario-row strong {
+    font-weight: 500;
+}
+
+.horario-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.horario-inputs input[type="time"] {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

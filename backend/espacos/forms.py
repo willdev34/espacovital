@@ -9,7 +9,6 @@ from django import forms
 from django.core.validators import EmailValidator, RegexValidator
 from .models import ContatoEspaco, AvaliacaoEspaco, Espaco, Comodidade
 
-
 # ===============================================================
 # FORM DE CONTATO COM ESPACO
 # ===============================================================
@@ -317,10 +316,7 @@ class EspacoForm(forms.ModelForm):
             'nome', 'descricao_breve', 'descricao_completa',
             'endereco', 'cidade', 'cep', 'bairro',
             'tipo_espaco', 'aceita_locacao', 'tem_acessibilidade',
-            'horario_manha_abertura', 'horario_manha_fechamento',
-            'horario_tarde_abertura', 'horario_tarde_fechamento',
-            'horario_noite_abertura', 'horario_noite_fechamento',
-            'horario_fds_abertura', 'horario_fds_fechamento',
+            'horarios_semana',
             'email', 'whatsapp', 'whatsapp_ativo', 'website', 
             'instagram', 'facebook', 'youtube', 'tiktok',
             'comodidades', 'especialidades', 'foto_principal'

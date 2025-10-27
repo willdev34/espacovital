@@ -361,12 +361,12 @@ SEÇÃO DE INFORMAÇÕES DETALHADAS
                         Terapias Disponíveis
                     </h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {% for especialidade in espaco.especialidades.all %}
+                        {% for esp_detalhe in especialidades_detalhadas %}
                         <div class="flex items-center p-3 bg-mint/10 rounded-lg">
                             <svg class="w-5 h-5 text-primary mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700">{{ especialidade.nome }}</span>
+                            <span class="text-sm font-medium text-gray-700">{{ esp_detalhe.especialidade.nome }}</span>
                         </div>
                         {% empty %}
                         <p class="text-gray-500 col-span-full">Nenhuma terapia cadastrada ainda.</p>
@@ -421,42 +421,22 @@ SEÇÃO DE INFORMAÇÕES DETALHADAS
                     {% endwith %}
                 </div>
 
-                <!-- Disponibilidade -->
+                <!-- Horários de Funcionamento -->
+                {% if espaco.tem_horarios %}
                 <div class="bg-white rounded-xl shadow-sm p-6">
                     <h3 class="text-xl font-poppins font-semibold text-gray-900 mb-4">
                         Horários de Funcionamento
                     </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="text-center p-4 bg-gray-50 rounded-lg">
-                            <svg class="w-8 h-8 text-primary mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
-                            <h4 class="font-medium text-gray-900">Manhã</h4>
-                            <p class="text-sm text-gray-600">06:00 - 12:00</p>
+                    <div class="space-y-3">
+                        {% for horario in espaco.get_horarios_formatados %}
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                            <span class="font-medium text-gray-900">{{ horario.dia }}</span>
+                            <span class="text-gray-600">{{ horario.horarios }}</span>
                         </div>
-                        <div class="text-center p-4 bg-gray-50 rounded-lg">
-                            <svg class="w-8 h-8 text-primary mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
-                            <h4 class="font-medium text-gray-900">Tarde</h4>
-                            <p class="text-sm text-gray-600">12:00 - 18:00</p>
-                        </div>
-                        <div class="text-center p-4 bg-gray-50 rounded-lg">
-                            <svg class="w-8 h-8 text-primary mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-                            </svg>
-                            <h4 class="font-medium text-gray-900">Noite</h4>
-                            <p class="text-sm text-gray-600">18:00 - 22:00</p>
-                        </div>
-                        <div class="text-center p-4 bg-gray-50 rounded-lg">
-                            <svg class="w-8 h-8 text-primary mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <h4 class="font-medium text-gray-900">Finais de Semana</h4>
-                            <p class="text-sm text-gray-600">Sáb e Dom</p>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- Avaliações -->
                 <div class="bg-white rounded-xl shadow-sm p-6">
