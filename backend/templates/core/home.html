@@ -135,7 +135,15 @@ Data: 07/09/2025
                         <div class="p-6 text-center">
                             <h3 class="font-poppins font-semibold text-gray-900 mb-2">{{ therapist.name }}</h3>
                             <p class="text-sm text-gray-600 mb-4">{{ therapist.specialties }}</p>
-                            <p class="text-xs text-gray-500 mb-4">{{ therapist.location }}</p>
+                            <p class="text-xs text-gray-500 mb-4">
+                                {% if terapeuta.cidade %}
+                                    {{ terapeuta.cidade.nome }}, {{ terapeuta.cidade.estado.sigla }}
+                                {% elif terapeuta.cidade_texto %}
+                                    {{ terapeuta.cidade_texto }}{% if terapeuta.pais %}, {{ terapeuta.pais.nome }}{% endif %}
+                                {% else %}
+                                    Localização não informada
+                                {% endif %}
+                            </p>
                             <a href="{{ therapist.url }}" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors w-full inline-block">
                                 Ver perfil
                             </a>
@@ -176,91 +184,57 @@ Data: 07/09/2025
             </div>
         </div>
         
-        <!-- Grid de Espaços -->
+        <!-- Seção Espaços em Destaque -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
-            <!-- Espaço 1 - Centro/RJ -->
-            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
-                <div class="h-32 lg:h-40 bg-gradient-to-br from-yellow-200 via-orange-300 to-amber-400 relative overflow-hidden">
-                    <!-- Padrão decorativo -->
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-2 left-2 w-6 h-6 bg-white rounded-full"></div>
-                        <div class="absolute bottom-2 right-2 w-4 h-4 bg-white rounded-full"></div>
-                    </div>
+            {% for espaco in espacos_destaque %}
+            <!-- Card do Espaço -->
+            <a href="{% url 'espacos:detalhe' espaco.slug %}" class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
+                <div class="h-32 lg:h-40 relative overflow-hidden">
+                    {% if espaco.foto_principal %}
+                        <img src="{{ espaco.foto_principal.url }}" alt="{{ espaco.nome }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <!-- Gradiente placeholder com padrão de cores -->
+                        <div class="w-full h-full bg-gradient-to-br from-primary/20 via-mint/30 to-coral/40 relative">
+                            <!-- Padrão decorativo -->
+                            <div class="absolute inset-0 opacity-20">
+                                <div class="absolute top-2 left-2 w-6 h-6 bg-white rounded-full"></div>
+                                <div class="absolute bottom-2 right-2 w-4 h-4 bg-white rounded-full"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
                     <!-- Overlay hover -->
                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                </div>
-                <div class="p-3 lg:p-4">
-                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Centro / RJ</p>
-                    <p class="text-xs text-gray-500 mt-1">3 terapeutas</p>
-                </div>
-            </div>
-            
-            <!-- Espaço 2 - Santa da Tijuca/RJ -->
-            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
-                <div class="h-32 lg:h-40 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-3 right-3 w-5 h-5 bg-white rounded-full"></div>
-                        <div class="absolute bottom-3 left-3 w-3 h-3 bg-white rounded-full"></div>
+                    
+                    <!-- Badge de tipo (se tiver) -->
+                    {% if espaco.aceita_locacao %}
+                    <div class="absolute top-2 right-2 bg-coral/95 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
+                        Locação
                     </div>
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    {% endif %}
                 </div>
                 <div class="p-3 lg:p-4">
-                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Santa da Tijuca / RJ</p>
-                    <p class="text-xs text-gray-500 mt-1">5 terapeutas</p>
+                    <p class="text-xs lg:text-sm text-gray-900 font-medium truncate">{{ espaco.nome }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ espaco.cidade.nome }} / {{ espaco.cidade.estado.sigla }}</p>
+                    
+                    {% if espaco.especialidades.count > 0 %}
+                    <p class="text-xs text-primary mt-1">{{ espaco.especialidades.count }} terapia{{ espaco.especialidades.count|pluralize }}</p>
+                    {% endif %}
                 </div>
+            </a>
+            {% empty %}
+            <!-- Mensagem se não houver espaços -->
+            <div class="col-span-2 md:col-span-3 lg:col-span-5 text-center py-12">
+                <p class="text-gray-500">Nenhum espaço em destaque no momento.</p>
             </div>
-            
-            <!-- Espaço 3 - Vila Madalena/SP -->
-            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
-                <div class="h-32 lg:h-40 bg-gradient-to-br from-red-400 via-red-600 to-red-800 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-4 left-4 w-4 h-4 bg-white rounded-full"></div>
-                        <div class="absolute bottom-4 right-4 w-6 h-6 bg-white rounded-full"></div>
-                    </div>
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                </div>
-                <div class="p-3 lg:p-4">
-                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Vila Madalena / SP</p>
-                    <p class="text-xs text-gray-500 mt-1">8 terapeutas</p>
-                </div>
-            </div>
-            
-            <!-- Espaço 4 - Santo Inácio/RJ -->
-            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
-                <div class="h-32 lg:h-40 bg-gradient-to-br from-gray-300 via-gray-500 to-gray-700 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full"></div>
-                        <div class="absolute bottom-2 left-2 w-7 h-7 bg-white rounded-full"></div>
-                    </div>
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                </div>
-                <div class="p-3 lg:p-4">
-                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Santo Inácio / RJ</p>
-                    <p class="text-xs text-gray-500 mt-1">2 terapeutas</p>
-                </div>
-            </div>
-            
-            <!-- Espaço 5 - Vilinha/ES -->
-            <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden cursor-pointer group">
-                <div class="h-32 lg:h-40 bg-gradient-to-br from-amber-300 via-yellow-400 to-orange-500 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-3 left-3 w-6 h-6 bg-white rounded-full"></div>
-                        <div class="absolute bottom-3 right-3 w-4 h-4 bg-white rounded-full"></div>
-                    </div>
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                </div>
-                <div class="p-3 lg:p-4">
-                    <p class="text-xs lg:text-sm text-gray-600 font-medium">Vilinha / ES</p>
-                    <p class="text-xs text-gray-500 mt-1">4 terapeutas</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
         
-        <!-- Botão Ver Todos - Mobile -->
-        <div class="flex justify-center mt-8 md:hidden">
-            <button class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+        <!-- Botão Ver Todos -->
+        <div class="flex justify-center mt-8">
+            <a href="{% url 'espacos:home' %}" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors inline-block">
                 Ver todos os espaços
-            </button>
+            </a>
         </div>
     </div>
 </section>
@@ -641,7 +615,10 @@ Data: 07/09/2025
     // JavaScript para Carrossel de Terapeutas
     // ===================================================================
     
-    let currentSlide = 0;
+    const carouselStates = {
+        'therapists': 0,
+        'spaces': 0
+    };
 
     function moveCarousel(carouselId, direction) {
         const carousel = document.getElementById(carouselId + '-carousel');
@@ -652,24 +629,24 @@ Data: 07/09/2025
         const cardWidth = carousel.children[0].offsetWidth;
         const gap = window.innerWidth >= 1024 ? 24 : window.innerWidth >= 768 ? 16 : 12;
         
-        // Calcular novo slide
-        currentSlide += direction;
+        // Calcular novo slide usando o estado específico do carrossel
+        carouselStates[carouselId] = (carouselStates[carouselId] || 0) + direction;
         
         // Controlar limites do carrossel
         const maxSlide = Math.max(0, totalCards - visibleCards);
-        if (currentSlide < 0) {
-            currentSlide = 0;
-        } else if (currentSlide > maxSlide) {
-            currentSlide = maxSlide;
+        if (carouselStates[carouselId] < 0) {
+            carouselStates[carouselId] = 0;
+        } else if (carouselStates[carouselId] > maxSlide) {
+            carouselStates[carouselId] = maxSlide;
         }
         
         // Aplicar transformação com transição suave
-        const translateX = -currentSlide * (cardWidth + gap);
+        const translateX = -carouselStates[carouselId] * (cardWidth + gap);
         carousel.style.transform = `translateX(${translateX}px)`;
         carousel.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
         
         // Atualizar estado dos botões
-        updateCarouselButtons(carouselId, currentSlide, maxSlide);
+        updateCarouselButtons(carouselId, carouselStates[carouselId], maxSlide);
     }
 
     function getVisibleCards() {

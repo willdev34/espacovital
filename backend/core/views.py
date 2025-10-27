@@ -44,6 +44,23 @@ class HomeView(TemplateView):
         # Converter para número usando hash
         return int(hashlib.md5(seed_string.encode()).hexdigest()[:8], 16)
     
+    def get_location_display(self, terapeuta):
+        """
+        Retorna localização formatada do terapeuta
+        Funciona para Brasil (cidade + estado) e Internacional (cidade_texto + país)
+        """
+        if terapeuta.cidade_principal and terapeuta.cidade_principal.estado:
+            # Terapeuta do Brasil (tem cidade e estado)
+            return f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}"
+        elif terapeuta.cidade_texto and terapeuta.pais:
+            # Terapeuta internacional (tem cidade_texto e país)
+            return f"{terapeuta.cidade_texto}, {terapeuta.pais.nome}"
+        elif terapeuta.cidade_texto:
+            # Só tem cidade_texto sem país
+            return terapeuta.cidade_texto
+        else:
+            return 'Localização não informada'
+    
     def get_context_data(self, **kwargs):
         """
         Contexto com TODOS os terapeutas em destaque, ordem rotativa
@@ -61,7 +78,11 @@ class HomeView(TemplateView):
             is_active=True,
             destaque=True,
             verificado=True
-        ).select_related('cidade_principal', 'cidade_principal__estado').prefetch_related('especialidades')
+        ).select_related(
+            'cidade_principal', 
+            'cidade_principal__estado',
+            'pais'
+        ).prefetch_related('especialidades')
 
         # Converter para lista e embaralhar
         terapeutas_list = list(terapeutas_qs)
@@ -72,6 +93,16 @@ class HomeView(TemplateView):
         # Converter para formato do template (igual ao que o template espera)
         context['featured_therapists'] = []
         for terapeuta in terapeutas_list:
+            # DEBUG - APAGAR DEPOIS
+            print(f"\n=== TERAPEUTA: {terapeuta.nome_completo} ===")
+            print(f"cidade_principal: {terapeuta.cidade_principal}")
+            print(f"cidade_texto: {terapeuta.cidade_texto}")
+            print(f"pais: {terapeuta.pais}")
+            if terapeuta.cidade_principal:
+                print(f"cidade_principal.nome: {terapeuta.cidade_principal.nome}")
+                print(f"cidade_principal.estado: {terapeuta.cidade_principal.estado}")
+            print(f"Location gerado: {self.get_location_display(terapeuta)}")
+            print("=" * 50)
             # Buscar especialidades
             especialidades = list(terapeuta.especialidades.all()[:2])
             especialidades_str = ' • '.join([esp.nome for esp in especialidades]) if especialidades else 'Terapeuta Holístico'
@@ -81,7 +112,7 @@ class HomeView(TemplateView):
                 'id': terapeuta.id,
                 'name': terapeuta.nome_exibicao or terapeuta.nome_completo,
                 'specialties': especialidades_str,
-                'location': f"{terapeuta.cidade_principal.nome} - {terapeuta.cidade_principal.estado.sigla}" if terapeuta.cidade_principal else '',
+                'location': self.get_location_display(terapeuta),
                 'verified': terapeuta.verificado,
                 'premium': terapeuta.premium,
                 'destaque': terapeuta.destaque,
