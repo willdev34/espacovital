@@ -5,7 +5,6 @@
 # Data: Novembro 2025
 # ===============================================================
 
-from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from core.models import Especialidade
 from terapeutas.models import Terapeuta
@@ -14,77 +13,36 @@ from espacos.models import Espaco
 
 class TerapiasDestaquesView(ListView):
     """
-    View: Terapias em Destaque
+    View: Página de Terapias em Destaque
     Descrição: Exibe as 10 terapias marcadas como destaque
+              Hero section com cards de terapias
     Template: terapias/destaques.html
     URL: /terapias/
     """
     model = Especialidade
     template_name = 'terapias/destaques.html'
-    context_object_name = 'terapias_destaque'
+    context_object_name = 'terapias'
     
     def get_queryset(self):
         """
-        Retorna apenas especialidades marcadas como destaque
-        Ordenadas por: destaque, ordem e nome
-        Limite: 10 terapias
+        Retorna apenas as especialidades em destaque e ativas
+        Limitado a 10 resultados
         """
         return Especialidade.objects.filter(
             destaque=True,
             is_active=True
-        ).order_by('-destaque', 'ordem', 'nome')[:10]
+        ).order_by('ordem', 'nome')[:10]
     
     def get_context_data(self, **kwargs):
         """
-        Adiciona informações relacionadas à terapia
+        Adiciona informações extras ao contexto
         """
         context = super().get_context_data(**kwargs)
-        terapia = self.get_object()
         
-        # Terapeutas que atendem esta especialidade
-        context['terapeutas'] = Terapeuta.objects.filter(
-            especialidades=terapia,
-            is_active=True
-        ).select_related('user').prefetch_related('especialidades')[:6]
-        
-        # Espaços que oferecem esta terapia
-        context['espacos'] = Espaco.objects.filter(
-            especialidades=terapia,
-            is_active=True
-        ).prefetch_related('especialidades', 'comodidades')[:6]
-        
-        # Contadores
-        context['total_terapeutas'] = Terapeuta.objects.filter(
-            especialidades=terapia,
+        # Total de terapias disponíveis
+        context['total_terapias'] = Especialidade.objects.filter(
             is_active=True
         ).count()
-        
-        context['total_espacos'] = Espaco.objects.filter(
-            especialidades=terapia,
-            is_active=True
-        ).count()
-        
-        # ===============================================================
-        # NOVO: Cidades que oferecem a terapia
-        # ===============================================================
-        from django.db.models import Q
-        
-        # Buscar cidades únicas de terapeutas
-        cidades_terapeutas = Terapeuta.objects.filter(
-            especialidades=terapia,
-            is_active=True
-        ).values_list('cidade', flat=True).distinct()
-        
-        # Buscar cidades únicas de espaços
-        cidades_espacos = Espaco.objects.filter(
-            especialidades=terapia,
-            is_active=True
-        ).values_list('cidade', flat=True).distinct()
-        
-        # Combinar e remover duplicatas
-        from core.models import Cidade
-        ids_cidades = set(list(cidades_terapeutas) + list(cidades_espacos))
-        context['cidades'] = Cidade.objects.filter(id__in=ids_cidades).order_by('nome')
         
         return context
 
@@ -162,21 +120,25 @@ class TerapiaDetalheView(DetailView):
         context = super().get_context_data(**kwargs)
         terapia = self.get_object()
         
+        # ===============================================================
         # Terapeutas que atendem esta especialidade
-        # Filtra terapeutas ativos e com especialidade relacionada
+        # ===============================================================
         context['terapeutas'] = Terapeuta.objects.filter(
             especialidades=terapia,
             is_active=True
         ).select_related('user').prefetch_related('especialidades')[:6]
         
+        # ===============================================================
         # Espaços que oferecem esta terapia
-        # Filtra espaços ativos e com especialidade relacionada
+        # ===============================================================
         context['espacos'] = Espaco.objects.filter(
             especialidades=terapia,
             is_active=True
         ).prefetch_related('especialidades', 'comodidades')[:6]
         
+        # ===============================================================
         # Contadores
+        # ===============================================================
         context['total_terapeutas'] = Terapeuta.objects.filter(
             especialidades=terapia,
             is_active=True
@@ -186,5 +148,27 @@ class TerapiaDetalheView(DetailView):
             especialidades=terapia,
             is_active=True
         ).count()
+        
+        # ===============================================================
+        # Cidades que oferecem a terapia
+        # ===============================================================
+        from django.db.models import Q
+        from core.models import Cidade
+        
+        # Buscar cidades únicas de terapeutas
+        cidades_terapeutas = Terapeuta.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).values_list('cidade_principal', flat=True).distinct()
+        
+        # Buscar cidades únicas de espaços
+        cidades_espacos = Espaco.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).values_list('cidade', flat=True).distinct()
+        
+        # Combinar e remover duplicatas
+        ids_cidades = set(list(cidades_terapeutas) + list(cidades_espacos))
+        context['cidades'] = Cidade.objects.filter(id__in=ids_cidades).order_by('nome')
         
         return context

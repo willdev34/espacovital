@@ -13,59 +13,73 @@ Data: Novembro 2025
 {% block content %}
 
 <!-- Hero Section com Foto e Título -->
-<section class="bg-gradient-to-br from-[#F5F1E8] to-white py-12 md:py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-5xl mx-auto">
+<!-- ===============================================================
+     HERO SECTION: Imagem de fundo com título e descrição
+     Descrição: Hero com foto da terapia como background
+     Autor: Will
+     Data: Novembro 2025
+     =============================================================== -->
+<section class="relative h-[500px] md:h-[600px] overflow-hidden">
+    
+    <!-- Background Image -->
+    <div class="absolute inset-0 z-0">
+        {% if terapia.foto %}
+        <img src="{{ terapia.foto.url }}" 
+             alt="{{ terapia.nome }}" 
+             class="w-full h-full object-cover">
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-br from-[#1E5C5C] to-[#2d8787]"></div>
+        {% endif %}
+        
+        <!-- Overlay escuro para melhorar legibilidade do texto -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+    </div>
+    
+    <!-- Conteúdo sobre a imagem -->
+    <div class="relative z-10 container mx-auto px-4 h-full flex items-center">
+        <div class="max-w-2xl">
             
             <!-- Breadcrumb -->
             <nav class="mb-6">
-                <ol class="flex items-center space-x-2 text-sm text-gray-600">
-                    <li><a href="{% url 'core:home' %}" class="hover:text-[#1E5C5C]">Home</a></li>
+                <ol class="flex items-center space-x-2 text-sm text-white/80">
+                    <li><a href="{% url 'core:home' %}" class="hover:text-white transition-colors">Home</a></li>
                     <li><span class="mx-2">/</span></li>
-                    <li><a href="{% url 'terapias:destaques' %}" class="hover:text-[#1E5C5C]">Terapias</a></li>
+                    <li><a href="{% url 'terapias:destaques' %}" class="hover:text-white transition-colors">Terapias</a></li>
                     <li><span class="mx-2">/</span></li>
-                    <li class="text-[#1E5C5C] font-medium">{{ terapia.nome }}</li>
+                    <li class="text-white font-medium">{{ terapia.nome }}</li>
                 </ol>
             </nav>
             
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                
-                <!-- Foto da Terapia -->
-                <div class="order-2 md:order-1">
-                    {% if terapia.foto %}
-                    <img src="{{ terapia.foto.url }}" 
-                         alt="{{ terapia.nome }}" 
-                         class="w-full h-auto rounded-2xl shadow-lg object-cover max-h-96">
-                    {% else %}
-                    <div class="w-full h-96 bg-gradient-to-br from-[#1E5C5C] to-[#2d8787] rounded-2xl shadow-lg flex items-center justify-center">
-                        <span class="text-white text-6xl font-bold opacity-20">{{ terapia.nome|first }}</span>
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Título e Info Rápida -->
-                <div class="order-1 md:order-2">
-                    <h1 class="text-4xl md:text-5xl font-bold text-[#1E5C5C] mb-4">
-                        {{ terapia.nome }}
-                    </h1>
-                    
-                    {% if terapia.categoria %}
-                    <span class="inline-block bg-[#1E5C5C] text-white px-4 py-1 rounded-full text-sm font-medium mb-4">
-                        {{ terapia.categoria }}
-                    </span>
-                    {% endif %}
-                    
-                    {% if terapia.descricao_curta %}
-                    <p class="text-lg text-gray-700 leading-relaxed">
-                        {{ terapia.descricao_curta }}
-                    </p>
-                    {% endif %}
-                </div>
-                
+            <!-- Subtítulo -->
+            <p class="text-white/90 text-lg md:text-xl mb-4 font-light tracking-wide">
+                Desbloqueie um mundo de bem-estar
+            </p>
+            
+            <!-- Título Principal -->
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                Encontre {{ terapia.nome }} perto de você
+            </h1>
+            
+            <!-- Descrição -->
+            <p class="text-white/90 text-lg md:text-xl mb-8 max-w-xl leading-relaxed">
+                {% if terapia.descricao_curta %}
+                    {{ terapia.descricao_curta }}
+                {% else %}
+                    Explore e conecte-se com profissionais qualificados através do nosso diretório de terapias
+                {% endif %}
+            </p>
+            
+            <!-- Badge: Profissionais Verificados -->
+            <div class="flex items-center space-x-2 text-white/90">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-sm">Todos os terapeutas são profissionais verificados</span>
             </div>
             
         </div>
     </div>
+    
 </section>
 
 <!-- Descrição Completa -->
@@ -109,23 +123,43 @@ Data: Novembro 2025
 {% endif %}
 
 <!-- ===============================================================
-     SEÇÃO: Conteúdo Completo (Editor Rico)
-     Descrição: Conteúdo extenso com seções estruturadas
+     SEÇÃO: Botão Saiba Mais (Link futuro para artigo do blog)
+     Descrição: CTA para artigo detalhado no blog
+     Autor: Will
+     Data: Novembro 2025
      =============================================================== -->
-{% if terapia.conteudo_completo %}
-<section class="py-12 bg-white">
+<section class="py-8 bg-white">
     <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto text-center">
             
-            <!-- Conteúdo Rico -->
-            <div class="prose prose-lg max-w-none">
-                {{ terapia.conteudo_completo|safe }}
+            <div class="bg-gradient-to-br from-[#F5F1E8] to-white rounded-2xl p-8 border border-[#1E5C5C]/20">
+                
+                <h3 class="text-2xl font-bold text-[#1E5C5C] mb-3">
+                    Quer saber mais sobre {{ terapia.nome }}?
+                </h3>
+                
+                <p class="text-gray-600 mb-6">
+                    Leia nosso artigo completo com tudo sobre a técnica, benefícios e como aproveitar ao máximo suas sessões
+                </p>
+                
+                <!-- Botão Saiba Mais (link futuro para blog) -->
+                <a href="#" 
+                   class="inline-flex items-center space-x-2 bg-[#1E5C5C] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#2d8787] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span>Saiba Mais sobre {{ terapia.nome }}</span>
+                </a>
+                
+                <p class="text-xs text-gray-500 mt-4">
+                    📝 Em breve: Artigos completos sobre cada terapia
+                </p>
+                
             </div>
             
         </div>
     </div>
 </section>
-{% endif %}
 
 <!-- ===============================================================
      SEÇÃO: Sites de Referência
@@ -680,9 +714,9 @@ document.addEventListener('keydown', function(event) {
                        class="inline-block bg-white text-[#1E5C5C] px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">
                         Ver todos os terapeutas de {{ terapia.nome }}
                     </a>
-                    <a href="{% url 'espacos:listagem_simples' %}?especialidades={{ terapia.id }}" 
-                       class="inline-block bg-white/20 text-white border-2 border-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-[#1E5C5C] transition-colors duration-200">
-                        Ver todos os espaços que oferecem {{ terapia.nome }}
+                    <a href="{% url 'espacos:busca_avancada' %}?especialidades={{ terapia.id }}" 
+                        class="inline-block bg-white/20 text-white border-2 border-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-[#1E5C5C] transition-colors duration-200">
+                            Ver todos os espaços que oferecem {{ terapia.nome }}
                     </a>
                 </div>
             </div>
@@ -728,7 +762,7 @@ function alternarTipoBusca(tipo) {
         // ===============================================================
         // Configurar para busca de ESPAÇOS
         // ===============================================================
-        formBusca.action = "{% url 'espacos:listagem_simples' %}";
+        formBusca.action = "{% url 'espacos:busca_avancada' %}";
         textoBotao.textContent = 'Buscar Espaços';
         tipoResultado.textContent = 'espaços';
         contadorResultados.textContent = '{{ total_espacos }}';

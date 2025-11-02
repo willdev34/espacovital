@@ -824,23 +824,6 @@ class EspecialidadeAdmin(admin.ModelAdmin):
             'description': 'Use a descrição curta para cards e a completa para a página individual'
         }),
         # ===============================================================
-        # NOVO FIELDSET: Conteúdo Extenso
-        # ===============================================================
-        ('Conteúdo Extenso (Editor Rico)', {
-            'fields': ('conteudo_completo',),
-            'classes': ('wide',),
-            'description': '''
-                Use o editor para criar conteúdo estruturado com seções como:
-                • Introdução
-                • O que é a terapia
-                • Em que a terapia pode ajudar
-                • O que esperar numa sessão
-                • O que sentirá após uma sessão
-                • Quantas sessões são necessárias
-                • Como escolher um terapeuta
-            '''
-        }),
-        # ===============================================================
         # NOVO FIELDSET: Sites de Referência
         # ===============================================================
         ('Sites de Referência', {
