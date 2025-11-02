@@ -28,6 +28,7 @@ urlpatterns = [
     # Apps principais
     path('terapeutas/', include('terapeutas.urls')),
     path('espacos/', include('espacos.urls')),
+    path('terapias/', include('terapias.urls')), 
     
     # APIs públicas
     path('api/estados/', api_estados, name='api_estados'),

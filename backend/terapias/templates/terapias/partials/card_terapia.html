@@ -1,0 +1,31 @@
+<!--
+Título: Card de Terapia (Componente Reutilizável)
+Descrição: Card individual de terapia para ser usado em listagens
+Autor: Will
+Data: Novembro 2025
+-->
+
+<div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
+    <!-- Título da Terapia -->
+    <h3 class="text-xl font-semibold text-[#1E5C5C] mb-3">
+        {{ terapia.nome }}
+    </h3>
+    
+    <!-- Descrição Resumida -->
+    <p class="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+        {% if terapia.descricao_curta %}
+            {{ terapia.descricao_curta|truncatewords:25 }}
+        {% else %}
+            Descubra os benefícios e aplicações desta terapia holística.
+        {% endif %}
+    </p>
+    
+    <!-- Link Saiba Mais -->
+    <a href="{% url 'terapias:detalhe' slug=terapia.slug %}" 
+       class="text-[#1E5C5C] hover:text-[#2d8787] font-medium text-sm inline-flex items-center transition-colors duration-200">
+        Saiba Mais
+        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </a>
+</div>

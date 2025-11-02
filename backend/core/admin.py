@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.contrib.admin import SimpleListFilter
-from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade
+from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade, Especialidade
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -764,3 +764,83 @@ class CidadeAdmin(admin.ModelAdmin):
         except:
             return 0
     total_espacos.short_description = 'Espaços'
+
+@admin.register(Especialidade)
+class EspecialidadeAdmin(admin.ModelAdmin):
+    """
+    Título: Admin Especialidade/Terapia
+    Descrição: Interface administrativa para gerenciar especialidades e terapias
+    Autor: Will
+    Data: Novembro 2025
+    """
+    # Campos exibidos na listagem
+    list_display = [
+        'nome', 
+        'categoria', 
+        'destaque', 
+        'ordem', 
+        'tem_foto',
+        'tem_beneficios',
+        'is_active'
+    ]
+    
+    # Filtros laterais
+    list_filter = ['destaque', 'is_active', 'categoria']
+    
+    # Campos de busca
+    search_fields = ['nome', 'descricao_curta', 'descricao_completa']
+    
+    # Slug automático
+    prepopulated_fields = {'slug': ('nome',)}
+    
+    # Ordenação
+    ordering = ['-destaque', 'ordem', 'nome']
+    
+    # Campos editáveis direto na listagem
+    list_editable = ['destaque', 'ordem']
+    
+    # Organização dos campos no formulário
+    fieldsets = (
+        ('Informações Básicas', {
+            'fields': ('nome', 'slug', 'categoria', 'foto', 'preview_foto')
+        }),
+        ('Descrições', {
+            'fields': ('descricao_curta', 'descricao_completa', 'beneficios'),
+            'description': 'Use a descrição curta para cards e a completa para a página individual'
+        }),
+        ('Configurações de Exibição', {
+            'fields': ('cor_destaque', 'ordem', 'destaque', 'is_active'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    # Preview da foto (somente leitura)
+    readonly_fields = ['preview_foto']
+    
+    # Métodos customizados para listagem
+    @admin.display(boolean=True, description='Tem Foto?')
+    def tem_foto(self, obj):
+        """
+        Indica se a especialidade tem foto cadastrada
+        """
+        return bool(obj.foto)
+    
+    @admin.display(boolean=True, description='Tem Benefícios?')
+    def tem_beneficios(self, obj):
+        """
+        Indica se a especialidade tem benefícios cadastrados
+        """
+        return bool(obj.beneficios)
+    
+    def preview_foto(self, obj):
+        """
+        Exibe preview da foto no formulário de edição
+        """
+        if obj.foto:
+            from django.utils.html import format_html
+            return format_html(
+                '<img src="{}" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />',
+                obj.foto.url
+            )
+        return "Nenhuma foto cadastrada"
+    preview_foto.short_description = "Preview da Foto"

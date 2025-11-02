@@ -1,70 +1,72 @@
 # ===============================================================
-# Título: Settings - Espaço Vital (Versão Limpa)
-# Descrição: Configurações básicas funcionais
-# Autor: Will | Empresa: Espaço VItal
+# Título: Settings - Espaço Vital
+# Descrição: Configurações do projeto Django com encoding UTF-8
+# Autor: Will
 # Data: 07/09/2025
+# ===============================================================
+
+# ⚠️ CRÍTICO: CONFIGURAÇÃO UTF-8 DEVE VIR PRIMEIRO
+# Resolve problemas de encoding no Windows com PostgreSQL
 # ===============================================================
 
 import sys
 import os
-from pathlib import Path
-from decouple import config, Csv
 
-# ===============================================================
-# FORÇA ENCODING UTF-8 NO WINDOWS (CRÍTICO!)
-# Resolve problemas com caracteres especiais no PostgreSQL
-# ===============================================================
+# FORÇA UTF-8 NO WINDOWS (ANTES DE QUALQUER OUTRA COISA!)
+if sys.platform == 'win32':
+    # Define variáveis de ambiente ANTES de qualquer import
+    os.environ['PYTHONUTF8'] = '1'
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+    os.environ['LANG'] = 'C.UTF-8'
+    os.environ['LC_ALL'] = 'C.UTF-8'
 
-import locale
+# Força encoding UTF-8 em streams de saída
 import io
-
-# Força encoding UTF-8 em todos os sistemas operacionais
-if sys.stdout.encoding != 'utf-8':
+if hasattr(sys.stdout, 'buffer'):
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-# Define locale padrão para UTF-8
-# Tenta pt_BR.UTF-8 primeiro, senão usa C.UTF-8
-try:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-except locale.Error:
-    try:
-        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
-    except locale.Error:
-        # Em ambientes restritivos (como Railway), usa o padrão
-        try:
-            locale.setlocale(locale.LC_ALL, '')
-        except locale.Error:
-            pass
+# ===============================================================
+# IMPORTS PRINCIPAIS
+# ===============================================================
 
-# Define variáveis de ambiente para garantir UTF-8
-os.environ['PYTHONIOENCODING'] = 'utf-8'
-os.environ['LANG'] = 'C.UTF-8'
-os.environ['LC_ALL'] = 'C.UTF-8'
+from pathlib import Path
+from decouple import config, Csv
+import locale
+
+# Tenta configurar locale para UTF-8
+# (silenciosamente ignora se não disponível)
+for locale_name in ['pt_BR.UTF-8', 'C.UTF-8', '']:
+    try:
+        locale.setlocale(locale.LC_ALL, locale_name)
+        break
+    except locale.Error:
+        continue
 
 # ===============================================================
-# Build paths inside the project
+# CAMINHOS DO PROJETO
 # ===============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==============================================================
+# ===============================================================
 # CONFIGURAÇÕES DE AMBIENTE
-# ==============================================================
+# ===============================================================
 
-# Identifica qual ambiente está rodando
 ENVIRONMENT = config('ENVIRONMENT', default='development')
 
-# Security
-SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
-# TEMPORÁRIO - para ver erro em produção
-DEBUG = True  # config('DEBUG', default=False, cast=bool)
+# ===============================================================
+# SEGURANÇA
+# ===============================================================
 
-# Configuração de ALLOWED_HOSTS
+SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production-INSECURE')
+DEBUG = config('DEBUG', default=True, cast=bool)
+
+# ALLOWED_HOSTS
 ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='localhost,127.0.0.1')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',')]
 
-# Adiciona automaticamente o domínio do Railway se existir
+# Adiciona domínio do Railway automaticamente
 RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
 if RAILWAY_STATIC_URL:
     railway_domain = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')
@@ -77,7 +79,6 @@ CSRF_TRUSTED_ORIGINS = config(
     default='http://localhost:8000',
     cast=Csv()
 )
-
 
 # ===============================================================
 # APLICAÇÕES INSTALADAS
@@ -94,7 +95,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # Third-party apps
-    'cloudinary_storage',  # IMPORTANTE: antes de 'cloudinary'
+    'cloudinary_storage',
     'cloudinary',
     'allauth',
     'allauth.account',
@@ -131,7 +132,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'espacovital.urls'
 
 # ===============================================================
-# CONFIGURAÇÕES DE TEMPLATES
+# TEMPLATES
 # ===============================================================
 
 TEMPLATES = [
@@ -153,18 +154,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'espacovital.wsgi.application'
 
-# ==============================================================
-# DATABASE - PostgreSQL com suporte Railway e Local
-# ==============================================================
+# ===============================================================
+# BANCO DE DADOS - PostgreSQL
+# ===============================================================
 
 import dj_database_url
 
-# Railway fornece DATABASE_URL automaticamente
-# Local usa as variáveis individuais
 DATABASE_URL = config('DATABASE_URL', default=None)
 
 if DATABASE_URL:
-    # Produção/QA (Railway) - usa DATABASE_URL
+    # Produção/QA (Railway) - usa DATABASE_URL completa
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -172,26 +171,45 @@ if DATABASE_URL:
             conn_health_checks=True,
         )
     }
-    # FORÇA encoding UTF-8 no PostgreSQL (CRÍTICO para acentos!)
+    # FORÇA UTF-8 no PostgreSQL
     DATABASES['default']['OPTIONS'] = {
         'client_encoding': 'UTF8',
         'connect_timeout': 10,
     }
 else:
-    # Desenvolvimento local - usa variáveis individuais
+    # Desenvolvimento local - variáveis individuais
+    # FORÇA UTF-8 em TODAS as strings antes de conectar
+    import urllib.parse
+    
+    db_name = config('DB_NAME', default='espacovital')
+    db_user = config('DB_USER', default='postgres')
+    db_password = config('DB_PASSWORD', default='postgres')
+    db_host = config('DB_HOST', default='localhost')
+    db_port = config('DB_PORT', default='5432')
+    
+    # Garante que todas as strings estão em UTF-8
+    if isinstance(db_name, bytes):
+        db_name = db_name.decode('utf-8')
+    if isinstance(db_user, bytes):
+        db_user = db_user.decode('utf-8')
+    if isinstance(db_password, bytes):
+        db_password = db_password.decode('utf-8')
+    if isinstance(db_host, bytes):
+        db_host = db_host.decode('utf-8')
+    
     DATABASES = {
         'default': {
-            'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
-            'NAME': config('DB_NAME', default='espacovital'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default='postgres'),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_password,
+            'HOST': db_host,
+            'PORT': db_port,
             'OPTIONS': {
                 'client_encoding': 'UTF8',
                 'connect_timeout': 10,
             },
-            'CONN_MAX_AGE': 0,  # Não mantém conexões abertas
+            'CONN_MAX_AGE': 0,
             'ATOMIC_REQUESTS': False,
             'AUTOCOMMIT': True,
         }
@@ -202,18 +220,10 @@ else:
 # ===============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # ===============================================================
@@ -226,62 +236,39 @@ USE_I18N = True
 USE_TZ = True
 
 # ===============================================================
-# ARQUIVOS ESTÁTICOS E MEDIA
+# ARQUIVOS ESTÁTICOS (Static Files)
 # ===============================================================
 
-# ===== STATIC FILES =====
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# WhiteNoise configuração
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ===== MEDIA FILES =====
-# Sempre definir MEDIA_ROOT para desenvolvimento local
+# Configurações WhiteNoise
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_ALLOW_ALL_ORIGINS = True
+
+# ===============================================================
+# ARQUIVOS DE MÍDIA (Media Files)
+# ===============================================================
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# DEBUG - Listar TODAS as variáveis de ambiente
-print("=" * 50)
-print("TODAS AS VARIÁVEIS DE AMBIENTE:")
-import os
-for key in sorted(os.environ.keys()):
-    if 'CLOUDINARY' in key or 'USE_CLOUDINARY' in key:
-        print(f"  {key} = {os.environ[key]}")
-print("=" * 50)
-
-# Lê a variável USE_CLOUDINARY do ambiente
-_use_cloudinary_env = os.environ.get('USE_CLOUDINARY', 'false').lower()
-USE_CLOUDINARY = _use_cloudinary_env in ['true', '1', 'yes', 'y', 'on']
-
-# DEBUG TEMPORÁRIO - REMOVER DEPOIS
-print("=" * 50)
-print("DEBUG MEDIA CONFIGURATION")
-print(f"ENVIRONMENT: {ENVIRONMENT}")
-print(f"USE_CLOUDINARY: {USE_CLOUDINARY}")
-print(f"Type: {type(USE_CLOUDINARY)}")
-print("=" * 50)
+# Verifica se deve usar Cloudinary
+USE_CLOUDINARY = os.environ.get('USE_CLOUDINARY', 'false').lower() in ['true', '1', 'yes']
 
 if USE_CLOUDINARY:
-    print("✓ USANDO CLOUDINARY!")
-    # Usar Cloudinary para mídia (produção)
+    # Cloudinary para produção
     import cloudinary
     import cloudinary.uploader
     import cloudinary.api
-    import os
     
-    # Ler DIRETO do ambiente, sem usar decouple
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'do0uq7w4n'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '429922328497991'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '000FaH_7fi181cdDR0XX-g4oqqU'),
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
     }
-    
-    print(f"DEBUG - Cloud Name: {CLOUDINARY_STORAGE['CLOUD_NAME']}")
-    print(f"DEBUG - API Key: {CLOUDINARY_STORAGE['API_KEY'][:10]}...")
     
     cloudinary.config(
         cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
@@ -291,49 +278,37 @@ if USE_CLOUDINARY:
     )
     
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'  # Cloudinary vai gerenciar automaticamente
-    print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
-else:
-    print("✗ USANDO ARMAZENAMENTO LOCAL (DESENVOLVIMENTO)")
-    # Armazenamento local (desenvolvimento)
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE if 'DEFAULT_FILE_STORAGE' in dir() else 'django.core.files.storage.FileSystemStorage'}")
-    print(f"MEDIA_URL: {MEDIA_URL}")
+    
+    if DEBUG:
+        print("✓ Cloudinary configurado para mídia")
+else:
+    # Armazenamento local para desenvolvimento
+    MEDIA_URL = '/media/'
+    
+    if DEBUG:
+        print("✓ Armazenamento local configurado para mídia")
 
-# Configuração para S3 (preparado para futuro)
+# Preparado para S3 (futuro)
 USE_S3 = config('USE_S3', default=False, cast=bool)
-
 if USE_S3:
-    print("✓ USANDO AWS S3")
-    # AWS S3 Settings (configurar quando for usar)
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 # ===============================================================
-# CONFIGURAÇÕES DO WHITENOISE (Para servir static files)
-# ===============================================================
-
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_ALLOW_ALL_ORIGINS = True
-
-
-# ===============================================================
-# CONFIGURAÇÕES DO CRISPY FORMS
+# CRISPY FORMS (Tailwind)
 # ===============================================================
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
 
 # ===============================================================
-# CONFIGURAÇÕES DO ALLAUTH
+# DJANGO ALLAUTH (Autenticação)
 # ===============================================================
 
 AUTHENTICATION_BACKENDS = [
@@ -350,14 +325,16 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_UNIQUE_EMAIL = True
 
-# URLs de redirecionamento
+# Redirecionamentos
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # ===============================================================
-# CONFIGURAÇÕES DO CKEDITOR
+# CKEDITOR (Editor de Texto Rico)
 # ===============================================================
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 CKEDITOR_CONFIGS = {
     'default': {
@@ -368,33 +345,6 @@ CKEDITOR_CONFIGS = {
             ['Link', 'Unlink'],
             ['RemoveFormat', 'Source']
         ],
-        'height': 300,
-        'width': '100%',
-    },
-}
-
-CKEDITOR_UPLOAD_PATH = "uploads/"
-
-# ===============================================================
-# CONFIGURAÇÕES DE EMAIL (desenvolvimento)
-# ===============================================================
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@espacovital.com.br'
-
-# ===============================================================
-# CAMPO DE CHAVE PRIMÁRIA PADRÃO
-# ===============================================================
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# ===============================================================
-# CONFIGURAÇÃO DO CKEDITOR
-# ===============================================================
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
         'height': 300,
         'width': '100%',
     },
@@ -418,13 +368,25 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# ==============================================================
-# CONFIGURAÇÕES ESPECÍFICAS POR AMBIENTE
-# ==============================================================
+# ===============================================================
+# EMAIL (Console para desenvolvimento)
+# ===============================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@espacovital.com.br'
+
+# ===============================================================
+# CAMPO PADRÃO PARA CHAVES PRIMÁRIAS
+# ===============================================================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ===============================================================
+# CONFIGURAÇÕES POR AMBIENTE
+# ===============================================================
 
 if ENVIRONMENT == 'development':
-    # Configurações apenas para DEV
-    print(" Rodando em modo DESENVOLVIMENTO")
+    print("🔧 Rodando em modo DESENVOLVIMENTO")
     
     # Django Debug Toolbar (opcional)
     if config('ENABLE_DEBUG_TOOLBAR', default=False, cast=bool):
@@ -433,19 +395,13 @@ if ENVIRONMENT == 'development':
         INTERNAL_IPS = ['127.0.0.1']
 
 elif ENVIRONMENT == 'qa':
-    # Configurações para QA (Railway)
-    print("Rodando em modo QA (Railway)")
-    
-    # Segurança adicional
-    SECURE_SSL_REDIRECT = False  # Railway já faz isso
+    print("🚀 Rodando em modo QA (Railway)")
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
 elif ENVIRONMENT == 'production':
-    # Configurações para Produção (futuro)
-    print("Rodando em modo PRODUÇÃO")
-    
-    # Segurança máxima
+    print("🔒 Rodando em modo PRODUÇÃO")
     DEBUG = False
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -453,3 +409,7 @@ elif ENVIRONMENT == 'production':
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+# ===============================================================
+# FIM DAS CONFIGURAÇÕES
+# ===============================================================

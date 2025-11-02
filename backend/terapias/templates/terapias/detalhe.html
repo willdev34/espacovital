@@ -1,0 +1,295 @@
+<!--
+Título: Página Individual da Terapia
+Descrição: Detalhes completos de uma terapia com terapeutas e espaços relacionados
+Autor: Will
+Data: Novembro 2025
+-->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ terapia.nome }} - Espaço Vital{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section com Foto e Título -->
+<section class="bg-gradient-to-br from-[#F5F1E8] to-white py-12 md:py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Breadcrumb -->
+            <nav class="mb-6">
+                <ol class="flex items-center space-x-2 text-sm text-gray-600">
+                    <li><a href="{% url 'core:home' %}" class="hover:text-[#1E5C5C]">Home</a></li>
+                    <li><span class="mx-2">/</span></li>
+                    <li><a href="{% url 'terapias:destaques' %}" class="hover:text-[#1E5C5C]">Terapias</a></li>
+                    <li><span class="mx-2">/</span></li>
+                    <li class="text-[#1E5C5C] font-medium">{{ terapia.nome }}</li>
+                </ol>
+            </nav>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                
+                <!-- Foto da Terapia -->
+                <div class="order-2 md:order-1">
+                    {% if terapia.foto %}
+                    <img src="{{ terapia.foto.url }}" 
+                         alt="{{ terapia.nome }}" 
+                         class="w-full h-auto rounded-2xl shadow-lg object-cover max-h-96">
+                    {% else %}
+                    <div class="w-full h-96 bg-gradient-to-br from-[#1E5C5C] to-[#2d8787] rounded-2xl shadow-lg flex items-center justify-center">
+                        <span class="text-white text-6xl font-bold opacity-20">{{ terapia.nome|first }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Título e Info Rápida -->
+                <div class="order-1 md:order-2">
+                    <h1 class="text-4xl md:text-5xl font-bold text-[#1E5C5C] mb-4">
+                        {{ terapia.nome }}
+                    </h1>
+                    
+                    {% if terapia.categoria %}
+                    <span class="inline-block bg-[#1E5C5C] text-white px-4 py-1 rounded-full text-sm font-medium mb-4">
+                        {{ terapia.categoria }}
+                    </span>
+                    {% endif %}
+                    
+                    {% if terapia.descricao_curta %}
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        {{ terapia.descricao_curta }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<!-- Descrição Completa -->
+{% if terapia.descricao_completa %}
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-6">
+                O que é {{ terapia.nome }}?
+            </h2>
+            
+            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                {{ terapia.descricao_completa|safe|linebreaks }}
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Benefícios -->
+{% if terapia.beneficios %}
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-6">
+                Benefícios da {{ terapia.nome }}
+            </h2>
+            
+            <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-100">
+                <div class="prose prose-lg max-w-none text-gray-700">
+                    {{ terapia.beneficios|safe|linebreaks }}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Terapeutas que Atendem -->
+{% if terapeutas %}
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Título da Seção -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-2">
+                        Terapeutas Especializados
+                    </h2>
+                    <p class="text-gray-600">
+                        {{ total_terapeutas }} terapeuta{{ total_terapeutas|pluralize }} oferece{{ total_terapeutas|pluralize:"m," }} {{ terapia.nome }}
+                    </p>
+                </div>
+                {% if total_terapeutas > 6 %}
+                <a href="{% url 'terapeutas:listagem' %}?especialidade={{ terapia.id }}" 
+                   class="text-[#1E5C5C] hover:text-[#2d8787] font-medium inline-flex items-center">
+                    Ver todos
+                    <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Grid de Terapeutas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for terapeuta in terapeutas %}
+                <a href="{% url 'terapeutas:perfil' pk=terapeuta.pk %}" 
+                   class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
+                    
+                    <!-- Foto do Terapeuta -->
+                    <div class="flex items-center mb-4">
+                        {% if terapeuta.foto_perfil %}
+                        <img src="{{ terapeuta.foto_perfil.url }}" 
+                             alt="{{ terapeuta.user.get_full_name }}" 
+                             class="w-16 h-16 rounded-full object-cover border-2 border-[#1E5C5C]">
+                        {% else %}
+                        <div class="w-16 h-16 rounded-full bg-[#1E5C5C] flex items-center justify-center text-white font-bold text-xl">
+                            {{ terapeuta.user.first_name|first }}{{ terapeuta.user.last_name|first }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="ml-4">
+                            <h3 class="font-semibold text-gray-900">
+                                {{ terapeuta.user.get_full_name }}
+                            </h3>
+                            {% if terapeuta.perfil_profissional %}
+                            <p class="text-sm text-gray-600">
+                                {{ terapeuta.perfil_profissional }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Especialidades -->
+                    <div class="flex flex-wrap gap-2">
+                        {% for esp in terapeuta.especialidades.all|slice:":3" %}
+                        <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                            {{ esp.nome }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    
+                </a>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Espaços que Oferecem -->
+{% if espacos %}
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Título da Seção -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-2">
+                        Espaços Terapêuticos
+                    </h2>
+                    <p class="text-gray-600">
+                        {{ total_espacos }} espaço{{ total_espacos|pluralize }} disponíve{{ total_espacos|pluralize:"l,is" }} para {{ terapia.nome }}
+                    </p>
+                </div>
+                {% if total_espacos > 6 %}
+                <a href="{% url 'espacos:listagem' %}?especialidade={{ terapia.id }}" 
+                   class="text-[#1E5C5C] hover:text-[#2d8787] font-medium inline-flex items-center">
+                    Ver todos
+                    <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Grid de Espaços -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for espaco in espacos %}
+                <a href="{% url 'espacos:perfil' pk=espaco.pk %}" 
+                   class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100">
+                    
+                    <!-- Foto do Espaço -->
+                    {% if espaco.foto_principal %}
+                    <img src="{{ espaco.foto_principal.url }}" 
+                         alt="{{ espaco.nome }}" 
+                         class="w-full h-48 object-cover">
+                    {% else %}
+                    <div class="w-full h-48 bg-gradient-to-br from-[#1E5C5C] to-[#2d8787] flex items-center justify-center">
+                        <span class="text-white text-4xl font-bold opacity-30">{{ espaco.nome|first }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                            {{ espaco.nome }}
+                        </h3>
+                        
+                        <!-- Localização -->
+                        {% if espaco.cidade %}
+                        <p class="text-sm text-gray-600 mb-3 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            {{ espaco.cidade.nome }}, {{ espaco.cidade.estado.sigla }}
+                        </p>
+                        {% endif %}
+                        
+                        <!-- Comodidades -->
+                        {% if espaco.comodidades.all %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for comodidade in espaco.comodidades.all|slice:":3" %}
+                            <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                                {{ comodidade.nome }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                </a>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Final -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-4">
+                Interessado em {{ terapia.nome }}?
+            </h2>
+            
+            <p class="text-gray-600 mb-8">
+                Conecte-se com profissionais qualificados e espaços especializados
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'terapeutas:listagem' %}" 
+                   class="inline-block bg-[#1E5C5C] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#2d8787] transition-colors duration-200 shadow-md hover:shadow-lg">
+                    Buscar Terapeutas
+                </a>
+                <a href="{% url 'espacos:listagem' %}" 
+                   class="inline-block bg-white text-[#1E5C5C] border-2 border-[#1E5C5C] px-8 py-3 rounded-lg font-medium hover:bg-[#1E5C5C] hover:text-white transition-colors duration-200">
+                    Buscar Espaços
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+{% endblock %}

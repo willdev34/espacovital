@@ -576,10 +576,15 @@ class Cidade(models.Model):
 
 class Especialidade(BaseModel):
     """
-    Model para especialidades/terapias oferecidas
-    COMPARTILHADO entre apps: terapeutas e espacos
-    Centralizado no core para evitar duplicação
+    Título: Model Especialidade (Terapias)
+    Descrição: Model para especialidades/terapias oferecidas
+              COMPARTILHADO entre apps: terapeutas, espacos e terapias
+              Centralizado no core para evitar duplicação
+    Autor: Will
+    Data: 2024
+    Última Atualização: Novembro 2025 - Adicionado campo foto e beneficios
     """
+    # Identificação básica
     nome = models.CharField(
         max_length=100,
         unique=True,
@@ -591,33 +596,55 @@ class Especialidade(BaseModel):
         blank=True,
         help_text="Slug para URLs amigáveis"
     )
+    
+    # Imagem da terapia (NOVO - para página de terapias)
+    foto = models.ImageField(
+        upload_to='terapias/',
+        null=True,
+        blank=True,
+        help_text="Imagem representativa da terapia (ideal: 800x600px)"
+    )
+    
+    # Descrições
     descricao_curta = models.CharField(
         max_length=700,
         blank=True,
-        help_text="Descrição resumida da especialidade"
+        help_text="Descrição resumida da especialidade (para cards)"
     )
     descricao_completa = models.TextField(
         blank=True,
-        help_text="Descrição detalhada da especialidade"
+        help_text="Descrição detalhada da especialidade (para página individual)"
     )
+    
+    # Benefícios (NOVO - para página de terapias)
+    beneficios = models.TextField(
+        blank=True,
+        help_text="Lista de benefícios da terapia (use marcadores • para listar)"
+    )
+    
+    # Categorização
     categoria = models.CharField(
         max_length=50,
         blank=True,
         help_text="Categoria da terapia (ex: Massagem, Energética)"
     )
+    
+    # Customização visual
     cor_destaque = models.CharField(
         max_length=7,
         blank=True,
         default='#6C63FF',
         help_text="Cor em hexadecimal para destaque (#RRGGBB)"
     )
+    
+    # Ordenação e destaque
     ordem = models.IntegerField(
         default=0,
         help_text="Ordem de exibição (menor aparece primeiro)"
     )
     destaque = models.BooleanField(
         default=False,
-        help_text="Especialidade aparece em destaque"
+        help_text="Aparece nas 10 terapias em destaque na página de Terapias"
     )
     is_active = models.BooleanField(
         default=True,
@@ -625,8 +652,8 @@ class Especialidade(BaseModel):
     )
 
     class Meta:
-        verbose_name = 'Especialidade'
-        verbose_name_plural = 'Especialidades'
+        verbose_name = 'Especialidade / Terapia'
+        verbose_name_plural = 'Especialidades / Terapias'
         ordering = ['-destaque', 'ordem', 'nome']
         indexes = [
             models.Index(fields=['destaque', 'is_active']),
@@ -638,8 +665,15 @@ class Especialidade(BaseModel):
 
     def save(self, *args, **kwargs):
         """
-        Gera slug automático baseado no nome
+        Gera slug automático baseado no nome se não existir
         """
         if not self.slug:
             self.slug = slugify(self.nome)
         super().save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        """
+        Retorna URL da página individual da terapia
+        """
+        from django.urls import reverse
+        return reverse('terapias:detalhe', kwargs={'slug': self.slug})

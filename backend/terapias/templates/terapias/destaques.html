@@ -1,0 +1,101 @@
+<!--
+Título: Página de Terapias em Destaque
+Descrição: Exibe as 10 terapias mais procuradas com hero section
+Autor: Will
+Data: Novembro 2025
+-->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terapias - Espaço Vital{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section com Modal de Destaques -->
+<section class="bg-gradient-to-br from-[#F5F1E8] to-white py-12 md:py-16">
+    <div class="container mx-auto px-4">
+        
+        <!-- Modal/Card Central -->
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            
+            <!-- Título Principal -->
+            <h1 class="text-3xl md:text-4xl font-bold text-[#1E5C5C] text-center mb-4">
+                Terapias
+            </h1>
+            
+            <!-- Subtítulo -->
+            <p class="text-gray-600 text-center mb-8 max-w-2xl mx-auto">
+                Precisa de ajuda? Selecione uma das áreas abaixo ou navegue pela lista 
+                completa para saber mais sobre cada tópico e as diversas opções de suporte.
+            </p>
+            
+            <!-- Grid de Terapias em Destaque (Cards Brancos) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {% for terapia in terapias_destaque %}
+                <a href="{% url 'terapias:detalhe' slug=terapia.slug %}" 
+                   class="bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-[#1E5C5C] hover:shadow-md transition-all duration-200">
+                    <span class="text-gray-800 font-medium">{{ terapia.nome }}</span>
+                </a>
+                {% empty %}
+                <div class="col-span-3 text-center text-gray-500 py-8">
+                    Nenhuma terapia em destaque no momento.
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+        
+    </div>
+</section>
+
+<!-- Filtro Alfabético (A-Z) -->
+<section class="bg-white py-8 border-b border-gray-200">
+    <div class="container mx-auto px-4">
+        
+        <!-- Navegação Alfabética -->
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+            <!-- Botão "Todas" -->
+            <a href="{% url 'terapias:listagem' %}" 
+               class="px-3 py-2 text-sm font-medium text-[#1E5C5C] hover:bg-[#1E5C5C] hover:text-white rounded transition-colors duration-200">
+                Todas
+            </a>
+            
+            <!-- Letras A-Z -->
+            {% for letra in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+            <a href="{% url 'terapias:listagem' %}?letra={{ letra }}" 
+               class="px-3 py-2 text-sm font-medium text-[#1E5C5C] hover:bg-[#1E5C5C] hover:text-white rounded transition-colors duration-200">
+                {{ letra }}
+            </a>
+            {% endfor %}
+        </div>
+        
+    </div>
+</section>
+
+<!-- Grid de Todas as Terapias (Preview) -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        
+        <!-- Título da Seção -->
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-2">
+                Explore Todas as Terapias
+            </h2>
+            <p class="text-gray-600">
+                {{ total_terapias }} terapias holísticas disponíveis
+            </p>
+        </div>
+        
+        <!-- Botão para Ver Lista Completa -->
+        <div class="text-center">
+            <a href="{% url 'terapias:listagem' %}" 
+               class="inline-block bg-[#1E5C5C] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#2d8787] transition-colors duration-200 shadow-md hover:shadow-lg">
+                Ver Lista Completa A-Z
+            </a>
+        </div>
+        
+    </div>
+</section>
+
+{% endblock %}

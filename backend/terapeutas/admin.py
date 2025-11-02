@@ -151,42 +151,42 @@ class AvaliacaoInline(admin.TabularInline):
 # ADMINS PRINCIPAIS
 # ===============================================================
 
-@admin.register(Especialidade)
-class EspecialidadeAdmin(admin.ModelAdmin):
-    """
-    Admin para Especialidades
-    """
-    list_display = ['nome', 'destaque', 'ordem', 'total_terapeutas', 'is_active']
-    list_filter = ['destaque', 'is_active']
-    search_fields = ['nome', 'descricao_curta', 'descricao_completa']
-    list_editable = ['destaque', 'ordem']
-    ordering = ['ordem', 'nome']
+# @admin.register(Especialidade)
+# class EspecialidadeAdmin(admin.ModelAdmin):
+#     """
+#     Admin para Especialidades
+#     """
+#     list_display = ['nome', 'destaque', 'ordem', 'total_terapeutas', 'is_active']
+#     list_filter = ['destaque', 'is_active']
+#     search_fields = ['nome', 'descricao_curta', 'descricao_completa']
+#     list_editable = ['destaque', 'ordem']
+#     ordering = ['ordem', 'nome']
     
-    fieldsets = [
-        ('Informações Básicas', {
-            'fields': ('nome', 'slug', 'descricao_curta')
-        }),
-        ('Descrição Completa', {
-            'fields': ('descricao_completa',),
-            'classes': ('collapse',)
-        }),
-        ('Configurações', {
-            'fields': ('destaque', 'ordem', 'cor_destaque')
-        }),
-        ('Sistema', {
-            'fields': ('is_active', 'created_at', 'updated_at'),
-            'classes': ('collapse',)
-        })
-    ]
+#     fieldsets = [
+#         ('Informações Básicas', {
+#             'fields': ('nome', 'slug', 'descricao_curta')
+#         }),
+#         ('Descrição Completa', {
+#             'fields': ('descricao_completa',),
+#             'classes': ('collapse',)
+#         }),
+#         ('Configurações', {
+#             'fields': ('destaque', 'ordem', 'cor_destaque')
+#         }),
+#         ('Sistema', {
+#             'fields': ('is_active', 'created_at', 'updated_at'),
+#             'classes': ('collapse',)
+#         })
+#     ]
     
-    readonly_fields = ['slug', 'created_at', 'updated_at']
+#     readonly_fields = ['slug', 'created_at', 'updated_at']
     
-    def total_terapeutas(self, obj):
-        """
-        Total de terapeutas com esta especialidade
-        """
-        return obj.terapeuta_set.filter(is_active=True).count()
-    total_terapeutas.short_description = 'Terapeutas'
+#     def total_terapeutas(self, obj):
+#         """
+#         Total de terapeutas com esta especialidade
+#         """
+#         return obj.terapeuta_set.filter(is_active=True).count()
+#     total_terapeutas.short_description = 'Terapeutas'
 
 @admin.register(Terapeuta)
 class TerapeutaAdmin(admin.ModelAdmin):
