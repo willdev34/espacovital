@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.core.validators import MinLengthValidator, EmailValidator
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 
 
 class TimeStampedModel(models.Model):
@@ -649,6 +650,33 @@ class Especialidade(BaseModel):
     is_active = models.BooleanField(
         default=True,
         help_text="Especialidade está ativa no sistema"
+    )
+
+    # ===============================================================
+    # NOVO CAMPO: Conteúdo Extenso com Editor Rico
+    # ===============================================================
+    conteudo_completo = RichTextField(
+        verbose_name="Conteúdo Completo (Editor Rico)",
+        blank=True,
+        null=True,
+        help_text="""
+        Conteúdo detalhado da terapia com seções estruturadas:
+        - Introdução
+        - O que é a terapia
+        - Em que a terapia pode ajudar
+        - O que esperar numa sessão
+        - O que sentirá após uma sessão
+        - Quantas sessões são necessárias
+        - Como escolher um terapeuta
+        """
+    )
+    
+    # Sites de referência (opcional)
+    sites_referencia = models.TextField(
+        verbose_name="Sites de Referência",
+        blank=True,
+        null=True,
+        help_text="URLs de sites de referência sobre a terapia (uma por linha)"
     )
 
     class Meta:

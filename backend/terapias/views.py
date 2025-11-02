@@ -36,14 +36,55 @@ class TerapiasDestaquesView(ListView):
     
     def get_context_data(self, **kwargs):
         """
-        Adiciona dados extras ao contexto
+        Adiciona informações relacionadas à terapia
         """
         context = super().get_context_data(**kwargs)
+        terapia = self.get_object()
         
-        # Total de terapias disponíveis
-        context['total_terapias'] = Especialidade.objects.filter(
+        # Terapeutas que atendem esta especialidade
+        context['terapeutas'] = Terapeuta.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).select_related('user').prefetch_related('especialidades')[:6]
+        
+        # Espaços que oferecem esta terapia
+        context['espacos'] = Espaco.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).prefetch_related('especialidades', 'comodidades')[:6]
+        
+        # Contadores
+        context['total_terapeutas'] = Terapeuta.objects.filter(
+            especialidades=terapia,
             is_active=True
         ).count()
+        
+        context['total_espacos'] = Espaco.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).count()
+        
+        # ===============================================================
+        # NOVO: Cidades que oferecem a terapia
+        # ===============================================================
+        from django.db.models import Q
+        
+        # Buscar cidades únicas de terapeutas
+        cidades_terapeutas = Terapeuta.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).values_list('cidade', flat=True).distinct()
+        
+        # Buscar cidades únicas de espaços
+        cidades_espacos = Espaco.objects.filter(
+            especialidades=terapia,
+            is_active=True
+        ).values_list('cidade', flat=True).distinct()
+        
+        # Combinar e remover duplicatas
+        from core.models import Cidade
+        ids_cidades = set(list(cidades_terapeutas) + list(cidades_espacos))
+        context['cidades'] = Cidade.objects.filter(id__in=ids_cidades).order_by('nome')
         
         return context
 

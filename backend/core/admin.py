@@ -773,7 +773,9 @@ class EspecialidadeAdmin(admin.ModelAdmin):
     Autor: Will
     Data: Novembro 2025
     """
+    # ===============================================================
     # Campos exibidos na listagem
+    # ===============================================================
     list_display = [
         'nome', 
         'categoria', 
@@ -781,25 +783,38 @@ class EspecialidadeAdmin(admin.ModelAdmin):
         'ordem', 
         'tem_foto',
         'tem_beneficios',
+        'tem_conteudo_completo',  # NOVO
         'is_active'
     ]
     
+    # ===============================================================
     # Filtros laterais
+    # ===============================================================
     list_filter = ['destaque', 'is_active', 'categoria']
     
+    # ===============================================================
     # Campos de busca
+    # ===============================================================
     search_fields = ['nome', 'descricao_curta', 'descricao_completa']
     
+    # ===============================================================
     # Slug automático
+    # ===============================================================
     prepopulated_fields = {'slug': ('nome',)}
     
+    # ===============================================================
     # Ordenação
+    # ===============================================================
     ordering = ['-destaque', 'ordem', 'nome']
     
+    # ===============================================================
     # Campos editáveis direto na listagem
+    # ===============================================================
     list_editable = ['destaque', 'ordem']
     
+    # ===============================================================
     # Organização dos campos no formulário
+    # ===============================================================
     fieldsets = (
         ('Informações Básicas', {
             'fields': ('nome', 'slug', 'categoria', 'foto', 'preview_foto')
@@ -808,16 +823,45 @@ class EspecialidadeAdmin(admin.ModelAdmin):
             'fields': ('descricao_curta', 'descricao_completa', 'beneficios'),
             'description': 'Use a descrição curta para cards e a completa para a página individual'
         }),
+        # ===============================================================
+        # NOVO FIELDSET: Conteúdo Extenso
+        # ===============================================================
+        ('Conteúdo Extenso (Editor Rico)', {
+            'fields': ('conteudo_completo',),
+            'classes': ('wide',),
+            'description': '''
+                Use o editor para criar conteúdo estruturado com seções como:
+                • Introdução
+                • O que é a terapia
+                • Em que a terapia pode ajudar
+                • O que esperar numa sessão
+                • O que sentirá após uma sessão
+                • Quantas sessões são necessárias
+                • Como escolher um terapeuta
+            '''
+        }),
+        # ===============================================================
+        # NOVO FIELDSET: Sites de Referência
+        # ===============================================================
+        ('Sites de Referência', {
+            'fields': ('sites_referencia',),
+            'classes': ('collapse',),
+            'description': 'Adicione URLs de sites de referência sobre a terapia (uma por linha)'
+        }),
         ('Configurações de Exibição', {
             'fields': ('cor_destaque', 'ordem', 'destaque', 'is_active'),
             'classes': ('collapse',)
         }),
     )
     
+    # ===============================================================
     # Preview da foto (somente leitura)
+    # ===============================================================
     readonly_fields = ['preview_foto']
     
+    # ===============================================================
     # Métodos customizados para listagem
+    # ===============================================================
     @admin.display(boolean=True, description='Tem Foto?')
     def tem_foto(self, obj):
         """
@@ -831,6 +875,16 @@ class EspecialidadeAdmin(admin.ModelAdmin):
         Indica se a especialidade tem benefícios cadastrados
         """
         return bool(obj.beneficios)
+    
+    # ===============================================================
+    # NOVO MÉTODO: Indicador de conteúdo completo
+    # ===============================================================
+    @admin.display(boolean=True, description='Tem Conteúdo Completo?')
+    def tem_conteudo_completo(self, obj):
+        """
+        Indica se a especialidade tem conteúdo completo cadastrado
+        """
+        return bool(obj.conteudo_completo)
     
     def preview_foto(self, obj):
         """

@@ -108,6 +108,312 @@ Data: Novembro 2025
 </section>
 {% endif %}
 
+<!-- ===============================================================
+     SEÇÃO: Conteúdo Completo (Editor Rico)
+     Descrição: Conteúdo extenso com seções estruturadas
+     =============================================================== -->
+{% if terapia.conteudo_completo %}
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Conteúdo Rico -->
+            <div class="prose prose-lg max-w-none">
+                {{ terapia.conteudo_completo|safe }}
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===============================================================
+     SEÇÃO: Sites de Referência
+     Descrição: Links para sites externos de referência sobre a terapia
+     =============================================================== -->
+{% if terapia.sites_referencia %}
+<section class="py-12 bg-[#F5F1E8]">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <h2 class="text-3xl font-bold text-[#1E5C5C] mb-6 text-center">
+                📚 Sites de Referência
+            </h2>
+            
+            <p class="text-gray-600 text-center mb-8">
+                Aprenda mais sobre {{ terapia.nome }} com fontes confiáveis
+            </p>
+            
+            <!-- Lista de Sites -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <ul class="space-y-3">
+                    {% for linha in terapia.sites_referencia.splitlines %}
+                        {% if linha.strip %}
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-[#1E5C5C] mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            <a href="{{ linha.strip }}" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="text-[#1E5C5C] hover:text-[#2d8787] hover:underline break-all">
+                                {{ linha.strip }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===============================================================
+     SEÇÃO: Cidades que Oferecem a Terapia
+     Descrição: Lista de cidades onde há terapeutas/espaços disponíveis
+     =============================================================== -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <h2 class="text-3xl font-bold text-[#1E5C5C] mb-6 text-center">
+                📍 Cidades que Oferecem {{ terapia.nome }}
+            </h2>
+            
+            <p class="text-gray-600 text-center mb-8">
+                Encontre profissionais qualificados nas seguintes localidades
+            </p>
+            
+            <!-- Lista de Cidades -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for cidade in cidades %}
+                <div class="bg-[#F5F1E8] rounded-lg p-4 text-center hover:bg-[#1E5C5C] hover:text-white transition-colors duration-200 group">
+                    <svg class="w-6 h-6 mx-auto mb-2 text-[#1E5C5C] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <p class="font-medium text-sm">{{ cidade.nome }}</p>
+                    <p class="text-xs opacity-75 mt-1">{{ cidade.estado }}</p>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-500">Nenhuma cidade disponível no momento</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+     SEÇÃO: Feedback do Conteúdo
+     Descrição: Convite para o usuário avaliar o conteúdo (estilo brasileiro)
+     Autor: Will
+     Data: Novembro 2025
+     =============================================================== -->
+<section class="py-12 bg-gradient-to-br from-[#F5F1E8] to-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center">
+            
+            <h2 class="text-3xl font-bold text-[#1E5C5C] mb-4">
+                Você gostaria de nos dar sua opinião sobre o nosso conteúdo?
+            </h2>
+            
+            <p class="text-gray-600 text-lg mb-8">
+                Sua opinião é muito importante para melhorarmos cada vez mais!
+            </p>
+            
+            <!-- Botão para abrir modal de feedback -->
+            <button 
+                onclick="abrirModalFeedback()"
+                class="bg-[#1E5C5C] text-white px-10 py-4 rounded-lg font-semibold hover:bg-[#2d8787] transition-all duration-200 shadow-lg hover:shadow-xl inline-flex items-center space-x-2 transform hover:scale-105">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                </svg>
+                <span>Diga-nos o que você pensa</span>
+            </button>
+            
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+     MODAL: Formulário de Feedback
+     Descrição: Modal com formulário completo de feedback
+     =============================================================== -->
+<div id="modalFeedback" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="fecharModalSeClicouFora(event)">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative" onclick="event.stopPropagation()">
+        
+        <!-- Header do Modal -->
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 rounded-t-2xl">
+            <button onclick="fecharModalFeedback()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            
+            <h3 class="text-2xl font-bold text-[#1E5C5C]">Diga-nos o que você pensa.</h3>
+        </div>
+        
+        <!-- Corpo do Modal -->
+        <div class="px-8 py-6">
+            
+            <!-- Aviso sobre aconselhamento -->
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Informamos que não podemos fornecer aconselhamento personalizado por meio deste formulário de feedback. 
+                    Caso necessite de mais informações ou aconselhamento, entre em contato diretamente com um profissional.
+                </p>
+            </div>
+            
+            <!-- Formulário -->
+            <form id="formFeedback" method="POST" action="#" onsubmit="enviarFeedback(event)">
+                {% csrf_token %}
+                
+                <!-- Campo: Por que você nos visitou? -->
+                <div class="mb-6">
+                    <label class="block text-gray-800 font-semibold mb-3">
+                        Por que você nos visitou? <span class="text-red-500">*</span>
+                    </label>
+                    
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="problema_pessoal" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para ajudar com um problema pessoal</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="membro_familia" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para ajudar um membro da família</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="amigo" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para ajudar um amigo</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="cuidando_alguem" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para ajudar alguém de quem estou cuidando</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="trabalho" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para me ajudar no meu trabalho</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" name="motivo_visita" value="estudos" class="w-4 h-4 text-[#1E5C5C] border-gray-300 rounded focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">para me ajudar nos meus estudos</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Campo: Esta página foi útil para você? -->
+                <div class="mb-6">
+                    <label class="block text-gray-800 font-semibold mb-3">
+                        Esta página foi útil para você? <span class="text-red-500">*</span>
+                    </label>
+                    
+                    <div class="flex gap-4">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="pagina_util" value="sim" required class="w-4 h-4 text-[#1E5C5C] border-gray-300 focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">Sim</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="pagina_util" value="nao" required class="w-4 h-4 text-[#1E5C5C] border-gray-300 focus:ring-[#1E5C5C]">
+                            <span class="text-gray-700">Não</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Campo: Sugestões de melhoria -->
+                <div class="mb-6">
+                    <label class="block text-gray-800 font-semibold mb-3">
+                        Por favor, diga-nos se/como podemos melhorar as informações fornecidas. <span class="text-red-500">*</span>
+                    </label>
+                    
+                    <textarea 
+                        name="sugestoes" 
+                        rows="5" 
+                        required
+                        placeholder="Compartilhe suas sugestões, críticas ou elogios..."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E5C5C] focus:border-transparent resize-none"></textarea>
+                    
+                    <p class="text-xs text-gray-500 mt-2">
+                        Sua opinião nos ajuda a criar conteúdo cada vez melhor! 💚
+                    </p>
+                </div>
+                
+                <!-- Aviso LGPD -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        Este site está protegido e seguimos as diretrizes da LGPD. 
+                        Seus dados serão tratados com total segurança e privacidade.
+                    </p>
+                </div>
+                
+                <!-- Botão de Envio -->
+                <div class="flex justify-end">
+                    <button 
+                        type="submit"
+                        class="bg-[#1E5C5C] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#2d8787] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                        Enviar feedback
+                    </button>
+                </div>
+                
+            </form>
+            
+        </div>
+        
+    </div>
+</div>
+
+<script>
+// ===============================================================
+// Título: Controle do Modal de Feedback
+// Descrição: Funções para abrir/fechar modal de feedback
+// Autor: Will
+// Data: Novembro 2025
+// ===============================================================
+
+function abrirModalFeedback() {
+    document.getElementById('modalFeedback').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Previne scroll do body
+}
+
+function fecharModalFeedback() {
+    document.getElementById('modalFeedback').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restaura scroll do body
+}
+
+function fecharModalSeClicouFora(event) {
+    if (event.target.id === 'modalFeedback') {
+        fecharModalFeedback();
+    }
+}
+
+// ===============================================================
+// Função temporária para enviar feedback (será substituída depois)
+// ===============================================================
+function enviarFeedback(event) {
+    event.preventDefault();
+    alert('Obrigado pelo seu feedback! Esta funcionalidade será implementada em breve.');
+    fecharModalFeedback();
+}
+
+// Fechar modal com tecla ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        fecharModalFeedback();
+    }
+});
+</script>
+
 <!-- Terapeutas que Atendem -->
 {% if terapeutas %}
 <section class="py-12 bg-white">
@@ -264,32 +570,182 @@ Data: Novembro 2025
 </section>
 {% endif %}
 
-<!-- CTA Final -->
-<section class="py-12 bg-white">
+<!-- ===============================================================
+     SEÇÃO: Busca de Terapeutas e Espaços (com filtro pré-aplicado)
+     Descrição: Busca já filtrada pela terapia atual
+     Autor: Will
+     Data: Novembro 2025
+     =============================================================== -->
+<section class="py-16 bg-gradient-to-br from-[#1E5C5C] to-[#2d8787]">
     <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
+        <div class="max-w-4xl mx-auto">
             
-            <h2 class="text-2xl md:text-3xl font-bold text-[#1E5C5C] mb-4">
-                Interessado em {{ terapia.nome }}?
-            </h2>
+            <!-- Título da Seção -->
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    Encontre profissionais de {{ terapia.nome }}
+                </h2>
+                <p class="text-white text-lg opacity-90">
+                    Conecte-se com terapeutas qualificados e espaços especializados em {{ terapia.nome }}
+                </p>
+            </div>
             
-            <p class="text-gray-600 mb-8">
-                Conecte-se com profissionais qualificados e espaços especializados
-            </p>
+            <!-- Formulário de Busca -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8">
+                
+                <!-- Abas: Terapeutas ou Espaços -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button 
+                        type="button"
+                        onclick="alternarTipoBusca('terapeutas')"
+                        id="tab-terapeutas"
+                        class="flex-1 py-3 px-4 text-center font-semibold border-b-2 border-[#1E5C5C] text-[#1E5C5C] transition-colors duration-200">
+                        🧘 Buscar Terapeutas
+                    </button>
+                    <button 
+                        type="button"
+                        onclick="alternarTipoBusca('espacos')"
+                        id="tab-espacos"
+                        class="flex-1 py-3 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-[#1E5C5C] transition-colors duration-200">
+                        🏢 Buscar Espaços
+                    </button>
+                </div>
+                
+                <!-- Formulário -->
+                <form id="form-busca-filtrada" method="GET" class="space-y-6">
+                    
+                    <!-- Campo Hidden: Terapia já selecionada -->
+                    <input type="hidden" name="especialidades" value="{{ terapia.id }}" id="input-especialidade">
+                    
+                    <!-- Campo: Localização -->
+                    <div>
+                        <label for="localizacao" class="block text-gray-800 font-semibold mb-2">
+                            📍 Onde você está procurando?
+                        </label>
+                        <select 
+                            name="cidade" 
+                            id="localizacao"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E5C5C] focus:border-transparent">
+                            <option value="">Todas as cidades</option>
+                            {% for cidade in cidades %}
+                            <option value="{{ cidade.id }}">{{ cidade.nome }} - {{ cidade.estado }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Info: Terapia pré-selecionada -->
+                    <div class="bg-[#F5F1E8] border border-[#1E5C5C] rounded-lg p-4 flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-[#1E5C5C] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-[#1E5C5C]">
+                                Terapia selecionada: <span class="font-bold">{{ terapia.nome }}</span>
+                            </p>
+                            <p class="text-xs text-gray-600 mt-1">
+                                Sua busca já está filtrada por esta especialidade
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Contador de Resultados -->
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <p class="text-sm text-gray-700">
+                            <span class="font-bold text-[#1E5C5C] text-lg" id="contador-resultados">
+                                {{ total_terapeutas }}
+                            </span>
+                            <span id="tipo-resultado">terapeutas</span> encontrados com esta especialidade
+                        </p>
+                    </div>
+                    
+                    <!-- Botão de Busca -->
+                    <button 
+                        type="submit"
+                        class="w-full bg-[#1E5C5C] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#2d8787] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <span id="texto-botao">Buscar Terapeutas</span>
+                    </button>
+                    
+                </form>
+                
+            </div>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{% url 'terapeutas:listagem' %}" 
-                   class="inline-block bg-[#1E5C5C] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#2d8787] transition-colors duration-200 shadow-md hover:shadow-lg">
-                    Buscar Terapeutas
-                </a>
-                <a href="{% url 'espacos:listagem' %}" 
-                   class="inline-block bg-white text-[#1E5C5C] border-2 border-[#1E5C5C] px-8 py-3 rounded-lg font-medium hover:bg-[#1E5C5C] hover:text-white transition-colors duration-200">
-                    Buscar Espaços
-                </a>
+            <!-- Links Rápidos -->
+            <div class="mt-8 text-center">
+                <p class="text-white text-sm mb-4">Ou navegue diretamente:</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="{% url 'terapeutas:listagem_resultados' %}?especialidades={{ terapia.id }}" 
+                       class="inline-block bg-white text-[#1E5C5C] px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">
+                        Ver todos os terapeutas de {{ terapia.nome }}
+                    </a>
+                    <a href="{% url 'espacos:listagem_simples' %}?especialidades={{ terapia.id }}" 
+                       class="inline-block bg-white/20 text-white border-2 border-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-[#1E5C5C] transition-colors duration-200">
+                        Ver todos os espaços que oferecem {{ terapia.nome }}
+                    </a>
+                </div>
             </div>
             
         </div>
     </div>
 </section>
+
+<script>
+// ===============================================================
+// Título: Controle de Busca Filtrada por Terapia
+// Descrição: Alterna entre busca de terapeutas e espaços
+// Autor: Will
+// Data: Novembro 2025
+// ===============================================================
+
+function alternarTipoBusca(tipo) {
+    // Elementos do DOM
+    const formBusca = document.getElementById('form-busca-filtrada');
+    const tabTerapeutas = document.getElementById('tab-terapeutas');
+    const tabEspacos = document.getElementById('tab-espacos');
+    const textoBotao = document.getElementById('texto-botao');
+    const tipoResultado = document.getElementById('tipo-resultado');
+    const contadorResultados = document.getElementById('contador-resultados');
+    
+    if (tipo === 'terapeutas') {
+        // ===============================================================
+        // Configurar para busca de TERAPEUTAS
+        // ===============================================================
+        formBusca.action = "{% url 'terapeutas:listagem_resultados' %}";
+        textoBotao.textContent = 'Buscar Terapeutas';
+        tipoResultado.textContent = 'terapeutas';
+        contadorResultados.textContent = '{{ total_terapeutas }}';
+        
+        // Atualizar estilos das abas
+        tabTerapeutas.classList.remove('text-gray-500', 'border-transparent');
+        tabTerapeutas.classList.add('text-[#1E5C5C]', 'border-[#1E5C5C]');
+        
+        tabEspacos.classList.remove('text-[#1E5C5C]', 'border-[#1E5C5C]');
+        tabEspacos.classList.add('text-gray-500', 'border-transparent');
+        
+    } else {
+        // ===============================================================
+        // Configurar para busca de ESPAÇOS
+        // ===============================================================
+        formBusca.action = "{% url 'espacos:listagem_simples' %}";
+        textoBotao.textContent = 'Buscar Espaços';
+        tipoResultado.textContent = 'espaços';
+        contadorResultados.textContent = '{{ total_espacos }}';
+        
+        // Atualizar estilos das abas
+        tabEspacos.classList.remove('text-gray-500', 'border-transparent');
+        tabEspacos.classList.add('text-[#1E5C5C]', 'border-[#1E5C5C]');
+        
+        tabTerapeutas.classList.remove('text-[#1E5C5C]', 'border-[#1E5C5C]');
+        tabTerapeutas.classList.add('text-gray-500', 'border-transparent');
+    }
+}
+
+// Inicializar com aba de terapeutas selecionada
+document.addEventListener('DOMContentLoaded', function() {
+    alternarTipoBusca('terapeutas');
+});
+</script>
 
 {% endblock %}
