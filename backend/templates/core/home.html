@@ -603,189 +603,231 @@ Data: 07/09/2025
 </section>
 <!-- JavaScript para funcionalidades -->
 <script>
-    // ===================================================================
-    // JavaScript para Carrossel de Terapeutas
-    // ===================================================================
+// ===============================================================
+// Título: JavaScript para Carrosséis com Suporte a Touch
+// Descrição: Navegação por botões, teclado e arrasto (mobile)
+// Autor: Will
+// Data: Novembro 2025
+// ===============================================================
+
+const carouselStates = {
+    'therapists': 0,
+    'spaces': 0
+};
+
+// Variáveis para controle de touch/swipe
+let touchStartX = 0;
+let touchEndX = 0;
+let isDragging = false;
+let currentCarouselId = null;
+
+// ===============================================================
+// Função: Mover carrossel
+// ===============================================================
+function moveCarousel(carouselId, direction) {
+    const carousel = document.getElementById(carouselId + '-carousel');
+    if (!carousel || !carousel.children.length) return;
     
-    const carouselStates = {
-        'therapists': 0,
-        'spaces': 0
-    };
+    const totalCards = carousel.children.length;
+    const visibleCards = getVisibleCards();
+    const cardWidth = carousel.children[0].offsetWidth;
+    const gap = window.innerWidth >= 1024 ? 24 : window.innerWidth >= 768 ? 16 : 12;
+    
+    // Calcular novo slide usando o estado específico do carrossel
+    carouselStates[carouselId] = (carouselStates[carouselId] || 0) + direction;
+    
+    // Controlar limites do carrossel
+    const maxSlide = Math.max(0, totalCards - visibleCards);
+    if (carouselStates[carouselId] < 0) {
+        carouselStates[carouselId] = 0;
+    } else if (carouselStates[carouselId] > maxSlide) {
+        carouselStates[carouselId] = maxSlide;
+    }
+    
+    // Aplicar transformação com transição suave
+    const translateX = -carouselStates[carouselId] * (cardWidth + gap);
+    carousel.style.transform = `translateX(${translateX}px)`;
+    carousel.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
+    
+    // Atualizar estado dos botões
+    updateCarouselButtons(carouselId, carouselStates[carouselId], maxSlide);
+    
+    // Atualizar indicadores mobile
+    updateMobileIndicators(carouselId);
+}
 
-    function moveCarousel(carouselId, direction) {
+// ===============================================================
+// Função: Determinar quantos cards são visíveis
+// ===============================================================
+function getVisibleCards() {
+    if (window.innerWidth >= 1024) return 4;  // Desktop: 4 cards
+    if (window.innerWidth >= 768) return 2;   // Tablet: 2 cards
+    return 1;                                 // Mobile: 1 card
+}
+
+// ===============================================================
+// Função: Atualizar estado dos botões
+// ===============================================================
+function updateCarouselButtons(carouselId, current, max) {
+    const prevBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', -1)"]`);
+    const nextBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', 1)"]`);
+    
+    if (prevBtn) {
+        prevBtn.disabled = current <= 0;
+        prevBtn.style.opacity = current <= 0 ? '0.5' : '1';
+        prevBtn.style.cursor = current <= 0 ? 'not-allowed' : 'pointer';
+    }
+    
+    if (nextBtn) {
+        nextBtn.disabled = current >= max;
+        nextBtn.style.opacity = current >= max ? '0.5' : '1';
+        nextBtn.style.cursor = current >= max ? 'not-allowed' : 'pointer';
+    }
+}
+
+// ===============================================================
+// Função: Atualizar indicadores mobile
+// ===============================================================
+function updateMobileIndicators(carouselId) {
+    const carousel = document.getElementById(carouselId + '-carousel');
+    if (!carousel) return;
+    
+    const indicators = carousel.closest('section').querySelectorAll('.flex.justify-center .w-2');
+    const currentSlide = carouselStates[carouselId] || 0;
+    
+    indicators.forEach((indicator, index) => {
+        if (index === currentSlide) {
+            indicator.classList.remove('bg-gray-300');
+            indicator.classList.add('bg-primary');
+        } else {
+            indicator.classList.remove('bg-primary');
+            indicator.classList.add('bg-gray-300');
+        }
+    });
+}
+
+// ===============================================================
+// Event Listeners: Touch/Swipe para Mobile
+// ===============================================================
+function setupTouchListeners() {
+    const carousels = ['therapists', 'spaces'];
+    
+    carousels.forEach(carouselId => {
         const carousel = document.getElementById(carouselId + '-carousel');
-        if (!carousel || !carousel.children.length) return;
+        if (!carousel) return;
         
-        const totalCards = carousel.children.length;
-        const visibleCards = getVisibleCards();
-        const cardWidth = carousel.children[0].offsetWidth;
-        const gap = window.innerWidth >= 1024 ? 24 : window.innerWidth >= 768 ? 16 : 12;
+        // Detectar início do toque
+        carousel.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            isDragging = true;
+            currentCarouselId = carouselId;
+        }, { passive: true });
         
-        // Calcular novo slide usando o estado específico do carrossel
-        carouselStates[carouselId] = (carouselStates[carouselId] || 0) + direction;
+        // Detectar movimento do toque
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            touchEndX = e.changedTouches[0].screenX;
+        }, { passive: true });
         
-        // Controlar limites do carrossel
-        const maxSlide = Math.max(0, totalCards - visibleCards);
-        if (carouselStates[carouselId] < 0) {
+        // Detectar fim do toque e determinar direção do swipe
+        carousel.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            handleSwipe(currentCarouselId);
+        });
+    });
+}
+
+// ===============================================================
+// Função: Processar gesto de swipe
+// ===============================================================
+function handleSwipe(carouselId) {
+    const swipeThreshold = 50; // Pixels mínimos para considerar swipe
+    const diff = touchStartX - touchEndX;
+    
+    // Swipe para esquerda (próximo)
+    if (diff > swipeThreshold) {
+        moveCarousel(carouselId, 1);
+    }
+    // Swipe para direita (anterior)
+    else if (diff < -swipeThreshold) {
+        moveCarousel(carouselId, -1);
+    }
+    
+    // Resetar valores
+    touchStartX = 0;
+    touchEndX = 0;
+}
+
+// ===============================================================
+// Event Listeners: Teclado (setas)
+// ===============================================================
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        moveCarousel('therapists', -1);
+    } else if (e.key === 'ArrowRight') {
+        moveCarousel('therapists', 1);
+    }
+});
+
+// ===============================================================
+// Resetar carrossel no redimensionamento da tela
+// ===============================================================
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        Object.keys(carouselStates).forEach(carouselId => {
             carouselStates[carouselId] = 0;
-        } else if (carouselStates[carouselId] > maxSlide) {
-            carouselStates[carouselId] = maxSlide;
-        }
-        
-        // Aplicar transformação com transição suave
-        const translateX = -carouselStates[carouselId] * (cardWidth + gap);
-        carousel.style.transform = `translateX(${translateX}px)`;
-        carousel.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
-        
-        // Atualizar estado dos botões
-        updateCarouselButtons(carouselId, carouselStates[carouselId], maxSlide);
-    }
-
-    function getVisibleCards() {
-        if (window.innerWidth >= 1024) return 4;  // Desktop: 4 cards
-        if (window.innerWidth >= 768) return 2;   // Tablet: 2 cards
-        return 1;                                 // Mobile: 1 card
-    }
-
-    function updateCarouselButtons(carouselId, current, max) {
-        const prevBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', -1)"]`);
-        const nextBtn = document.querySelector(`[onclick="moveCarousel('${carouselId}', 1)"]`);
-        
-        if (prevBtn) {
-            prevBtn.disabled = current <= 0;
-            prevBtn.style.opacity = current <= 0 ? '0.5' : '1';
-            prevBtn.style.cursor = current <= 0 ? 'not-allowed' : 'pointer';
-        }
-        
-        if (nextBtn) {
-            nextBtn.disabled = current >= max;
-            nextBtn.style.opacity = current >= max ? '0.5' : '1';
-            nextBtn.style.cursor = current >= max ? 'not-allowed' : 'pointer';
-        }
-    }
-
-    // Resetar carrossel no redimensionamento da tela
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-            currentSlide = 0;
-            const carousel = document.getElementById('therapists-carousel');
+            const carousel = document.getElementById(carouselId + '-carousel');
             if (carousel) {
                 carousel.style.transform = 'translateX(0px)';
                 const totalCards = carousel.children.length;
                 const visibleCards = getVisibleCards();
                 const maxSlide = Math.max(0, totalCards - visibleCards);
-                updateCarouselButtons('therapists', 0, maxSlide);
+                updateCarouselButtons(carouselId, 0, maxSlide);
+                updateMobileIndicators(carouselId);
             }
-        }, 250);
-    });
+        });
+    }, 250);
+});
 
-    // Inicializar estado dos botões quando a página carregar
-    document.addEventListener('DOMContentLoaded', function() {
-        const carousel = document.getElementById('therapists-carousel');
+// ===============================================================
+// Inicialização quando página carregar
+// ===============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar touch listeners
+    setupTouchListeners();
+    
+    // Inicializar estado dos botões e indicadores
+    Object.keys(carouselStates).forEach(carouselId => {
+        const carousel = document.getElementById(carouselId + '-carousel');
         if (carousel) {
             const totalCards = carousel.children.length;
             const visibleCards = getVisibleCards();
             const maxSlide = Math.max(0, totalCards - visibleCards);
-            updateCarouselButtons('therapists', 0, maxSlide);
+            updateCarouselButtons(carouselId, 0, maxSlide);
+            updateMobileIndicators(carouselId);
         }
     });
-    
-    function updateMobileIndicators() {
-        const indicators = document.querySelectorAll('.flex.justify-center .w-2');
-        indicators.forEach((indicator, index) => {
-            if (index === currentSlide) {
-                indicator.classList.remove('bg-gray-300');
-                indicator.classList.add('bg-primary');
-            } else {
-                indicator.classList.remove('bg-primary');
-                indicator.classList.add('bg-gray-300');
-            }
-        });
-    }
-    
-    // Auto-play do carrossel (opcional)
-    function autoPlay() {
-        setInterval(() => {
-            const visibleCards = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 768 ? 2 : 1;
-            if (currentSlide >= maxSlides - visibleCards) {
-                currentSlide = 0;
-            } else {
-                currentSlide++;
-            }
-            
-            const carousel = document.getElementById('therapists-carousel');
-            const cardWidth = carousel.children[0].offsetWidth;
-            const translateX = -currentSlide * (cardWidth + (window.innerWidth >= 1024 ? 24 : 12));
-            carousel.style.transform = `translateX(${translateX}px)`;
-            
-            updateMobileIndicators();
-        }, 5000); // Muda a cada 5 segundos
-    }
-    
-    // Inicializar funcionalidades quando página carregar
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar indicadores
-        updateMobileIndicators();
-        
-        // Iniciar auto-play (descomente se quiser)
-        // autoPlay();
-        
-        // Adicionar event listeners para touch/swipe em mobile
-        let startX = 0;
-        let endX = 0;
-        
-        const carousel = document.getElementById('therapists-carousel');
-        
-        carousel.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-        });
-        
-        carousel.addEventListener('touchend', (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-        
-        function handleSwipe() {
-            const threshold = 50; // Mínimo de pixels para considerar swipe
-            const diff = startX - endX;
-            
-            if (Math.abs(diff) > threshold) {
-                if (diff > 0) {
-                    // Swipe para esquerda - próximo
-                    moveCarousel('therapists', 1);
-                } else {
-                    // Swipe para direita - anterior
-                    moveCarousel('therapists', -1);
-                }
-            }
+});
+
+// ===============================================================
+// Smooth scroll para links internos
+// ===============================================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
-        
-        // Ajustar carrossel ao redimensionar janela
-        window.addEventListener('resize', () => {
-            currentSlide = 0;
-            const carousel = document.getElementById('therapists-carousel');
-            carousel.style.transform = 'translateX(0px)';
-            updateMobileIndicators();
-        });
     });
-    
-    // ===================================================================
-    // Smooth scroll para links internos (se necessário)
-    // ===================================================================
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
+});
 </script>
 
 {% endblock %}
