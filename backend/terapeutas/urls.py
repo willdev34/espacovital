@@ -57,9 +57,9 @@ urlpatterns = [
     # Perfil completo do terapeuta
     # URL: /terapeutas/perfil/ana-silva/
     path(
-        'perfil/<slug:slug>/', 
-        views.TerapeutaDetailView.as_view(), 
-        name='profile'
+        'perfil/<slug:slug>/',
+        views.TerapeutaDetailView.as_view(),
+        name='perfil'  # ← Mudança aqui
     ),
     
     # Formulário de contato com terapeuta

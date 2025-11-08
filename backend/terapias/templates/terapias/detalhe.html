@@ -478,8 +478,8 @@ document.addEventListener('keydown', function(event) {
             <!-- Grid de Terapeutas -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for terapeuta in terapeutas %}
-                <a href="{% url 'terapeutas:perfil' pk=terapeuta.pk %}" 
-                   class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
+                <a href="{% url 'terapeutas:perfil' slug=terapeuta.slug %}" 
+                    class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
                     
                     <!-- Foto do Terapeuta -->
                     <div class="flex items-center mb-4">
@@ -553,8 +553,8 @@ document.addEventListener('keydown', function(event) {
             <!-- Grid de Espaços -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for espaco in espacos %}
-                <a href="{% url 'espacos:perfil' pk=espaco.pk %}" 
-                   class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100">
+                <a href="{% url 'espacos:perfil' slug=espaco.slug %}" 
+                    class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100">
                     
                     <!-- Foto do Espaço -->
                     {% if espaco.foto_principal %}
