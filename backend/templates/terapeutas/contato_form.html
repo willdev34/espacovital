@@ -23,7 +23,7 @@ Data: 13/09/2025
                     <li><span class="mx-2">›</span></li>
                     <li><a href="{% url 'terapeutas:buscar' %}" class="hover:text-primary">Terapeutas</a></li>
                     <li><span class="mx-2">›</span></li>
-                    <li><a href="{% url 'terapeutas:profile' terapeuta.slug %}" class="hover:text-primary">{{ terapeuta.nome_exibicao }}</a></li>
+                    <li><a href="{% url 'terapeutas:perfil' terapeuta.slug %}" class="hover:text-primary">{{ terapeuta.nome_exibicao }}</a></li>
                     <li><span class="mx-2">›</span></li>
                     <li class="text-primary">Contatar</li>
                 </ol>
@@ -95,7 +95,7 @@ Data: 13/09/2025
                     </div>
                     
                     <!-- Botão voltar ao perfil -->
-                    <a href="{% url 'terapeutas:profile' terapeuta.slug %}" 
+                    <a href="{% url 'terapeutas:perfil' terapeuta.slug %}" 
                        class="block w-full text-center border border-primary text-primary px-4 py-3 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors">
                         ← Voltar ao Perfil
                     </a>
