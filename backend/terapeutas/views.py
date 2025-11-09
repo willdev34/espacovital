@@ -325,8 +325,8 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
                     especialidade = Especialidade.objects.get(nome__icontains='Reiki')
                 elif terapia == 'terapia-tantrica':
                     especialidade = Especialidade.objects.get(nome__icontains='Tântrica')
-                elif terapia == 'thetahealing':
-                    especialidade = Especialidade.objects.get(nome__icontains='Thetahealing')
+                elif terapia == 'ThetaHealing':
+                    especialidade = Especialidade.objects.get(nome__icontains='ThetaHealing')
                 elif terapia == 'psicoterapia':
                     especialidade = Especialidade.objects.get(nome__icontains='Psicoterapia')
                 elif terapia == 'acupuntura':
