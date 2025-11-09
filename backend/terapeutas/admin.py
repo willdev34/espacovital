@@ -200,9 +200,10 @@ class TerapeutaAdmin(admin.ModelAdmin):
         'premium', 'destaque', 'is_active'
     ]
     list_filter = [
-        VerificadoFilter, AvaliacaoFilter, 'destaque', 'premium',
-        'is_active', 'cidade_principal__estado', 'tipos_sessao'
+        'destaque', 'premium', 'is_active'
     ]
+    # Filtros complexos temporariamente desabilitados para debug
+    # VerificadoFilter, AvaliacaoFilter, 'cidade_principal__estado', 'tipos_sessao'
     search_fields = [
         'nome_completo', 'nome_exibicao', 'email_profissional',
         'user__username', 'user__email', 'cidade_principal__nome'
@@ -370,18 +371,9 @@ class TerapeutaAdmin(admin.ModelAdmin):
         
         return form
     
+    # Temporariamente simplificado para debug
     def get_queryset(self, request):
-        """
-        Filtrar queryset baseado em permissões
-        """
-        qs = super().get_queryset(request)
-        
-        if self.is_admin_user(request.user):
-            # ADMIN: Vê todos os terapeutas
-            return qs
-        else:
-            # TERAPEUTA: Vê apenas seu próprio perfil
-            return qs.filter(user=request.user)
+        return super().get_queryset(request)
     
     class Media:
         """

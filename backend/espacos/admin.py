@@ -282,10 +282,11 @@ class EspacoAdmin(admin.ModelAdmin):
         'rating_display', 'total_avaliacoes_display', 'comodidades_count', 'created_at'
     ]
     list_filter = [
-        VerificadoEspacoFilter, AvaliacaoEspacoFilter, TipoEspacoFilter,
-        'is_destaque', 'is_premium', 'aceita_locacao', 'tem_acessibilidade',
-        'is_active', 'pais'
+        'is_destaque', 'is_premium', 'is_active'
     ]
+    # Filtros complexos temporariamente desabilitados para debug:
+    # VerificadoEspacoFilter, AvaliacaoEspacoFilter, TipoEspacoFilter
+    # 'aceita_locacao', 'tem_acessibilidade', 'pais'
     search_fields = [
         'nome', 'descricao_breve', 'email', 'telefone',
         'cidade__nome', 'cidade_texto', 'bairro'
@@ -535,13 +536,8 @@ class EspacoAdmin(admin.ModelAdmin):
     # ===============================================================
     
     def get_queryset(self, request):
-        """Otimiza queries com select_related e prefetch_related"""
-        qs = super().get_queryset(request)
-        return qs.select_related(
-            'cidade', 'cidade__estado', 'estado', 'pais', 'responsavel'
-        ).prefetch_related(
-            'comodidades', 'avaliacoes'
-        )
+        """Temporariamente simplificado para debug do erro 500"""
+        return super().get_queryset(request)
     
     # ===============================================================
     # CUSTOMIZAR LABELS DOS CAMPOS
