@@ -22,6 +22,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.management import call_command
 import io
 
+from django.views.generic import CreateView
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .models import Contact, SugestaoTerapia
+
 
 class HomeView(TemplateView):
     """
@@ -75,7 +80,7 @@ class HomeView(TemplateView):
         
         # Última opção: retornar vazio (o template pode mostrar mensagem padrão se quiser)
         return ""
-    
+
     def get_context_data(self, **kwargs):
         """
         Contexto com TODOS os terapeutas em destaque, ordem rotativa
@@ -412,3 +417,159 @@ def fix_sequences_view(request):
             f"<h2>❌ Erro ao corrigir sequences:</h2><pre>{str(e)}</pre>",
             content_type="text/html"
         )
+    
+# ===============================================================
+# PÁGINAS INSTITUCIONAIS
+# ===============================================================
+
+class SobreView(TemplateView):
+    """
+    Página Sobre o Projeto
+    Descreve a missão, visão e valores do Espaço Vital
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/sobre.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Sobre o Espaço Vital - Nossa História e Missão'
+        return context
+
+
+class TermosView(TemplateView):
+    """
+    Página Termos de Uso
+    Apresenta os termos e condições de uso da plataforma
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/termos.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Termos de Uso - Espaço Vital'
+        return context
+
+
+class PrivacidadeView(TemplateView):
+    """
+    Página Política de Privacidade
+    Apresenta como os dados dos usuários são coletados e utilizados
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/privacidade.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Política de Privacidade - Espaço Vital'
+        return context
+
+
+class CookiesView(TemplateView):
+    """
+    Página Política de Cookies
+    Explica o uso de cookies e tecnologias similares
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/cookies.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Política de Cookies - Espaço Vital'
+        return context
+
+
+class ParceiroView(TemplateView):
+    """
+    Página Seja um Parceiro
+    Informações para terapeutas e espaços se cadastrarem
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/parceiro.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Seja um Parceiro - Espaço Vital'
+        return context
+
+
+class FaqView(TemplateView):
+    """
+    Página de Perguntas Frequentes (FAQ)
+    Responde dúvidas comuns dos usuários
+    Autor: Will
+    Data: 08/11/2025
+    """
+    template_name = 'core/faq.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Perguntas Frequentes (FAQ) - Espaço Vital'
+        return context
+
+
+class ContatoView(CreateView):
+    """
+    Página de Contato com Formulário
+    Permite usuários enviarem mensagens para o Espaço Vital
+    Autor: Will
+    Data: 08/11/2025
+    """
+    model = Contact
+    template_name = 'core/contato.html'
+    fields = ['nome', 'email', 'telefone', 'assunto', 'mensagem']
+    success_url = reverse_lazy('core:contato')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Fale Conosco - Espaço Vital'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            'Mensagem enviada com sucesso! Entraremos em contato em breve.'
+        )
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            'Erro ao enviar mensagem. Verifique os campos e tente novamente.'
+        )
+        return super().form_invalid(form)
+    
+class IndiqueTerapiaView(CreateView):
+    """
+    Formulário para usuários indicarem terapias
+    Permite sugestões de novas terapias para o catálogo
+    Autor: Will
+    Data: 08/11/2025
+    """
+    model = SugestaoTerapia
+    template_name = 'core/indique_terapia.html'
+    fields = ['nome', 'email', 'nome_terapia', 'descricao']
+    success_url = reverse_lazy('core:indique_terapia')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Indique uma Terapia - Espaço Vital'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            'Obrigado pela sugestão! Avaliaremos e entraremos em contato.'
+        )
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            'Erro ao enviar sugestão. Verifique os campos e tente novamente.'
+        )
+        return super().form_invalid(form)

@@ -1,0 +1,476 @@
+<!-- 
+===============================================================
+Título: Template FAQ - Espaço Vital
+Descrição: Página de Perguntas Frequentes com accordion
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perguntas Frequentes (FAQ) - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO
+=============================================================== -->
+<section class="bg-gradient-to-b from-primary/10 to-white py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><span class="text-primary font-medium">FAQ</span></li>
+            </ol>
+        </nav>
+
+        <!-- Título Principal -->
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold text-primary mb-6">
+                Perguntas Frequentes
+            </h1>
+            <p class="text-xl text-gray-700">
+                Encontre respostas para as dúvidas mais comuns sobre o Espaço Vital
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CATEGORIAS DE PERGUNTAS
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Categoria: Sobre a Plataforma -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-6 flex items-center">
+                    <span class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </span>
+                    Sobre a Plataforma
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Pergunta 1 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">O que é o Espaço Vital?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                O Espaço Vital é uma plataforma online que conecta pessoas que buscam terapias holísticas 
+                                a profissionais qualificados e espaços terapêuticos certificados. Facilitamos o encontro 
+                                entre clientes e terapeutas através de um sistema de busca inteligente e perfis verificados.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 2 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">O serviço é gratuito?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim! A busca e visualização de perfis é 100% gratuita para clientes. 
+                                Terapeutas e espaços podem se cadastrar gratuitamente com um perfil básico, 
+                                ou optar por planos Premium para maior destaque e recursos adicionais.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 3 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como funciona a busca?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Você pode usar filtros avançados para encontrar o terapeuta ou espaço ideal: 
+                                tipo de terapia, localização (cidade/bairro), tipo de atendimento (presencial/online), 
+                                especialidades, acessibilidade e muito mais. Os resultados são personalizados 
+                                de acordo com suas preferências.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categoria: Para Clientes -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-6 flex items-center">
+                    <span class="w-10 h-10 bg-mint/20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </span>
+                    Para Clientes
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Pergunta 4 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Preciso criar uma conta para buscar terapeutas?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Não é obrigatório! Você pode buscar e visualizar perfis de terapeutas sem cadastro. 
+                                No entanto, criar uma conta gratuita permite salvar favoritos, deixar avaliações 
+                                e acessar recursos personalizados.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 5 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como entro em contato com um terapeuta?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Cada perfil de terapeuta possui opções de contato: WhatsApp direto, 
+                                formulário de mensagem interno, telefone e e-mail. Escolha o meio 
+                                que preferir e entre em contato diretamente com o profissional.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 6 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como sei se um terapeuta é confiável?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Todos os terapeutas passam por um processo de verificação onde analisamos 
+                                certificações, formações e documentos. Perfis verificados recebem um selo especial. 
+                                Você também pode ver avaliações de outros clientes para ajudar na escolha.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 7 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Posso fazer avaliações?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim! Após criar uma conta, você pode avaliar terapeutas e espaços que utilizou. 
+                                Sua avaliação ajuda outros usuários na escolha e contribui para a qualidade da plataforma.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categoria: Para Terapeutas -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-6 flex items-center">
+                    <span class="w-10 h-10 bg-coral/20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </span>
+                    Para Terapeutas
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Pergunta 8 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como me cadastro como terapeuta?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed mb-3">
+                                Entre em contato através do e-mail <strong>parceiros@espacovital.com.br</strong> 
+                                informando seu interesse. Você receberá instruções sobre:
+                            </p>
+                            <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                                <li>Documentos necessários (RG, CPF, certificados)</li>
+                                <li>Preenchimento do perfil</li>
+                                <li>Processo de verificação</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 9 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Quanto custa para terapeutas?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed mb-3">
+                                Oferecemos dois planos:
+                            </p>
+                            <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                                <li><strong>Plano Gratuito:</strong> Perfil básico, aparece nas buscas, contato direto</li>
+                                <li><strong>Plano Premium:</strong> Destaque no topo, sem anúncios, estatísticas detalhadas, 
+                                    galeria ampliada e recursos exclusivos (consulte valores)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 10 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Posso atualizar meu perfil?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim! Você tem acesso a um painel de controle onde pode atualizar suas informações, 
+                                fotos, especialidades, disponibilidade e muito mais. É importante manter seu perfil 
+                                sempre atualizado para atrair mais clientes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 11 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como recebo os contatos dos clientes?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Os clientes podem entrar em contato diretamente através do WhatsApp, 
+                                telefone ou formulário interno. Mensagens enviadas pelo formulário chegam 
+                                ao seu e-mail cadastrado e também ficam disponíveis no painel do terapeuta.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categoria: Para Espaços -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-6 flex items-center">
+                    <span class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </span>
+                    Para Espaços Terapêuticos
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Pergunta 12 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Que tipo de espaços podem se cadastrar?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Aceitamos diversos tipos de espaços voltados para terapias holísticas: 
+                                clínicas, consultórios compartilhados, centros holísticos, spas terapêuticos, 
+                                espaços de yoga/meditação e similares. O espaço precisa ter alvará de 
+                                funcionamento e infraestrutura adequada.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 13 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Como funciona a locação do espaço?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                O Espaço Vital é apenas uma plataforma de divulgação e conexão. 
+                                Os valores, condições e agendamentos são negociados diretamente entre 
+                                você (proprietário do espaço) e os terapeutas interessados. 
+                                Não intermediamos pagamentos.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 14 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Preciso de CNPJ?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim, é necessário CNPJ ativo e alvará de funcionamento para cadastrar 
+                                um espaço terapêutico. Isso garante a legalidade e credibilidade do local.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categoria: Segurança e Privacidade -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-6 flex items-center">
+                    <span class="w-10 h-10 bg-mint/20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </span>
+                    Segurança e Privacidade
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Pergunta 15 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Meus dados estão seguros?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim! Utilizamos criptografia SSL para proteger suas informações e seguimos 
+                                rigorosamente a LGPD (Lei Geral de Proteção de Dados). Seus dados pessoais 
+                                nunca são vendidos ou compartilhados com terceiros sem autorização. 
+                                Consulte nossa <a href="{% url 'core:privacidade' %}" class="text-primary hover:underline">Política de Privacidade</a>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pergunta 16 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-beige-50 hover:bg-beige-100 transition-colors flex items-center justify-between group"
+                                onclick="toggleFaq(this)">
+                            <span class="font-semibold text-gray-900">Posso excluir minha conta?</span>
+                            <svg class="w-5 h-5 text-gray-600 transform transition-transform group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="px-6 py-4 bg-white hidden">
+                            <p class="text-gray-700 leading-relaxed">
+                                Sim, você pode solicitar a exclusão de sua conta e dados a qualquer momento 
+                                através do e-mail <strong>privacidade@espacovital.com.br</strong>. 
+                                Seus dados serão removidos conforme a LGPD, mantendo apenas informações 
+                                necessárias por obrigações legais.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+AINDA COM DÚVIDAS?
+=============================================================== -->
+<section class="py-16 bg-beige-50">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl font-poppins font-bold text-gray-900 mb-4">
+                Ainda com dúvidas?
+            </h2>
+            <p class="text-lg text-gray-700 mb-8">
+                Entre em contato conosco! Estamos aqui para ajudar.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="mailto:contato@espacovital.com.br" 
+                   class="bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-colors inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    Enviar E-mail
+                </a>
+                <a href="https://wa.me/5521999999999" 
+                   target="_blank"
+                   class="border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-primary/5 transition-colors inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+JAVASCRIPT PARA ACCORDION
+=============================================================== -->
+<script>
+function toggleFaq(button) {
+    // Pegar o elemento da resposta (próximo elemento após o botão)
+    const answer = button.nextElementSibling;
+    const icon = button.querySelector('svg');
+    
+    // Toggle da classe hidden
+    answer.classList.toggle('hidden');
+    
+    // Rotacionar o ícone
+    icon.classList.toggle('rotate-180');
+}
+</script>
+
+{% endblock %}

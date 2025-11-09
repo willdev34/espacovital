@@ -1,0 +1,458 @@
+<!-- 
+===============================================================
+Título: Template Seja um Parceiro - Espaço Vital
+Descrição: Página para captação de terapeutas e espaços terapêuticos
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seja um Parceiro - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO
+=============================================================== -->
+<section class="bg-gradient-to-br from-primary via-primary-dark to-primary text-white py-20">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2 text-white/80">
+                <li><a href="{% url 'core:home' %}" class="hover:text-white">Home</a></li>
+                <li><span>/</span></li>
+                <li><span class="text-white font-medium">Seja um Parceiro</span></li>
+            </ol>
+        </nav>
+
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold mb-6">
+                Faça Parte dessa Agregação
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 opacity-90">
+                Conecte-se com pessoas que buscam bem-estar e transformação
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#terapeuta" 
+                   class="bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-beige-50 transition-colors inline-block">
+                    Sou Terapeuta
+                </a>
+                <a href="#espaco" 
+                   class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-block">
+                    Tenho um Espaço
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+BENEFÍCIOS GERAIS
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-poppins font-bold text-center text-gray-900 mb-4">
+                Por que se tornar um parceiro?
+            </h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Amplie sua visibilidade e alcance mais clientes através de uma plataforma 
+                especializada em terapias holísticas
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Benefício 1 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Mais Visibilidade</h3>
+                    <p class="text-gray-700">
+                        Seu perfil aparece nas buscas de milhares de pessoas procurando terapias
+                    </p>
+                </div>
+
+                <!-- Benefício 2 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-mint/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Público Qualificado</h3>
+                    <p class="text-gray-700">
+                        Conecte-se com pessoas genuinamente interessadas em terapias holísticas
+                    </p>
+                </div>
+
+                <!-- Benefício 3 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-coral/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Credibilidade</h3>
+                    <p class="text-gray-700">
+                        Perfil verificado transmite confiança e profissionalismo aos clientes
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+PARA TERAPEUTAS
+=============================================================== -->
+<section id="terapeuta" class="py-16 bg-beige-50">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Conteúdo -->
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-poppins font-bold text-gray-900 mb-6">
+                        Para Terapeutas
+                    </h2>
+                    <p class="text-lg text-gray-700 mb-8">
+                        Amplie seu alcance e conecte-se com clientes que buscam seus serviços. 
+                        Tenha um perfil completo e profissional na maior plataforma de terapias holísticas.
+                    </p>
+
+                    <div class="space-y-4 mb-8">
+                        <!-- Recurso 1 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Perfil Profissional Completo</h3>
+                                <p class="text-gray-700">Fotos, bio, especialidades, certificações e avaliações</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 2 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Sistema de Busca Inteligente</h3>
+                                <p class="text-gray-700">Apareça nas buscas por especialidade e localização</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 3 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Contato Direto com Clientes</h3>
+                                <p class="text-gray-700">WhatsApp, formulário e sistema de mensagens</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 4 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Selo de Verificação</h3>
+                                <p class="text-gray-700">Destaque-se com o selo de terapeuta verificado</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 5 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Opção Premium</h3>
+                                <p class="text-gray-700">Destaque no topo, sem anúncios e recursos exclusivos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="mailto:parceiros@espacovital.com.br?subject=Quero ser um Terapeuta Parceiro" 
+                       class="inline-block bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
+                        Quero me Cadastrar como Terapeuta
+                    </a>
+                </div>
+
+                <!-- Imagem Ilustrativa -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-primary/20 to-mint/20 rounded-2xl p-8 text-center">
+                        <svg class="w-64 h-64 mx-auto text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <p class="text-gray-600 mt-4">Perfil Profissional Verificado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+PARA ESPAÇOS
+=============================================================== -->
+<section id="espaco" class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Imagem Ilustrativa -->
+                <div class="relative order-2 lg:order-1">
+                    <div class="bg-gradient-to-br from-mint/20 to-coral/20 rounded-2xl p-8 text-center">
+                        <svg class="w-64 h-64 mx-auto text-mint/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <p class="text-gray-600 mt-4">Espaço Terapêutico Certificado</p>
+                    </div>
+                </div>
+
+                <!-- Conteúdo -->
+                <div class="order-1 lg:order-2">
+                    <h2 class="text-3xl md:text-4xl font-poppins font-bold text-gray-900 mb-6">
+                        Para Espaços Terapêuticos
+                    </h2>
+                    <p class="text-lg text-gray-700 mb-8">
+                        Divulgue seu espaço terapêutico para profissionais e clientes. 
+                        Aumente a ocupação do seu espaço conectando-se com terapeutas da região.
+                    </p>
+
+                    <div class="space-y-4 mb-8">
+                        <!-- Recurso 1 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-mint rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Perfil Completo do Espaço</h3>
+                                <p class="text-gray-700">Galeria de fotos, comodidades, localização e terapias oferecidas</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 2 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-mint rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Conexão com Terapeutas</h3>
+                                <p class="text-gray-700">Terapeutas podem vincular-se ao seu espaço</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 3 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-mint rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Gestão de Disponibilidade</h3>
+                                <p class="text-gray-700">Informe horários disponíveis para locação</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 4 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-mint rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Sistema de Avaliações</h3>
+                                <p class="text-gray-700">Receba avaliações e feedback dos clientes</p>
+                            </div>
+                        </div>
+
+                        <!-- Recurso 5 -->
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-mint rounded-full flex items-center justify-center mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Certificação e Credibilidade</h3>
+                                <p class="text-gray-700">Selo de espaço verificado e certificado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="mailto:parceiros@espacovital.com.br?subject=Quero ser um Espaço Parceiro" 
+                       class="inline-block bg-mint text-white px-8 py-4 rounded-lg font-semibold hover:bg-mint/90 transition-colors">
+                        Quero Cadastrar meu Espaço
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+COMO FUNCIONA
+=============================================================== -->
+<section class="py-16 bg-beige-50">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-poppins font-bold text-center text-gray-900 mb-4">
+                Como Funciona?
+            </h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Processo simples e rápido para você começar a receber mais clientes
+            </p>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Passo 1 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        1
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Entre em Contato</h3>
+                    <p class="text-gray-700 text-sm">
+                        Envie um e-mail com suas informações
+                    </p>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        2
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Documentação</h3>
+                    <p class="text-gray-700 text-sm">
+                        Envie documentos e certificações
+                    </p>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Verificação</h3>
+                    <p class="text-gray-700 text-sm">
+                        Análise em até 48h úteis
+                    </p>
+                </div>
+
+                <!-- Passo 4 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        4
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Pronto!</h3>
+                    <p class="text-gray-700 text-sm">
+                        Seu perfil está no ar
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+FAQ RÁPIDO
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl font-poppins font-bold text-center text-gray-900 mb-12">
+                Perguntas Frequentes
+            </h2>
+
+            <div class="space-y-6">
+                <!-- Pergunta 1 -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">É gratuito?</h3>
+                    <p class="text-gray-700">
+                        Sim! O cadastro básico é gratuito. Oferecemos também planos Premium 
+                        com recursos adicionais para quem deseja maior destaque.
+                    </p>
+                </div>
+
+                <!-- Pergunta 2 -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Quanto tempo leva a verificação?</h3>
+                    <p class="text-gray-700">
+                        A análise da documentação é feita em até 48 horas úteis após o envio completo.
+                    </p>
+                </div>
+
+                <!-- Pergunta 3 -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Que documentos preciso enviar?</h3>
+                    <p class="text-gray-700">
+                        Para terapeutas: certificados de formação, RG/CPF. 
+                        Para espaços: CNPJ, alvará de funcionamento, fotos do local.
+                    </p>
+                </div>
+
+                <!-- Pergunta 4 -->
+                <div class="pb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Posso cancelar a qualquer momento?</h3>
+                    <p class="text-gray-700">
+                        Sim! Você tem total controle sobre seu perfil e pode desativá-lo quando quiser.
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="{% url 'core:faq' %}" class="text-primary hover:underline font-semibold">
+                    Ver todas as perguntas frequentes →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CTA FINAL
+=============================================================== -->
+<section class="py-16 bg-gradient-to-r from-primary to-primary-dark text-white">
+    <div class="container mx-auto px-4 lg:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-poppins font-bold mb-6">
+            Pronto para Crescer?
+        </h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">
+            Entre em contato agora e faça parte da maior plataforma de terapias holísticas
+        </p>
+        <a href="mailto:parceiros@espacovital.com.br?subject=Quero ser Parceiro do Espaço Vital" 
+           class="inline-block bg-white text-primary px-10 py-5 rounded-lg font-semibold text-lg hover:bg-beige-50 transition-colors">
+            Entrar em Contato Agora
+        </a>
+    </div>
+</section>
+
+{% endblock %}

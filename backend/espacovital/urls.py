@@ -10,6 +10,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from core.views import api_estados, api_cidades, fix_sequences_view
+from core.views import fix_sequences_view
 
 
 # ===============================================================
@@ -17,6 +18,9 @@ from core.views import api_estados, api_cidades, fix_sequences_view
 # ===============================================================
 
 urlpatterns = [
+    # Temporário - DEVE VIR ANTES DO ADMIN
+    path('fix-sequences/', fix_sequences_view, name='fix_sequences'),
+
     # Admin do Django
     path('admin/', admin.site.urls),
     

@@ -705,3 +705,45 @@ class Especialidade(BaseModel):
         """
         from django.urls import reverse
         return reverse('terapias:detalhe', kwargs={'slug': self.slug})
+    
+class SugestaoTerapia(BaseModel):
+    """
+    Model para armazenar sugestões de terapias dos usuários
+    Autor: Will
+    Data: 08/11/2025
+    """
+    nome = models.CharField(
+        'Nome',
+        max_length=200,
+        help_text='Nome completo do usuário'
+    )
+    
+    email = models.EmailField(
+        'E-mail',
+        help_text='E-mail para contato'
+    )
+    
+    nome_terapia = models.CharField(
+        'Nome da Terapia',
+        max_length=200,
+        help_text='Nome da terapia sugerida'
+    )
+    
+    descricao = models.TextField(
+        'Descrição',
+        help_text='Breve descrição sobre a terapia'
+    )
+    
+    lida = models.BooleanField(
+        'Lida',
+        default=False,
+        help_text='Indica se a sugestão foi lida pela equipe'
+    )
+    
+    class Meta:
+        verbose_name = 'Sugestão de Terapia'
+        verbose_name_plural = 'Sugestões de Terapias'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'{self.nome_terapia} - {self.nome}'

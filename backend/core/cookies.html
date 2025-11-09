@@ -1,0 +1,337 @@
+<!-- 
+===============================================================
+Título: Template Política de Cookies - Espaço Vital
+Descrição: Página institucional sobre uso de cookies e rastreamento
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Política de Cookies - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO
+=============================================================== -->
+<section class="bg-gradient-to-b from-primary/10 to-white py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><span class="text-primary font-medium">Política de Cookies</span></li>
+            </ol>
+        </nav>
+
+        <!-- Título Principal -->
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold text-primary mb-6">
+                Política de Cookies
+            </h1>
+            <p class="text-lg text-gray-600">
+                Última atualização: 08 de novembro de 2025
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CONTEÚDO DA POLÍTICA
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto prose prose-lg">
+            
+            <!-- Introdução -->
+            <div class="mb-12">
+                <p class="text-gray-700 leading-relaxed">
+                    Esta Política de Cookies explica como o <strong>Espaço Vital</strong> utiliza cookies 
+                    e tecnologias similares para reconhecer você quando visita nossa plataforma. 
+                    Ela explica o que são essas tecnologias, por que as usamos e seus direitos de controle.
+                </p>
+            </div>
+
+            <!-- 1. O que são Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    1. O que são Cookies?
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Cookies são pequenos arquivos de texto armazenados no seu dispositivo (computador, smartphone, tablet) 
+                    quando você visita um site. Eles permitem que o site reconheça seu dispositivo e memorize 
+                    informações sobre sua visita.
+                </p>
+                <p class="text-gray-700 leading-relaxed">
+                    Cookies podem ser <strong>"cookies de sessão"</strong> (temporários, excluídos ao fechar o navegador) 
+                    ou <strong>"cookies persistentes"</strong> (permanecem no dispositivo até expirar ou serem excluídos).
+                </p>
+            </div>
+
+            <!-- 2. Por que usamos Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    2. Por que Usamos Cookies?
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Utilizamos cookies para diversos propósitos:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Funcionalidade:</strong> Manter você conectado, lembrar suas preferências</li>
+                    <li><strong>Segurança:</strong> Proteger sua conta e detectar atividades suspeitas</li>
+                    <li><strong>Desempenho:</strong> Analisar como você usa o site para melhorar a experiência</li>
+                    <li><strong>Personalização:</strong> Mostrar conteúdo relevante baseado em seus interesses</li>
+                    <li><strong>Marketing:</strong> Exibir anúncios personalizados (com seu consentimento)</li>
+                </ul>
+            </div>
+
+            <!-- 3. Tipos de Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    3. Tipos de Cookies que Utilizamos
+                </h2>
+
+                <!-- Cookies Essenciais -->
+                <div class="mb-6 p-6 bg-beige-50 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        3.1. Cookies Estritamente Necessários
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        <strong>Propósito:</strong> Essenciais para o funcionamento do site. 
+                        Sem eles, você não conseguirá usar recursos básicos.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-2"><strong>Exemplos:</strong></p>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>Cookie de sessão (mantém você logado)</li>
+                        <li>Cookie de segurança (proteção CSRF)</li>
+                        <li>Cookie de carrinho de compras</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        <strong>Consentimento:</strong> Não é necessário (são essenciais)
+                    </p>
+                </div>
+
+                <!-- Cookies de Desempenho -->
+                <div class="mb-6 p-6 bg-mint/5 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-mint/20 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-mint" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                            </svg>
+                        </span>
+                        3.2. Cookies de Desempenho e Análise
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        <strong>Propósito:</strong> Coletam informações sobre como você usa o site 
+                        (páginas mais visitadas, tempo de navegação, erros).
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-2"><strong>Exemplos:</strong></p>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>Google Analytics (_ga, _gid)</li>
+                        <li>Hotjar (análise de comportamento)</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        <strong>Consentimento:</strong> Requer consentimento
+                    </p>
+                </div>
+
+                <!-- Cookies de Funcionalidade -->
+                <div class="mb-6 p-6 bg-coral/5 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-coral/20 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-coral" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        3.3. Cookies de Funcionalidade
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        <strong>Propósito:</strong> Lembram suas escolhas e preferências 
+                        (idioma, região, filtros de busca).
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-2"><strong>Exemplos:</strong></p>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>Preferência de idioma</li>
+                        <li>Filtros de busca salvos</li>
+                        <li>Volume de vídeos</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        <strong>Consentimento:</strong> Recomendado obter consentimento
+                    </p>
+                </div>
+
+                <!-- Cookies de Publicidade -->
+                <div class="mb-6 p-6 bg-primary/5 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        3.4. Cookies de Publicidade e Marketing
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        <strong>Propósito:</strong> Rastreiam suas visitas e interesses para 
+                        exibir anúncios relevantes.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-2"><strong>Exemplos:</strong></p>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>Google Ads</li>
+                        <li>Facebook Pixel</li>
+                        <li>Remarketing</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        <strong>Consentimento:</strong> Requer consentimento explícito
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. Cookies de Terceiros -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    4. Cookies de Terceiros
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Além dos nossos próprios cookies, utilizamos cookies de terceiros para:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+                    <li><strong>Google Analytics:</strong> Análise de tráfego e comportamento</li>
+                    <li><strong>Google Maps:</strong> Exibição de mapas e localização</li>
+                    <li><strong>Redes Sociais:</strong> Botões de compartilhamento (Facebook, Instagram, LinkedIn)</li>
+                    <li><strong>Serviços de Pagamento:</strong> Processamento de transações</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed">
+                    Esses terceiros podem usar cookies para coletar informações sobre suas atividades. 
+                    Não controlamos esses cookies - revise as políticas de privacidade deles.
+                </p>
+            </div>
+
+            <!-- 5. Como Gerenciar Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    5. Como Gerenciar e Desativar Cookies
+                </h2>
+                
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">5.1. Configurações do Site</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Você pode gerenciar suas preferências através do nosso banner de cookies 
+                    exibido na primeira visita. Clique em "Configurar Cookies" para escolher quais categorias aceitar.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">5.2. Configurações do Navegador</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Você também pode configurar seu navegador para bloquear ou alertar sobre cookies:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Google Chrome:</strong> Configurações → Privacidade e Segurança → Cookies</li>
+                    <li><strong>Firefox:</strong> Configurações → Privacidade e Segurança → Cookies</li>
+                    <li><strong>Safari:</strong> Preferências → Privacidade → Cookies</li>
+                    <li><strong>Edge:</strong> Configurações → Privacidade → Cookies</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    <strong>Atenção:</strong> Bloquear cookies essenciais pode afetar o funcionamento do site.
+                </p>
+            </div>
+
+            <!-- 6. Web Beacons -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    6. Web Beacons e Tecnologias Similares
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Além de cookies, utilizamos <strong>web beacons</strong> (pixels invisíveis) 
+                    para rastrear abertura de e-mails e cliques em links. Também usamos 
+                    <strong>Local Storage</strong> e <strong>Session Storage</strong> para 
+                    armazenar dados localmente no navegador.
+                </p>
+            </div>
+
+            <!-- 7. Atualizações -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    7. Atualizações desta Política
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Podemos atualizar esta Política de Cookies periodicamente para refletir 
+                    mudanças em nossas práticas ou por razões legais. A data da última 
+                    atualização está no topo desta página.
+                </p>
+            </div>
+
+            <!-- Tabela de Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    8. Lista de Cookies Utilizados
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead class="bg-beige-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Nome</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Tipo</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Duração</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Propósito</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700">
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">sessionid</td>
+                                <td class="px-4 py-3 text-sm">Essencial</td>
+                                <td class="px-4 py-3 text-sm">Sessão</td>
+                                <td class="px-4 py-3 text-sm">Mantém você logado</td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">csrftoken</td>
+                                <td class="px-4 py-3 text-sm">Essencial</td>
+                                <td class="px-4 py-3 text-sm">Sessão</td>
+                                <td class="px-4 py-3 text-sm">Proteção contra ataques CSRF</td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">_ga</td>
+                                <td class="px-4 py-3 text-sm">Análise</td>
+                                <td class="px-4 py-3 text-sm">2 anos</td>
+                                <td class="px-4 py-3 text-sm">Google Analytics - ID único</td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">_gid</td>
+                                <td class="px-4 py-3 text-sm">Análise</td>
+                                <td class="px-4 py-3 text-sm">24 horas</td>
+                                <td class="px-4 py-3 text-sm">Google Analytics - sessão</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">cookie_consent</td>
+                                <td class="px-4 py-3 text-sm">Funcional</td>
+                                <td class="px-4 py-3 text-sm">1 ano</td>
+                                <td class="px-4 py-3 text-sm">Armazena preferências de cookies</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Contato -->
+            <div class="mt-12 p-6 bg-primary/5 rounded-lg border-l-4 border-primary">
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                    Dúvidas sobre Cookies?
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    Se você tiver dúvidas sobre nosso uso de cookies, entre em contato:
+                </p>
+                <p class="text-gray-700">
+                    <strong>E-mail:</strong> privacidade@espacovital.com.br<br>
+                    <strong>Telefone:</strong> (21) 99999-9999
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

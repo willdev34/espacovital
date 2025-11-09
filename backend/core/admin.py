@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.contrib.admin import SimpleListFilter
-from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade, Especialidade
+from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade, Especialidade, SugestaoTerapia
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -881,3 +881,28 @@ class EspecialidadeAdmin(admin.ModelAdmin):
             )
         return "Nenhuma foto cadastrada"
     preview_foto.short_description = "Preview da Foto"
+
+@admin.register(SugestaoTerapia)
+class SugestaoTerapiaAdmin(admin.ModelAdmin):
+    """
+    Admin para Sugestões de Terapias
+    Autor: Will
+    Data: 08/11/2025
+    """
+    list_display = ['nome_terapia', 'nome', 'email', 'lida', 'created_at']
+    list_filter = ['lida', 'created_at']
+    search_fields = ['nome_terapia', 'nome', 'email', 'descricao']
+    readonly_fields = ['created_at', 'updated_at']
+    list_editable = ['lida']
+    
+    fieldsets = (
+        ('Informações da Sugestão', {
+            'fields': ('nome_terapia', 'descricao')
+        }),
+        ('Dados do Usuário', {
+            'fields': ('nome', 'email')
+        }),
+        ('Controle', {
+            'fields': ('lida', 'created_at', 'updated_at')
+        }),
+    )

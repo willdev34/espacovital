@@ -15,9 +15,25 @@ urlpatterns = [
     # Página inicial - rota vazia aponta para home
     path('', views.HomeView.as_view(), name='home'),
     
-    # Páginas institucionais (comentadas até implementar)
-    # path('sobre/', views.AboutView.as_view(), name='about'),
-    # path('contato/', views.ContactView.as_view(), name='contact'),
+    # ============================================
+    # PÁGINAS INSTITUCIONAIS
+    # ============================================
+    # Página Sobre o Projeto
+    path('sobre/', views.SobreView.as_view(), name='sobre'),
+    # Termos de Uso
+    path('termos/', views.TermosView.as_view(), name='termos'),
+    # Política de Privacidade
+    path('privacidade/', views.PrivacidadeView.as_view(), name='privacidade'),
+    # Política de Cookies
+    path('cookies/', views.CookiesView.as_view(), name='cookies'),
+    # Seja um Parceiro
+    path('parceiro/', views.ParceiroView.as_view(), name='parceiro'),
+    # Perguntas Frequentes (FAQ)
+    path('faq/', views.FaqView.as_view(), name='faq'),
+    # Contato (Formulário)
+    path('contato/', views.ContatoView.as_view(), name='contato'),
+    # Indique uma Terapia (Formulário)
+    path('indique-terapia/', views.IndiqueTerapiaView.as_view(), name='indique_terapia'),
     
     # APIs AJAX (comentadas até implementar)
     # path('api/search/therapists/', views.search_therapists_ajax, name='search_therapists_ajax'),

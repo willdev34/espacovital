@@ -1,0 +1,238 @@
+<!-- 
+===============================================================
+Título: Template Sobre o Projeto - Espaço Vital
+Descrição: Página institucional sobre a missão e valores
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre o Espaço Vital - Nossa História e Missão{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO - APRESENTAÇÃO
+=============================================================== -->
+<section class="bg-gradient-to-b from-primary/10 to-white py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><span class="text-primary font-medium">Sobre</span></li>
+            </ol>
+        </nav>
+
+        <!-- Título Principal -->
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold text-primary mb-6">
+                Sobre o Espaço Vital
+            </h1>
+            <p class="text-xl text-gray-700 leading-relaxed">
+                Conectando você ao cuidado terapêutico que transforma
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+NOSSA HISTÓRIA
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-poppins font-bold text-gray-900 mb-6">
+                Nossa História
+            </h2>
+            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+                <p>
+                    O <strong>Espaço Vital</strong> nasceu da necessidade de facilitar o acesso a terapias holísticas 
+                    e integrativas, conectando pessoas que buscam bem-estar físico, mental e espiritual a profissionais 
+                    qualificados e espaços terapêuticos certificados.
+                </p>
+                <p>
+                    Acreditamos que cada pessoa merece ter acesso a cuidados que vão além do tradicional, 
+                    valorizando o ser humano em sua totalidade. Por isso, criamos uma plataforma que reúne 
+                    terapeutas verificados, espaços acolhedores e informações confiáveis sobre as mais diversas 
+                    práticas terapêuticas.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+MISSÃO, VISÃO E VALORES
+=============================================================== -->
+<section class="py-16 bg-beige-50">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Missão -->
+            <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-poppins font-bold text-gray-900 mb-4">Missão</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Facilitar o acesso a terapias holísticas, promovendo o bem-estar integral através da 
+                    conexão entre pessoas e profissionais qualificados.
+                </p>
+            </div>
+
+            <!-- Visão -->
+            <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-mint/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-poppins font-bold text-gray-900 mb-4">Visão</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Ser a principal plataforma de referência em terapias holísticas no Brasil, 
+                    reconhecida pela qualidade e confiabilidade.
+                </p>
+            </div>
+
+            <!-- Valores -->
+            <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-coral/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-poppins font-bold text-gray-900 mb-4">Valores</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Ética, transparência, respeito à diversidade, compromisso com a qualidade 
+                    e valorização do cuidado integral.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+NOSSOS DIFERENCIAIS
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-poppins font-bold text-center text-gray-900 mb-12">
+                O que nos torna únicos
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Diferencial 1 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Profissionais Verificados</h3>
+                        <p class="text-gray-700">
+                            Todos os terapeutas cadastrados passam por um processo de verificação de credenciais 
+                            e formação profissional.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Diferencial 2 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-mint/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Busca Inteligente</h3>
+                        <p class="text-gray-700">
+                            Sistema de filtros avançados para encontrar exatamente o que você precisa: 
+                            tipo de terapia, localização, especialidade e muito mais.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Diferencial 3 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-coral/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Conteúdo Educativo</h3>
+                        <p class="text-gray-700">
+                            Blog com artigos sobre terapias, bem-estar e autoconhecimento, 
+                            escritos por profissionais especializados.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Diferencial 4 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Espaços Certificados</h3>
+                        <p class="text-gray-700">
+                            Ambientes terapêuticos cuidadosamente selecionados, com infraestrutura 
+                            adequada para diferentes modalidades de atendimento.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CALL TO ACTION
+=============================================================== -->
+<section class="py-16 bg-gradient-to-r from-primary to-primary-dark text-white">
+    <div class="container mx-auto px-4 lg:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-poppins font-bold mb-6">
+            Pronto para começar sua jornada de bem-estar?
+        </h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">
+            Encontre o terapeuta ideal ou o espaço perfeito para suas necessidades
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'terapeutas:buscar' %}" 
+               class="bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-beige-50 transition-colors inline-block">
+                Buscar Terapeutas
+            </a>
+            <a href="{% url 'espacos:buscar' %}" 
+               class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors inline-block">
+                Buscar Espaços
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

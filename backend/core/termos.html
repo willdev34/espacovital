@@ -1,0 +1,252 @@
+<!-- 
+===============================================================
+Título: Template Termos de Uso - Espaço Vital
+Descrição: Página institucional com termos e condições de uso
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Termos de Uso - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO
+=============================================================== -->
+<section class="bg-gradient-to-b from-primary/10 to-white py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><span class="text-primary font-medium">Termos de Uso</span></li>
+            </ol>
+        </nav>
+
+        <!-- Título Principal -->
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold text-primary mb-6">
+                Termos de Uso
+            </h1>
+            <p class="text-lg text-gray-600">
+                Última atualização: 08 de novembro de 2025
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CONTEÚDO DOS TERMOS
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto prose prose-lg">
+            
+            <!-- Introdução -->
+            <div class="mb-12">
+                <p class="text-gray-700 leading-relaxed">
+                    Bem-vindo ao <strong>Espaço Vital</strong>. Ao acessar e utilizar nossa plataforma, 
+                    você concorda com os termos e condições descritos neste documento. 
+                    Por favor, leia atentamente antes de utilizar nossos serviços.
+                </p>
+            </div>
+
+            <!-- 1. Definições -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    1. Definições
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para fins destes Termos de Uso, consideram-se:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Plataforma:</strong> O site Espaço Vital e todos os seus serviços associados</li>
+                    <li><strong>Usuário:</strong> Qualquer pessoa que acesse a plataforma</li>
+                    <li><strong>Terapeuta:</strong> Profissional cadastrado que oferece serviços terapêuticos</li>
+                    <li><strong>Espaço Terapêutico:</strong> Local cadastrado que oferece infraestrutura para atendimentos</li>
+                    <li><strong>Cliente:</strong> Usuário que busca ou contrata serviços através da plataforma</li>
+                </ul>
+            </div>
+
+            <!-- 2. Aceitação dos Termos -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    2. Aceitação dos Termos
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Ao utilizar o Espaço Vital, você declara que:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>É maior de 18 anos ou possui autorização dos responsáveis legais</li>
+                    <li>Leu, compreendeu e concordou com todos os termos aqui estabelecidos</li>
+                    <li>Está ciente de que o não cumprimento pode resultar na suspensão de sua conta</li>
+                    <li>Utilizará a plataforma de forma ética e legal</li>
+                </ul>
+            </div>
+
+            <!-- 3. Serviços Oferecidos -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    3. Serviços Oferecidos
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    O Espaço Vital é uma plataforma de conexão que:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Facilita o encontro entre clientes e terapeutas qualificados</li>
+                    <li>Permite a divulgação de espaços terapêuticos certificados</li>
+                    <li>Oferece conteúdo educativo sobre terapias holísticas</li>
+                    <li>Disponibiliza sistema de busca e filtros avançados</li>
+                    <li>Fornece canal de comunicação entre usuários e profissionais</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    <strong class="text-primary">IMPORTANTE:</strong> O Espaço Vital atua apenas como intermediador. 
+                    Não somos responsáveis pelos serviços prestados pelos terapeutas ou pela qualidade 
+                    dos espaços terapêuticos cadastrados.
+                </p>
+            </div>
+
+            <!-- 4. Cadastro e Conta de Usuário -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    4. Cadastro e Conta de Usuário
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Ao criar uma conta, você se compromete a:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Fornecer informações verdadeiras, precisas e atualizadas</li>
+                    <li>Manter a confidencialidade de sua senha</li>
+                    <li>Notificar imediatamente sobre uso não autorizado de sua conta</li>
+                    <li>Ser responsável por todas as atividades realizadas em sua conta</li>
+                    <li>Não criar múltiplas contas sem autorização</li>
+                </ul>
+            </div>
+
+            <!-- 5. Obrigações dos Terapeutas -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    5. Obrigações dos Terapeutas
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Os profissionais cadastrados devem:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Possuir formação e certificações válidas para as práticas oferecidas</li>
+                    <li>Manter informações de perfil atualizadas e verídicas</li>
+                    <li>Respeitar os códigos de ética de suas respectivas áreas</li>
+                    <li>Não fazer promessas de cura ou resultados garantidos</li>
+                    <li>Atender com profissionalismo e respeito</li>
+                    <li>Manter sigilo sobre informações dos clientes</li>
+                </ul>
+            </div>
+
+            <!-- 6. Obrigações dos Espaços Terapêuticos -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    6. Obrigações dos Espaços Terapêuticos
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Os espaços cadastrados devem:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Possuir alvará de funcionamento e documentação em dia</li>
+                    <li>Manter o ambiente limpo, seguro e adequado</li>
+                    <li>Informar corretamente sobre comodidades e acessibilidade</li>
+                    <li>Respeitar os horários agendados</li>
+                    <li>Garantir privacidade aos usuários</li>
+                </ul>
+            </div>
+
+            <!-- 7. Conteúdo do Usuário -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    7. Conteúdo do Usuário
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Ao publicar conteúdo na plataforma (avaliações, comentários, fotos), você:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Garante ter direitos sobre o conteúdo publicado</li>
+                    <li>Concede ao Espaço Vital direito de usar, modificar e exibir o conteúdo</li>
+                    <li>Não publicará conteúdo ofensivo, ilegal ou difamatório</li>
+                    <li>Aceita que o conteúdo pode ser moderado ou removido</li>
+                </ul>
+            </div>
+
+            <!-- 8. Propriedade Intelectual -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    8. Propriedade Intelectual
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Todo o conteúdo da plataforma (textos, imagens, logotipos, código) é protegido por 
+                    direitos autorais e propriedade intelectual do Espaço Vital. É proibida a reprodução 
+                    sem autorização prévia.
+                </p>
+            </div>
+
+            <!-- 9. Limitação de Responsabilidade -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    9. Limitação de Responsabilidade
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    O Espaço Vital não se responsabiliza por:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Qualidade dos serviços prestados pelos terapeutas</li>
+                    <li>Resultados de tratamentos ou terapias</li>
+                    <li>Danos causados por informações incorretas de terceiros</li>
+                    <li>Indisponibilidade temporária da plataforma</li>
+                    <li>Conflitos entre usuários e profissionais</li>
+                </ul>
+            </div>
+
+            <!-- 10. Modificações -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    10. Modificações dos Termos
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Reservamo-nos o direito de modificar estes termos a qualquer momento. 
+                    As alterações entram em vigor imediatamente após publicação. 
+                    O uso continuado da plataforma após modificações constitui aceitação dos novos termos.
+                </p>
+            </div>
+
+            <!-- 11. Cancelamento e Suspensão -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    11. Cancelamento e Suspensão
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Podemos suspender ou cancelar contas que violem estes termos, 
+                    sem aviso prévio e sem reembolso de valores pagos, quando aplicável.
+                </p>
+            </div>
+
+            <!-- 12. Lei Aplicável -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    12. Lei Aplicável
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Estes termos são regidos pelas leis brasileiras. 
+                    Fica eleito o foro da comarca do Rio de Janeiro para dirimir quaisquer controvérsias.
+                </p>
+            </div>
+
+            <!-- Contato -->
+            <div class="mt-12 p-6 bg-beige-50 rounded-lg">
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                    Dúvidas sobre os Termos?
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    Se você tiver alguma dúvida sobre estes Termos de Uso, entre em contato conosco:
+                </p>
+                <p class="text-gray-700">
+                    <strong>Email:</strong> contato@esp

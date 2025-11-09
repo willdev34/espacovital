@@ -1,0 +1,296 @@
+<!-- 
+===============================================================
+Título: Template Política de Privacidade - Espaço Vital
+Descrição: Página institucional sobre tratamento de dados pessoais (LGPD)
+Autor: Will
+Data: 08/11/2025
+===============================================================
+-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Política de Privacidade - Espaço Vital{% endblock %}
+
+{% block content %}
+<!-- ===============================================================
+SEÇÃO HERO
+=============================================================== -->
+<section class="bg-gradient-to-b from-primary/10 to-white py-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-8">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><span class="text-primary font-medium">Política de Privacidade</span></li>
+            </ol>
+        </nav>
+
+        <!-- Título Principal -->
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-poppins font-bold text-primary mb-6">
+                Política de Privacidade
+            </h1>
+            <p class="text-lg text-gray-600">
+                Última atualização: 08 de novembro de 2025
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+CONTEÚDO DA POLÍTICA
+=============================================================== -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
+        <div class="max-w-4xl mx-auto prose prose-lg">
+            
+            <!-- Introdução -->
+            <div class="mb-12">
+                <p class="text-gray-700 leading-relaxed">
+                    O <strong>Espaço Vital</strong> respeita sua privacidade e está comprometido em proteger 
+                    seus dados pessoais. Esta Política de Privacidade descreve como coletamos, usamos, 
+                    armazenamos e compartilhamos suas informações, em conformidade com a 
+                    <strong>Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018)</strong>.
+                </p>
+            </div>
+
+            <!-- 1. Dados Coletados -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    1. Dados Coletados
+                </h2>
+                
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">1.1. Dados Fornecidos por Você</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Coletamos as informações que você nos fornece voluntariamente:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-6">
+                    <li><strong>Cadastro:</strong> Nome, e-mail, telefone, CPF/CNPJ, endereço</li>
+                    <li><strong>Perfil Profissional:</strong> Formação, certificações, especialidades, fotos</li>
+                    <li><strong>Comunicação:</strong> Mensagens enviadas através de formulários</li>
+                    <li><strong>Avaliações:</strong> Comentários e notas sobre serviços</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">1.2. Dados Coletados Automaticamente</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Coletamos automaticamente algumas informações quando você usa a plataforma:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Dados de Navegação:</strong> Endereço IP, tipo de navegador, sistema operacional</li>
+                    <li><strong>Cookies:</strong> Informações armazenadas no seu dispositivo</li>
+                    <li><strong>Dados de Uso:</strong> Páginas visitadas, tempo de navegação, cliques</li>
+                    <li><strong>Localização:</strong> Dados aproximados de localização (se autorizado)</li>
+                </ul>
+            </div>
+
+            <!-- 2. Como Usamos Seus Dados -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    2. Como Usamos Seus Dados
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Utilizamos suas informações para:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Criar e gerenciar sua conta na plataforma</li>
+                    <li>Facilitar a comunicação entre clientes e terapeutas</li>
+                    <li>Processar e exibir seu perfil profissional</li>
+                    <li>Enviar notificações sobre sua conta e serviços</li>
+                    <li>Melhorar nossos serviços através de análises</li>
+                    <li>Personalizar sua experiência na plataforma</li>
+                    <li>Prevenir fraudes e garantir segurança</li>
+                    <li>Cumprir obrigações legais</li>
+                    <li>Enviar comunicações de marketing (com seu consentimento)</li>
+                </ul>
+            </div>
+
+            <!-- 3. Base Legal -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    3. Base Legal para Tratamento de Dados
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Tratamos seus dados pessoais com base nas seguintes hipóteses legais:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Consentimento:</strong> Quando você autoriza expressamente</li>
+                    <li><strong>Execução de Contrato:</strong> Para fornecer os serviços contratados</li>
+                    <li><strong>Obrigação Legal:</strong> Para cumprir exigências legais</li>
+                    <li><strong>Legítimo Interesse:</strong> Para melhorar nossos serviços e prevenir fraudes</li>
+                </ul>
+            </div>
+
+            <!-- 4. Compartilhamento de Dados -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    4. Compartilhamento de Dados
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Podemos compartilhar seus dados nas seguintes situações:
+                </p>
+                
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">4.1. Com Outros Usuários</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Informações de perfil público (nome, foto, especialidades) são visíveis para outros usuários.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">4.2. Com Prestadores de Serviço</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Compartilhamos dados com fornecedores que nos auxiliam:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-6">
+                    <li>Hospedagem de dados (servidores)</li>
+                    <li>Processamento de pagamentos</li>
+                    <li>Envio de e-mails e notificações</li>
+                    <li>Análise de dados e métricas</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">4.3. Por Obrigação Legal</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Podemos divulgar dados quando exigido por lei ou ordem judicial.
+                </p>
+            </div>
+
+            <!-- 5. Armazenamento e Segurança -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    5. Armazenamento e Segurança
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Seus dados são armazenados em servidores seguros localizados no Brasil. 
+                    Implementamos medidas de segurança técnicas e organizacionais:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Criptografia de dados sensíveis (SSL/TLS)</li>
+                    <li>Controle de acesso restrito</li>
+                    <li>Monitoramento de sistemas</li>
+                    <li>Backups regulares</li>
+                    <li>Políticas internas de segurança</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    <strong>Importante:</strong> Nenhum sistema é 100% seguro. Mantenha sua senha confidencial.
+                </p>
+            </div>
+
+            <!-- 6. Retenção de Dados -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    6. Retenção de Dados
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Mantemos seus dados pelo tempo necessário para:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Fornecer os serviços solicitados</li>
+                    <li>Cumprir obrigações legais (normalmente 5 anos)</li>
+                    <li>Resolver disputas e fazer cumprir contratos</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    Após esse período, os dados são anonimizados ou excluídos.
+                </p>
+            </div>
+
+            <!-- 7. Seus Direitos -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    7. Seus Direitos (LGPD)
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    De acordo com a LGPD, você tem direito a:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Confirmação:</strong> Saber se tratamos seus dados</li>
+                    <li><strong>Acesso:</strong> Solicitar cópia dos seus dados</li>
+                    <li><strong>Correção:</strong> Atualizar dados incompletos ou incorretos</li>
+                    <li><strong>Anonimização/Bloqueio:</strong> Solicitar anonimização de dados desnecessários</li>
+                    <li><strong>Eliminação:</strong> Solicitar exclusão de dados (com exceções legais)</li>
+                    <li><strong>Portabilidade:</strong> Receber seus dados em formato estruturado</li>
+                    <li><strong>Revogação:</strong> Retirar consentimento a qualquer momento</li>
+                    <li><strong>Oposição:</strong> Opor-se a tratamentos realizados</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    Para exercer seus direitos, entre em contato através de: 
+                    <strong>privacidade@espacovital.com.br</strong>
+                </p>
+            </div>
+
+            <!-- 8. Cookies -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    8. Cookies e Tecnologias Similares
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Utilizamos cookies para:
+                </p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>Manter você conectado à sua conta</li>
+                    <li>Lembrar suas preferências</li>
+                    <li>Analisar o uso da plataforma</li>
+                    <li>Personalizar conteúdo e anúncios</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    Você pode gerenciar cookies através das configurações do seu navegador. 
+                    Para mais detalhes, consulte nossa <a href="{% url 'core:cookies' %}" class="text-primary hover:underline">Política de Cookies</a>.
+                </p>
+            </div>
+
+            <!-- 9. Menores de Idade -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    9. Menores de Idade
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Nossos serviços são destinados a maiores de 18 anos. Não coletamos intencionalmente 
+                    dados de menores sem consentimento dos responsáveis. Se identificarmos dados de 
+                    menores sem autorização, serão excluídos.
+                </p>
+            </div>
+
+            <!-- 10. Alterações -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    10. Alterações nesta Política
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Podemos atualizar esta política periodicamente. Alterações significativas serão 
+                    notificadas por e-mail ou aviso na plataforma. Recomendamos revisar regularmente.
+                </p>
+            </div>
+
+            <!-- 11. Encarregado de Dados (DPO) -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-poppins font-bold text-gray-900 mb-4">
+                    11. Encarregado de Proteção de Dados (DPO)
+                </h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Para questões sobre proteção de dados e exercício de direitos, contate nosso DPO:
+                </p>
+                <div class="mt-4 p-4 bg-beige-50 rounded-lg">
+                    <p class="text-gray-700">
+                        <strong>E-mail:</strong> dpo@espacovital.com.br<br>
+                        <strong>Endereço:</strong> [Endereço completo da empresa]
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contato -->
+            <div class="mt-12 p-6 bg-primary/5 rounded-lg border-l-4 border-primary">
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                    Dúvidas sobre Privacidade?
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    Estamos à disposição para esclarecer qualquer dúvida sobre o tratamento de seus dados:
+                </p>
+                <p class="text-gray-700">
+                    <strong>E-mail de Privacidade:</strong> privacidade@espacovital.com.br<br>
+                    <strong>E-mail Geral:</strong> contato@espacovital.com.br<br>
+                    <strong>Telefone:</strong> (21) 99999-9999
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
