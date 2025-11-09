@@ -217,8 +217,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     ]
     
     # Inlines
-    inlines = [FotoGaleriaTerapeutaInline , TerapeutaEspecialidadeInline]
-    # AvaliacaoInline temporariamente desabilitado para debug do erro 500
+    inlines = [FotoGaleriaTerapeutaInline , TerapeutaEspecialidadeInline, AvaliacaoInline]
     
     # Configurações da lista
     list_per_page = 25

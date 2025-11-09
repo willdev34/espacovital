@@ -295,8 +295,7 @@ class EspacoAdmin(admin.ModelAdmin):
     ]
     
     # Inlines
-    inlines = [FotoGaleriaEspacoInline, EspacoEspecialidadeInline]
-    # AvaliacaoEspacoInline temporariamente desabilitado para debug do erro 500
+    inlines = [FotoGaleriaEspacoInline, EspacoEspecialidadeInline, AvaliacaoEspacoInline]
     
     # Configurações da lista
     list_per_page = 25
