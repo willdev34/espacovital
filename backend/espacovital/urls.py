@@ -9,7 +9,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import api_estados, api_cidades
+from core.views import api_estados, api_cidades, fix_sequences_view
+
 
 # ===============================================================
 # URLs Principais da Aplicação
@@ -33,6 +34,9 @@ urlpatterns = [
     # APIs públicas
     path('api/estados/', api_estados, name='api_estados'),
     path('api/cidades/', api_cidades, name='api_cidades'),
+
+    # Temporário - Corrigir sequences
+    path('admin/fix-sequences/', fix_sequences_view, name='fix_sequences'),
     
     # URLs futuras
     # path('terapias/', include('terapias.urls')),

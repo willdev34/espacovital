@@ -15,6 +15,13 @@ import hashlib
 import time
 from datetime import datetime
 
+# Temporário
+from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.management import call_command
+import io
+
 
 class HomeView(TemplateView):
     """
@@ -385,3 +392,23 @@ def api_cidades(request):
         return JsonResponse({'error': 'Estado ou País não informado'}, status=400)
     
     return JsonResponse(list(cidades), safe=False)
+
+@staff_member_required
+@require_http_methods(["GET"])
+def fix_sequences_view(request):
+    """View temporária para corrigir sequences do PostgreSQL"""
+    try:
+        # Captura a saída do comando
+        output = io.StringIO()
+        call_command('fix_sequences', stdout=output)
+        result = output.getvalue()
+        
+        return HttpResponse(
+            f"<pre>{result}</pre>",
+            content_type="text/html"
+        )
+    except Exception as e:
+        return HttpResponse(
+            f"<h2>❌ Erro ao corrigir sequences:</h2><pre>{str(e)}</pre>",
+            content_type="text/html"
+        )
