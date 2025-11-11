@@ -97,7 +97,7 @@ Data: 07/09/2025
                         Buscar Terapeuta
                     </button>
 
-                    <a href="{% url 'terapias:destaques' %}" class="text-gray-700 hover:text-[#1E5C5C] font-medium transition-colors"" 
+                    <a href="{% url 'terapias:destaques' %}" 
                     class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Terapias
                     </a>
@@ -112,7 +112,7 @@ Data: 07/09/2025
                         Blog
                     </a>
                     
-                    <a href="#sobre" 
+                    <a href="{% url 'core:sobre' %}" 
                     class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
                         Sobre
                     </a>
@@ -187,20 +187,20 @@ Data: 07/09/2025
                     Buscar Terapeuta
                     </button>
 
-                    <a href="{% url 'terapias:destaques' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-[#1E5C5C] hover:bg-gray-50"" 
-                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                    <a href="{% url 'terapias:destaques' %}"
+                    class="text-gray-700 font-medium py-2 w-full text-left">
                         Terapias
                     </a>
                     <a href="{% url 'espacos:busca_avancada' %}" 
-                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                    class="text-gray-700 font-medium py-2 w-full text-left">
                         Espaços
                     </a>
                     <a href="#blog" 
-                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                    class="text-gray-700 font-medium py-2 w-full text-left">
                         Blog
                     </a>
-                    <a href="#sobre" 
-                    class="block px-3 py-2 text-gray-700 hover:text-primary transition-colors">
+                    <a href="{% url 'core:sobre' %}" 
+                    class="text-gray-700 font-medium py-2 w-full text-left">
                         Sobre
                     </a>
                     <hr class="border-gray-200 my-2">
@@ -268,10 +268,10 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-4 text-lg">Para você</h3>
                         <ul class="space-y-3 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary transition-colors">Buscar Terapeuta</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Encontre um espaço</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Artigos do Blog</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Qual terapia escolher?</a></li>
+                            <li><a href="{% url 'terapeutas:buscar' %}" class="hover:text-primary transition-colors">Buscar Terapeuta</a></li>
+                            <li><a href="{% url 'espacos:busca_avancada' %}" class="hover:text-primary transition-colors">Encontre um espaço</a></li>
+                            <li><a href="#blog" class="hover:text-primary transition-colors">Artigos do Blog</a></li>
+                            <li><a href="{% url 'core:indique_terapia' %}" class="hover:text-primary transition-colors">Qual terapia escolher?</a></li>
                         </ul>
                     </div>
                     
@@ -279,10 +279,10 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-4 text-lg">Para Profissionais</h3>
                         <ul class="space-y-3 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary transition-colors">Faça parte dessa egrégora</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Conecte-se</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Seja Premium</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Destaque seu perfil no VIP</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary transition-colors">Faça parte dessa egrégora</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary transition-colors">Conecte-se</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary transition-colors">Seja Premium</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary transition-colors">Destaque seu perfil no VIP</a></li>
                         </ul>
                     </div>
                     
@@ -290,12 +290,13 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-4 text-lg">Empresa</h3>
                         <ul class="space-y-3 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary transition-colors">Sobre</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Contatos</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Parceria & Publicidade</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Política de cookies</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Aviso de privacidade</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Termos & Denúncias</a></li>
+                            <li><a href="{% url 'core:sobre' %}" class="hover:text-primary transition-colors">Sobre</a></li>
+                            <li><a href="{% url 'core:contato' %}" class="hover:text-primary transition-colors">Contatos</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary transition-colors">Parceria & Publicidade</a></li>
+                            <li><a href="{% url 'core:cookies' %}" class="hover:text-primary transition-colors">Política de cookies</a></li>
+                            <li><a href="{% url 'core:privacidade' %}" class="hover:text-primary transition-colors">Aviso de privacidade</a></li>
+                            <li><a href="{% url 'core:termos' %}" class="hover:text-primary transition-colors">Termos & Denúncias</a></li>
+                            <li><a href="{% url 'core:faq' %}" class="hover:text-primary transition-colors">Perguntas Frequentes</a></li>
                         </ul>
                     </div>
                 </div>
@@ -348,10 +349,10 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-3">Para você</h3>
                         <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary">Buscar Terapeuta</a></li>
-                            <li><a href="#" class="hover:text-primary">Encontre um espaço</a></li>
-                            <li><a href="#" class="hover:text-primary">Artigos do Blog</a></li>
-                            <li><a href="#" class="hover:text-primary">Qual terapia escolher?</a></li>
+                            <li><a href="{% url 'terapeutas:buscar' %}" class="hover:text-primary">Buscar Terapeuta</a></li>
+                            <li><a href="{% url 'espacos:busca_avancada' %}" class="hover:text-primary">Encontre um espaço</a></li>
+                            <li><a href="#blog" class="hover:text-primary">Artigos do Blog</a></li>
+                            <li><a href="{% url 'core:indique_terapia' %}" class="hover:text-primary">Qual terapia escolher?</a></li>
                         </ul>
                     </div>
                     
@@ -359,10 +360,10 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-3">Para Profissionais</h3>
                         <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary">Faça parte dessa egrégora</a></li>
-                            <li><a href="#" class="hover:text-primary">Conecte-se</a></li>
-                            <li><a href="#" class="hover:text-primary">Seja Premium</a></li>
-                            <li><a href="#" class="hover:text-primary">Destaque seu perfil no VIP</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary">Faça parte dessa egrégora</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary">Conecte-se</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary">Seja Premium</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary">Destaque seu perfil no VIP</a></li>
                         </ul>
                     </div>
                     
@@ -370,12 +371,13 @@ Data: 07/09/2025
                     <div>
                         <h3 class="font-poppins font-semibold text-primary mb-3">Empresa</h3>
                         <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="#" class="hover:text-primary">Sobre</a></li>
-                            <li><a href="#" class="hover:text-primary">Contatos</a></li>
-                            <li><a href="#" class="hover:text-primary">Parceria & Publicidade</a></li>
-                            <li><a href="#" class="hover:text-primary">Política de cookies</a></li>
-                            <li><a href="#" class="hover:text-primary">Aviso de privacidade</a></li>
-                            <li><a href="#" class="hover:text-primary">Termos & Denúncias</a></li>
+                            <li><a href="{% url 'core:sobre' %}" class="hover:text-primary">Sobre</a></li>
+                            <li><a href="{% url 'core:contato' %}" class="hover:text-primary">Contatos</a></li>
+                            <li><a href="{% url 'core:parceiro' %}" class="hover:text-primary">Parceria & Publicidade</a></li>
+                            <li><a href="{% url 'core:cookies' %}" class="hover:text-primary">Política de cookies</a></li>
+                            <li><a href="{% url 'core:privacidade' %}" class="hover:text-primary">Aviso de privacidade</a></li>
+                            <li><a href="{% url 'core:termos' %}" class="hover:text-primary">Termos & Denúncias</a></li>
+                            <li><a href="{% url 'core:faq' %}" class="hover:text-primary">Perguntas Frequentes</a></li>
                         </ul>
                     </div>
                 </div>
