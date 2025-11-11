@@ -42,12 +42,9 @@ SEÇÃO PRINCIPAL - BUSCA DE TERAPEUTAS
         </h2>
         
         <form id="filtro-terapeutas" 
-              method="get"
-              hx-get="{% url 'terapeutas:buscar' %}" 
-              hx-target="#lista-terapeutas" 
-              hx-swap="innerHTML"
-              hx-indicator="#loading-indicator"
-              class="space-y-6">
+            method="get"
+            action="{% url 'terapeutas:buscar' %}"
+            class="space-y-6">
             
             <!-- ============================================ -->
             <!-- FILTRO: TIPO DE SESSÃO -->
