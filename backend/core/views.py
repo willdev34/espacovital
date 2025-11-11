@@ -521,7 +521,7 @@ class ContatoView(CreateView):
     """
     model = Contact
     template_name = 'core/contato.html'
-    fields = ['nome', 'email', 'telefone', 'assunto', 'mensagem']
+    fields = ['name', 'email', 'phone', 'subject', 'message']
     success_url = reverse_lazy('core:contato')
     
     def get_context_data(self, **kwargs):
