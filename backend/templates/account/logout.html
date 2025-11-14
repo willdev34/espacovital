@@ -16,8 +16,8 @@
         
         <!-- Logo -->
         <div class="text-center">
-            <a href="{% url 'home' %}">
-                <img class="mx-auto h-20 w-auto" src="{% static 'images/logo.png' %}" alt="Espaço Vital">
+            <a href="{% url 'core:home' %}">
+                <img class="mx-auto h-20 w-auto" src="{% static 'images/logo/logotipo_minimalista.png' %}" alt="Espaço Vital">
             </a>
             <h2 class="mt-6 text-3xl font-bold text-gray-900">
                 Deseja sair?
@@ -62,7 +62,7 @@
                     </button>
                     
                     <!-- Botão Cancelar -->
-                    <a href="{% if user.is_authenticated and user.terapeuta %}{% url 'terapeutas:dashboard' %}{% else %}{% url 'home' %}{% endif %}" 
+                    <a href="{% if user.is_authenticated and user.terapeuta %}{% url 'terapeutas:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}"
                        class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -76,7 +76,7 @@
         <!-- Links Úteis -->
         <div class="text-center text-sm">
             <p class="text-gray-600">
-                <a href="{% url 'home' %}" class="font-medium text-primary hover:text-primary-dark">
+                <a href="{% url 'core:home' %}" class="font-medium text-primary hover:text-primary-dark">
                     Voltar para home
                 </a>
             </p>
