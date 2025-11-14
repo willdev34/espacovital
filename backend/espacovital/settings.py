@@ -319,16 +319,22 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # Configurações de conta
+# Django Allauth
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Não obrigatório para admins
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permite login com email OU username
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = False
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # Redirecionamentos
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'  # Fallback (caso o adapter não funcione)
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
+
+# Adapter customizado do Allauth (redireciona baseado no tipo de usuário)
+ACCOUNT_ADAPTER = 'core.adapters.CustomAccountAdapter'
 
 # ===============================================================
 # CKEDITOR (Editor de Texto Rico)

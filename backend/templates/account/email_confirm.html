@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{# ===============================================================
+   Título: Confirmação de Email - Espaço Vital
+   Descrição: Página para confirmar endereço de email
+   Autor: Will
+   Data: 13/11/2025
+   =============================================================== #}
+
+{% block title %}Confirmar Email - Espaço Vital{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-beige-50 to-beige-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        
+        <!-- Logo -->
+        <div class="text-center">
+            <a href="{% url 'core:home' %}">
+                <img class="mx-auto h-20 w-auto" src="{% static 'images/logo/logotipo_minimalista_fundo.png' %}" alt="Espaço Vital">
+            </a>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">
+                📧 Confirme seu email
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Enviamos um link de confirmação para seu email
+            </p>
+        </div>
+        
+        <!-- Card de Confirmação -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            
+            <!-- Ícone de Email -->
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="text-center space-y-4">
+                <p class="text-gray-700">
+                    Enviamos um link de confirmação para:
+                </p>
+                <p class="text-lg font-semibold text-primary">
+                    {{ email }}
+                </p>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                    <p class="font-medium mb-2">📬 Verifique sua caixa de entrada</p>
+                    <p>Clique no link que enviamos para confirmar seu email e ativar sua conta.</p>
+                </div>
+                
+                <div class="text-xs text-gray-500 space-y-2 pt-4">
+                    <p>💡 <strong>Dica:</strong> Se não recebeu o email, verifique sua pasta de spam.</p>
+                    <p>⏱️ O link expira em 24 horas.</p>
+                </div>
+            </div>
+            
+            <!-- Botão Reenviar -->
+            <div class="mt-6">
+                <form method="post" action="{% url 'account_email' %}">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="w-full py-3 px-4 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all">
+                        🔄 Reenviar email de confirmação
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+        
+        <!-- Links Úteis -->
+        <div class="text-center space-y-2 text-sm">
+            <p class="text-gray-600">
+                <a href="{% url 'account_login' %}" class="font-medium text-primary hover:text-primary-dark">
+                    ← Voltar para login
+                </a>
+            </p>
+            <p class="text-gray-600">
+                <a href="{% url 'core:home' %}" class="font-medium text-gray-500 hover:text-gray-700">
+                    Ir para home
+                </a>
+            </p>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
