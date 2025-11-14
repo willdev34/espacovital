@@ -1,0 +1,447 @@
+{% extends 'terapeutas/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{# ===============================================================
+   Título: Gerenciar Plano de Assinatura - Espaço Vital
+   Descrição: Página para visualizar plano atual e fazer upgrade
+   Autor: Will
+   Data: 13/11/2025
+   =============================================================== #}
+
+{% block dashboard_content %}
+<!-- ===== Container de Assinatura ===== -->
+<div class="space-y-6">
+    
+    <!-- ===== Header da Página ===== -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h1 class="text-2xl font-bold text-gray-900">💳 Meu Plano</h1>
+        <p class="text-gray-600 text-sm mt-1">
+            Gerencie sua assinatura e aproveite todos os benefícios
+        </p>
+    </div>
+    
+    <!-- ===== Status do Plano Atual ===== -->
+    <div class="bg-gradient-to-r {% if is_premium_s %}from-yellow-400 to-yellow-600{% elif is_premium_a %}from-blue-500 to-blue-600{% else %}from-gray-400 to-gray-600{% endif %} rounded-lg shadow-lg p-8 text-white">
+        <div class="flex items-center justify-between flex-wrap gap-6">
+            <div class="flex items-center gap-4">
+                {% if is_premium_s %}
+                <div class="p-4 bg-white bg-opacity-20 rounded-full animate-pulse">
+                    <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                </div>
+                {% elif is_premium_a %}
+                <div class="p-4 bg-white bg-opacity-20 rounded-full">
+                    <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                </div>
+                {% else %}
+                <div class="p-4 bg-white bg-opacity-20 rounded-full">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                {% endif %}
+                
+                <div>
+                    <p class="text-sm text-white text-opacity-80 mb-1">Plano Atual</p>
+                    <h2 class="text-4xl font-bold">{{ plano_atual }}</h2>
+                    {% if is_premium_s %}
+                    <p class="text-sm text-white text-opacity-90 mt-1">
+                        🏆 Você é um dos profissionais de elite da Categoria S!
+                    </p>
+                    {% elif is_premium_a %}
+                    <p class="text-sm text-white text-opacity-90 mt-1">
+                        ⭐ Você tem acesso a recursos premium avançados!
+                    </p>
+                    {% else %}
+                    <p class="text-sm text-white text-opacity-90 mt-1">
+                        Faça upgrade para desbloquear recursos exclusivos
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if is_premium %}
+            <div class="text-right">
+                <p class="text-sm text-white text-opacity-80 mb-1">Próxima Cobrança</p>
+                <p class="text-2xl font-bold">R$ 49,90</p>
+                <p class="text-xs text-white text-opacity-75 mt-1">em 15/12/2025</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- ===== Comparação de Planos ===== -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        {% for plano in planos %}
+        <div class="relative bg-white rounded-xl shadow-lg border-2 {% if plano.destaque %}border-primary{% else %}border-gray-200{% endif %} overflow-hidden">
+            
+            <!-- Badge de Destaque -->
+            {% if plano.destaque %}
+            <div class="absolute top-0 right-0 bg-gradient-to-r from-primary to-mint text-white px-6 py-2 text-xs font-bold uppercase tracking-wider">
+                Mais Popular
+            </div>
+            {% endif %}
+            
+            <!-- Cabeçalho do Plano -->
+            <div class="p-8 {% if plano.destaque %}bg-gradient-to-br from-primary to-mint text-white{% else %}bg-gray-50{% endif %}">
+                <h3 class="text-2xl font-bold mb-2">{{ plano.nome }}</h3>
+                <p class="text-sm {% if plano.destaque %}text-white text-opacity-90{% else %}text-gray-600{% endif %} mb-6">
+                    {{ plano.descricao }}
+                </p>
+                
+                <!-- Preço -->
+                <div class="flex items-baseline gap-2 mb-2">
+                    {% if plano.preco_original %}
+                    <span class="text-lg line-through {% if plano.destaque %}text-white text-opacity-60{% else %}text-gray-400{% endif %}">
+                        {{ plano.preco_original }}
+                    </span>
+                    {% endif %}
+                    <span class="text-5xl font-bold">{{ plano.preco }}</span>
+                    <span class="text-sm {% if plano.destaque %}text-white text-opacity-80{% else %}text-gray-600{% endif %}">
+                        /{{ plano.periodo }}
+                    </span>
+                </div>
+                
+                {% if plano.desconto %}
+                <div class="inline-flex items-center px-3 py-1 bg-coral text-white text-xs font-bold rounded-full">
+                    {{ plano.desconto }}
+                </div>
+                {% endif %}
+                
+                {% if plano.economia %}
+                <p class="text-xs {% if plano.destaque %}text-white text-opacity-80{% else %}text-gray-500{% endif %} mt-2">
+                    {{ plano.economia }}
+                </p>
+                {% endif %}
+            </div>
+            
+            <!-- Contador de Vagas Categoria S -->
+            {% if plano.id == 'premium_s' %}
+                {% if not plano.disponivel %}
+                <div class="px-8 py-4 bg-red-50 border-t border-b border-red-200">
+                    <p class="text-center text-red-800 font-semibold text-sm">
+                        ⚠️ Todas as {{ max_categoria_s }} vagas da Categoria S estão preenchidas
+                    </p>
+                    <p class="text-center text-red-600 text-xs mt-1">
+                        Entre na lista de espera para ser avisado quando abrir vagas
+                    </p>
+                </div>
+                {% elif plano.vagas_restantes <= 10 %}
+                <div class="px-8 py-4 bg-yellow-50 border-t border-b border-yellow-200">
+                    <p class="text-center text-yellow-800 font-semibold text-sm flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        ⚡ Apenas {{ plano.vagas_restantes }} vagas restantes!
+                    </p>
+                    <p class="text-center text-yellow-700 text-xs mt-1">
+                        Seja um dos {{ max_categoria_s }} profissionais de elite
+                    </p>
+                </div>
+                {% else %}
+                <div class="px-8 py-4 bg-green-50 border-t border-b border-green-200">
+                    <p class="text-center text-green-800 font-semibold text-sm">
+                        ✅ {{ plano.vagas_restantes }} vagas disponíveis de {{ max_categoria_s }}
+                    </p>
+                </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Lista de Benefícios -->
+            <div class="p-8">
+                <ul class="space-y-4 mb-8">
+                    {% for beneficio in plano.beneficios %}
+                    <li class="flex items-start gap-3">
+                        <svg class="w-6 h-6 {% if plano.destaque %}text-mint{% else %}text-gray-400{% endif %} flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm text-gray-700">{{ beneficio }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if plano.limitacoes %}
+                <div class="border-t border-gray-200 pt-6 mb-6">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Limitações</p>
+                    <ul class="space-y-2">
+                        {% for limitacao in plano.limitacoes %}
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-gray-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-xs text-gray-500">{{ limitacao }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <!-- Botão de Ação -->
+                {% if plano.atual %}
+                <button disabled
+                        class="w-full py-4 bg-gray-100 text-gray-500 font-semibold rounded-lg cursor-not-allowed">
+                    Plano Atual
+                </button>
+                {% else %}
+                    {% if plano.id == 'premium_s' and not plano.disponivel %}
+                    <button disabled
+                            class="w-full py-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed">
+                        Vagas Esgotadas
+                    </button>
+                    {% elif plano.destaque %}
+                    <button onclick="fazerUpgrade('{{ plano.nome }}', '{{ plano.id }}')"
+                            class="w-full py-4 bg-gradient-to-r {% if plano.id == 'premium_s' %}from-yellow-400 to-yellow-600{% else %}from-primary to-mint{% endif %} text-white font-bold rounded-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        Fazer Upgrade Agora
+                    </button>
+                    {% else %}
+                    <button onclick="manterGratuito()"
+                            class="w-full py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all">
+                        Manter Gratuito
+                    </button>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+        </div>
+        {% endfor %}
+        
+    </div>
+    
+    <!-- ===== Benefícios Exclusivos Premium ===== -->
+    {% if not is_premium %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+            ✨ Destaques do Plano Premium
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for beneficio in beneficios_premium_exclusivos %}
+            <div class="flex items-start gap-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg">
+                <div class="text-4xl">{{ beneficio.icone }}</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-900 mb-2">{{ beneficio.titulo }}</h3>
+                    <p class="text-sm text-gray-600">{{ beneficio.descricao }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ===== Depoimentos de Usuários Premium ===== -->
+    <div class="bg-gradient-to-r from-primary to-mint rounded-lg shadow-lg p-8 text-white">
+        <h2 class="text-2xl font-bold mb-6 text-center">
+            💬 O que dizem nossos usuários Premium
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Depoimento 1 -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    {% for i in "12345" %}
+                    <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-sm text-white text-opacity-90 mb-4 italic">
+                    "O plano Premium triplicou meus contatos! Aparecer em destaque fez toda a diferença."
+                </p>
+                <p class="text-xs font-semibold">— Ana Silva, Reikiana</p>
+            </div>
+            
+            <!-- Depoimento 2 -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    {% for i in "12345" %}
+                    <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-sm text-white text-opacity-90 mb-4 italic">
+                    "As estatísticas detalhadas me ajudaram a entender melhor meu público e crescer."
+                </p>
+                <p class="text-xs font-semibold">— Carlos Mendes, Terapeuta Holístico</p>
+            </div>
+            
+            <!-- Depoimento 3 -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    {% for i in "12345" %}
+                    <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-sm text-white text-opacity-90 mb-4 italic">
+                    "Vale cada centavo! O badge premium transmite profissionalismo e confiança."
+                </p>
+                <p class="text-xs font-semibold">— Mariana Costa, Masssoterapeuta</p>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- ===== FAQ sobre Assinatura ===== -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+            ❓ Perguntas Frequentes
+        </h2>
+        
+        <div class="space-y-4 max-w-3xl mx-auto">
+            
+            <!-- FAQ 1 -->
+            <div class="border border-gray-200 rounded-lg">
+                <button onclick="toggleFAQ(1)" 
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <span class="font-semibold text-gray-900">Como funciona o período de teste?</span>
+                    <svg id="faq-icon-1" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="faq-content-1" class="hidden p-4 pt-0 text-sm text-gray-600">
+                    Você pode testar o plano Premium por 7 dias gratuitamente. Durante este período, você tem acesso a todos os recursos premium sem compromisso. Se decidir não continuar, basta cancelar antes do fim do período de teste.
+                </div>
+            </div>
+            
+            <!-- FAQ 2 -->
+            <div class="border border-gray-200 rounded-lg">
+                <button onclick="toggleFAQ(2)" 
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <span class="font-semibold text-gray-900">Posso cancelar a qualquer momento?</span>
+                    <svg id="faq-icon-2" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="faq-content-2" class="hidden p-4 pt-0 text-sm text-gray-600">
+                    Sim! Você pode cancelar sua assinatura a qualquer momento, sem multas ou taxas. Ao cancelar, você continuará tendo acesso aos benefícios premium até o fim do período já pago.
+                </div>
+            </div>
+            
+            <!-- FAQ 3 -->
+            <div class="border border-gray-200 rounded-lg">
+                <button onclick="toggleFAQ(3)" 
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <span class="font-semibold text-gray-900">Quais formas de pagamento são aceitas?</span>
+                    <svg id="faq-icon-3" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="faq-content-3" class="hidden p-4 pt-0 text-sm text-gray-600">
+                    Aceitamos cartões de crédito (Visa, Mastercard, Elo, Amex), PIX e boleto bancário. O pagamento é processado de forma segura através do Mercado Pago.
+                </div>
+            </div>
+            
+            <!-- FAQ 4 -->
+            <div class="border border-gray-200 rounded-lg">
+                <button onclick="toggleFAQ(4)" 
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <span class="font-semibold text-gray-900">Posso voltar ao plano gratuito depois?</span>
+                    <svg id="faq-icon-4" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="faq-content-4" class="hidden p-4 pt-0 text-sm text-gray-600">
+                    Sim! Ao cancelar sua assinatura premium, seu perfil automaticamente volta para o plano gratuito. Todos os seus dados e informações são mantidos, mas você perderá acesso aos recursos exclusivos do premium.
+                </div>
+            </div>
+            
+            <!-- FAQ 5 -->
+            <div class="border border-gray-200 rounded-lg">
+                <button onclick="toggleFAQ(5)" 
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <span class="font-semibold text-gray-900">O que acontece se eu não pagar?</span>
+                    <svg id="faq-icon-5" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="faq-content-5" class="hidden p-4 pt-0 text-sm text-gray-600">
+                    Se houver falha no pagamento, você receberá notificações por email. Terá um período de 5 dias para regularizar. Após este período, sua conta será automaticamente rebaixada para o plano gratuito, mas seus dados serão preservados.
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- ===== CTA Final ===== -->
+    {% if not is_premium_s %}
+    <div class="text-center bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+            Pronto para crescer? 🚀
+        </h2>
+        <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Junte-se a centenas de terapeutas que já estão usando o plano Premium para aumentar sua visibilidade e conquistar mais clientes.
+        </p>
+        <button onclick="fazerUpgrade('Premium')"
+                class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary to-mint text-white font-bold text-lg rounded-lg hover:shadow-xl transition-all transform hover:scale-105">
+            Fazer Upgrade Agora
+            <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+        </button>
+        <p class="text-xs text-gray-500 mt-4">
+            7 dias de teste grátis • Cancele quando quiser • Sem fidelidade
+        </p>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ===== JavaScript para Funcionalidades da Página =====
+
+function fazerUpgrade(plano) {
+    // TODO: Implementar integração com gateway de pagamento
+    alert(`Redirecionando para checkout do plano ${plano}...`);
+    
+    // Exemplo de redirecionamento:
+    // window.location.href = '/checkout/premium/';
+    
+    console.log('Fazer upgrade para:', plano);
+}
+
+function manterGratuito() {
+    alert('Você permanecerá no plano gratuito. Pode fazer upgrade a qualquer momento!');
+}
+
+function toggleFAQ(numero) {
+    const content = document.getElementById(`faq-content-${numero}`);
+    const icon = document.getElementById(`faq-icon-${numero}`);
+    
+    // Toggle do conteúdo
+    content.classList.toggle('hidden');
+    
+    // Rotacionar ícone
+    if (content.classList.contains('hidden')) {
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+// Fechar outros FAQs ao abrir um novo
+document.querySelectorAll('[id^="faq-content-"]').forEach((content, index) => {
+    const button = content.previousElementSibling;
+    button.addEventListener('click', function() {
+        // Fechar todos os outros
+        document.querySelectorAll('[id^="faq-content-"]').forEach((otherContent, otherIndex) => {
+            if (otherIndex !== index && !otherContent.classList.contains('hidden')) {
+                otherContent.classList.add('hidden');
+                const otherIcon = document.getElementById(`faq-icon-${otherIndex + 1}`);
+                if (otherIcon) {
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

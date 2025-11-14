@@ -1,0 +1,446 @@
+{% extends 'terapeutas/dashboard/base_dashboard.html' %}
+{# ===============================================================
+   Título: Gerenciar Espaços Vinculados - Espaço Vital
+   Descrição: Página para listar e vincular espaços terapêuticos
+   Autor: Will
+   Data: 13/11/2025
+   =============================================================== #}
+
+{% load static %}
+
+{% block dashboard_content %}
+<!-- ===== Container de Espaços ===== -->
+<div class="space-y-6">
+    
+    <!-- ===== Header da Página ===== -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h1 class="text-2xl font-bold text-gray-900">🏢 Espaços Terapêuticos</h1>
+        <p class="text-gray-600 text-sm mt-1">
+            Gerencie os espaços onde você atende seus clientes
+        </p>
+    </div>
+    
+    <!-- ===== Contador de Espaços ===== -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-gradient-to-br from-primary to-mint rounded-lg shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-white text-opacity-80 mb-1">Espaços Vinculados</p>
+                    <p class="text-4xl font-bold">{{ total_espacos_vinculados }}</p>
+                </div>
+                <div class="p-3 bg-white bg-opacity-20 rounded-lg">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Sugestões Disponíveis</p>
+                    <p class="text-4xl font-bold text-gray-900">{{ total_sugestoes }}</p>
+                </div>
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Cidades Atendidas</p>
+                    <p class="text-4xl font-bold text-gray-900">{{ terapeuta.cidades_atendimento.count }}</p>
+                </div>
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- ===== Verificação de Cidades ===== -->
+    {% if not tem_cidades %}
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+        <div class="flex items-start">
+            <svg class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-yellow-800 mb-2">Adicione cidades de atendimento</h3>
+                <p class="text-sm text-yellow-700 mb-4">
+                    Para receber sugestões de espaços próximos a você, primeiro cadastre as cidades onde você atende.
+                </p>
+                <a href="{% url 'terapeutas:dashboard_editar_perfil' %}" 
+                   class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-all">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Adicionar Cidades
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ===== Meus Espaços Vinculados ===== -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-gray-900">Meus Espaços</h2>
+            {% if total_espacos_vinculados > 0 %}
+            <span class="px-3 py-1 bg-primary text-white text-sm font-medium rounded-full">
+                {{ total_espacos_vinculados }} {% if total_espacos_vinculados == 1 %}espaço{% else %}espaços{% endif %}
+            </span>
+            {% endif %}
+        </div>
+        
+        {% if espacos_vinculados %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% for espaco in espacos_vinculados %}
+            <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                <!-- Imagem do Espaço -->
+                <div class="relative h-48 bg-gray-200">
+                    {% if espaco.foto_principal %}
+                    <img src="{{ espaco.foto_principal.url }}" 
+                         alt="{{ espaco.nome }}"
+                         class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-mint">
+                        <span class="text-6xl font-bold text-white opacity-50">
+                            {{ espaco.nome.0 }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge Verificado -->
+                    {% if espaco.verificado %}
+                    <div class="absolute top-3 right-3 bg-mint text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Verificado
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Informações do Espaço -->
+                <div class="p-5">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ espaco.nome }}</h3>
+                    
+                    <!-- Localização -->
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>{{ espaco.cidade.nome }} - {{ espaco.cidade.estado.sigla }}</span>
+                    </div>
+                    
+                    <!-- Comodidades (3 primeiras) -->
+                    {% if espaco.comodidades.all %}
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {% for comodidade in espaco.comodidades.all|slice:":3" %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                            {{ comodidade.nome }}
+                        </span>
+                        {% endfor %}
+                        {% if espaco.comodidades.count > 3 %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                            +{{ espaco.comodidades.count|add:"-3" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Descrição Curta -->
+                    {% if espaco.descricao %}
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+                        {{ espaco.descricao|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Ações -->
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'espacos:detalhe' espaco.slug %}" 
+                            target="_blank"
+                            class="flex-1 px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-all text-center">
+                                Ver Detalhes
+                        </a>
+                        
+                        <button onclick="desvincularEspaco({{ espaco.id }}, '{{ espaco.nome }}')"
+                                class="px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-all">
+                            Desvincular
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            <p class="text-gray-500 font-medium mb-2">Você ainda não está vinculado a nenhum espaço</p>
+            <p class="text-gray-400 text-sm mb-6">
+                Vincule-se a espaços terapêuticos para oferecer mais opções aos seus clientes
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- ===== Sugestões de Espaços ===== -->
+    {% if tem_cidades %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900">Espaços Sugeridos</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                    Baseado nas suas cidades de atendimento
+                </p>
+            </div>
+            {% if total_sugestoes > 0 %}
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                {{ total_sugestoes }} {% if total_sugestoes == 1 %}sugestão{% else %}sugestões{% endif %}
+            </span>
+            {% endif %}
+        </div>
+        
+        {% if espacos_disponiveis %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% for espaco in espacos_disponiveis %}
+            <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                <!-- Imagem do Espaço -->
+                <div class="relative h-40 bg-gray-200">
+                    {% if espaco.foto_principal %}
+                    <img src="{{ espaco.foto_principal.url }}" 
+                         alt="{{ espaco.nome }}"
+                         class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-500">
+                        <span class="text-5xl font-bold text-white opacity-50">
+                            {{ espaco.nome.0 }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge Novo -->
+                    <div class="absolute top-3 right-3 bg-coral text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        Novo
+                    </div>
+                </div>
+                
+                <!-- Informações -->
+                <div class="p-4">
+                    <h3 class="text-base font-bold text-gray-900 mb-2">{{ espaco.nome }}</h3>
+                    
+                    <!-- Localização -->
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>{{ espaco.cidade.nome }} - {{ espaco.cidade.estado.sigla }}</span>
+                    </div>
+                    
+                    <!-- Comodidades (2 primeiras) -->
+                    {% if espaco.comodidades.all %}
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        {% for comodidade in espaco.comodidades.all|slice:":2" %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                            {{ comodidade.nome }}
+                        </span>
+                        {% endfor %}
+                        {% if espaco.comodidades.count > 2 %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                            +{{ espaco.comodidades.count|add:"-2" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Ações -->
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'espacos:detalhe' espaco.slug %}" 
+                            target="_blank"
+                            class="flex-1 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-all text-center">
+                                Ver Perfil
+                        </a>
+                        
+                        <button onclick="vincularEspaco({{ espaco.id }}, '{{ espaco.nome }}')"
+                                class="flex-1 px-3 py-2 bg-mint text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-all">
+                            Vincular
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if total_sugestoes > 10 %}
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Mostrando 10 de {{ total_sugestoes }} espaços disponíveis
+            </p>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <p class="text-gray-500 font-medium mb-2">Nenhuma sugestão disponível no momento</p>
+            <p class="text-gray-400 text-sm">
+                Não encontramos espaços disponíveis nas suas cidades de atendimento
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- ===== Benefícios de Vincular Espaços ===== -->
+    <div class="bg-gradient-to-r from-primary to-mint rounded-lg shadow-lg p-8 text-white">
+        <h2 class="text-2xl font-bold mb-4">💡 Por que vincular-se a espaços?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-semibold mb-1">Mais Opções para Clientes</p>
+                    <p class="text-sm text-white text-opacity-90">
+                        Ofereça diferentes locais de atendimento para facilitar o acesso dos seus clientes
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-semibold mb-1">Infraestrutura Completa</p>
+                    <p class="text-sm text-white text-opacity-90">
+                        Utilize espaços equipados com salas preparadas e comodidades profissionais
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-semibold mb-1">Networking</p>
+                    <p class="text-sm text-white text-opacity-90">
+                        Conecte-se com outros profissionais e amplie sua rede de contatos
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-semibold mb-1">Visibilidade</p>
+                    <p class="text-sm text-white text-opacity-90">
+                        Apareça nas buscas dos clientes que procuram por espaços específicos
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ===== JavaScript para Vincular/Desvincular Espaços =====
+
+function vincularEspaco(espacoId, espacoNome) {
+    if (confirm(`Deseja vincular-se ao espaço "${espacoNome}"?`)) {
+        // TODO: Implementar chamada AJAX para vincular
+        console.log('Vincular espaço:', espacoId);
+        
+        // Exemplo de implementação:
+        fetch(`/terapeutas/dashboard/espacos/vincular/${espacoId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Espaço vinculado com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao vincular espaço: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao vincular espaço. Tente novamente.');
+        });
+    }
+}
+
+function desvincularEspaco(espacoId, espacoNome) {
+    if (confirm(`Tem certeza que deseja desvincular-se do espaço "${espacoNome}"?`)) {
+        // TODO: Implementar chamada AJAX para desvincular
+        console.log('Desvincular espaço:', espacoId);
+        
+        // Exemplo de implementação:
+        fetch(`/terapeutas/dashboard/espacos/desvincular/${espacoId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Espaço desvinculado com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao desvincular espaço: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao desvincular espaço. Tente novamente.');
+        });
+    }
+}
+
+// Função auxiliar para pegar CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

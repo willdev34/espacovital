@@ -1,0 +1,567 @@
+{% extends 'terapeutas/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{# ===============================================================
+   Título: Editar Perfil do Terapeuta - Espaço Vital
+   Descrição: Formulário completo para edição de dados profissionais
+   Autor: Will
+   Data: 13/11/2025
+=============================================================== #}
+
+{% block dashboard_content %}
+<!-- ===== Container do Formulário ===== -->
+<div class="space-y-6">
+    
+    <!-- ===== Header da Página ===== -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h1 class="text-2xl font-bold text-gray-900">Editar Perfil</h1>
+        <p class="text-gray-600 text-sm mt-1">
+            Mantenha suas informações atualizadas para atrair mais clientes
+        </p>
+    </div>
+    
+    <!-- ===== Formulário de Edição ===== -->
+    <form method="POST" enctype="multipart/form-data" id="form-editar-perfil" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- ===== Seção 1: Informações Básicas ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                📋 Informações Básicas
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Foto de Perfil -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Foto de Perfil *
+                    </label>
+                    <div class="flex items-center gap-6">
+                        <!-- Preview da foto atual -->
+                        <div class="flex-shrink-0">
+                            {% if terapeuta.foto %}
+                            <img id="preview-foto" 
+                                 src="{{ terapeuta.foto.url }}" 
+                                 alt="Foto atual"
+                                 class="w-24 h-24 rounded-full object-cover border-2 border-gray-300">
+                            {% else %}
+                            <div id="preview-foto" 
+                                 class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl font-bold border-2 border-gray-300">
+                                {{ terapeuta.nome_completo.0|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Input de upload -->
+                        <div class="flex-1">
+                            <input type="file" 
+                                   name="foto" 
+                                   id="id_foto"
+                                   accept="image/*"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer">
+                            <p class="text-xs text-gray-500 mt-2">
+                                Formatos aceitos: JPG, PNG. Tamanho máximo: 5MB
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nome Completo -->
+                <div class="md:col-span-2">
+                    <label for="id_nome_completo" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome Completo *
+                    </label>
+                    <input type="text" 
+                           name="nome_completo" 
+                           id="id_nome_completo"
+                           value="{{ terapeuta.nome_completo }}"
+                           required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- CPF -->
+                <div>
+                    <label for="id_cpf" class="block text-sm font-medium text-gray-700 mb-2">
+                        CPF *
+                    </label>
+                    <input type="text" 
+                           name="cpf" 
+                           id="id_cpf"
+                           value="{{ terapeuta.cpf }}"
+                           required
+                           maxlength="14"
+                           placeholder="000.000.000-00"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- Telefone -->
+                <div>
+                    <label for="id_telefone" class="block text-sm font-medium text-gray-700 mb-2">
+                        Telefone *
+                    </label>
+                    <input type="tel" 
+                           name="telefone" 
+                           id="id_telefone"
+                           value="{{ terapeuta.telefone }}"
+                           required
+                           placeholder="(00) 00000-0000"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- WhatsApp -->
+                <div>
+                    <label for="id_whatsapp" class="block text-sm font-medium text-gray-700 mb-2">
+                        WhatsApp
+                    </label>
+                    <input type="tel" 
+                           name="whatsapp" 
+                           id="id_whatsapp"
+                           value="{{ terapeuta.whatsapp|default:'' }}"
+                           placeholder="(00) 00000-0000"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- E-mail -->
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700 mb-2">
+                        E-mail *
+                    </label>
+                    <input type="email" 
+                           name="email" 
+                           id="id_email"
+                           value="{{ terapeuta.email }}"
+                           required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- ===== Seção 2: Informações Profissionais ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                💼 Informações Profissionais
+            </h2>
+            
+            <div class="space-y-6">
+                
+                <!-- Biografia Completa -->
+                <div>
+                    <label for="id_bio_completa" class="block text-sm font-medium text-gray-700 mb-2">
+                        Biografia Completa *
+                    </label>
+                    <textarea name="bio_completa" 
+                              id="id_bio_completa"
+                              rows="6"
+                              required
+                              placeholder="Conte um pouco sobre você, sua experiência, sua abordagem terapêutica..."
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.bio_completa }}</textarea>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Descreva sua trajetória profissional, formações e sua filosofia de trabalho
+                    </p>
+                </div>
+                
+                <!-- Formação Acadêmica -->
+                <div>
+                    <label for="id_formacao_academica" class="block text-sm font-medium text-gray-700 mb-2">
+                        Formação Acadêmica *
+                    </label>
+                    <textarea name="formacao_academica" 
+                              id="id_formacao_academica"
+                              rows="4"
+                              required
+                              placeholder="Ex: Graduação em Psicologia - UFRJ (2015)&#10;Pós-graduação em Terapia Holística - PUC (2017)"
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.formacao_academica }}</textarea>
+                </div>
+                
+                <!-- Certificações -->
+                <div>
+                    <label for="id_certificacoes" class="block text-sm font-medium text-gray-700 mb-2">
+                        Certificações e Cursos
+                    </label>
+                    <textarea name="certificacoes" 
+                              id="id_certificacoes"
+                              rows="4"
+                              placeholder="Liste suas certificações, cursos complementares, workshops..."
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.certificacoes|default:'' }}</textarea>
+                </div>
+                
+                <!-- Anos de Experiência -->
+                <div>
+                    <label for="id_experiencia_anos" class="block text-sm font-medium text-gray-700 mb-2">
+                        Anos de Experiência
+                    </label>
+                    <input type="number" 
+                           name="experiencia_anos" 
+                           id="id_experiencia_anos"
+                           value="{{ terapeuta.experiencia_anos|default:'' }}"
+                           min="0"
+                           max="50"
+                           placeholder="Ex: 5"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- ===== Seção 3: Especialidades ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                ✨ Especialidades / Terapias
+            </h2>
+            
+            <p class="text-sm text-gray-600 mb-4">
+                Selecione as terapias que você oferece (mínimo 1, recomendado 3-5)
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {% for especialidade in todas_especialidades %}
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" 
+                           name="especialidades" 
+                           value="{{ especialidade.id }}"
+                           {% if especialidade.id in especialidades_selecionadas %}checked{% endif %}
+                           class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                    <span class="ml-3 text-sm text-gray-700">{{ especialidade.nome }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- ===== Seção 4: Tipos de Atendimento ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                📍 Tipos de Atendimento
+            </h2>
+            
+            <div class="space-y-4">
+                <p class="text-sm text-gray-600">
+                    Selecione como você atende seus clientes
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% for tipo in tipos_sessao_disponiveis %}
+                    <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                        <input type="checkbox" 
+                               name="tipos_sessao" 
+                               value="{{ tipo.value }}"
+                               {% if tipo.value in terapeuta.tipos_sessao %}checked{% endif %}
+                               class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                        <span class="ml-3 text-sm font-medium text-gray-700">{{ tipo.label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== Seção 5: Para Quem ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                👥 Para Quem é Direcionado
+            </h2>
+            
+            <p class="text-sm text-gray-600 mb-4">
+                Selecione o público-alvo do seu atendimento
+            </p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                {% for opcao in para_quem_opcoes %}
+                <label class="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors text-center">
+                    <input type="checkbox" 
+                           name="para_quem" 
+                           value="{{ opcao.value }}"
+                           {% if opcao.value in terapeuta.para_quem %}checked{% endif %}
+                           class="sr-only peer">
+                    <span class="text-sm font-medium text-gray-700 peer-checked:text-primary">
+                        {{ opcao.label }}
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- ===== Seção 6: Localização ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                🗺️ Cidades de Atendimento
+            </h2>
+            
+            <p class="text-sm text-gray-600 mb-4">
+                Selecione as cidades onde você atende
+            </p>
+            
+            <!-- Filtro por Estado -->
+            <div class="mb-4">
+                <label for="filtro_estado" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Estado
+                </label>
+                <select id="filtro_estado" 
+                        class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Todos os estados</option>
+                    {% for estado in estados_brasil %}
+                    <option value="{{ estado.id }}">{{ estado.nome }} - {{ estado.sigla }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Lista de Cidades -->
+            <div id="lista-cidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg">
+                <!-- As cidades serão carregadas aqui via JavaScript -->
+                <p class="text-sm text-gray-500 col-span-full text-center py-8">
+                    Carregando cidades...
+                </p>
+            </div>
+        </div>
+        
+        <!-- ===== Seção 7: Redes Sociais ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                🌐 Redes Sociais
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Instagram -->
+                <div>
+                    <label for="id_instagram" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram
+                    </label>
+                    <input type="url" 
+                           name="instagram" 
+                           id="id_instagram"
+                           value="{{ terapeuta.instagram|default:'' }}"
+                           placeholder="https://instagram.com/seu_usuario"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- Facebook -->
+                <div>
+                    <label for="id_facebook" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook
+                    </label>
+                    <input type="url" 
+                           name="facebook" 
+                           id="id_facebook"
+                           value="{{ terapeuta.facebook|default:'' }}"
+                           placeholder="https://facebook.com/seu_usuario"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- LinkedIn -->
+                <div>
+                    <label for="id_linkedin" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
+                    </label>
+                    <input type="url" 
+                           name="linkedin" 
+                           id="id_linkedin"
+                           value="{{ terapeuta.linkedin|default:'' }}"
+                           placeholder="https://linkedin.com/in/seu_usuario"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <!-- Site Pessoal -->
+                <div>
+                    <label for="id_site" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-globe text-gray-600 mr-1"></i> Site Pessoal
+                    </label>
+                    <input type="url" 
+                           name="site" 
+                           id="id_site"
+                           value="{{ terapeuta.site|default:'' }}"
+                           placeholder="https://seu-site.com.br"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- ===== Seção 8: Outras Configurações ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                ⚙️ Outras Configurações
+            </h2>
+            
+            <div class="space-y-4">
+                
+                <!-- Acessibilidade -->
+                <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="checkbox" 
+                           name="acessibilidade" 
+                           id="id_acessibilidade"
+                           {% if terapeuta.acessibilidade %}checked{% endif %}
+                           class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                    <div class="ml-3">
+                        <span class="text-sm font-medium text-gray-900">Acessibilidade</span>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Marque se seu local de atendimento possui acessibilidade para pessoas com mobilidade reduzida
+                        </p>
+                    </div>
+                </label>
+                
+                <!-- Perfil Ativo -->
+                <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="checkbox" 
+                           name="is_active" 
+                           id="id_is_active"
+                           {% if terapeuta.is_active %}checked{% endif %}
+                           class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                    <div class="ml-3">
+                        <span class="text-sm font-medium text-gray-900">Perfil Ativo</span>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Desmarque para ocultar temporariamente seu perfil da plataforma
+                        </p>
+                    </div>
+                </label>
+                
+            </div>
+        </div>
+        
+        <!-- ===== Botões de Ação ===== -->
+        <div class="flex items-center justify-between gap-4 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <a href="{% url 'terapeutas:dashboard' %}" 
+               class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </a>
+            
+            <button type="submit" 
+                    class="px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg">
+                Salvar Alterações
+            </button>
+        </div>
+        
+    </form>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ===== JavaScript para funcionalidades do formulário =====
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ===== Preview de Foto ao Selecionar =====
+    const inputFoto = document.getElementById('id_foto');
+    const previewFoto = document.getElementById('preview-foto');
+    
+    if (inputFoto) {
+        inputFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewFoto.tagName === 'IMG') {
+                        previewFoto.src = e.target.result;
+                    } else {
+                        // Criar elemento img se for div
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-24 h-24 rounded-full object-cover border-2 border-gray-300';
+                        img.id = 'preview-foto';
+                        previewFoto.parentNode.replaceChild(img, previewFoto);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // ===== Máscaras de Input =====
+    
+    // Máscara CPF
+    const inputCPF = document.getElementById('id_cpf');
+    if (inputCPF) {
+        inputCPF.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    }
+    
+    // Máscara Telefone
+    const inputTelefone = document.getElementById('id_telefone');
+    const inputWhatsApp = document.getElementById('id_whatsapp');
+    
+    function mascaraTelefone(input) {
+        if (!input) return;
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    }
+    
+    mascaraTelefone(inputTelefone);
+    mascaraTelefone(inputWhatsApp);
+    
+    // ===== Carregar Cidades =====
+    carregarCidades();
+    
+    // Filtro por Estado
+    const filtroEstado = document.getElementById('filtro_estado');
+    if (filtroEstado) {
+        filtroEstado.addEventListener('change', function() {
+            carregarCidades(this.value);
+        });
+    }
+    
+});
+
+// ===== Função para Carregar Cidades =====
+function carregarCidades(estadoId = '') {
+    const listaCidades = document.getElementById('lista-cidades');
+    
+    // URL da API de cidades
+    let url = '/api/cidades/';
+    if (estadoId) {
+        url += `?estado=${estadoId}`;
+    }
+    
+    // Mostrar loading
+    listaCidades.innerHTML = '<p class="text-sm text-gray-500 col-span-full text-center py-8">Carregando cidades...</p>';
+    
+    // Buscar cidades (simulação - você precisa implementar a API)
+    // Por enquanto, vou usar dados mockados
+    setTimeout(() => {
+        const cidadesSelecionadas = {{ cidades_selecionadas|safe }};
+        
+        // Aqui você deve fazer um fetch real para sua API
+        // fetch(url).then(response => response.json()).then(data => { ... })
+        
+        // Exemplo mockado:
+        const cidades = [
+            {id: 1, nome: 'Rio de Janeiro', estado: 'RJ'},
+            {id: 2, nome: 'São Paulo', estado: 'SP'},
+            {id: 3, nome: 'Belo Horizonte', estado: 'MG'},
+            // Adicione mais cidades conforme necessário
+        ];
+        
+        let html = '';
+        cidades.forEach(cidade => {
+            const checked = cidadesSelecionadas.includes(cidade.id) ? 'checked' : '';
+            html += `
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" 
+                           name="cidades_atendimento" 
+                           value="${cidade.id}"
+                           ${checked}
+                           class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                    <span class="ml-3 text-sm text-gray-700">${cidade.nome} - ${cidade.estado}</span>
+                </label>
+            `;
+        });
+        
+        listaCidades.innerHTML = html || '<p class="text-sm text-gray-500 col-span-full text-center py-8">Nenhuma cidade encontrada</p>';
+    }, 500);
+}
+</script>
+{% endblock %}

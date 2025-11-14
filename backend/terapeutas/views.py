@@ -10,7 +10,10 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
 from django.contrib import messages
+from datetime import timedelta
 from django.utils import timezone
 from .models import (
     Terapeuta, Especialidade, 
@@ -185,9 +188,22 @@ class TerapeutaListView(ListView):
         elif ordering == 'nome':
             queryset = queryset.order_by('nome_exibicao')
         else:  # relevancia (padrão)
-            queryset = queryset.order_by(
-                '-destaque', '-premium', '-verificado',
-                '-avg_avaliacoes', '-created_at'
+            # Ordenação com prioridade de plano: Categoria S > Premium A > Basic
+            from django.db.models import Case, When, IntegerField
+            
+            queryset = queryset.annotate(
+                prioridade_plano=Case(
+                    When(plano='premium_s', then=3),
+                    When(plano='premium_a', then=2),
+                    When(plano='basic', then=1),
+                    default=0,
+                    output_field=IntegerField()
+                )
+            ).order_by(
+                '-prioridade_plano',  # Categoria S primeiro
+                '-verificado',         # Depois verificados
+                '-avg_avaliacoes',     # Depois por avaliação
+                'nome_exibicao'        # Por fim alfabético
             )
         
         return queryset
@@ -757,3 +773,505 @@ class TerapeutaUpdateView(LoginRequiredMixin, UpdateView):
     
     def get_success_url(self):
         return reverse('terapeutas:profile', kwargs={'slug': self.object.slug})
+    
+class TerapeutaRequiredMixin(LoginRequiredMixin):
+    """
+    Mixin: Verificar se usuário é terapeuta
+    Descrição: Garante que apenas terapeutas autenticados acessem o dashboard
+               Redireciona para home caso não tenha perfil de terapeuta
+    Uso: Todas as views do dashboard herdam este mixin
+    """
+    login_url = '/accounts/login/'  # URL de login do django-allauth
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Intercepta a requisição antes de processar
+        Verifica autenticação e perfil de terapeuta
+        """
+        # Verificar se está autenticado
+        if not request.user.is_authenticated:
+            messages.warning(
+                request, 
+                'Você precisa estar logado para acessar o dashboard.'
+            )
+            return self.handle_no_permission()
+        
+        # Verificar se tem perfil de terapeuta
+        if not hasattr(request.user, 'terapeuta'):
+            messages.error(
+                request, 
+                'Você precisa ter um perfil de terapeuta para acessar esta área. '
+                'Entre em contato conosco para criar seu perfil.'
+            )
+            return redirect('home')
+        
+        return super().dispatch(request, *args, **kwargs)
+
+
+class DashboardView(TerapeutaRequiredMixin, TemplateView):
+    """
+    View: Dashboard Principal do Terapeuta
+    Descrição: Página inicial do painel privado com visão geral
+               Exibe estatísticas, completude do perfil e resumos
+    Template: terapeutas/dashboard/dashboard.html
+    URL: /terapeutas/dashboard/
+    """
+    template_name = 'terapeutas/dashboard/dashboard.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona dados do dashboard ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Buscar o terapeuta logado
+        terapeuta = self.request.user.terapeuta
+        
+        # ===== ESTATÍSTICAS BÁSICAS =====
+        context['terapeuta'] = terapeuta
+        context['total_visualizacoes'] = terapeuta.visualizacoes
+        context['total_contatos'] = terapeuta.total_contatos
+        context['rating_medio'] = terapeuta.rating_medio
+        context['total_avaliacoes'] = terapeuta.total_avaliacoes
+        
+        # ===== COMPLETUDE DO PERFIL =====
+        completude = self._calcular_completude_perfil(terapeuta)
+        context['completude_perfil'] = completude['percentual']
+        context['perfil_completo'] = completude['completo']
+        context['campos_faltantes'] = completude['campos_faltantes']
+        
+        # ===== ÚLTIMAS AVALIAÇÕES =====
+        context['ultimas_avaliacoes'] = terapeuta.avaliacoes.filter(
+            is_active=True
+        ).select_related('cliente').order_by('-created_at')[:5]
+        
+        # ===== ESPAÇOS VINCULADOS =====
+        # TODO: Implementar relacionamento com espaços quando o modelo estiver pronto
+        context['espacos_vinculados'] = []
+        context['total_espacos'] = 0
+        
+        # ===== ESTATÍSTICAS DO MÊS =====
+        data_limite = timezone.now() - timedelta(days=30)
+        
+        # Avaliações dos últimos 30 dias
+        avaliacoes_mes = terapeuta.avaliacoes.filter(
+            created_at__gte=data_limite,
+            is_active=True
+        ).count()
+        context['avaliacoes_mes'] = avaliacoes_mes
+        
+        # Contatos dos últimos 30 dias
+        contatos_mes = terapeuta.contatos_recebidos.filter(
+            created_at__gte=data_limite
+        ).count()
+        context['contatos_mes'] = contatos_mes
+        
+        return context
+    
+    def _calcular_completude_perfil(self, terapeuta):
+        """
+        Calcula percentual de completude do perfil
+        """
+        campos_obrigatorios = [
+            bool(terapeuta.foto_perfil),
+            bool(terapeuta.foto_capa),
+            bool(terapeuta.bio_completa),
+            bool(terapeuta.whatsapp),
+            bool(terapeuta.especialidades.exists()),
+            bool(terapeuta.formacao),
+            terapeuta.experiencia_anos > 0,
+            bool(terapeuta.cidade_principal or terapeuta.cidade_texto),
+        ]
+        
+        campos_opcionais = [
+            bool(terapeuta.instagram),
+            bool(terapeuta.facebook),
+            bool(terapeuta.registro_profissional),
+            bool(terapeuta.metodologia),
+            terapeuta.fotos_galeria.count() > 0,
+        ]
+        
+        # Peso: obrigatórios valem 70%, opcionais 30%
+        total_obrigatorios = len(campos_obrigatorios)
+        preenchidos_obrigatorios = sum(campos_obrigatorios)
+        
+        total_opcionais = len(campos_opcionais)
+        preenchidos_opcionais = sum(campos_opcionais)
+        
+        percentual_obrigatorios = (preenchidos_obrigatorios / total_obrigatorios) * 70
+        percentual_opcionais = (preenchidos_opcionais / total_opcionais) * 30
+        
+        percentual_total = int(percentual_obrigatorios + percentual_opcionais)
+        
+        return {
+            'percentual': percentual_total,
+            'campos_faltantes': total_obrigatorios - preenchidos_obrigatorios,
+            'completo': percentual_total >= 80
+        }
+
+
+class DashboardEditarPerfilView(TerapeutaRequiredMixin, TemplateView):
+    """
+    View: Editar Perfil do Terapeuta
+    Descrição: Formulário completo para edição de dados profissionais
+               Upload de foto, bio, especialidades, cidades, etc.
+    Template: terapeutas/dashboard/editar_perfil.html
+    URL: /terapeutas/dashboard/perfil/
+    """
+    template_name = 'terapeutas/dashboard/editar_perfil.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona dados necessários para o formulário
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Terapeuta logado
+        terapeuta = self.request.user.terapeuta
+        context['terapeuta'] = terapeuta
+        
+        # ===== OPÇÕES PARA OS SELECTS =====
+        
+        # Buscar todas as especialidades disponíveis
+        from core.models import Especialidade
+        context['todas_especialidades'] = Especialidade.objects.filter(
+            is_active=True
+        ).order_by('nome')
+        
+        # Especialidades já selecionadas pelo terapeuta
+        context['especialidades_selecionadas'] = terapeuta.especialidades.values_list(
+            'id', flat=True
+        )
+        
+        # Buscar todos os estados do Brasil
+        from core.models import Estado
+        context['estados_brasil'] = Estado.objects.filter(
+            pais__nome='Brasil',
+            ativo=True
+        ).order_by('nome')
+        
+        # Cidades já selecionadas pelo terapeuta
+        context['cidades_selecionadas'] = terapeuta.cidades_atendimento.values_list(
+            'id', flat=True
+        )
+        
+        # ===== TIPOS DE SESSÃO =====
+        context['tipos_sessao_disponiveis'] = [
+            {'value': 'presencial', 'label': 'Presencial'},
+            {'value': 'online', 'label': 'On-line'},
+            {'value': 'domicilio', 'label': 'Domicílio'},
+        ]
+        
+        # ===== PARA QUEM =====
+        context['para_quem_opcoes'] = [
+            {'value': 'adultos', 'label': 'Adultos'},
+            {'value': 'criancas', 'label': 'Crianças'},
+            {'value': 'idosos', 'label': 'Idosos'},
+            {'value': 'casais', 'label': 'Casais'},
+            {'value': 'grupos', 'label': 'Grupos'},
+        ]
+        
+        return context
+
+
+class DashboardEstatisticasView(TerapeutaRequiredMixin, TemplateView):
+    """
+    View: Estatísticas Detalhadas do Terapeuta
+    Descrição: Métricas detalhadas de performance
+               Visualizações, contatos, avaliações ao longo do tempo
+    Template: terapeutas/dashboard/estatisticas.html
+    URL: /terapeutas/dashboard/estatisticas/
+    """
+    template_name = 'terapeutas/dashboard/estatisticas.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona estatísticas detalhadas ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Terapeuta logado
+        terapeuta = self.request.user.terapeuta
+        context['terapeuta'] = terapeuta
+        
+        # ===== ESTATÍSTICAS GERAIS =====
+        context['total_visualizacoes'] = terapeuta.visualizacoes
+        context['total_contatos'] = terapeuta.total_contatos
+        context['rating_medio'] = terapeuta.rating_medio
+        context['total_avaliacoes'] = terapeuta.total_avaliacoes
+        
+        # ===== ESTATÍSTICAS DOS ÚLTIMOS 30 DIAS =====
+        data_limite_30d = timezone.now() - timedelta(days=30)
+        
+        # Avaliações dos últimos 30 dias
+        avaliacoes_recentes = terapeuta.avaliacoes.filter(
+            created_at__gte=data_limite_30d,
+            is_active=True
+        )
+        context['avaliacoes_mes'] = avaliacoes_recentes.count()
+        
+        # Média das avaliações recentes
+        media_recente = avaliacoes_recentes.aggregate(
+            media=Avg('nota')
+        )['media']
+        context['media_avaliacoes_mes'] = round(media_recente, 1) if media_recente else 0
+        
+        # Contatos dos últimos 30 dias
+        contatos_recentes = terapeuta.contatos_recebidos.filter(
+            created_at__gte=data_limite_30d
+        )
+        context['contatos_mes'] = contatos_recentes.count()
+        
+        # ===== ESTATÍSTICAS DOS ÚLTIMOS 7 DIAS =====
+        data_limite_7d = timezone.now() - timedelta(days=7)
+        
+        context['avaliacoes_semana'] = terapeuta.avaliacoes.filter(
+            created_at__gte=data_limite_7d,
+            is_active=True
+        ).count()
+        
+        context['contatos_semana'] = terapeuta.contatos_recebidos.filter(
+            created_at__gte=data_limite_7d
+        ).count()
+        
+        # ===== DISTRIBUIÇÃO DE AVALIAÇÕES POR NOTA =====
+        distribuicao_notas = {}
+        for nota in range(1, 6):  # 1 a 5 estrelas
+            distribuicao_notas[nota] = terapeuta.avaliacoes.filter(
+                nota=nota,
+                is_active=True
+            ).count()
+        context['distribuicao_notas'] = distribuicao_notas
+        
+        # ===== ÚLTIMAS AVALIAÇÕES =====
+        context['ultimas_avaliacoes'] = terapeuta.avaliacoes.filter(
+            is_active=True
+        ).select_related('cliente').order_by('-created_at')[:10]
+        
+        # ===== COMPARAÇÃO COM MÉDIA DA PLATAFORMA =====
+        # Buscar média geral de todos os terapeutas
+        from terapeutas.models import Terapeuta
+        from django.db.models import Count
+
+        # Buscar terapeutas com pelo menos 1 avaliação
+        terapeutas_com_avaliacoes = Terapeuta.objects.filter(
+            is_active=True
+        ).annotate(
+            num_avaliacoes=Count('avaliacoes', filter=Q(avaliacoes__is_active=True))
+        ).filter(
+            num_avaliacoes__gt=0
+        )
+
+        # Calcular média geral da plataforma
+        media_plataforma = terapeutas_com_avaliacoes.aggregate(
+            media=Avg('avaliacoes__nota', filter=Q(avaliacoes__is_active=True))
+        )['media']
+        
+        context['media_plataforma'] = round(media_plataforma, 1) if media_plataforma else 0
+        context['acima_da_media'] = terapeuta.rating_medio > (media_plataforma or 0)
+        
+        return context
+
+
+class DashboardEspacosVinculadosView(TerapeutaRequiredMixin, TemplateView):
+    """
+    View: Gerenciar Espaços Vinculados
+    Descrição: Listar espaços já vinculados e sugerir novos
+               Permite adicionar/remover vínculos com espaços terapêuticos
+    Template: terapeutas/dashboard/espacos_vinculados.html
+    URL: /terapeutas/dashboard/espacos/
+    """
+    template_name = 'terapeutas/dashboard/espacos_vinculados.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações sobre espaços ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Terapeuta logado
+        terapeuta = self.request.user.terapeuta
+        context['terapeuta'] = terapeuta
+        
+        # ===== ESPAÇOS JÁ VINCULADOS =====
+        # TODO: Implementar relacionamento ManyToMany entre Terapeuta e Espaco
+        context['espacos_vinculados'] = []
+        context['total_espacos_vinculados'] = 0
+        
+        # ===== SUGERIR ESPAÇOS DISPONÍVEIS =====
+        from espacos.models import Espaco
+        
+        # Pegar IDs das cidades onde o terapeuta atende
+        cidades_terapeuta_ids = list(terapeuta.cidades_atendimento.values_list('id', flat=True))
+        
+        # Adicionar cidade principal se existir
+        if terapeuta.cidade_principal:
+            cidades_terapeuta_ids.append(terapeuta.cidade_principal.id)
+        
+        # Buscar espaços nas mesmas cidades
+        if cidades_terapeuta_ids:
+            espacos_disponiveis = Espaco.objects.filter(
+                is_active=True,
+                cidade_id__in=cidades_terapeuta_ids
+            ).select_related('cidade', 'cidade__estado').prefetch_related(
+                'comodidades'
+            ).order_by('nome')[:10]  # Limitar a 10 sugestões
+        else:
+            espacos_disponiveis = []
+        
+        context['espacos_disponiveis'] = espacos_disponiveis
+        context['total_sugestoes'] = len(espacos_disponiveis) if espacos_disponiveis else 0
+        
+        # ===== VERIFICAR SE TEM CIDADES CADASTRADAS =====
+        context['tem_cidades'] = terapeuta.cidades_atendimento.exists() or bool(terapeuta.cidade_principal)
+        
+        return context
+
+
+class DashboardAssinaturaView(TerapeutaRequiredMixin, TemplateView):
+    """
+    View: Gerenciar Plano de Assinatura
+    Descrição: Exibe plano atual e opções de upgrade
+               4 planos: Basic, Premium A, Premium S
+    Template: terapeutas/dashboard/assinatura.html
+    URL: /terapeutas/dashboard/assinatura/
+    """
+    template_name = 'terapeutas/dashboard/assinatura.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações sobre planos ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Terapeuta logado
+        terapeuta = self.request.user.terapeuta
+        context['terapeuta'] = terapeuta
+        
+        # ===== PLANO ATUAL =====
+        context['plano_atual'] = terapeuta.nome_plano
+        context['is_basic'] = terapeuta.is_basic
+        context['is_premium_a'] = terapeuta.is_premium_a
+        context['is_premium_s'] = terapeuta.is_premium_s
+        
+        # ===== LIMITE DE CATEGORIA S =====
+        from terapeutas.models import Terapeuta, PlanoChoices
+        
+        total_categoria_s = Terapeuta.objects.filter(
+            plano=PlanoChoices.PREMIUM_S,
+            is_active=True
+        ).count()
+        
+        MAX_CATEGORIA_S = 50
+        vagas_restantes_s = MAX_CATEGORIA_S - total_categoria_s
+        categoria_s_disponivel = vagas_restantes_s > 0
+        
+        context['vagas_restantes_s'] = vagas_restantes_s
+        context['categoria_s_disponivel'] = categoria_s_disponivel
+        context['max_categoria_s'] = MAX_CATEGORIA_S
+        
+        # ===== DEFINIÇÃO DOS PLANOS =====
+        context['planos'] = [
+            {
+                'id': 'basic',
+                'nome': 'Basic',
+                'emoji': '🌱',
+                'preco': 'R$ 9,99',
+                'periodo': 'por mês',
+                'descricao': 'Ideal para começar e ter presença online',
+                'beneficios': [
+                    'Perfil básico permanente',
+                    'Listagem nos resultados de busca',
+                    'Até 3 especialidades cadastradas',
+                    'Até 5 fotos no perfil',
+                    'Receber e responder avaliações',
+                    'Formulário de contato',
+                    'Suporte por email',
+                ],
+                'limitacoes': [
+                    'Não aparece em destaque',
+                    'Estatísticas limitadas',
+                    'Sem badge premium',
+                    'Sem prioridade nas buscas',
+                ],
+                'atual': terapeuta.is_basic,
+                'destaque': False,
+                'cor': 'gray',
+            },
+            {
+                'id': 'premium_a',
+                'nome': 'Premium A',
+                'emoji': '⭐',
+                'preco': 'R$ 49,90',
+                'periodo': 'por mês',
+                'descricao': 'Para profissionais que querem crescer',
+                'beneficios': [
+                    '✨ Tudo do plano Basic',
+                    '🌟 Destaque moderado nas buscas',
+                    '✅ Badge "Verificado Premium"',
+                    '∞ Especialidades ilimitadas',
+                    '📸 Galeria ilimitada de fotos',
+                    '📊 Estatísticas básicas',
+                    '🔗 Links para redes sociais',
+                    '🏢 Até 3 espaços vinculados',
+                    '🎯 Suporte prioritário',
+                ],
+                'destaque': True,
+                'atual': terapeuta.is_premium_a,
+                'cor': 'blue',
+            },
+            {
+                'id': 'premium_s',
+                'nome': 'Premium S',
+                'subtitulo': 'Categoria S',
+                'emoji': '💎',
+                'preco': 'R$ 99,90',
+                'periodo': 'por mês',
+                'descricao': 'Elite dos profissionais - Recursos avançados',
+                'beneficios': [
+                    '✨ Tudo do Premium A',
+                    '🥇 PRIORIDADE MÁXIMA nas buscas',
+                    '💎 Badge dourado "Categoria S"',
+                    '🏠 Aparece na home em destaque rotativo',
+                    '📊 Estatísticas avançadas com gráficos',
+                    '🏢 Espaços vinculados ilimitados',
+                    '📱 Suporte via WhatsApp prioritário',
+                    '📅 Sistema de agendamento online (em breve)',
+                    '💳 Sistema de pagamento integrado (em breve)',
+                    '🏆 Selo "Top Profissional"',
+                    '📈 Análise de concorrência',
+                ],
+                'destaque': True,
+                'atual': terapeuta.is_premium_s,
+                'cor': 'gold',
+                'limitado': True,
+                'vagas_restantes': vagas_restantes_s,
+                'disponivel': categoria_s_disponivel,
+            },
+        ]
+        
+        # ===== BENEFÍCIOS EXCLUSIVOS PREMIUM =====
+        context['beneficios_premium_exclusivos'] = [
+            {
+                'icone': '🌟',
+                'titulo': 'Destaque nas Buscas',
+                'descricao': 'Seu perfil aparece primeiro nos resultados',
+            },
+            {
+                'icone': '📊',
+                'titulo': 'Estatísticas Avançadas',
+                'descricao': 'Acompanhe visualizações, contatos e performance',
+            },
+            {
+                'icone': '✅',
+                'titulo': 'Badge Verificado',
+                'descricao': 'Mostre profissionalismo com selo premium',
+            },
+            {
+                'icone': '🎯',
+                'titulo': 'Suporte Prioritário',
+                'descricao': 'Atendimento rápido e personalizado',
+            },
+        ]
+        
+        return context

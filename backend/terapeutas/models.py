@@ -13,6 +13,14 @@ from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 from core.models import TimeStampedModel, BaseModel, Estado, Cidade, Especialidade
 
+class PlanoChoices(models.TextChoices):
+    """
+    Tipos de plano de assinatura
+    """
+    BASIC = 'basic', '🌱 Basic'
+    PREMIUM_A = 'premium_a', '⭐ Premium A'
+    PREMIUM_S = 'premium_s', '💎 Premium S (Categoria S)'
+
 
 # ===============================================================
 # CHOICES PARA OS MODELS
@@ -323,16 +331,35 @@ class Terapeuta(BaseModel):
         help_text='Terapeuta verificado pela plataforma'
     )
     
-    destaque = models.BooleanField(
-        'Em Destaque',
-        default=False,
-        help_text='Exibir na home como destaque'
+    # Campo de plano (NOVO - substitui premium e destaque)
+    plano = models.CharField(
+        'Plano de Assinatura',
+        max_length=20,
+        choices=PlanoChoices.choices,
+        default=PlanoChoices.BASIC,
+        help_text='Plano atual do terapeuta'
     )
-    
+
+    # Data de assinatura do plano atual
+    data_assinatura_plano = models.DateTimeField(
+        'Data de Assinatura do Plano',
+        null=True,
+        blank=True,
+        auto_now_add=True,
+        help_text='Quando assinou o plano atual'
+    )
+
+    # MANTER para compatibilidade (será depreciado)
     premium = models.BooleanField(
         'Premium',
         default=False,
-        help_text='Conta premium com benefícios'
+        help_text='[DEPRECATED] Use campo plano'
+    )
+
+    destaque = models.BooleanField(
+        'Em Destaque',
+        default=False,
+        help_text='[DEPRECATED] Use campo plano'
     )
     
     data_verificacao = models.DateTimeField(
@@ -409,6 +436,56 @@ class Terapeuta(BaseModel):
         """
         self.visualizacoes += 1
         self.save(update_fields=['visualizacoes'])
+
+    @property
+    def is_basic(self):
+        """Verifica se é plano Basic"""
+        return self.plano == PlanoChoices.BASIC
+
+    @property
+    def is_premium_a(self):
+        """Verifica se é plano Premium A"""
+        return self.plano == PlanoChoices.PREMIUM_A
+
+    @property
+    def is_premium_s(self):
+        """Verifica se é plano Premium S (Categoria S)"""
+        return self.plano == PlanoChoices.PREMIUM_S
+
+    @property
+    def is_premium(self):
+        """Verifica se tem qualquer plano premium (A ou S)"""
+        return self.plano in [PlanoChoices.PREMIUM_A, PlanoChoices.PREMIUM_S]
+
+    @property
+    def nome_plano(self):
+        """Retorna o nome legível do plano"""
+        return self.get_plano_display()
+
+    @property
+    def badge_plano_html(self):
+        """Retorna HTML do badge do plano para usar em templates"""
+        from django.utils.safestring import mark_safe
+        
+        badges = {
+            PlanoChoices.BASIC: '<span class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">🌱 Basic</span>',
+            PlanoChoices.PREMIUM_A: '<span class="px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-semibold">⭐ Premium A</span>',
+            PlanoChoices.PREMIUM_S: '<span class="px-2 py-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-xs font-bold rounded-full shadow-lg">💎 Categoria S</span>',
+        }
+        return mark_safe(badges.get(self.plano, ''))
+    
+    @property
+    def prioridade_busca(self):
+        """
+        Retorna valor de prioridade para ordenação nas buscas
+        Categoria S tem prioridade máxima
+        """
+        prioridades = {
+            PlanoChoices.PREMIUM_S: 3,  # Mais alta
+            PlanoChoices.PREMIUM_A: 2,
+            PlanoChoices.BASIC: 1,      # Mais baixa
+        }
+        return prioridades.get(self.plano, 0)
     
     # Novos métodos
     def get_todas_cidades(self):

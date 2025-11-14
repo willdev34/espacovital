@@ -1,8 +1,8 @@
 # ===============================================================
 # Título: URLs do App Terapeutas - Espaço Vital
-# Descrição: Configuração de rotas para busca e perfil de terapeutas
+# Descrição: Configuração de rotas para busca, perfil e dashboard de terapeutas
 # Autor: Will | Empresa: Espaço VItal
-# Data: 13/09/2025
+# Data: 13/11/2025
 # ===============================================================
 
 from django.urls import path
@@ -51,15 +51,65 @@ urlpatterns = [
     ),
     
     # ============================================
-    # PERFIL DO TERAPEUTA
+    # DASHBOARD PRIVADO (requer autenticação)
+    # ============================================
+    
+    # Dashboard principal do terapeuta
+    # URL: /terapeutas/dashboard/
+    # Área privada com estatísticas e visão geral
+    path(
+        'dashboard/',
+        views.DashboardView.as_view(),
+        name='dashboard'
+    ),
+    
+    # Editar perfil do terapeuta
+    # URL: /terapeutas/dashboard/perfil/
+    # Formulário completo para edição de dados profissionais
+    path(
+        'dashboard/perfil/',
+        views.DashboardEditarPerfilView.as_view(),
+        name='dashboard_editar_perfil'
+    ),
+    
+    # Estatísticas detalhadas
+    # URL: /terapeutas/dashboard/estatisticas/
+    # Métricas de visualizações, contatos e avaliações
+    path(
+        'dashboard/estatisticas/',
+        views.DashboardEstatisticasView.as_view(),
+        name='dashboard_estatisticas'
+    ),
+    
+    # Gerenciar espaços vinculados
+    # URL: /terapeutas/dashboard/espacos/
+    # Listar e vincular-se a espaços terapêuticos
+    path(
+        'dashboard/espacos/',
+        views.DashboardEspacosVinculadosView.as_view(),
+        name='dashboard_espacos'
+    ),
+    
+    # Gerenciar assinatura/plano
+    # URL: /terapeutas/dashboard/assinatura/
+    # Ver plano atual e opções de upgrade (Free/Premium)
+    path(
+        'dashboard/assinatura/',
+        views.DashboardAssinaturaView.as_view(),
+        name='dashboard_assinatura'
+    ),
+    
+    # ============================================
+    # PERFIL DO TERAPEUTA (público)
     # ============================================
     
     # Perfil completo do terapeuta
     # URL: /terapeutas/perfil/ana-silva/
+    # IMPORTANTE: Deve ficar depois das rotas do dashboard para evitar conflitos
     path(
         'perfil/<slug:slug>/',
         views.TerapeutaDetailView.as_view(),
-        name='perfil'  # ← Mudança aqui
+        name='perfil'
     ),
     
     # Formulário de contato com terapeuta
@@ -151,15 +201,22 @@ ESTRUTURA DAS URLs DO APP TERAPEUTAS:
    - 'lista/' → Listagem simples sem filtros
    - 'especialidade/<slug>/' → Filtro por especialidade
 
-2. PERFIL:
+2. DASHBOARD PRIVADO (NOVO - TAREFA 8):
+   - 'dashboard/' → Dashboard principal com estatísticas
+   - 'dashboard/perfil/' → Editar perfil completo
+   - 'dashboard/estatisticas/' → Métricas detalhadas
+   - 'dashboard/espacos/' → Gerenciar espaços vinculados
+   - 'dashboard/assinatura/' → Gerenciar plano (Free/Premium)
+
+3. PERFIL PÚBLICO:
    - 'perfil/<slug>/' → Perfil completo
    - 'contatar/<slug>/' → Formulário de contato
 
-3. APIs AJAX:
+4. APIs AJAX:
    - 'api/cidades-por-estado/' → Filtro dinâmico
    - 'api/buscar/' → Autocomplete do hero
 
-4. FUTURAS IMPLEMENTAÇÕES (comentadas):
+5. FUTURAS IMPLEMENTAÇÕES (comentadas):
    - URLs por localização (SEO)
    - Categorias específicas (destaque, premium)
    - Sistema de avaliações
@@ -168,10 +225,19 @@ EXEMPLOS DE USO:
 - Busca geral: /terapeutas/
 - Com filtros: /terapeutas/?cidade=1&especialidades=1,2&acessibilidade=sim
 - Por especialidade: /terapeutas/especialidade/massoterapia/
-- Perfil: /terapeutas/perfil/ana-silva/
+- Dashboard: /terapeutas/dashboard/
+- Editar perfil: /terapeutas/dashboard/perfil/
+- Estatísticas: /terapeutas/dashboard/estatisticas/
+- Perfil público: /terapeutas/perfil/ana-silva/
 - Contato: /terapeutas/contatar/ana-silva/
 - AJAX cidades: /terapeutas/api/cidades-por-estado/?estado_id=1
 - AJAX busca: /terapeutas/api/buscar/?q=ana
+
+SEGURANÇA DO DASHBOARD:
+- Todas as views do dashboard utilizam TerapeutaRequiredMixin
+- Verifica se usuário está autenticado
+- Verifica se usuário tem perfil de terapeuta
+- Redireciona para home caso não atenda os requisitos
 
 INTEGRAÇÃO COM URLS PRINCIPAIS:
 No arquivo espacovital/urls.py, adicionar:
