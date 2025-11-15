@@ -3,6 +3,7 @@
 # Descrição: Configuração principal de rotas da aplicação
 # Autor: Will | Empresa: Espaço Vital
 # Data: 12/10/2025
+# Atualizado: 15/11/2025 - Views customizadas de autenticação
 # ===============================================================
 
 from django.contrib import admin
@@ -11,6 +12,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core.views import api_estados, api_cidades, fix_sequences_view
 from core.views import fix_sequences_view
+
+# ===== VIEWS CUSTOMIZADAS DE AUTENTICAÇÃO =====
+from core.views_auth import CustomLoginView, CustomLogoutView
 
 
 # ===============================================================
@@ -24,7 +28,12 @@ urlpatterns = [
     # Admin do Django
     path('admin/', admin.site.urls),
     
-    # Sistema de autenticação (allauth)
+    # ===== AUTENTICAÇÃO CUSTOMIZADA (ANTES DO ALLAUTH) =====
+    # Sobrescreve login/logout para controlar redirecionamento e mensagens
+    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
+    path('accounts/logout/', CustomLogoutView.as_view(), name='account_logout'),
+    
+    # Sistema de autenticação (allauth) - demais URLs
     path('accounts/', include('allauth.urls')),
     
     # App core - páginas principais (home, sobre, etc.)
