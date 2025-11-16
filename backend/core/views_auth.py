@@ -8,57 +8,47 @@
 
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth import login as auth_login
 from allauth.account.views import LoginView, LogoutView
 
 
 class CustomLoginView(LoginView):
     """
     View customizada de login
-    Descrição:
-    - Redireciona usuários já autenticados para dashboard/home
-    - Evita acesso à página de login quando já está logado
     """
-    # teste no railway
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'terapeuta'):
+                return redirect('terapeutas:dashboard')
+            else:
+                return redirect('core:home')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        """
+        Sobrescreve para forçar redirecionamento correto após login
+        """
+        # ===== REALIZAR LOGIN =====
+        self.user = form.user
+        auth_login(self.request, self.user)
+        
+        # ===== REDIRECIONAR BASEADO NO TIPO DE USUÁRIO =====
+        if hasattr(self.user, 'terapeuta'):
+            return redirect('terapeutas:dashboard')
+        else:
+            return redirect('core:home')
+    
     def get_success_url(self):
-        """
-        Define URL de redirecionamento após login bem-sucedido
-        """
         if hasattr(self.request.user, 'terapeuta'):
             return '/terapeutas/dashboard/'
         else:
             return '/'
-
-    def dispatch(self, request, *args, **kwargs):
-        """
-        Intercepta requisição antes de processar
-        Se usuário já logado, redireciona para destino apropriado
-        """
-        # ===== VERIFICAR SE JÁ ESTÁ LOGADO =====
-        if request.user.is_authenticated:
-            # Usuário já logado - redireciona para dashboard ou home
-            if hasattr(request.user, 'terapeuta'):
-                # É terapeuta - vai para dashboard
-                return redirect('terapeutas:dashboard')
-            else:
-                # Usuário comum - vai para home
-                return redirect('core:home')
-        
-        # ===== USUÁRIO NÃO LOGADO - CONTINUA NORMAL =====
-        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
-        """
-        Adiciona contexto extra para template
-        Limpa mensagens de logout antiga se necessário
-        """
         context = super().get_context_data(**kwargs)
-        
-        # ===== GERENCIAR MENSAGENS =====
-        # Verifica se tem mensagem de logout na sessão
-        # e garante que só aparece se foi logout recente
         storage = messages.get_messages(self.request)
-        storage.used = False  # Permite re-leitura das mensagens
-        
+        storage.used = False
         return context
 
 
