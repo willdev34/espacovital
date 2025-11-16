@@ -120,9 +120,79 @@ Data: 07/09/2025
                 
                 <!-- Botão Login/Cadastrar Desktop -->
                 <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                    {# ===== USUÁRIO LOGADO ===== #}
+                    <div class="relative" x-data="{ open: false }">
+                        <button onclick="toggleUserMenu()" 
+                                class="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                            {# Avatar do usuário #}
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold text-sm">
+                                    {{ user.first_name|first|default:user.username|first|upper }}
+                                </span>
+                            </div>
+                            {# Nome do usuário #}
+                            <span class="text-gray-700 font-medium">
+                                {{ user.first_name|default:user.username }}
+                            </span>
+                            {# Ícone dropdown #}
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        {# Menu Dropdown #}
+                        <div id="user-menu-desktop" 
+                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            
+                            {# Informação do Perfil #}
+                            <div class="px-4 py-2 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900">{{ user.first_name }} {{ user.last_name }}</p>
+                                <p class="text-xs text-gray-500">{{ user.email }}</p>
+                            </div>
+                            
+                            {# Links de Dashboard #}
+                            {% if user.terapeuta %}
+                            <a href="{% url 'terapeutas:dashboard' %}" 
+                            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                Painel do Terapeuta
+                            </a>
+                            {% endif %}
+                            
+                            {% if user.espacos_gerenciados.exists %}
+                            <a href="{% url 'espacos:dashboard' %}" 
+                            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                Painel do Espaço
+                            </a>
+                            {% endif %}
+                            
+                            <hr class="my-2 border-gray-100">
+                            
+                            {# Logout #}
+                            <form method="POST" action="{% url 'account_logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    Sair
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    {# ===== USUÁRIO NÃO LOGADO ===== #}
                     <a href="{% url 'account_login' %}" class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-medium">
                         LOGIN / CADASTRAR
                     </a>
+                    {% endif %}
                 </div>
             </nav>
             
@@ -204,9 +274,49 @@ Data: 07/09/2025
                         Sobre
                     </a>
                     <hr class="border-gray-200 my-2">
+                    {% if user.is_authenticated %}
+                    {# ===== USUÁRIO LOGADO - MOBILE ===== #}
+                    <div class="border-t border-gray-200 pt-4 mt-4">
+                        <div class="flex items-center gap-3 mb-4 px-2">
+                            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold">
+                                    {{ user.first_name|first|default:user.username|first|upper }}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ user.first_name|default:user.username }}</p>
+                                <p class="text-xs text-gray-500">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if user.terapeuta %}
+                        <a href="{% url 'terapeutas:dashboard' %}" 
+                        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg mb-2">
+                            🧘 Painel do Terapeuta
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.espacos_gerenciados.exists %}
+                        <a href="{% url 'espacos:dashboard' %}" 
+                        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg mb-2">
+                            🏢 Painel do Espaço
+                        </a>
+                        {% endif %}
+                        
+                        <form method="POST" action="{% url 'account_logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    class="w-full px-6 py-3 bg-red-50 text-red-600 rounded-lg text-center font-medium hover:bg-red-100 transition-colors">
+                                Sair da Conta
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    {# ===== USUÁRIO NÃO LOGADO - MOBILE ===== #}
                     <a href="{% url 'account_login' %}" class="px-6 py-3 border border-primary text-primary rounded-lg text-center font-medium">
                         LOGIN / CADASTRAR
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -305,12 +415,14 @@ Data: 07/09/2025
                 <div class="flex flex-col items-center space-y-4 relative" style="width: 280px; height: 200px;">
                     <h3 class="font-poppins font-semibold text-primary text-lg text-center">Anuncie seu espaço terapêutico</h3>
                     <div class="flex flex-col space-y-3 w-full max-w-xs">
-                        <button class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-medium">
+                        <a href="{% url 'account_login' %}" 
+                        class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-medium text-center">
                             ENTRE
-                        </button>
-                        <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-300 font-medium">
+                        </a>
+                        <a href="{% url 'account_signup' %}" 
+                        class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-300 font-medium text-center">
                             FAÇA PARTE
-                        </button>
+                        </a>
                     </div>
                     <!-- Mandala decorativa -->
                     <div class="absolute right-1/2 transform translate-x-1/2" style="bottom: -6.5rem;">
@@ -386,12 +498,14 @@ Data: 07/09/2025
                 <div class="text-center space-y-4">
                     <h3 class="font-poppins font-semibold text-primary">Anuncie seu espaço terapêutico</h3>
                     <div class="space-y-3">
-                        <button class="w-full px-6 py-2 border border-primary text-primary rounded-lg font-medium">
+                        <a href="{% url 'account_login' %}" 
+                        class="block w-full px-6 py-2 border border-primary text-primary rounded-lg font-medium text-center">
                             ENTRE
-                        </button>
-                        <button class="w-full px-6 py-2 bg-primary text-white rounded-lg font-medium">
+                        </a>
+                        <a href="{% url 'account_signup' %}" 
+                        class="block w-full px-6 py-2 bg-primary text-white rounded-lg font-medium text-center">
                             FAÇA PARTE
-                        </button>
+                        </a>
                     </div>
                 </div>
                 
@@ -853,7 +967,24 @@ Data: 07/09/2025
             }
         }
     });
+
+    // Toggle menu do usuário (desktop)
+    function toggleUserMenu() {
+        const menu = document.getElementById('user-menu-desktop');
+        menu.classList.toggle('hidden');
+    }
+
+    // Fechar menu do usuário ao clicar fora
+    document.addEventListener('click', function(event) {
+        const userMenu = document.getElementById('user-menu-desktop');
+        const userButton = event.target.closest('button[onclick="toggleUserMenu()"]');
+        
+        if (userMenu && !userButton && !event.target.closest('#user-menu-desktop')) {
+            userMenu.classList.add('hidden');
+        }
+    });
 </script>
+
 
 </body>
 </html>

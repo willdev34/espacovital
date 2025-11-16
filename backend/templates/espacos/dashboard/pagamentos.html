@@ -339,27 +339,54 @@
     </div>
     
     {# ===== INFORMAÇÕES IMPORTANTES ===== #}
-    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-blue-900 mb-3 flex items-center gap-2">
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Informações Importantes
+            💰 Como funcionam os pagamentos no Espaço Vital
         </h3>
+        
+        <div class="bg-white/60 rounded-lg p-4 border border-blue-100 mb-4">
+            <p class="text-sm text-blue-800 font-medium mb-3">
+                <strong>Importante:</strong> O Espaço Vital <strong>NÃO intermedia pagamentos</strong> entre terapeutas e espaços terapêuticos. 
+                Nós facilitamos a conexão e disponibilizamos ferramentas para tornar o processo mais prático.
+            </p>
+            
+            <h4 class="font-semibold text-blue-900 mb-3">Como funciona:</h4>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-blue-700">
+                <li>
+                    <strong>Cadastre seus dados de pagamento:</strong> Insira os dados da sua conta bancária e sua chave PIX no formulário acima.
+                </li>
+                <li>
+                    <strong>Sistema gera QR Code automaticamente:</strong> Quando um terapeuta reservar seu espaço, o sistema gerará automaticamente um QR Code e código "copia e cola" do PIX com base na sua chave cadastrada.
+                </li>
+                <li>
+                    <strong>Terapeuta efetua o pagamento:</strong> O terapeuta paga diretamente para você via PIX, sem intermediários.
+                </li>
+                <li>
+                    <strong>Confirmação manual:</strong> Após receber o pagamento na sua conta, você confirma a reserva no sistema.
+                </li>
+            </ol>
+        </div>
+        
+        <div class="flex items-center gap-2 text-green-700 font-semibold mb-4 bg-green-50 p-3 rounded-lg border border-green-200">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>✨ Sem taxas! Você recebe 100% do valor da locação diretamente na sua conta.</span>
+        </div>
+        
         <div class="space-y-3 text-sm text-blue-800">
             <p>
-                <strong>Repasses:</strong> Os valores são repassados automaticamente em até 2 dias úteis após a confirmação da reserva.
+                <strong>🔐 Segurança:</strong> Seus dados bancários são utilizados apenas para gerar o QR Code do PIX. Nós não temos acesso à sua conta.
             </p>
             <p>
-                <strong>Taxa da plataforma:</strong> A Espaço Vital retém uma taxa de 10% sobre cada transação para manutenção da plataforma.
+                <strong>📄 Notas fiscais:</strong> Você é responsável pela emissão de notas fiscais aos terapeutas que utilizam seu espaço, se necessário.
             </p>
             <p>
-                <strong>Notas fiscais:</strong> Você é responsável pela emissão de notas fiscais aos terapeutas que utilizam seu espaço.
-            </p>
-            <p>
-                <strong>Suporte:</strong> Em caso de problemas com pagamentos, entre em contato pelo email financeiro@espacovital.com.br
+                <strong>💬 Suporte:</strong> Em caso de dúvidas sobre o sistema de pagamentos, entre em contato pelo email suporte@espacovital.com.br
             </p>
         </div>
     </div>
-</div>
 {% endblock %}
