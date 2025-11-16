@@ -18,7 +18,16 @@ class CustomLoginView(LoginView):
     - Redireciona usuários já autenticados para dashboard/home
     - Evita acesso à página de login quando já está logado
     """
-    
+    # teste no railway
+    def get_success_url(self):
+        """
+        Define URL de redirecionamento após login bem-sucedido
+        """
+        if hasattr(self.request.user, 'terapeuta'):
+            return '/terapeutas/dashboard/'
+        else:
+            return '/'
+
     def dispatch(self, request, *args, **kwargs):
         """
         Intercepta requisição antes de processar
