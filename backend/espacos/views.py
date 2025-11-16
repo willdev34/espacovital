@@ -525,3 +525,497 @@ class EspacoEstatisticasView(LoginRequiredMixin, DetailView):
         context['total_avaliacoes'] = espaco.total_avaliacoes
         
         return context
+    
+# ===============================================================
+# VIEWS DO DASHBOARD PRIVADO DO ESPAÇO
+# ===============================================================
+
+from datetime import timedelta
+
+
+class EspacoRequiredMixin(LoginRequiredMixin):
+    """
+    Título: Mixin de Verificação de Proprietário de Espaço
+    Descrição: Garante que apenas proprietários de espaços acessem o dashboard
+    Autor: Will
+    Data: 16/11/2025
+    
+    Verificações:
+    - Usuário está autenticado
+    - Usuário possui pelo menos um espaço cadastrado
+    - Redireciona para home caso não atenda os requisitos
+    """
+    login_url = '/accounts/login/'
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Intercepta a requisição antes de processar
+        Verifica autenticação e propriedade de espaço
+        """
+        # Verificar se está autenticado
+        if not request.user.is_authenticated:
+            messages.warning(
+                request,
+                'Você precisa estar logado para acessar o painel do espaço.'
+            )
+            return self.handle_no_permission()
+        
+        # Verificar se tem pelo menos um espaço
+        if not Espaco.objects.filter(responsavel=request.user).exists():
+            messages.error(
+                request,
+                'Você precisa ter um espaço terapêutico cadastrado para acessar esta área. '
+                'Entre em contato conosco para cadastrar seu espaço.'
+            )
+            return redirect('core:home')
+        
+        return super().dispatch(request, *args, **kwargs)
+
+
+class DashboardEspacoView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Dashboard Principal do Espaço
+    Descrição: Visão geral do espaço com estatísticas e ações rápidas
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/dashboard.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega todas as estatísticas e informações do espaço
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Pegar o espaço do usuário (primeiro se tiver vários)
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).select_related('cidade', 'estado').first()
+        
+        context['espaco'] = espaco
+        
+        # Verificar se tem espaço
+        if not espaco:
+            return context
+        
+        # ===== ESTATÍSTICAS PRINCIPAIS =====
+        
+        # Total de visualizações (verificar se campo existe)
+        if hasattr(espaco, 'visualizacoes'):
+            context['total_visualizacoes'] = espaco.visualizacoes
+            context['visualizacoes_7_dias'] = int(espaco.visualizacoes * 0.15)
+        else:
+            context['total_visualizacoes'] = 0
+            context['visualizacoes_7_dias'] = 0
+        
+        # Total de contatos recebidos
+        context['total_contatos'] = espaco.contatos.count()
+        
+        # Contatos nos últimos 30 dias
+        data_30_dias = timezone.now() - timedelta(days=30)
+        context['contatos_30_dias'] = espaco.contatos.filter(
+            created_at__gte=data_30_dias
+        ).count()
+        
+        # ===== AVALIAÇÕES =====
+        
+        # Média de avaliações
+        media_avaliacoes = espaco.avaliacoes.filter(
+            is_active=True
+        ).aggregate(Avg('nota'))['nota__avg']
+        context['media_avaliacoes'] = round(media_avaliacoes, 1) if media_avaliacoes else 0
+        
+        # Total de avaliações
+        context['total_avaliacoes'] = espaco.avaliacoes.filter(is_active=True).count()
+        
+        # ===== TERAPEUTAS VINCULADOS =====
+        
+        # Verificar se o model tem campo para terapeutas vinculados
+        if hasattr(espaco, 'terapeutas_vinculados'):
+            context['total_terapeutas'] = espaco.terapeutas_vinculados.count()
+        else:
+            context['total_terapeutas'] = 0
+        
+        # ===== PERCENTUAL DE COMPLETUDE DO PERFIL =====
+        
+        completude = 0
+        total_campos = 6
+        
+        # Verificar cada campo importante (com hasattr para segurança)
+        if espaco.nome:
+            completude += 1
+        if hasattr(espaco, 'descricao_completa') and espaco.descricao_completa:
+            completude += 1
+        if hasattr(espaco, 'descricao_breve') and espaco.descricao_breve:
+            completude += 1
+        if espaco.cidade:
+            completude += 1
+        if espaco.comodidades.exists():
+            completude += 1
+        if espaco.especialidades.exists():
+            completude += 1
+        
+        context['percentual_completude'] = int((completude / total_campos) * 100)
+        
+        # ===== CONTATOS RECENTES =====
+        
+        context['contatos_recentes'] = espaco.contatos.select_related(
+        ).order_by('-created_at')[:5]
+        
+        # ===== AVALIAÇÕES RECENTES =====
+        
+        context['avaliacoes_recentes'] = espaco.avaliacoes.filter(
+            is_active=True
+        ).order_by('-created_at')[:3]
+        
+        # ===== PLANO ATUAL =====
+        
+        # Determinar plano baseado nos campos do model
+        if espaco.is_premium:
+            context['plano_atual'] = 'Premium S'
+            context['plano_badge_color'] = 'bg-gradient-to-r from-amber-500 to-orange-500'
+        elif espaco.is_destaque:
+            context['plano_atual'] = 'Premium A'
+            context['plano_badge_color'] = 'bg-gradient-to-r from-blue-500 to-indigo-500'
+        else:
+            context['plano_atual'] = 'Basic'
+            context['plano_badge_color'] = 'bg-gray-500'
+        
+        # ===== COMPARATIVO COM MÉDIA DA PLATAFORMA =====
+        
+        context['media_plataforma_visualizacoes'] = 0
+        context['diferenca_visualizacoes'] = 0
+        
+        return context
+
+
+class DashboardEditarEspacoView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Editar Perfil do Espaço
+    Descrição: Formulário completo para edição de dados do espaço
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/editar_espaco.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega todas as estatísticas e informações do espaço
+        Versão simplificada e segura
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Pegar o espaço do usuário (primeiro se tiver vários)
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).first()
+        
+        context['espaco'] = espaco
+        
+        # Verificar se tem espaço
+        if not espaco:
+            context['total_visualizacoes'] = 0
+            context['visualizacoes_7_dias'] = 0
+            context['total_contatos'] = 0
+            context['contatos_30_dias'] = 0
+            context['media_avaliacoes'] = 0
+            context['total_avaliacoes'] = 0
+            context['total_terapeutas'] = 0
+            context['percentual_completude'] = 0
+            context['contatos_recentes'] = []
+            context['avaliacoes_recentes'] = []
+            context['plano_atual'] = 'Basic'
+            context['plano_badge_color'] = 'bg-gray-500'
+            context['media_plataforma_visualizacoes'] = 0
+            context['diferenca_visualizacoes'] = 0
+            return context
+        
+        # ===== ESTATÍSTICAS PRINCIPAIS (valores padrão) =====
+        context['total_visualizacoes'] = 0
+        context['visualizacoes_7_dias'] = 0
+        context['total_contatos'] = espaco.contatos.count() if hasattr(espaco, 'contatos') else 0
+        context['contatos_30_dias'] = 0
+        context['media_avaliacoes'] = 0
+        context['total_avaliacoes'] = 0
+        context['total_terapeutas'] = 0
+        
+        # Contatos nos últimos 30 dias
+        if hasattr(espaco, 'contatos'):
+            data_30_dias = timezone.now() - timedelta(days=30)
+            context['contatos_30_dias'] = espaco.contatos.filter(
+                created_at__gte=data_30_dias
+            ).count()
+        
+        # ===== AVALIAÇÕES =====
+        if hasattr(espaco, 'avaliacoes'):
+            media_avaliacoes = espaco.avaliacoes.filter(
+                is_active=True
+            ).aggregate(Avg('nota'))['nota__avg']
+            context['media_avaliacoes'] = round(media_avaliacoes, 1) if media_avaliacoes else 0
+            context['total_avaliacoes'] = espaco.avaliacoes.filter(is_active=True).count()
+        
+        # ===== PERCENTUAL DE COMPLETUDE DO PERFIL =====
+        completude = 0
+        if espaco.nome:
+            completude += 1
+        if hasattr(espaco, 'descricao_completa') and espaco.descricao_completa:
+            completude += 1
+        if hasattr(espaco, 'descricao_breve') and espaco.descricao_breve:
+            completude += 1
+        if espaco.cidade:
+            completude += 1
+        if hasattr(espaco, 'comodidades') and espaco.comodidades.exists():
+            completude += 1
+        if hasattr(espaco, 'especialidades') and espaco.especialidades.exists():
+            completude += 1
+        
+        context['percentual_completude'] = int((completude / 6) * 100)
+        
+        # ===== CONTATOS RECENTES =====
+        if hasattr(espaco, 'contatos'):
+            context['contatos_recentes'] = espaco.contatos.order_by('-created_at')[:5]
+        else:
+            context['contatos_recentes'] = []
+        
+        # ===== AVALIAÇÕES RECENTES =====
+        if hasattr(espaco, 'avaliacoes'):
+            context['avaliacoes_recentes'] = espaco.avaliacoes.filter(
+                is_active=True
+            ).order_by('-created_at')[:3]
+        else:
+            context['avaliacoes_recentes'] = []
+        
+        # ===== PLANO ATUAL =====
+        if hasattr(espaco, 'is_premium') and espaco.is_premium:
+            context['plano_atual'] = 'Premium S'
+            context['plano_badge_color'] = 'bg-gradient-to-r from-amber-500 to-orange-500'
+        elif hasattr(espaco, 'is_destaque') and espaco.is_destaque:
+            context['plano_atual'] = 'Premium A'
+            context['plano_badge_color'] = 'bg-gradient-to-r from-blue-500 to-indigo-500'
+        else:
+            context['plano_atual'] = 'Basic'
+            context['plano_badge_color'] = 'bg-gray-500'
+        
+        # ===== COMPARATIVO =====
+        context['media_plataforma_visualizacoes'] = 0
+        context['diferenca_visualizacoes'] = 0
+        
+        return context
+
+
+class DashboardTerapeutasVinculadosView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Terapeutas Vinculados ao Espaço
+    Descrição: Gerenciar terapeutas que utilizam o espaço
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/terapeutas_vinculados.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Lista terapeutas vinculados e solicitações pendentes
+        """
+        context = super().get_context_data(**kwargs)
+        
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).first()
+        
+        context['espaco'] = espaco
+        
+        # Terapeutas vinculados (se o relacionamento existir)
+        if hasattr(espaco, 'terapeutas_vinculados'):
+            context['terapeutas_vinculados'] = espaco.terapeutas_vinculados.all()
+        else:
+            context['terapeutas_vinculados'] = []
+        
+        # Solicitações pendentes (estrutura para futuro)
+        context['solicitacoes_pendentes'] = []
+        
+        # Estatísticas de uso
+        context['total_vinculados'] = len(context['terapeutas_vinculados'])
+        
+        return context
+
+
+class DashboardDisponibilidadeView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Disponibilidade do Espaço
+    Descrição: Gerenciar calendário e horários disponíveis para locação
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/disponibilidade.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega informações de disponibilidade e reservas
+        """
+        context = super().get_context_data(**kwargs)
+        
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).first()
+        
+        context['espaco'] = espaco
+        
+        # Períodos de disponibilidade configurados
+        context['periodos_disponiveis'] = []
+        if espaco:
+            # Verificar quais períodos estão marcados
+            if hasattr(espaco, 'disponibilidade_manha') and espaco.disponibilidade_manha:
+                context['periodos_disponiveis'].append('Manhã')
+            if hasattr(espaco, 'disponibilidade_tarde') and espaco.disponibilidade_tarde:
+                context['periodos_disponiveis'].append('Tarde')
+            if hasattr(espaco, 'disponibilidade_noite') and espaco.disponibilidade_noite:
+                context['periodos_disponiveis'].append('Noite')
+            if hasattr(espaco, 'disponibilidade_fds') and espaco.disponibilidade_fds:
+                context['periodos_disponiveis'].append('Finais de Semana')
+        
+        # Reservas futuras (estrutura para futuro)
+        context['reservas_futuras'] = []
+        
+        # Horários disponíveis
+        context['horarios_semana'] = [
+            {'dia': 'Segunda-feira', 'horarios': '08:00 - 20:00'},
+            {'dia': 'Terça-feira', 'horarios': '08:00 - 20:00'},
+            {'dia': 'Quarta-feira', 'horarios': '08:00 - 20:00'},
+            {'dia': 'Quinta-feira', 'horarios': '08:00 - 20:00'},
+            {'dia': 'Sexta-feira', 'horarios': '08:00 - 20:00'},
+            {'dia': 'Sábado', 'horarios': '09:00 - 14:00'},
+            {'dia': 'Domingo', 'horarios': 'Fechado'},
+        ]
+        
+        return context
+
+
+class DashboardPagamentosEspacoView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Pagamentos Recebidos
+    Descrição: Gerenciar pagamentos de terapeutas pelo uso do espaço
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/pagamentos.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega histórico e resumo de pagamentos
+        """
+        context = super().get_context_data(**kwargs)
+        
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).first()
+        
+        context['espaco'] = espaco
+        
+        # Valores simulados (estrutura para futuro sistema de pagamentos)
+        context['receita_total'] = 0.00
+        context['receita_mes_atual'] = 0.00
+        context['pagamentos_pendentes'] = 0.00
+        
+        # Histórico de transações (futuro)
+        context['transacoes'] = []
+        
+        # Estatísticas
+        context['total_transacoes'] = 0
+        context['media_por_transacao'] = 0.00
+        
+        return context
+
+
+class DashboardAssinaturaEspacoView(EspacoRequiredMixin, TemplateView):
+    """
+    Título: Assinatura do Espaço
+    Descrição: Gerenciar plano de assinatura do espaço
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'espacos/dashboard/assinatura.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega informações do plano atual e opções de upgrade
+        """
+        context = super().get_context_data(**kwargs)
+        
+        espaco = Espaco.objects.filter(
+            responsavel=self.request.user
+        ).first()
+        
+        context['espaco'] = espaco
+        
+        # Determinar plano atual
+        if espaco.is_premium:
+            context['plano_atual'] = 'Premium S'
+            context['preco_atual'] = 99.90
+            context['plano_badge_color'] = 'bg-gradient-to-r from-amber-500 to-orange-500'
+        elif espaco.is_destaque:
+            context['plano_atual'] = 'Premium A'
+            context['preco_atual'] = 49.90
+            context['plano_badge_color'] = 'bg-gradient-to-r from-blue-500 to-indigo-500'
+        else:
+            context['plano_atual'] = 'Basic'
+            context['preco_atual'] = 9.99
+            context['plano_badge_color'] = 'bg-gray-500'
+        
+        # Definição dos planos disponíveis
+        context['planos'] = [
+            {
+                'nome': 'Basic',
+                'preco': 9.99,
+                'cor': 'gray',
+                'icone': '🏠',
+                'beneficios': [
+                    'Perfil básico na plataforma',
+                    'Até 3 fotos do espaço',
+                    'Listagem na busca',
+                    'Contato por formulário',
+                ],
+                'limitacoes': [
+                    'Sem destaque na busca',
+                    'Sem selo de verificado',
+                    'Suporte básico',
+                ]
+            },
+            {
+                'nome': 'Premium A',
+                'preco': 49.90,
+                'cor': 'blue',
+                'icone': '⭐',
+                'beneficios': [
+                    'Tudo do Basic',
+                    'Até 7 fotos do espaço',
+                    'Destaque na busca',
+                    'Selo de espaço verificado',
+                    'Link direto para WhatsApp',
+                    'Suporte prioritário',
+                ],
+                'limitacoes': [
+                    'Sem posição premium no topo',
+                ]
+            },
+            {
+                'nome': 'Premium S',
+                'preco': 99.90,
+                'cor': 'amber',
+                'icone': '👑',
+                'beneficios': [
+                    'Tudo do Premium A',
+                    'Posição premium no topo',
+                    'Badge VIP exclusivo',
+                    'Destaque na home',
+                    'Estatísticas avançadas',
+                    'Suporte VIP 24h',
+                    'Relatórios mensais',
+                ],
+                'limitacoes': []
+            }
+        ]
+        
+        # Data de renovação (simulada)
+        context['data_renovacao'] = timezone.now() + timedelta(days=30)
+        
+        return context

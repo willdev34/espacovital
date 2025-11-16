@@ -1,0 +1,384 @@
+{# =============================================================== #}
+{# Título: Assinatura do Espaço Terapêutico #}
+{# Descrição: Gerenciamento de plano e opções de upgrade #}
+{# Autor: Will #}
+{# Data: 16/11/2025 #}
+{# =============================================================== #}
+
+{% extends 'espacos/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Assinatura - {{ espaco.nome }} - Espaço Vital{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+    
+    {# ===== CABEÇALHO DA PÁGINA ===== #}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-poppins font-bold text-gray-900">
+                Assinatura
+            </h1>
+            <p class="text-gray-600 mt-1">
+                Gerencie seu plano e desbloqueie recursos premium.
+            </p>
+        </div>
+    </div>
+    
+    {# ===== PLANO ATUAL ===== #}
+    <div class="bg-gradient-to-r from-teal-600 to-teal-700 rounded-xl shadow-lg p-6 text-white">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <p class="text-teal-100 text-sm font-medium mb-1">Seu plano atual</p>
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    {% if plano_atual == 'Premium S' %}
+                    👑
+                    {% elif plano_atual == 'Premium A' %}
+                    ⭐
+                    {% else %}
+                    🏠
+                    {% endif %}
+                    {{ plano_atual }}
+                </h2>
+                <p class="text-teal-100 mt-2">
+                    R$ {{ preco_atual|floatformat:2 }}/mês
+                </p>
+            </div>
+            
+            <div class="text-right">
+                <p class="text-teal-100 text-sm">Próxima renovação</p>
+                <p class="text-xl font-semibold">{{ data_renovacao|date:"d/m/Y" }}</p>
+                <p class="text-teal-200 text-xs mt-1">Renovação automática</p>
+            </div>
+        </div>
+        
+        {% if plano_atual != 'Premium S' %}
+        <div class="mt-6 pt-6 border-t border-white/20">
+            <p class="text-sm text-teal-100 mb-2">
+                💡 <strong>Dica:</strong> Faça upgrade para {{ plano_atual == 'Basic' and 'Premium A ou Premium S' or 'Premium S' }} e aumente sua visibilidade em até 300%!
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    {# ===== COMPARAÇÃO DE PLANOS ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6 text-center">
+            Compare os Planos e Escolha o Melhor para Você
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for plano in planos %}
+            <div class="relative rounded-xl border-2 {% if plano.nome == plano_atual %}border-teal-500 bg-teal-50{% elif plano.nome == 'Premium S' %}border-amber-400{% else %}border-gray-200{% endif %} p-6 transition-all hover:shadow-lg">
+                
+                {# Badge de Plano Atual #}
+                {% if plano.nome == plano_atual %}
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span class="px-3 py-1 bg-teal-600 text-white text-xs font-bold rounded-full">
+                        PLANO ATUAL
+                    </span>
+                </div>
+                {% elif plano.nome == 'Premium S' %}
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span class="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full">
+                        MAIS POPULAR
+                    </span>
+                </div>
+                {% endif %}
+                
+                {# Cabeçalho do Plano #}
+                <div class="text-center mb-6">
+                    <span class="text-4xl mb-3 block">{{ plano.icone }}</span>
+                    <h3 class="text-xl font-bold text-gray-900">{{ plano.nome }}</h3>
+                    <div class="mt-3">
+                        <span class="text-3xl font-bold text-gray-900">R$ {{ plano.preco|floatformat:2 }}</span>
+                        <span class="text-gray-600">/mês</span>
+                    </div>
+                </div>
+                
+                {# Benefícios #}
+                <div class="space-y-3 mb-6">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Benefícios incluídos:</p>
+                    {% for beneficio in plano.beneficios %}
+                    <div class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span class="text-sm text-gray-700">{{ beneficio }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {# Limitações (se houver) #}
+                {% if plano.limitacoes %}
+                <div class="space-y-2 mb-6">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Não inclui:</p>
+                    {% for limitacao in plano.limitacoes %}
+                    <div class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        <span class="text-sm text-gray-500">{{ limitacao }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {# Botão de Ação #}
+                <div class="mt-auto">
+                    {% if plano.nome == plano_atual %}
+                    <button disabled 
+                            class="w-full px-4 py-3 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
+                        Plano Atual
+                    </button>
+                    {% elif plano.preco > preco_atual %}
+                    <button type="button"
+                            onclick="selecionarPlano('{{ plano.nome }}', {{ plano.preco }})"
+                            class="w-full px-4 py-3 {% if plano.nome == 'Premium S' %}bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600{% else %}bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600{% endif %} text-white rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl">
+                        Fazer Upgrade
+                    </button>
+                    {% else %}
+                    <button type="button"
+                            onclick="confirmarDowngrade('{{ plano.nome }}')"
+                            class="w-full px-4 py-3 bg-gray-500 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition-all">
+                        Fazer Downgrade
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {# ===== BENEFÍCIOS DO UPGRADE ===== #}
+    {% if plano_atual != 'Premium S' %}
+    <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-amber-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Por que fazer upgrade?
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">📈</div>
+                <h4 class="font-semibold text-gray-900 mb-1">+300% Visibilidade</h4>
+                <p class="text-sm text-gray-600">Espaços Premium aparecem no topo das buscas.</p>
+            </div>
+            
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">✅</div>
+                <h4 class="font-semibold text-gray-900 mb-1">Selo Verificado</h4>
+                <p class="text-sm text-gray-600">Transmita confiança e credibilidade.</p>
+            </div>
+            
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">📊</div>
+                <h4 class="font-semibold text-gray-900 mb-1">Estatísticas Avançadas</h4>
+                <p class="text-sm text-gray-600">Entenda melhor seu público e otimize resultados.</p>
+            </div>
+            
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">🎯</div>
+                <h4 class="font-semibold text-gray-900 mb-1">Destaque na Home</h4>
+                <p class="text-sm text-gray-600">Apareça na página inicial do site.</p>
+            </div>
+            
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">📸</div>
+                <h4 class="font-semibold text-gray-900 mb-1">Mais Fotos</h4>
+                <p class="text-sm text-gray-600">Mostre até 7 fotos do seu espaço.</p>
+            </div>
+            
+            <div class="bg-white/80 rounded-lg p-4">
+                <div class="text-2xl mb-2">🎧</div>
+                <h4 class="font-semibold text-gray-900 mb-1">Suporte Prioritário</h4>
+                <p class="text-sm text-gray-600">Atendimento VIP com resposta rápida.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {# ===== HISTÓRICO DE PAGAMENTOS ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Histórico de Pagamentos da Assinatura
+        </h2>
+        
+        <div class="space-y-3">
+            {# Pagamentos simulados #}
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">Assinatura {{ plano_atual }}</p>
+                        <p class="text-sm text-gray-600">{{ data_renovacao|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-gray-900">R$ {{ preco_atual|floatformat:2 }}</p>
+                    <span class="text-xs text-green-600 font-medium">Pago</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <button class="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                Ver histórico completo →
+            </button>
+        </div>
+    </div>
+    
+    {# ===== CANCELAR ASSINATURA ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Cancelar Assinatura</h2>
+        <p class="text-sm text-gray-600 mb-4">
+            Ao cancelar sua assinatura, seu perfil será removido da plataforma ao final do período já pago. 
+            Você poderá reativar a qualquer momento.
+        </p>
+        <button type="button"
+                onclick="confirmarCancelamento()"
+                class="px-4 py-2 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors">
+            Cancelar Assinatura
+        </button>
+    </div>
+    
+    {# ===== FAQ ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6">Perguntas Frequentes</h2>
+        
+        <div class="space-y-4">
+            <div class="border-b border-gray-200 pb-4">
+                <h3 class="font-medium text-gray-900 mb-2">Posso mudar de plano a qualquer momento?</h3>
+                <p class="text-sm text-gray-600">
+                    Sim! Upgrades são aplicados imediatamente com cobrança proporcional. Downgrades entram em vigor na próxima renovação.
+                </p>
+            </div>
+            
+            <div class="border-b border-gray-200 pb-4">
+                <h3 class="font-medium text-gray-900 mb-2">Como funciona o pagamento?</h3>
+                <p class="text-sm text-gray-600">
+                    A cobrança é mensal e automática no cartão de crédito cadastrado. Você pode atualizar os dados de pagamento a qualquer momento.
+                </p>
+            </div>
+            
+            <div class="border-b border-gray-200 pb-4">
+                <h3 class="font-medium text-gray-900 mb-2">O que acontece se eu cancelar?</h3>
+                <p class="text-sm text-gray-600">
+                    Seu perfil permanece ativo até o final do período pago. Após isso, ele será removido das buscas, mas seus dados ficam salvos para reativação futura.
+                </p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium text-gray-900 mb-2">Existe período de fidelidade?</h3>
+                <p class="text-sm text-gray-600">
+                    Não! Você pode cancelar a qualquer momento sem multas ou taxas adicionais.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ===== MODAL DE UPGRADE ===== #}
+<div id="modalUpgrade" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Confirmar Upgrade</h3>
+            <button onclick="fecharModalUpgrade()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="mb-6">
+            <p class="text-gray-600 mb-4">
+                Você está prestes a fazer upgrade para o plano <strong id="planoSelecionado"></strong>.
+            </p>
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p class="text-sm text-green-800">
+                    <strong>Novo valor mensal:</strong> R$ <span id="valorPlano"></span>
+                </p>
+                <p class="text-xs text-green-600 mt-1">
+                    A diferença será cobrada proporcionalmente hoje.
+                </p>
+            </div>
+        </div>
+        
+        <div class="flex gap-3">
+            <button type="button" 
+                    onclick="fecharModalUpgrade()"
+                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                Cancelar
+            </button>
+            <button type="button" 
+                    onclick="confirmarUpgrade()"
+                    class="flex-1 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg text-sm font-medium hover:from-teal-700 hover:to-teal-800 transition-colors">
+                Confirmar Upgrade
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    // ===== Variáveis globais =====
+    let planoSelecionadoNome = '';
+    let planoSelecionadoValor = 0;
+    
+    // ===== Funções do Modal de Upgrade =====
+    function selecionarPlano(nome, valor) {
+        planoSelecionadoNome = nome;
+        planoSelecionadoValor = valor;
+        
+        document.getElementById('planoSelecionado').textContent = nome;
+        document.getElementById('valorPlano').textContent = valor.toFixed(2).replace('.', ',');
+        
+        document.getElementById('modalUpgrade').classList.remove('hidden');
+        document.getElementById('modalUpgrade').classList.add('flex');
+    }
+    
+    function fecharModalUpgrade() {
+        document.getElementById('modalUpgrade').classList.add('hidden');
+        document.getElementById('modalUpgrade').classList.remove('flex');
+    }
+    
+    function confirmarUpgrade() {
+        // Implementar lógica de upgrade via AJAX/Stripe
+        alert(`Upgrade para ${planoSelecionadoNome} confirmado!\n\nEm breve você será redirecionado para o pagamento.`);
+        fecharModalUpgrade();
+    }
+    
+    // ===== Confirmações =====
+    function confirmarDowngrade(plano) {
+        if (confirm(`Tem certeza que deseja fazer downgrade para o plano ${plano}?\n\nVocê perderá acesso aos recursos premium na próxima renovação.`)) {
+            alert('Downgrade solicitado. A mudança será aplicada na próxima renovação.');
+        }
+    }
+    
+    function confirmarCancelamento() {
+        if (confirm('Tem certeza que deseja cancelar sua assinatura?\n\nSeu perfil será removido da plataforma ao final do período pago.')) {
+            if (confirm('Esta ação não pode ser desfeita facilmente. Deseja continuar?')) {
+                alert('Assinatura cancelada. Seu perfil permanecerá ativo até o final do período já pago.');
+            }
+        }
+    }
+    
+    // ===== Fechar modal ao clicar fora =====
+    document.getElementById('modalUpgrade').addEventListener('click', function(e) {
+        if (e.target === this) {
+            fecharModalUpgrade();
+        }
+    });
+</script>
+{% endblock %}

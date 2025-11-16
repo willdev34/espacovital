@@ -24,34 +24,42 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         """
         Redireciona baseado no tipo de usuário:
-        - Tem perfil de terapeuta → Dashboard de Terapeutas
-        - Tem perfil de gestor de espaço → Dashboard de Espaços (futuro)
+        - Tem perfil de terapeuta E espaço → Página de seleção de perfil
+        - Tem apenas terapeuta → Dashboard de Terapeutas
+        - Tem apenas espaço → Dashboard de Espaços
         - Não tem perfil → Home (usuário comum sem acesso)
+        
+        Atualizado: 16/11/2025 - Suporte a múltiplos perfis
         """
         user = request.user
         
-        # ===== VERIFICAR SE É TERAPEUTA =====
-        if hasattr(user, 'terapeuta'):
-            return '/terapeutas/dashboard/'
+        # ===== VERIFICAR PERFIS DISPONÍVEIS =====
+        tem_terapeuta = hasattr(user, 'terapeuta')
+        tem_espaco = False
         
-        # ===== VERIFICAR SE É GESTOR DE ESPAÇO =====
         try:
             from espacos.models import Espaco
             # Verificar se usuário é responsável por algum espaço
-            if Espaco.objects.filter(responsavel=user, is_active=True).exists():
-                # TODO: Quando implementar dashboard de espaços, descomentar:
-                # return '/espacos/dashboard/'
-                
-                # Por enquanto, redireciona para home com mensagem
-                return '/terapeutas/dashboard/'  # Temporário
+            tem_espaco = Espaco.objects.filter(responsavel=user, is_active=True).exists()
         except Exception:
             pass  # Campo 'responsavel' ainda não existe no modelo
         
-        # ===== USUÁRIO COMUM SEM PERFIL =====
-        # Redireciona para home
-        # Se quiser criar página explicando como se tornar terapeuta:
-        # return '/seja-terapeuta/'
-        return '/'
+        # ===== DECISÃO DE REDIRECIONAMENTO =====
+        
+        # Caso 1: Tem AMBOS os perfis → Página de seleção
+        if tem_terapeuta and tem_espaco:
+            return reverse('core:selecionar_perfil')
+        
+        # Caso 2: Apenas terapeuta → Dashboard do terapeuta
+        if tem_terapeuta:
+            return reverse('terapeutas:dashboard')
+        
+        # Caso 3: Apenas espaço → Dashboard do espaço
+        if tem_espaco:
+            return reverse('espacos:dashboard')
+        
+        # Caso 4: Nenhum perfil → Home
+        return reverse('core:home')
     
     def add_message(self, request, level, message_template, message_context=None, extra_tags=''):
         """

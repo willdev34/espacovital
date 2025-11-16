@@ -14,6 +14,14 @@ app_name = 'core'
 urlpatterns = [
     # Página inicial - rota vazia aponta para home
     path('', views.HomeView.as_view(), name='home'),
+
+    # Seleção de perfil (terapeuta ou espaço)
+    # URL: /selecionar-perfil/
+    path(
+        'selecionar-perfil/',
+        views.SelecionarPerfilView.as_view(),
+        name='selecionar_perfil'
+    ),
     
     # ============================================
     # PÁGINAS INSTITUCIONAIS

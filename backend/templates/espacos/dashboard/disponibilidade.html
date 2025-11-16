@@ -1,0 +1,411 @@
+{# =============================================================== #}
+{# Título: Disponibilidade do Espaço Terapêutico #}
+{# Descrição: Gerenciamento de horários e calendário de reservas #}
+{# Autor: Will #}
+{# Data: 16/11/2025 #}
+{# =============================================================== #}
+
+{% extends 'espacos/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Disponibilidade - {{ espaco.nome }} - Espaço Vital{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+    
+    {# ===== CABEÇALHO DA PÁGINA ===== #}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-poppins font-bold text-gray-900">
+                Disponibilidade
+            </h1>
+            <p class="text-gray-600 mt-1">
+                Configure os horários de funcionamento e gerencie reservas.
+            </p>
+        </div>
+        
+        <button type="button" 
+                onclick="abrirModalHorarios()"
+                class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Configurar Horários
+        </button>
+    </div>
+    
+    {# ===== PERÍODOS DE DISPONIBILIDADE ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Períodos Disponíveis para Locação
+        </h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {# Manhã #}
+            <div class="p-4 rounded-lg border-2 {% if 'Manhã' in periodos_disponiveis %}border-green-500 bg-green-50{% else %}border-gray-200 bg-gray-50{% endif %}">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">🌅</span>
+                    {% if 'Manhã' in periodos_disponiveis %}
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    {% else %}
+                    <span class="w-3 h-3 bg-gray-300 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <h3 class="font-semibold text-gray-900">Manhã</h3>
+                <p class="text-sm text-gray-600">06:00 - 12:00</p>
+                <p class="text-xs mt-2 {% if 'Manhã' in periodos_disponiveis %}text-green-600 font-medium{% else %}text-gray-400{% endif %}">
+                    {% if 'Manhã' in periodos_disponiveis %}Disponível{% else %}Indisponível{% endif %}
+                </p>
+            </div>
+            
+            {# Tarde #}
+            <div class="p-4 rounded-lg border-2 {% if 'Tarde' in periodos_disponiveis %}border-green-500 bg-green-50{% else %}border-gray-200 bg-gray-50{% endif %}">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">☀️</span>
+                    {% if 'Tarde' in periodos_disponiveis %}
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    {% else %}
+                    <span class="w-3 h-3 bg-gray-300 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <h3 class="font-semibold text-gray-900">Tarde</h3>
+                <p class="text-sm text-gray-600">12:00 - 18:00</p>
+                <p class="text-xs mt-2 {% if 'Tarde' in periodos_disponiveis %}text-green-600 font-medium{% else %}text-gray-400{% endif %}">
+                    {% if 'Tarde' in periodos_disponiveis %}Disponível{% else %}Indisponível{% endif %}
+                </p>
+            </div>
+            
+            {# Noite #}
+            <div class="p-4 rounded-lg border-2 {% if 'Noite' in periodos_disponiveis %}border-green-500 bg-green-50{% else %}border-gray-200 bg-gray-50{% endif %}">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">🌙</span>
+                    {% if 'Noite' in periodos_disponiveis %}
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    {% else %}
+                    <span class="w-3 h-3 bg-gray-300 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <h3 class="font-semibold text-gray-900">Noite</h3>
+                <p class="text-sm text-gray-600">18:00 - 22:00</p>
+                <p class="text-xs mt-2 {% if 'Noite' in periodos_disponiveis %}text-green-600 font-medium{% else %}text-gray-400{% endif %}">
+                    {% if 'Noite' in periodos_disponiveis %}Disponível{% else %}Indisponível{% endif %}
+                </p>
+            </div>
+            
+            {# Finais de Semana #}
+            <div class="p-4 rounded-lg border-2 {% if 'Finais de Semana' in periodos_disponiveis %}border-green-500 bg-green-50{% else %}border-gray-200 bg-gray-50{% endif %}">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">📅</span>
+                    {% if 'Finais de Semana' in periodos_disponiveis %}
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    {% else %}
+                    <span class="w-3 h-3 bg-gray-300 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <h3 class="font-semibold text-gray-900">Fins de Semana</h3>
+                <p class="text-sm text-gray-600">Sábado e Domingo</p>
+                <p class="text-xs mt-2 {% if 'Finais de Semana' in periodos_disponiveis %}text-green-600 font-medium{% else %}text-gray-400{% endif %}">
+                    {% if 'Finais de Semana' in periodos_disponiveis %}Disponível{% else %}Indisponível{% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    {# ===== HORÁRIOS DE FUNCIONAMENTO ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Horários de Funcionamento
+        </h2>
+        
+        <div class="space-y-3">
+            {% for horario in horarios_semana %}
+            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-medium text-sm">
+                        {{ forloop.counter }}
+                    </span>
+                    <span class="font-medium text-gray-900">{{ horario.dia }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    {% if horario.horarios == 'Fechado' %}
+                    <span class="text-red-600 font-medium">{{ horario.horarios }}</span>
+                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                    {% else %}
+                    <span class="text-gray-700">{{ horario.horarios }}</span>
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-4 text-center">
+            <button type="button" 
+                    onclick="abrirModalHorarios()"
+                    class="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                Editar horários de funcionamento →
+            </button>
+        </div>
+    </div>
+    
+    {# ===== CALENDÁRIO DE RESERVAS ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Próximas Reservas
+            </h2>
+            <span class="text-xs text-gray-500">Próximos 7 dias</span>
+        </div>
+        
+        {% if reservas_futuras %}
+        <div class="space-y-3">
+            {% for reserva in reservas_futuras %}
+            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div class="flex items-center gap-4">
+                    <div class="text-center">
+                        <p class="text-xs text-blue-600 font-medium uppercase">{{ reserva.data|date:"M" }}</p>
+                        <p class="text-2xl font-bold text-blue-700">{{ reserva.data|date:"d" }}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">{{ reserva.terapeuta.nome }}</p>
+                        <p class="text-sm text-gray-600">{{ reserva.horario_inicio }} - {{ reserva.horario_fim }}</p>
+                    </div>
+                </div>
+                <div>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                        Confirmada
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        {# Estado Vazio #}
+        <div class="text-center py-12">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhuma reserva agendada</h3>
+            <p class="text-gray-600 mb-4 max-w-md mx-auto">
+                Quando terapeutas vinculados fizerem reservas, elas aparecerão aqui.
+            </p>
+            <a href="{% url 'espacos:dashboard_terapeutas' %}" 
+               class="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                Vincular terapeutas ao seu espaço →
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {# ===== CONFIGURAÇÕES DE LOCAÇÃO ===== #}
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Configurações de Locação
+        </h2>
+        
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {# Valor por Hora #}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Valor por Hora (R$)
+                    </label>
+                    <input type="number" 
+                           name="valor_hora" 
+                           step="0.01"
+                           min="0"
+                           value="{{ espaco.valor_hora|default:'50.00' }}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                           placeholder="50.00">
+                </div>
+                
+                {# Valor por Turno #}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Valor por Turno (R$)
+                    </label>
+                    <input type="number" 
+                           name="valor_turno" 
+                           step="0.01"
+                           min="0"
+                           value="{{ espaco.valor_turno|default:'200.00' }}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                           placeholder="200.00">
+                </div>
+                
+                {# Valor por Dia #}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Valor por Dia (R$)
+                    </label>
+                    <input type="number" 
+                           name="valor_dia" 
+                           step="0.01"
+                           min="0"
+                           value="{{ espaco.valor_dia|default:'500.00' }}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                           placeholder="500.00">
+                </div>
+                
+                {# Tempo Mínimo de Reserva #}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Tempo Mínimo de Reserva
+                    </label>
+                    <select name="tempo_minimo" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <option value="1">1 hora</option>
+                        <option value="2" selected>2 horas</option>
+                        <option value="3">3 horas</option>
+                        <option value="4">4 horas (meio turno)</option>
+                    </select>
+                </div>
+            </div>
+            
+            {# Políticas de Cancelamento #}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Política de Cancelamento
+                </label>
+                <textarea name="politica_cancelamento" 
+                          rows="4"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          placeholder="Descreva as regras de cancelamento de reservas...">Cancelamentos com até 24h de antecedência: reembolso total.
+Cancelamentos com menos de 24h: cobrança de 50% do valor.
+Não comparecimento: cobrança integral.</textarea>
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="submit" 
+                        class="px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg text-sm font-medium hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg">
+                    Salvar Configurações
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    {# ===== DICAS ===== #}
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-amber-900 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            Dicas para aumentar suas reservas
+        </h3>
+        <ul class="space-y-2 text-sm text-amber-800">
+            <li class="flex items-start gap-2">
+                <span class="text-amber-500 mt-1">•</span>
+                Mantenha seus horários sempre atualizados
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="text-amber-500 mt-1">•</span>
+                Ofereça preços competitivos para reservas longas
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="text-amber-500 mt-1">•</span>
+                Responda rapidamente às solicitações de vinculação
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="text-amber-500 mt-1">•</span>
+                Considere oferecer descontos para terapeutas frequentes
+            </li>
+        </ul>
+    </div>
+</div>
+
+{# ===== MODAL DE CONFIGURAÇÃO DE HORÁRIOS ===== #}
+<div id="modalHorarios" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">Configurar Horários de Funcionamento</h3>
+            <button onclick="fecharModalHorarios()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <form method="POST" action="#">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for dia in "Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado,Domingo"|make_list %}
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-32">
+                        <span class="font-medium text-gray-900">{{ dia }}</span>
+                    </div>
+                    <div class="flex-1 flex items-center gap-2">
+                        <input type="time" 
+                               name="abertura_{{ forloop.counter }}" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                               value="08:00">
+                        <span class="text-gray-500">às</span>
+                        <input type="time" 
+                               name="fechamento_{{ forloop.counter }}" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                               value="20:00">
+                    </div>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" 
+                               name="fechado_{{ forloop.counter }}"
+                               class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <span class="text-sm text-gray-600">Fechado</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mt-6 flex gap-3">
+                <button type="button" 
+                        onclick="fecharModalHorarios()"
+                        class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" 
+                        class="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors">
+                    Salvar Horários
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    // ===== Funções do Modal de Horários =====
+    function abrirModalHorarios() {
+        document.getElementById('modalHorarios').classList.remove('hidden');
+        document.getElementById('modalHorarios').classList.add('flex');
+    }
+    
+    function fecharModalHorarios() {
+        document.getElementById('modalHorarios').classList.add('hidden');
+        document.getElementById('modalHorarios').classList.remove('flex');
+    }
+    
+    // ===== Fechar modal ao clicar fora =====
+    document.getElementById('modalHorarios').addEventListener('click', function(e) {
+        if (e.target === this) {
+            fecharModalHorarios();
+        }
+    });
+</script>
+{% endblock %}

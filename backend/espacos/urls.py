@@ -13,6 +13,73 @@ app_name = 'espacos'
 
 urlpatterns = [
     # ===============================================================
+    # PÁGINA INICIAL DE ESPAÇOS
+    # ===============================================================
+    
+    # Página inicial de espaços (redirecionamento)
+    # IMPORTANTE: Deve vir primeiro para não conflitar
+    path('', views.EspacoHomeView.as_view(), name='home'),
+    
+    # ===============================================================
+    # DASHBOARD PRIVADO DO ESPAÇO (TAREFA 9)
+    # IMPORTANTE: Deve vir ANTES de <slug:slug>/ para não conflitar
+    # ===============================================================
+    
+    # Dashboard principal do espaço
+    # URL: /espacos/dashboard/
+    # Área privada com estatísticas e visão geral
+    path(
+        'dashboard/',
+        views.DashboardEspacoView.as_view(),
+        name='dashboard'
+    ),
+    
+    # Editar perfil do espaço
+    # URL: /espacos/dashboard/editar/
+    # Formulário completo para edição de dados do espaço
+    path(
+        'dashboard/editar/',
+        views.DashboardEditarEspacoView.as_view(),
+        name='dashboard_editar'
+    ),
+    
+    # Gerenciar terapeutas vinculados
+    # URL: /espacos/dashboard/terapeutas/
+    # Listar e aprovar terapeutas que usam o espaço
+    path(
+        'dashboard/terapeutas/',
+        views.DashboardTerapeutasVinculadosView.as_view(),
+        name='dashboard_terapeutas'
+    ),
+    
+    # Gerenciar disponibilidade/calendário
+    # URL: /espacos/dashboard/disponibilidade/
+    # Configurar horários e reservas do espaço
+    path(
+        'dashboard/disponibilidade/',
+        views.DashboardDisponibilidadeView.as_view(),
+        name='dashboard_disponibilidade'
+    ),
+    
+    # Gerenciar pagamentos recebidos
+    # URL: /espacos/dashboard/pagamentos/
+    # Ver pagamentos de terapeutas pelo uso do espaço
+    path(
+        'dashboard/pagamentos/',
+        views.DashboardPagamentosEspacoView.as_view(),
+        name='dashboard_pagamentos'
+    ),
+    
+    # Gerenciar assinatura/plano
+    # URL: /espacos/dashboard/assinatura/
+    # Ver plano atual e opções de upgrade (Basic/Premium A/Premium S)
+    path(
+        'dashboard/assinatura/',
+        views.DashboardAssinaturaEspacoView.as_view(),
+        name='dashboard_assinatura'
+    ),
+    
+    # ===============================================================
     # URLS PRINCIPAIS DE LISTAGEM E BUSCA
     # ===============================================================
     
@@ -24,26 +91,6 @@ urlpatterns = [
     
     # Listagem por região/cidade
     path('regiao/<slug:cidade_slug>/', views.EspacoPorRegiaoView.as_view(), name='por_regiao'),
-    
-    # ===============================================================
-    # URLS DE DETALHES E PERFIL
-    # ===============================================================
-    
-    # Perfil completo do espaço
-    path('<slug:slug>/', views.EspacoDetailView.as_view(), name='detalhe'),
-    
-    # Galeria de fotos do espaço
-    path('<slug:slug>/galeria/', views.EspacoGaleriaView.as_view(), name='galeria'),
-    
-    # ===============================================================
-    # URLS DE CONTATO E INTERAÇÃO
-    # ===============================================================
-    
-    # Formulário de contato com o espaço
-    path('<slug:slug>/contato/', views.ContatoEspacoView.as_view(), name='contato'),
-    
-    # Avaliação do espaço
-    path('<slug:slug>/avaliar/', views.AvaliarEspacoView.as_view(), name='avaliar'),
     
     # ===============================================================
     # APIS AJAX PARA FILTROS DINÂMICOS
@@ -62,18 +109,24 @@ urlpatterns = [
     path('api/buscar/', views.EspacoBuscaHTMXView.as_view(), name='api_busca_htmx'),
     
     # ===============================================================
-    # URLS DE ESTATÍSTICAS E DADOS
+    # URLS DE DETALHES E PERFIL (COM SLUG)
+    # IMPORTANTE: Devem vir POR ÚLTIMO para não capturar outras rotas
     # ===============================================================
+    
+    # Perfil completo do espaço
+    path('<slug:slug>/', views.EspacoDetailView.as_view(), name='detalhe'),
+    
+    # Galeria de fotos do espaço
+    path('<slug:slug>/galeria/', views.EspacoGaleriaView.as_view(), name='galeria'),
+    
+    # Formulário de contato com o espaço
+    path('<slug:slug>/contato/', views.ContatoEspacoView.as_view(), name='contato'),
+    
+    # Avaliação do espaço
+    path('<slug:slug>/avaliar/', views.AvaliarEspacoView.as_view(), name='avaliar'),
     
     # Estatísticas do espaço (para proprietários)
     path('<slug:slug>/estatisticas/', views.EspacoEstatisticasView.as_view(), name='estatisticas'),
-    
-    # ===============================================================
-    # URLS AUXILIARES
-    # ===============================================================
-    
-    # Página inicial de espaços (redirecionamento)
-    path('', views.EspacoHomeView.as_view(), name='home'),
 ]
 
 # ===============================================================

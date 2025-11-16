@@ -573,3 +573,66 @@ class IndiqueTerapiaView(CreateView):
             'Erro ao enviar sugestão. Verifique os campos e tente novamente.'
         )
         return super().form_invalid(form)
+    
+# ===============================================================
+# VIEW DE SELEÇÃO DE PERFIL (TERAPEUTA OU ESPAÇO)
+# ===============================================================
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
+
+
+class SelecionarPerfilView(LoginRequiredMixin, TemplateView):
+    """
+    Título: Seleção de Perfil de Acesso
+    Descrição: Permite usuário escolher qual dashboard acessar quando possui
+               perfil de terapeuta E de proprietário de espaço
+    Autor: Will
+    Data: 16/11/2025
+    """
+    template_name = 'core/selecionar_perfil.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Verifica se o usuário realmente precisa escolher
+        Redireciona automaticamente se tiver apenas um tipo de perfil
+        """
+        if not request.user.is_authenticated:
+            return redirect('account_login')
+        
+        # Verificar perfis disponíveis
+        tem_terapeuta = hasattr(request.user, 'terapeuta')
+        tem_espaco = request.user.espacos_gerenciados.exists() if hasattr(request.user, 'espacos_gerenciados') else False
+        
+        # Se não tem nenhum perfil, redireciona para home
+        if not tem_terapeuta and not tem_espaco:
+            return redirect('core:home')
+        
+        # Se tem apenas terapeuta, vai direto
+        if tem_terapeuta and not tem_espaco:
+            return redirect('terapeutas:dashboard')
+        
+        # Se tem apenas espaço, vai direto
+        if tem_espaco and not tem_terapeuta:
+            return redirect('espacos:dashboard')
+        
+        # Se tem ambos, mostra a página de seleção
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        """
+        Carrega informações dos perfis do usuário
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Dados do terapeuta
+        if hasattr(self.request.user, 'terapeuta'):
+            context['terapeuta'] = self.request.user.terapeuta
+        
+        # Dados do espaço (primeiro espaço se tiver vários)
+        if hasattr(self.request.user, 'espacos_gerenciados'):
+            context['espaco'] = self.request.user.espacos_gerenciados.first()
+            context['total_espacos'] = self.request.user.espacos_gerenciados.count()
+        
+        return context
