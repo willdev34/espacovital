@@ -803,7 +803,7 @@ class TerapeutaRequiredMixin(LoginRequiredMixin):
                 'Você precisa ter um perfil de terapeuta para acessar esta área. '
                 'Entre em contato conosco para criar seu perfil.'
             )
-            return redirect('home')
+            return redirect('core:home')
         
         return super().dispatch(request, *args, **kwargs)
 
