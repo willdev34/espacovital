@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # ===============================================================
 # Título: Manage.py - Espaço Vital
 # Descrição: Script principal do Django com encoding UTF-8 forçado

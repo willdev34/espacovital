@@ -639,6 +639,30 @@ admin.site.index_title = "Painel de Controle"
 admin.site.site_url = "/"  # Link para voltar ao site
 
 # ===============================================================
+# CUSTOMIZAR INDEX DO ADMIN PARA MOSTRAR DASHBOARD
+# ===============================================================
+
+from django.urls import path
+from django.contrib.admin import AdminSite
+
+# Sobrescrever o método get_urls do admin
+_original_get_urls = admin.site.get_urls
+
+def get_urls():
+    """
+    Adiciona URL customizada para o dashboard administrativo
+    """
+    from .admin_dashboard import admin_dashboard
+    
+    urls = _original_get_urls()
+    custom_urls = [
+        path('dashboard/', admin_dashboard, name='admin_dashboard'),
+    ]
+    return custom_urls + urls
+
+admin.site.get_urls = get_urls
+
+# ===============================================================
 # ADMINS DE LOCALIZAÇÃO
 # ===============================================================
 

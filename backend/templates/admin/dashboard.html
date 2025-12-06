@@ -1,0 +1,496 @@
+<!-- 
+===============================================================
+Título: Template Dashboard Administrativo - Espaço Vital
+Descrição: Dashboard com estatísticas e atalhos para gestão
+Autor: Will
+Data: 06/12/2025
+===============================================================
+-->
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Dashboard Administrativo - Espaço Vital{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* ===============================================================
+       ESTILOS CUSTOMIZADOS DO DASHBOARD
+       =============================================================== */
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid #059669;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card.warning {
+        border-left-color: #f59e0b;
+    }
+    
+    .stat-card.danger {
+        border-left-color: #ef4444;
+    }
+    
+    .stat-card.info {
+        border-left-color: #3b82f6;
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+    
+    .stat-title {
+        font-size: 0.875rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+    
+    .stat-description {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+    
+    .stat-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+    
+    .stat-badge.success {
+        background: #d1fae5;
+        color: #059669;
+    }
+    
+    .stat-badge.warning {
+        background: #fef3c7;
+        color: #f59e0b;
+    }
+    
+    .stat-badge.info {
+        background: #dbeafe;
+        color: #3b82f6;
+    }
+    
+    .alert-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-left: 4px solid #f59e0b;
+    }
+    
+    .alert-card.info {
+        border-left-color: #3b82f6;
+    }
+    
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .alert-icon {
+        font-size: 2rem;
+    }
+    
+    .alert-text h4 {
+        margin: 0 0 4px 0;
+        font-size: 1rem;
+        color: #111827;
+        font-weight: 600;
+    }
+    
+    .alert-button {
+        padding: 8px 20px;
+        background: #059669;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.2s;
+    }
+    
+    .alert-button:hover {
+        background: #047857;
+        color: white;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 32px 0 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+    }
+    
+    .quick-link {
+        background: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #111827;
+        font-weight: 600;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .quick-link:hover {
+        background: #e5e7eb;
+        color: #059669;
+    }
+    
+    .especialidade-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .especialidade-nome {
+        font-weight: 600;
+        color: #111827;
+    }
+    
+    .especialidade-count {
+        background: #059669;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    
+    <!-- ===============================================================
+         TÍTULO DO DASHBOARD
+         =============================================================== -->
+    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 32px; color: #059669;">
+        📊 Dashboard Administrativo
+    </h1>
+    
+    <!-- ===============================================================
+         ALERTAS E AÇÕES PENDENTES
+         =============================================================== -->
+    {% if alertas %}
+    <div style="margin-bottom: 40px;">
+        <h2 class="section-title">⚠️ Ações Pendentes</h2>
+        {% for alerta in alertas %}
+        <div class="alert-card {{ alerta.tipo }}">
+            <div class="alert-content">
+                <div class="alert-icon">{{ alerta.icone }}</div>
+                <div class="alert-text">
+                    <h4>{{ alerta.titulo }}</h4>
+                </div>
+            </div>
+            <a href="{{ alerta.link }}" class="alert-button">{{ alerta.acao }}</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- ===============================================================
+         ESTATÍSTICAS GERAIS - USUÁRIOS
+         =============================================================== -->
+    <h2 class="section-title">👥 Usuários do Sistema</h2>
+    <div class="dashboard-grid">
+        
+        <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-title">Total de Usuários</div>
+            <div class="stat-value">{{ total_usuarios }}</div>
+            <div class="stat-description">
+                <span class="stat-badge success">{{ usuarios_ativos }} ativos</span>
+            </div>
+        </div>
+        
+        <div class="stat-card danger">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-title">Superusuários</div>
+            <div class="stat-value">{{ superusuarios }}</div>
+            <div class="stat-description">Acesso total ao sistema</div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">👑</div>
+            <div class="stat-title">Administradores</div>
+            <div class="stat-value">{{ administradores }}</div>
+            <div class="stat-description">Gestão do painel</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">👨‍⚕️</div>
+            <div class="stat-title">Grupo Terapeutas</div>
+            <div class="stat-value">{{ terapeutas_group }}</div>
+            <div class="stat-description">Com acesso ao dashboard</div>
+        </div>
+        
+    </div>
+    
+    <!-- ===============================================================
+         ESTATÍSTICAS - TERAPEUTAS
+         =============================================================== -->
+    <h2 class="section-title">👨‍⚕️ Terapeutas</h2>
+    <div class="dashboard-grid">
+        
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-title">Total de Terapeutas</div>
+            <div class="stat-value">{{ total_terapeutas }}</div>
+            <div class="stat-description">Cadastrados na plataforma</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-title">Verificados</div>
+            <div class="stat-value">{{ terapeutas_verificados }}</div>
+            <div class="stat-description">
+                <span class="stat-badge success">Perfis aprovados</span>
+            </div>
+        </div>
+        
+        <div class="stat-card warning">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-title">Pendentes</div>
+            <div class="stat-value">{{ terapeutas_pendentes }}</div>
+            <div class="stat-description">
+                <span class="stat-badge warning">Aguardando verificação</span>
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-title">Em Destaque</div>
+            <div class="stat-value">{{ terapeutas_destaque }}</div>
+            <div class="stat-description">Posição premium</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">💎</div>
+            <div class="stat-title">Plano Premium</div>
+            <div class="stat-value">{{ terapeutas_premium }}</div>
+            <div class="stat-description">Assinantes ativos</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🆕</div>
+            <div class="stat-title">Novos (7 dias)</div>
+            <div class="stat-value">{{ terapeutas_novos }}</div>
+            <div class="stat-description">
+                <span class="stat-badge info">Última semana</span>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- ===============================================================
+         ESTATÍSTICAS - ESPAÇOS TERAPÊUTICOS
+         =============================================================== -->
+    <h2 class="section-title">🏢 Espaços Terapêuticos</h2>
+    <div class="dashboard-grid">
+        
+        <div class="stat-card">
+            <div class="stat-icon">🏠</div>
+            <div class="stat-title">Total de Espaços</div>
+            <div class="stat-value">{{ total_espacos }}</div>
+            <div class="stat-description">Cadastrados na plataforma</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-title">Verificados</div>
+            <div class="stat-value">{{ espacos_verificados }}</div>
+            <div class="stat-description">
+                <span class="stat-badge success">Perfis aprovados</span>
+            </div>
+        </div>
+        
+        <div class="stat-card warning">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-title">Pendentes</div>
+            <div class="stat-value">{{ espacos_pendentes }}</div>
+            <div class="stat-description">
+                <span class="stat-badge warning">Aguardando verificação</span>
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-title">Em Destaque</div>
+            <div class="stat-value">{{ espacos_destaque }}</div>
+            <div class="stat-description">Posição premium</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">💎</div>
+            <div class="stat-title">Plano Premium</div>
+            <div class="stat-value">{{ espacos_premium }}</div>
+            <div class="stat-description">Assinantes ativos</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🆕</div>
+            <div class="stat-title">Novos (7 dias)</div>
+            <div class="stat-value">{{ espacos_novos }}</div>
+            <div class="stat-description">
+                <span class="stat-badge info">Última semana</span>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- ===============================================================
+         ESTATÍSTICAS - TERAPIAS E AVALIAÇÕES
+         =============================================================== -->
+    <h2 class="section-title">🌿 Terapias e Avaliações</h2>
+    <div class="dashboard-grid">
+        
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-title">Especialidades</div>
+            <div class="stat-value">{{ total_especialidades }}</div>
+            <div class="stat-description">
+                <span class="stat-badge success">{{ especialidades_ativas }} ativas</span>
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-title">Avaliações Terapeutas</div>
+            <div class="stat-value">{{ total_avaliacoes_terapeutas }}</div>
+            <div class="stat-description">
+                Média: {{ media_avaliacoes_terapeutas }}/5.0
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-title">Avaliações Espaços</div>
+            <div class="stat-value">{{ total_avaliacoes_espacos }}</div>
+            <div class="stat-description">
+                Média: {{ media_avaliacoes_espacos }}/5.0
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">📧</div>
+            <div class="stat-title">Mensagens Gerais</div>
+            <div class="stat-value">{{ mensagens_gerais }}</div>
+            <div class="stat-description">
+                {% if mensagens_nao_lidas > 0 %}
+                <span class="stat-badge warning">{{ mensagens_nao_lidas }} não lidas</span>
+                {% else %}
+                <span class="stat-badge success">Todas lidas</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-title">Contatos Terapeutas</div>
+            <div class="stat-value">{{ total_contatos_terapeutas }}</div>
+            <div class="stat-description">
+                {% if contatos_pendentes > 0 %}
+                <span class="stat-badge warning">{{ contatos_pendentes }} pendentes</span>
+                {% else %}
+                <span class="stat-badge success">Todos respondidos</span>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- ===============================================================
+         ESPECIALIDADES MAIS POPULARES
+         =============================================================== -->
+    <h2 class="section-title">🔥 Top 5 Especialidades Mais Procuradas</h2>
+    <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        {% for esp in especialidades_populares %}
+        <div class="especialidade-item">
+            <div class="especialidade-nome">{{ esp.nome }}</div>
+            <div class="especialidade-count">{{ esp.total_terapeutas }} terapeuta{{ esp.total_terapeutas|pluralize }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- ===============================================================
+         ATALHOS RÁPIDOS
+         =============================================================== -->
+    <h2 class="section-title">⚡ Atalhos Rápidos</h2>
+    <div class="quick-links">
+        <a href="{% url 'admin:terapeutas_terapeuta_changelist' %}" class="quick-link">
+            👨‍⚕️ Gerenciar Terapeutas
+        </a>
+        <a href="{% url 'admin:espacos_espaco_changelist' %}" class="quick-link">
+            🏢 Gerenciar Espaços
+        </a>
+        <a href="{% url 'admin:core_especialidade_changelist' %}" class="quick-link">
+            🌿 Gerenciar Terapias
+        </a>
+        <a href="{% url 'admin:auth_user_changelist' %}" class="quick-link">
+            👥 Gerenciar Usuários
+        </a>
+        <a href="{% url 'admin:core_contact_changelist' %}" class="quick-link">
+            📧 Ver Mensagens
+        </a>
+        <a href="{% url 'admin:core_cidade_changelist' %}" class="quick-link">
+            🗺️ Gerenciar Localidades
+        </a>
+    </div>
+    
+</div>
+{% endblock %}

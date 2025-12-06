@@ -1,7 +1,7 @@
 # ===============================================================
 # Git Ignore - Espaço Vital
 # Autor: Will
-# Data: 12/10/2025
+# Data: 06/12/2025
 # ===============================================================
 
 # Python
@@ -13,13 +13,14 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
 
-# Virtual Environment
+# Virtual Environment (TODOS os ambientes virtuais)
 venv/
+venv-wsl/
 env/
 ENV/
 .venv
+*.venv
 
 # Django
 *.log
@@ -67,6 +68,16 @@ htmlcov/
 *.bak
 *.cache
 test_db.py
+debug_psycopg2.py
+sitecustomize.py
+
+# Scripts de inicialização Windows
+start_espacovital.bat
 
 # Node (se usar no futuro)
 node_modules/
+
+# Arquivos de build e cache
+*.egg-info/
+dist/
+build/

@@ -304,7 +304,7 @@ class EspacoAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     
     # Ações personalizadas
-    actions = ['verificar_espacos', 'remover_verificacao', 'marcar_destaque', 'marcar_premium']
+    actions = ['verificar_espacos', 'remover_verificacao', 'marcar_destaque', 'marcar_premium', 'remover_destaque', 'ativar_espacos', 'desativar_espacos', 'exportar_para_csv',]
     
     # Campos com seleção múltipla horizontal
     filter_horizontal = ['comodidades']
@@ -524,6 +524,125 @@ class EspacoAdmin(admin.ModelAdmin):
         updated = queryset.update(is_destaque=True)
         self.message_user(request, f'{updated} espaço(s) marcado(s) como destaque.')
     marcar_destaque.short_description = '🔥 Marcar como destaque'
+
+    def remover_destaque(self, request, queryset):
+        """
+        Ação para remover de destaque (apenas admin)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem remover destaques.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(destaque=False)
+        self.message_user(
+            request,
+            f'{updated} espaço(s) removido(s) do destaque.'
+        )
+    remover_destaque.short_description = 'Remover do destaque'
+    
+    def ativar_espacos(self, request, queryset):
+        """
+        Ação para ativar espaços (tornar perfil ativo)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem ativar espaços.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(ativo=True)
+        self.message_user(
+            request,
+            f'{updated} espaço(s) ativado(s) com sucesso.',
+            level='SUCCESS'
+        )
+    ativar_espacos.short_description = 'Ativar espaços selecionados'
+    
+    def desativar_espacos(self, request, queryset):
+        """
+        Ação para desativar espaços (suspender perfil)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem desativar espaços.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(ativo=False)
+        self.message_user(
+            request,
+            f'{updated} espaço(s) desativado(s) com sucesso.',
+            level='WARNING'
+        )
+    desativar_espacos.short_description = 'Desativar espaços selecionados'
+    
+    def exportar_para_csv(self, request, queryset):
+        """
+        Ação para exportar espaços selecionados para CSV
+        """
+        import csv
+        from django.http import HttpResponse
+        from datetime import datetime
+        
+        # Criar resposta HTTP com CSV
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        response['Content-Disposition'] = f'attachment; filename="espacos_{timestamp}.csv"'
+        
+        # Criar writer CSV
+        writer = csv.writer(response)
+        
+        # Cabeçalhos
+        writer.writerow([
+            'ID',
+            'Nome',
+            'Email',
+            'Telefone',
+            'Endereço',
+            'Cidade',
+            'Estado',
+            'Verificado',
+            'Destaque',
+            'Plano',
+            'Ativo',
+            'Aceita Locação',
+            'Data Cadastro'
+        ])
+        
+        # Dados dos espaços
+        for espaco in queryset:
+            writer.writerow([
+                espaco.id,
+                espaco.nome,
+                espaco.email or '',
+                espaco.telefone or '',
+                espaco.endereco or '',
+                espaco.cidade.nome if espaco.cidade else '',
+                espaco.cidade.estado.sigla if espaco.cidade else '',
+                'Sim' if espaco.verificado else 'Não',
+                'Sim' if espaco.destaque else 'Não',
+                espaco.get_plano_display(),
+                'Sim' if espaco.ativo else 'Não',
+                'Sim' if espaco.aceita_locacao else 'Não',
+                espaco.created_at.strftime('%d/%m/%Y %H:%M')
+            ])
+        
+        self.message_user(
+            request,
+            f'{queryset.count()} espaço(s) exportado(s) com sucesso.',
+            level='SUCCESS'
+        )
+        
+        return response
+    exportar_para_csv.short_description = 'Exportar selecionados para CSV'
     
     def marcar_premium(self, request, queryset):
         """Ação para marcar como premium"""

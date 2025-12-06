@@ -226,7 +226,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     
     # Ações personalizadas
-    actions = ['verificar_terapeutas', 'remover_verificacao', 'marcar_destaque']
+    actions = ['verificar_terapeutas', 'remover_verificacao', 'marcar_destaque', 'remover_destaque', 'ativar_terapeutas', 'desativar_terapeutas', 'exportar_para_csv',]
     
     def get_fieldsets(self, request, obj=None):
         """
@@ -698,6 +698,123 @@ class TerapeutaAdmin(admin.ModelAdmin):
             f'{updated} terapeuta(s) marcado(s) como destaque.'
         )
     marcar_destaque.short_description = 'Marcar como destaque'
+
+    def remover_destaque(self, request, queryset):
+        """
+        Ação para remover de destaque (apenas admin)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem remover destaques.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(destaque=False)
+        self.message_user(
+            request,
+            f'{updated} terapeuta(s) removido(s) do destaque.'
+        )
+    remover_destaque.short_description = 'Remover do destaque'
+    
+    def ativar_terapeutas(self, request, queryset):
+        """
+        Ação para ativar terapeutas (tornar perfil ativo)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem ativar terapeutas.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(ativo=True)
+        self.message_user(
+            request,
+            f'{updated} terapeuta(s) ativado(s) com sucesso.',
+            level='SUCCESS'
+        )
+    ativar_terapeutas.short_description = 'Ativar terapeutas selecionados'
+    
+    def desativar_terapeutas(self, request, queryset):
+        """
+        Ação para desativar terapeutas (suspender perfil)
+        """
+        if not self.is_admin_user(request.user):
+            self.message_user(
+                request,
+                'Apenas administradores podem desativar terapeutas.',
+                level='ERROR'
+            )
+            return
+        
+        updated = queryset.update(ativo=False)
+        self.message_user(
+            request,
+            f'{updated} terapeuta(s) desativado(s) com sucesso.',
+            level='WARNING'
+        )
+    desativar_terapeutas.short_description = 'Desativar terapeutas selecionados'
+    
+    def exportar_para_csv(self, request, queryset):
+        """
+        Ação para exportar terapeutas selecionados para CSV
+        """
+        import csv
+        from django.http import HttpResponse
+        from datetime import datetime
+        
+        # Criar resposta HTTP com CSV
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        response['Content-Disposition'] = f'attachment; filename="terapeutas_{timestamp}.csv"'
+        
+        # Criar writer CSV
+        writer = csv.writer(response)
+        
+        # Cabeçalhos
+        writer.writerow([
+            'ID',
+            'Nome',
+            'Email',
+            'Telefone',
+            'CRP/CRT',
+            'Cidade',
+            'Estado',
+            'Verificado',
+            'Destaque',
+            'Plano',
+            'Ativo',
+            'Data Cadastro'
+        ])
+        
+        # Dados dos terapeutas
+        for terapeuta in queryset:
+            writer.writerow([
+                terapeuta.id,
+                terapeuta.nome_exibicao,
+                terapeuta.usuario.email if terapeuta.usuario else '',
+                terapeuta.telefone or '',
+                terapeuta.crp_crt or '',
+                terapeuta.get_cidade_principal_display(),
+                '',  # Estado já está na cidade
+                'Sim' if terapeuta.verificado else 'Não',
+                'Sim' if terapeuta.destaque else 'Não',
+                terapeuta.get_plano_display(),
+                'Sim' if terapeuta.ativo else 'Não',
+                terapeuta.created_at.strftime('%d/%m/%Y %H:%M')
+            ])
+        
+        self.message_user(
+            request,
+            f'{queryset.count()} terapeuta(s) exportado(s) com sucesso.',
+            level='SUCCESS'
+        )
+        
+        return response
+    exportar_para_csv.short_description = 'Exportar selecionados para CSV'
     
     # ===============================================================
     # MÉTODOS UTILITÁRIOS
@@ -864,6 +981,6 @@ class ContatoAdmin(admin.ModelAdmin):
 # ===============================================================
 
 # Personalizar título do admin
-admin.site.site_header = "Espaço Vital - Administração"
-admin.site.site_title = "Espaço Vital Admin"
-admin.site.index_title = "Painel de Controle - Terapeutas"
+# admin.site.site_header = "Espaço Vital - Administração"
+# admin.site.site_title = "Espaço Vital Admin"
+# admin.site.index_title = "Painel de Controle - Terapeutas"
