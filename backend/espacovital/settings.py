@@ -320,12 +320,13 @@ SITE_ID = 1
 
 # Configurações de conta
 # Django Allauth
-ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Não obrigatório para admins
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permite login com email OU username
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = False
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Tornar verificação obrigatória
 
 # Redirecionamentos
 LOGIN_REDIRECT_URL = '/'  # Fallback (caso o adapter não funcione)
@@ -335,6 +336,11 @@ LOGIN_URL = '/accounts/login/'
 
 # Adapter customizado do Allauth (redireciona baseado no tipo de usuário)
 ACCOUNT_ADAPTER = 'core.adapters.CustomAccountAdapter'
+
+# Formulário customizado de signup
+ACCOUNT_FORMS = {
+    'signup': 'core.forms.CustomSignupForm',
+}
 
 # ===============================================================
 # CKEDITOR (Editor de Texto Rico)

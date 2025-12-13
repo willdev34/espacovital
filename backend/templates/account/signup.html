@@ -2,143 +2,202 @@
 {% load static %}
 
 {# ===============================================================
-   Título: Cadastro de Usuário - Espaço Vital
-   Descrição: Formulário de registro de nova conta
+   Título: Cadastro Expandido - Espaço Vital
+   Descrição: Formulário customizado com tipo de perfil e voucher
    Autor: Will
-   Data: 13/11/2025
+   Data: Dezembro 2025
    =============================================================== #}
 
-{% block title %}Cadastrar - Espaço Vital{% endblock %}
+{% block title %}Cadastre-se - Espaço Vital{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-beige-50 to-beige-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+<div class="min-h-screen bg-gradient-to-br from-primary/5 to-coral/5 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
         
-        <!-- Logo -->
-        <div class="text-center">
-            <a href="{% url 'core:home' %}">
-                <img class="mx-auto h-20 w-auto" src="{% static 'images/logo/logotipo_minimalista.png' %}" alt="Espaço Vital">
+        <!-- Logo e Título -->
+        <div class="text-center mb-8">
+            <a href="{% url 'core:home' %}" class="inline-block mb-6">
+                <img src="{% static 'images/logo/logotipo_minimalista.png' %}" alt="Espaço Vital" class="h-20 mx-auto">
             </a>
-            <h2 class="mt-6 text-3xl font-bold text-gray-900">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
                 Crie sua conta
-            </h2>
-            <p class="mt-2 text-sm text-gray-600">
+            </h1>
+            <p class="text-gray-600">
                 Junte-se à maior comunidade de terapias holísticas do Brasil
             </p>
         </div>
         
-        <!-- Card de Cadastro -->
+        <!-- Card do Formulário -->
         <div class="bg-white rounded-2xl shadow-xl p-8">
             
-            <!-- Mensagens de Erro/Sucesso -->
-            {% if messages %}
-            <div class="mb-6 space-y-2">
-                {% for message in messages %}
-                <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% elif message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
-                    {{ message }}
+            <!-- Mensagens de Erro Gerais -->
+            {% if form.non_field_errors %}
+            <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="text-sm text-red-800">
+                        {{ form.non_field_errors }}
+                    </div>
                 </div>
-                {% endfor %}
             </div>
             {% endif %}
             
-            <!-- Formulário de Cadastro -->
+            <!-- Formulário -->
             <form method="post" action="{% url 'account_signup' %}" class="space-y-5">
                 {% csrf_token %}
                 
-                <!-- Campo Username -->
+                <!-- Grid: Nome e Sobrenome -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Nome -->
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nome <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Sobrenome -->
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Sobrenome <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Email -->
                 <div>
-                    <label for="id_username" class="block text-sm font-medium text-gray-700 mb-2">
-                        Nome de Usuário
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" 
-                           name="username" 
-                           id="id_username"
-                           required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                           placeholder="seu_usuario">
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Username -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome de Usuário <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% else %}
                     <p class="mt-1 text-xs text-gray-500">Letras, números e @/./+/-/_ apenas</p>
+                    {% endif %}
                 </div>
                 
-                <!-- Campo Email -->
+                <!-- Telefone -->
                 <div>
-                    <label for="id_email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email
+                    <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Telefone <span class="text-red-500">*</span>
                     </label>
-                    <input type="email" 
-                           name="email" 
-                           id="id_email"
-                           required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                           placeholder="seu@email.com">
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+                    {% else %}
+                    <p class="mt-1 text-xs text-gray-500">Formato: (XX) XXXXX-XXXX</p>
+                    {% endif %}
                 </div>
                 
-                <!-- Campo Senha -->
+                <!-- Tipo de Perfil -->
                 <div>
-                    <label for="id_password1" class="block text-sm font-medium text-gray-700 mb-2">
-                        Senha
+                    <label for="{{ form.tipo_perfil.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Quero me cadastrar como <span class="text-red-500">*</span>
                     </label>
-                    <input type="password" 
-                           name="password1" 
-                           id="id_password1"
-                           required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                           placeholder="••••••••">
+                    {{ form.tipo_perfil }}
+                    {% if form.tipo_perfil.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.tipo_perfil.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Senha -->
+                <div>
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Senha <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                    {% else %}
                     <p class="mt-1 text-xs text-gray-500">Mínimo 8 caracteres</p>
+                    {% endif %}
                 </div>
                 
-                <!-- Campo Confirmar Senha -->
+                <!-- Confirmar Senha -->
                 <div>
-                    <label for="id_password2" class="block text-sm font-medium text-gray-700 mb-2">
-                        Confirmar Senha
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Confirmar Senha <span class="text-red-500">*</span>
                     </label>
-                    <input type="password" 
-                           name="password2" 
-                           id="id_password2"
-                           required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                           placeholder="••••••••">
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
-                <!-- Termos de Uso -->
+                <!-- Código de Voucher (Opcional) -->
+                <div class="bg-mint/10 rounded-lg p-4 border border-mint/30">
+                    <label for="{{ form.voucher_code.id_for_label }}" class="block text-sm font-medium text-primary mb-2">
+                        🎁 Código de Voucher (Opcional)
+                    </label>
+                    {{ form.voucher_code }}
+                    {% if form.voucher_code.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.voucher_code.errors.0 }}</p>
+                    {% else %}
+                    <p class="mt-1 text-xs text-gray-600">Se você tem um código de desconto, digite aqui</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Aceite de Termos -->
                 <div class="flex items-start">
-                    <input type="checkbox" 
-                           name="terms" 
-                           id="id_terms"
-                           required
-                           class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
-                    <label for="id_terms" class="ml-2 block text-sm text-gray-700">
-                        Concordo com os 
-                        <a href="{% url 'core:termos' %}" target="_blank" class="text-primary hover:underline">Termos de Uso</a>
-                        e 
-                        <a href="{% url 'core:privacidade' %}" target="_blank" class="text-primary hover:underline">Política de Privacidade</a>
+                    <div class="flex items-center h-5">
+                        {{ form.aceite_termos }}
+                    </div>
+                    <label for="{{ form.aceite_termos.id_for_label }}" class="ml-3 text-sm text-gray-700">
+                        Li e aceito os Termos de Uso e Política de Privacidade
+                        <span class="text-red-500">*</span>
                     </label>
                 </div>
+                {% if form.aceite_termos.errors %}
+                <p class="text-sm text-red-600">{{ form.aceite_termos.errors.0 }}</p>
+                {% endif %}
                 
-                <!-- Botão Cadastrar -->
+                <!-- Botão de Submit -->
                 <button type="submit" 
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
+                        class="w-full flex justify-center items-center px-6 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                     </svg>
-                    Criar conta
+                    Criar Conta
                 </button>
+                
             </form>
             
-            <!-- Divider -->
+            <!-- Separador -->
             <div class="relative my-6">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-300"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">ou</span>
+                    <span class="px-4 bg-white text-gray-500">ou</span>
                 </div>
             </div>
             
-            <!-- Já tem conta -->
+            <!-- Link para Login -->
             <div class="text-center">
                 <p class="text-sm text-gray-600">
                     Já tem uma conta?
-                    <a href="{% url 'account_login' %}" class="font-medium text-primary hover:text-primary-dark">
+                    <a href="{% url 'account_login' %}" class="font-semibold text-primary hover:text-primary/80 transition-colors">
                         Faça login
                     </a>
                 </p>
@@ -146,8 +205,41 @@
             
         </div>
         
+        <!-- Benefícios do Cadastro -->
+        <div class="mt-8 bg-white/50 backdrop-blur rounded-xl p-6">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                ✨ Ao se cadastrar você terá acesso a:
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-mint mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Perfil profissional completo
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-mint mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Conexão com milhares de potenciais clientes
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-mint mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Estatísticas e insights do seu perfil
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-mint mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    15 dias grátis do plano Premium
+                </li>
+            </ul>
+        </div>
+        
         <!-- Link Voltar -->
-        <div class="text-center text-sm">
+        <div class="text-center text-sm mt-6">
             <a href="{% url 'core:home' %}" class="text-gray-600 hover:text-primary flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -158,4 +250,31 @@
         
     </div>
 </div>
+
+<!-- Script para máscara de telefone -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.querySelector('[data-mask="phone"]');
+    
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length <= 11) {
+                if (value.length <= 2) {
+                    value = value.replace(/^(\d{0,2})/, '($1');
+                } else if (value.length <= 6) {
+                    value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+                } else if (value.length <= 10) {
+                    value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                } else {
+                    value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                }
+            }
+            
+            e.target.value = value;
+        });
+    }
+});
+</script>
 {% endblock %}

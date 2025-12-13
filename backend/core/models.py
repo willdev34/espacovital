@@ -747,3 +747,452 @@ class SugestaoTerapia(BaseModel):
     
     def __str__(self):
         return f'{self.nome_terapia} - {self.nome}'
+    
+# ===============================================================
+# MODELS DE SISTEMA DE ASSINATURAS E VOUCHERS
+# ===============================================================
+
+class PlanoChoices(models.TextChoices):
+    """
+    Choices para tipos de plano de assinatura
+    Baseado no sistema de planos já definido
+    """
+    GRATUITO_FILIADO = 'gratuito_filiado', 'Gratuito Filiado a Espaço'
+    BASIC = 'basic', 'Basic'
+    PREMIUM_A = 'premium_a', 'Premium A (Terapeuta)'
+    PREMIUM_S = 'premium_s', 'Premium S (Espaço)'
+    PREMIUM_S_PLUS = 'premium_s_plus', 'Premium S+ (Espaço com Gerenciamento)'
+    COMBO_A_S = 'combo_a_s', 'Combo Premium A + S'
+    COMBO_A_S_PLUS = 'combo_a_s_plus', 'Combo Premium A + S+'
+
+
+class StatusAssinaturaChoices(models.TextChoices):
+    """
+    Status de uma assinatura
+    """
+    TRIAL = 'trial', 'Período de Teste'
+    ACTIVE = 'active', 'Ativa'
+    SUSPENDED = 'suspended', 'Suspensa'
+    CANCELLED = 'cancelled', 'Cancelada'
+    EXPIRED = 'expired', 'Expirada'
+
+
+class TipoDescontoVoucher(models.TextChoices):
+    """
+    Tipo de desconto do voucher
+    """
+    PERCENTUAL = 'percentual', 'Percentual'
+    VALOR_FIXO = 'valor_fixo', 'Valor Fixo'
+    GRATUIDADE = 'gratuidade', 'Período de Gratuidade'
+
+
+class Plano(BaseModel):
+    """
+    Model para Planos de Assinatura
+    Define os planos disponíveis no sistema
+    """
+    nome = models.CharField(
+        'Nome do Plano',
+        max_length=100,
+        choices=PlanoChoices.choices,
+        unique=True
+    )
+    nome_exibicao = models.CharField(
+        'Nome para Exibição',
+        max_length=100,
+        help_text='Nome que aparece na interface'
+    )
+    descricao = models.TextField(
+        'Descrição',
+        help_text='Descrição resumida do plano'
+    )
+    valor = models.DecimalField(
+        'Valor Mensal',
+        max_digits=10,
+        decimal_places=2,
+        help_text='Valor mensal em R$'
+    )
+    dias_trial = models.PositiveIntegerField(
+        'Dias de Trial',
+        default=15,
+        help_text='Quantidade de dias gratuitos de teste'
+    )
+    
+    # Funcionalidades do plano
+    destaque_busca = models.BooleanField(
+        'Destaque nas Buscas',
+        default=False,
+        help_text='Perfil aparece em destaque nas buscas'
+    )
+    badge_verificado = models.BooleanField(
+        'Badge Verificado',
+        default=False,
+        help_text='Exibe badge de verificado no perfil'
+    )
+    estatisticas_avancadas = models.BooleanField(
+        'Estatísticas Avançadas',
+        default=False,
+        help_text='Acesso a estatísticas avançadas'
+    )
+    suporte_prioritario = models.BooleanField(
+        'Suporte Prioritário',
+        default=False,
+        help_text='Atendimento prioritário'
+    )
+    limite_fotos = models.PositiveIntegerField(
+        'Limite de Fotos',
+        default=5,
+        help_text='Quantidade máxima de fotos no perfil'
+    )
+    vinculos_espacos = models.PositiveIntegerField(
+        'Vínculos com Espaços',
+        default=1,
+        help_text='Quantidade de espaços que pode se vincular'
+    )
+    gerenciamento_salas = models.BooleanField(
+        'Gerenciamento de Salas',
+        default=False,
+        help_text='Permite gerenciar salas (para espaços)'
+    )
+    divulgacao_perfil = models.BooleanField(
+        'Divulgação de Perfil',
+        default=True,
+        help_text='Perfil aparece publicamente no site'
+    )
+    
+    # Controle de disponibilidade
+    max_usuarios = models.PositiveIntegerField(
+        'Máximo de Usuários',
+        null=True,
+        blank=True,
+        help_text='Limite de usuários neste plano (null = ilimitado)'
+    )
+    ordem_exibicao = models.PositiveIntegerField(
+        'Ordem de Exibição',
+        default=0,
+        help_text='Ordem de exibição na página de planos'
+    )
+    recomendado = models.BooleanField(
+        'Plano Recomendado',
+        default=False,
+        help_text='Destacar como plano recomendado'
+    )
+    
+    class Meta:
+        verbose_name = 'Plano de Assinatura'
+        verbose_name_plural = 'Planos de Assinatura'
+        ordering = ['ordem_exibicao', 'valor']
+    
+    def __str__(self):
+        return f"{self.nome_exibicao} - R$ {self.valor}"
+    
+    @property
+    def total_assinantes(self):
+        """
+        Retorna total de assinantes ativos neste plano
+        """
+        return self.assinaturas.filter(
+            status__in=[StatusAssinaturaChoices.ACTIVE, StatusAssinaturaChoices.TRIAL]
+        ).count()
+    
+    @property
+    def vagas_disponiveis(self):
+        """
+        Retorna quantidade de vagas disponíveis
+        """
+        if self.max_usuarios is None:
+            return None  # Ilimitado
+        return max(0, self.max_usuarios - self.total_assinantes)
+    
+    @property
+    def tem_vagas(self):
+        """
+        Verifica se ainda há vagas disponíveis
+        """
+        if self.max_usuarios is None:
+            return True
+        return self.total_assinantes < self.max_usuarios
+
+
+class Voucher(BaseModel):
+    """
+    Model para Vouchers/Cupons de Desconto
+    Gerenciado pelo admin para dar descontos/gratuidade
+    """
+    codigo = models.CharField(
+        'Código do Voucher',
+        max_length=50,
+        unique=True,
+        help_text='Código único do voucher (ex: BEMVINDO2024)'
+    )
+    descricao = models.CharField(
+        'Descrição',
+        max_length=200,
+        help_text='Descrição interna do voucher'
+    )
+    
+    # Tipo de desconto
+    tipo_desconto = models.CharField(
+        'Tipo de Desconto',
+        max_length=20,
+        choices=TipoDescontoVoucher.choices,
+        default=TipoDescontoVoucher.PERCENTUAL
+    )
+    valor_desconto = models.DecimalField(
+        'Valor do Desconto',
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text='Valor em R$ (se fixo) ou % (se percentual)'
+    )
+    dias_gratuidade = models.PositiveIntegerField(
+        'Dias de Gratuidade',
+        default=15,
+        help_text='Quantidade de dias grátis (15 a 90)'
+    )
+    
+    # Validade
+    data_inicio = models.DateField(
+        'Data de Início',
+        help_text='Data a partir da qual o voucher é válido'
+    )
+    data_expiracao = models.DateField(
+        'Data de Expiração',
+        help_text='Data até quando o voucher é válido'
+    )
+    
+    # Limites de uso
+    limite_usos = models.PositiveIntegerField(
+        'Limite de Usos',
+        null=True,
+        blank=True,
+        help_text='Quantidade máxima de usos (null = ilimitado)'
+    )
+    usos_realizados = models.PositiveIntegerField(
+        'Usos Realizados',
+        default=0,
+        editable=False
+    )
+    
+    # Planos aplicáveis
+    planos_aplicaveis = models.ManyToManyField(
+        Plano,
+        related_name='vouchers',
+        verbose_name='Planos Aplicáveis',
+        help_text='Planos em que o voucher pode ser usado'
+    )
+    
+    # Controle
+    criado_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='vouchers_criados',
+        verbose_name='Criado por'
+    )
+    
+    class Meta:
+        verbose_name = 'Voucher'
+        verbose_name_plural = 'Vouchers'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.codigo} ({self.get_tipo_desconto_display()})"
+    
+    @property
+    def esta_valido(self):
+        """
+        Verifica se o voucher está válido (data e limite de usos)
+        """
+        from django.utils import timezone
+        hoje = timezone.now().date()
+        
+        # Verifica data
+        if hoje < self.data_inicio or hoje > self.data_expiracao:
+            return False
+        
+        # Verifica limite de usos
+        if self.limite_usos is not None and self.usos_realizados >= self.limite_usos:
+            return False
+        
+        return self.is_active
+    
+    def calcular_desconto(self, valor_plano):
+        """
+        Calcula o valor do desconto sobre um valor de plano
+        """
+        if self.tipo_desconto == TipoDescontoVoucher.PERCENTUAL:
+            return (valor_plano * self.valor_desconto) / 100
+        elif self.tipo_desconto == TipoDescontoVoucher.VALOR_FIXO:
+            return min(self.valor_desconto, valor_plano)
+        else:  # GRATUIDADE
+            return valor_plano  # Desconto total durante período
+    
+    def registrar_uso(self):
+        """
+        Registra um uso do voucher
+        """
+        self.usos_realizados += 1
+        self.save(update_fields=['usos_realizados'])
+
+
+class Assinatura(BaseModel):
+    """
+    Model para Assinaturas dos Usuários
+    Relaciona usuário com plano escolhido
+    """
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='assinaturas',
+        verbose_name='Usuário'
+    )
+    plano = models.ForeignKey(
+        Plano,
+        on_delete=models.PROTECT,
+        related_name='assinaturas',
+        verbose_name='Plano'
+    )
+    status = models.CharField(
+        'Status',
+        max_length=20,
+        choices=StatusAssinaturaChoices.choices,
+        default=StatusAssinaturaChoices.TRIAL
+    )
+    
+    # Datas
+    data_inicio = models.DateField(
+        'Data de Início',
+        help_text='Data de início da assinatura'
+    )
+    data_fim_trial = models.DateField(
+        'Data Fim do Trial',
+        null=True,
+        blank=True,
+        help_text='Data de término do período de teste'
+    )
+    data_proxima_cobranca = models.DateField(
+        'Data Próxima Cobrança',
+        null=True,
+        blank=True,
+        help_text='Data da próxima cobrança'
+    )
+    data_cancelamento = models.DateField(
+        'Data de Cancelamento',
+        null=True,
+        blank=True,
+        help_text='Data em que a assinatura foi cancelada'
+    )
+    
+    # Voucher utilizado
+    voucher_utilizado = models.ForeignKey(
+        Voucher,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assinaturas',
+        verbose_name='Voucher Utilizado'
+    )
+    
+    # Observações
+    observacoes = models.TextField(
+        'Observações',
+        blank=True,
+        help_text='Observações sobre a assinatura'
+    )
+    
+    class Meta:
+        verbose_name = 'Assinatura'
+        verbose_name_plural = 'Assinaturas'
+        ordering = ['-data_inicio']
+    
+    def __str__(self):
+        return f"{self.usuario.get_full_name()} - {self.plano.nome_exibicao} ({self.get_status_display()})"
+    
+    @property
+    def esta_ativa(self):
+        """
+        Verifica se a assinatura está ativa
+        """
+        return self.status in [StatusAssinaturaChoices.ACTIVE, StatusAssinaturaChoices.TRIAL]
+    
+    @property
+    def em_trial(self):
+        """
+        Verifica se está em período de teste
+        """
+        from django.utils import timezone
+        if self.status == StatusAssinaturaChoices.TRIAL and self.data_fim_trial:
+            return timezone.now().date() <= self.data_fim_trial
+        return False
+    
+    def cancelar(self):
+        """
+        Cancela a assinatura
+        """
+        from django.utils import timezone
+        self.status = StatusAssinaturaChoices.CANCELLED
+        self.data_cancelamento = timezone.now().date()
+        self.save(update_fields=['status', 'data_cancelamento'])
+    
+    def ativar(self):
+        """
+        Ativa a assinatura
+        """
+        self.status = StatusAssinaturaChoices.ACTIVE
+        self.save(update_fields=['status'])
+
+
+class HistoricoAssinatura(TimeStampedModel):
+    """
+    Model para Histórico de Alterações nas Assinaturas
+    Registra mudanças de plano, status, etc.
+    """
+    assinatura = models.ForeignKey(
+        Assinatura,
+        on_delete=models.CASCADE,
+        related_name='historico',
+        verbose_name='Assinatura'
+    )
+    acao = models.CharField(
+        'Ação',
+        max_length=100,
+        help_text='Descrição da ação realizada'
+    )
+    detalhes = models.TextField(
+        'Detalhes',
+        blank=True,
+        help_text='Detalhes adicionais da ação'
+    )
+    plano_anterior = models.ForeignKey(
+        Plano,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='historico_anterior',
+        verbose_name='Plano Anterior'
+    )
+    plano_novo = models.ForeignKey(
+        Plano,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='historico_novo',
+        verbose_name='Plano Novo'
+    )
+    realizado_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='acoes_assinatura',
+        verbose_name='Realizado por'
+    )
+    
+    class Meta:
+        verbose_name = 'Histórico de Assinatura'
+        verbose_name_plural = 'Históricos de Assinaturas'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.assinatura.usuario.get_full_name()} - {self.acao} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"

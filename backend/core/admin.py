@@ -13,7 +13,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.contrib.admin import SimpleListFilter
-from .models import Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, Cidade, Especialidade, SugestaoTerapia
+from .models import ( Contact, Newsletter, FAQ, SiteConfiguration, Pais, Estado, 
+                     Cidade, Especialidade, SugestaoTerapia, Plano, Voucher, 
+                     Assinatura, HistoricoAssinatura
+)
+
 
 # ===============================================================
 # FILTROS PERSONALIZADOS
@@ -930,3 +934,468 @@ class SugestaoTerapiaAdmin(admin.ModelAdmin):
             'fields': ('lida', 'created_at', 'updated_at')
         }),
     )
+
+# ===============================================================
+# ADMIN DE SISTEMA DE ASSINATURAS E VOUCHERS
+# ===============================================================
+
+class PlanoInline(admin.TabularInline):
+    """
+    Inline para exibir planos aplicáveis em Voucher
+    """
+    model = Voucher.planos_aplicaveis.through
+    extra = 1
+    verbose_name = 'Plano Aplicável'
+    verbose_name_plural = 'Planos Aplicáveis'
+
+
+@admin.register(Plano)
+class PlanoAdmin(admin.ModelAdmin):
+    """
+    Título: Admin de Planos de Assinatura
+    Descrição: Interface para gerenciar planos disponíveis no sistema
+    Autor: Will
+    Data: Dezembro 2025
+    """
+    list_display = [
+        'nome_exibicao_badge', 
+        'valor_display', 
+        'total_assinantes_display',
+        'vagas_status',
+        'ordem_exibicao',
+        'is_active'
+    ]
+    list_filter = ['is_active', 'recomendado', 'divulgacao_perfil']
+    search_fields = ['nome_exibicao', 'descricao']
+    ordering = ['ordem_exibicao', 'valor']
+    list_editable = ['ordem_exibicao', 'is_active']
+    
+    fieldsets = [
+        ('Informações Básicas', {
+            'fields': (
+                'nome', 
+                'nome_exibicao', 
+                'descricao', 
+                'valor',
+                'dias_trial'
+            )
+        }),
+        ('Funcionalidades', {
+            'fields': (
+                'destaque_busca',
+                'badge_verificado',
+                'estatisticas_avancadas',
+                'suporte_prioritario',
+                'limite_fotos',
+                'vinculos_espacos',
+                'gerenciamento_salas',
+                'divulgacao_perfil'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Controle de Disponibilidade', {
+            'fields': (
+                'max_usuarios',
+                'ordem_exibicao',
+                'recomendado',
+                'is_active'
+            )
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    ]
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def nome_exibicao_badge(self, obj):
+        """Exibe nome com badge se for recomendado"""
+        if obj.recomendado:
+            return format_html(
+                '<strong style="color: #1E5C5C;">{}</strong> <span style="background: #FFB4A2; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">RECOMENDADO</span>',
+                obj.nome_exibicao
+            )
+        return obj.nome_exibicao
+    nome_exibicao_badge.short_description = 'Plano'
+    
+    def valor_display(self, obj):
+        """Exibe valor formatado"""
+        return format_html(
+            '<strong style="color: #059669;">R$ {}</strong>',
+            f'{obj.valor:.2f}'.replace('.', ',')
+        )
+    valor_display.short_description = 'Valor/Mês'
+    
+    def total_assinantes_display(self, obj):
+        """Exibe total de assinantes ativos"""
+        total = obj.total_assinantes
+        if total > 0:
+            return format_html(
+                '<span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 12px; font-weight: bold;">{}</span>',
+                total
+            )
+        return '-'
+    total_assinantes_display.short_description = 'Assinantes'
+    
+    def vagas_status(self, obj):
+        """Exibe status de vagas disponíveis"""
+        if obj.max_usuarios is None:
+            return format_html(
+                '<span style="color: #059669;">♾️ Ilimitado</span>'
+            )
+        
+        vagas = obj.vagas_disponiveis
+        if vagas == 0:
+            return format_html(
+                '<span style="background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 12px; font-weight: bold;">🔒 LOTADO</span>'
+            )
+        elif vagas <= 5:
+            return format_html(
+                '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 12px; font-weight: bold;">⚠️ {} vagas</span>',
+                vagas
+            )
+        else:
+            return format_html(
+                '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 12px; font-weight: bold;">✅ {} vagas</span>',
+                vagas
+            )
+    vagas_status.short_description = 'Disponibilidade'
+
+
+@admin.register(Voucher)
+class VoucherAdmin(admin.ModelAdmin):
+    """
+    Título: Admin de Vouchers/Cupons
+    Descrição: Interface para criar e gerenciar vouchers de desconto
+    Autor: Will
+    Data: Dezembro 2025
+    """
+    list_display = [
+        'codigo_display',
+        'tipo_desconto_badge',
+        'valor_desconto_display',
+        'periodo_validade',
+        'usos_display',
+        'status_badge'
+    ]
+    list_filter = ['tipo_desconto', 'is_active', 'data_inicio', 'data_expiracao']
+    search_fields = ['codigo', 'descricao']
+    ordering = ['-created_at']
+    
+    fieldsets = [
+        ('Informações do Voucher', {
+            'fields': ('codigo', 'descricao', 'criado_por')
+        }),
+        ('Tipo de Desconto', {
+            'fields': (
+                'tipo_desconto',
+                'valor_desconto',
+                'dias_gratuidade'
+            )
+        }),
+        ('Validade', {
+            'fields': (
+                'data_inicio',
+                'data_expiracao'
+            )
+        }),
+        ('Limites e Controle', {
+            'fields': (
+                'limite_usos',
+                'usos_realizados',
+                'is_active'
+            )
+        }),
+        ('Planos Aplicáveis', {
+            'fields': ('planos_aplicaveis',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    ]
+    
+    readonly_fields = ['created_at', 'updated_at', 'usos_realizados']
+    filter_horizontal = ['planos_aplicaveis']
+    
+    def save_model(self, request, obj, form, change):
+        """Salva o voucher e registra quem criou"""
+        if not change:  # Novo voucher
+            obj.criado_por = request.user
+        super().save_model(request, obj, form, change)
+    
+    def codigo_display(self, obj):
+        """Exibe código do voucher"""
+        return format_html(
+            '<code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #1f2937;">{}</code>',
+            obj.codigo
+        )
+    codigo_display.short_description = 'Código'
+    
+    def tipo_desconto_badge(self, obj):
+        """Exibe tipo de desconto com badge colorido"""
+        colors = {
+            'percentual': '#7c3aed',
+            'valor_fixo': '#059669',
+            'gratuidade': '#f59e0b'
+        }
+        color = colors.get(obj.tipo_desconto, '#6b7280')
+        return format_html(
+            '<span style="background: {}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: bold;">{}</span>',
+            color,
+            obj.get_tipo_desconto_display()
+        )
+    tipo_desconto_badge.short_description = 'Tipo'
+    
+    def valor_desconto_display(self, obj):
+        """Exibe valor do desconto formatado"""
+        if obj.tipo_desconto == 'percentual':
+            return format_html('<strong>{}%</strong>', obj.valor_desconto)
+        elif obj.tipo_desconto == 'valor_fixo':
+            return format_html('<strong>R$ {}</strong>', f'{obj.valor_desconto:.2f}'.replace('.', ','))
+        else:  # gratuidade
+            return format_html('<strong>{} dias grátis</strong>', obj.dias_gratuidade)
+    valor_desconto_display.short_description = 'Valor'
+    
+    def periodo_validade(self, obj):
+        """Exibe período de validade"""
+        return format_html(
+            '{} até {}',
+            obj.data_inicio.strftime('%d/%m/%Y'),
+            obj.data_expiracao.strftime('%d/%m/%Y')
+        )
+    periodo_validade.short_description = 'Validade'
+    
+    def usos_display(self, obj):
+        """Exibe usos realizados vs limite"""
+        if obj.limite_usos is None:
+            return format_html(
+                '<span>{} usos (ilimitado)</span>',
+                obj.usos_realizados
+            )
+        
+        percentual = (obj.usos_realizados / obj.limite_usos * 100) if obj.limite_usos > 0 else 0
+        
+        if percentual >= 100:
+            color = '#991b1b'
+            bg = '#fee2e2'
+        elif percentual >= 70:
+            color = '#92400e'
+            bg = '#fef3c7'
+        else:
+            color = '#065f46'
+            bg = '#d1fae5'
+        
+        return format_html(
+            '<span style="background: {}; color: {}; padding: 4px 12px; border-radius: 12px; font-weight: bold;">{} / {}</span>',
+            bg, color, obj.usos_realizados, obj.limite_usos
+        )
+    usos_display.short_description = 'Usos'
+    
+    def status_badge(self, obj):
+        """Exibe status do voucher (válido/expirado/esgotado)"""
+        if obj.esta_valido:
+            return format_html(
+                '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 12px; font-weight: bold;">✅ VÁLIDO</span>'
+            )
+        
+        from django.utils import timezone
+        hoje = timezone.now().date()
+        
+        if hoje > obj.data_expiracao:
+            return format_html(
+                '<span style="background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 12px; font-weight: bold;">⏰ EXPIRADO</span>'
+            )
+        elif obj.limite_usos and obj.usos_realizados >= obj.limite_usos:
+            return format_html(
+                '<span style="background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 12px; font-weight: bold;">🔒 ESGOTADO</span>'
+            )
+        elif not obj.is_active:
+            return format_html(
+                '<span style="background: #f3f4f6; color: #6b7280; padding: 4px 12px; border-radius: 12px; font-weight: bold;">⭕ INATIVO</span>'
+            )
+        else:
+            return format_html(
+                '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 12px; font-weight: bold;">⚠️ AGUARDANDO</span>'
+            )
+    status_badge.short_description = 'Status'
+
+
+class HistoricoAssinaturaInline(admin.TabularInline):
+    """
+    Inline para exibir histórico de assinaturas
+    """
+    model = HistoricoAssinatura
+    extra = 0
+    readonly_fields = ['acao', 'detalhes', 'plano_anterior', 'plano_novo', 'realizado_por', 'created_at']
+    can_delete = False
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Assinatura)
+class AssinaturaAdmin(admin.ModelAdmin):
+    """
+    Título: Admin de Assinaturas
+    Descrição: Interface para gerenciar assinaturas dos usuários
+    Autor: Will
+    Data: Dezembro 2025
+    """
+    list_display = [
+        'usuario_display',
+        'plano_badge',
+        'status_badge',
+        'data_inicio',
+        'data_proxima_cobranca',
+        'voucher_usado'
+    ]
+    list_filter = ['status', 'plano', 'data_inicio']
+    search_fields = ['usuario__username', 'usuario__email', 'usuario__first_name', 'usuario__last_name']
+    ordering = ['-data_inicio']
+    date_hierarchy = 'data_inicio'
+    
+    inlines = [HistoricoAssinaturaInline]
+    
+    fieldsets = [
+        ('Usuário e Plano', {
+            'fields': ('usuario', 'plano', 'status')
+        }),
+        ('Datas', {
+            'fields': (
+                'data_inicio',
+                'data_fim_trial',
+                'data_proxima_cobranca',
+                'data_cancelamento'
+            )
+        }),
+        ('Voucher e Observações', {
+            'fields': (
+                'voucher_utilizado',
+                'observacoes'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Controle', {
+            'fields': ('is_active',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    ]
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    actions = ['ativar_assinaturas', 'suspender_assinaturas', 'cancelar_assinaturas']
+    
+    def usuario_display(self, obj):
+        """Exibe usuário com email"""
+        return format_html(
+            '<strong>{}</strong><br><small style="color: #6b7280;">{}</small>',
+            obj.usuario.get_full_name() or obj.usuario.username,
+            obj.usuario.email
+        )
+    usuario_display.short_description = 'Usuário'
+    
+    def plano_badge(self, obj):
+        """Exibe plano com badge colorido"""
+        return format_html(
+            '<span style="background: #1E5C5C; color: white; padding: 4px 12px; border-radius: 12px; font-weight: bold;">{}</span>',
+            obj.plano.nome_exibicao
+        )
+    plano_badge.short_description = 'Plano'
+    
+    def status_badge(self, obj):
+        """Exibe status com badge colorido"""
+        status_colors = {
+            'trial': ('#fef3c7', '#92400e', '🎁'),
+            'active': ('#d1fae5', '#065f46', '✅'),
+            'suspended': ('#fee2e2', '#991b1b', '⏸️'),
+            'cancelled': ('#f3f4f6', '#6b7280', '❌'),
+            'expired': ('#fee2e2', '#991b1b', '⏰')
+        }
+        
+        bg, color, icon = status_colors.get(obj.status, ('#f3f4f6', '#6b7280', '❓'))
+        
+        return format_html(
+            '<span style="background: {}; color: {}; padding: 4px 12px; border-radius: 12px; font-weight: bold;">{} {}</span>',
+            bg, color, icon, obj.get_status_display()
+        )
+    status_badge.short_description = 'Status'
+    
+    def voucher_usado(self, obj):
+        """Exibe voucher se foi usado"""
+        if obj.voucher_utilizado:
+            return format_html(
+                '<code style="background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 11px;">{}</code>',
+                obj.voucher_utilizado.codigo
+            )
+        return '-'
+    voucher_usado.short_description = 'Voucher'
+    
+    # Ações em massa
+    def ativar_assinaturas(self, request, queryset):
+        """Ativa assinaturas selecionadas"""
+        for assinatura in queryset:
+            assinatura.ativar()
+        self.message_user(request, f'{queryset.count()} assinatura(s) ativada(s) com sucesso.')
+    ativar_assinaturas.short_description = '✅ Ativar assinaturas selecionadas'
+    
+    def suspender_assinaturas(self, request, queryset):
+        """Suspende assinaturas selecionadas"""
+        updated = queryset.update(status='suspended')
+        self.message_user(request, f'{updated} assinatura(s) suspensa(s) com sucesso.')
+    suspender_assinaturas.short_description = '⏸️ Suspender assinaturas selecionadas'
+    
+    def cancelar_assinaturas(self, request, queryset):
+        """Cancela assinaturas selecionadas"""
+        from django.utils import timezone
+        for assinatura in queryset:
+            assinatura.cancelar()
+        self.message_user(request, f'{queryset.count()} assinatura(s) cancelada(s) com sucesso.')
+    cancelar_assinaturas.short_description = '❌ Cancelar assinaturas selecionadas'
+
+
+@admin.register(HistoricoAssinatura)
+class HistoricoAssinaturaAdmin(admin.ModelAdmin):
+    """
+    Título: Admin de Histórico de Assinaturas
+    Descrição: Visualização do histórico de mudanças nas assinaturas
+    Autor: Will
+    Data: Dezembro 2025
+    """
+    list_display = ['usuario_assinatura', 'acao', 'planos_mudanca', 'realizado_por', 'created_at']
+    list_filter = ['created_at', 'acao']
+    search_fields = ['assinatura__usuario__username', 'assinatura__usuario__email', 'acao']
+    ordering = ['-created_at']
+    date_hierarchy = 'created_at'
+    
+    readonly_fields = ['assinatura', 'acao', 'detalhes', 'plano_anterior', 'plano_novo', 'realizado_por', 'created_at', 'updated_at']
+    
+    def has_add_permission(self, request):
+        """Não permite adicionar histórico manualmente"""
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        """Não permite deletar histórico"""
+        return False
+    
+    def usuario_assinatura(self, obj):
+        """Exibe usuário da assinatura"""
+        return obj.assinatura.usuario.get_full_name() or obj.assinatura.usuario.username
+    usuario_assinatura.short_description = 'Usuário'
+    
+    def planos_mudanca(self, obj):
+        """Exibe mudança de planos se houver"""
+        if obj.plano_anterior and obj.plano_novo:
+            return format_html(
+                '{} → {}',
+                obj.plano_anterior.nome_exibicao,
+                obj.plano_novo.nome_exibicao
+            )
+        elif obj.plano_novo:
+            return obj.plano_novo.nome_exibicao
+        return '-'
+    planos_mudanca.short_description = 'Mudança de Plano'
