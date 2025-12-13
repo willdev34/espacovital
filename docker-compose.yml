@@ -1,25 +1,24 @@
 # ===============================================================
-# Título: Docker Compose - PostgreSQL Local
-# Descrição: Configuração Docker para PostgreSQL com PostGIS
+# Titulo: Docker Compose - PostgreSQL Local
+# Descricao: Configuracao Docker para PostgreSQL com PostGIS
 # Autor: Will
-# Data: 08/11/2025
+# Data: 30/11/2024
 # ===============================================================
-
-version: '3.8'
 
 services:
   postgres:
     image: postgis/postgis:16-3.4
-    container_name: espacovital_postgres
+    container_name: espacovital-postgres
     environment:
       POSTGRES_DB: espacovital
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C.UTF-8 --lc-ctype=C.UTF-8"
+      PGDATA: /var/lib/postgresql/data/pgdata
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      PGCLIENTENCODING: UTF8
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -27,8 +26,6 @@ services:
       - "postgres"
       - "-c"
       - "client_encoding=UTF8"
-      - "-c"
-      - "log_statement=all"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
