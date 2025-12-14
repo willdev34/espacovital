@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha seu Plano - Espaço Vital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E5C5C',
+                        coral: '#FFB4A2',
+                        mint: '#56C596',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-primary/5 via-mint/5 to-coral/5 min-h-screen">
+    
+    <!-- Container Principal -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Logo e Voltar -->
+        <div class="flex items-center justify-between mb-8">
+            <a href="{% url 'core:onboarding_welcome' %}" class="text-primary hover:text-mint transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar
+            </a>
+            <a href="{% url 'core:home' %}" class="inline-block">
+                <img src="{% static 'images/logo/logotipo_minimalista.png' %}" alt="Espaço Vital" class="h-12">
+            </a>
+            <div class="w-20"></div> <!-- Spacer para centralizar logo -->
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">
+                Escolha seu Plano
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                {% if tipo_perfil == 'terapeuta' %}
+                    Selecionamos os melhores planos para <strong>terapeutas</strong> como você, {{ first_name }}!
+                {% elif tipo_perfil == 'espaco' %}
+                    Selecionamos os melhores planos para <strong>proprietários de espaços</strong> como você, {{ first_name }}!
+                {% else %}
+                    Selecionamos os melhores planos que combinam <strong>terapeuta + espaço</strong> para você, {{ first_name }}!
+                {% endif %}
+            </p>
+            
+            {% if voucher %}
+            <div class="inline-flex items-center gap-2 bg-mint/10 text-mint px-6 py-3 rounded-full mt-4 border-2 border-mint">
+                <i class="fas fa-ticket-alt text-xl"></i>
+                <span class="font-semibold">Voucher <strong>{{ voucher.codigo }}</strong> aplicado!</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Grid de Planos -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-{{ planos|length|default:2 }} gap-6 mb-12">
+            
+            {% for item in planos %}
+            <div class="bg-white rounded-2xl shadow-xl p-8 relative {% if item.plano.recomendado %}border-4 border-mint{% else %}border-2 border-gray-100{% endif %} hover:shadow-2xl transition-all duration-300 flex flex-col">
+                
+                <!-- Badge Recomendado -->
+                {% if item.plano.recomendado %}
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-max">
+                    <span class="bg-mint text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">
+                        ⭐ RECOMENDADO
+                    </span>
+                </div>
+                {% endif %}
+                
+                <!-- Nome do Plano -->
+                <div class="text-center mb-6 {% if item.plano.recomendado %}mt-4{% endif %}">
+                    <h3 class="text-2xl font-bold text-primary mb-2">
+                        {{ item.plano.nome_exibicao }}
+                    </h3>
+                    
+                    <!-- Preço -->
+                    <div class="mb-4">
+                        {% if item.tem_desconto %}
+                            {% if item.dias_gratuidade > 0 %}
+                                <div class="text-3xl font-bold text-mint">
+                                    {{ item.dias_gratuidade }} dias GRÁTIS
+                                </div>
+                                <div class="text-sm text-gray-500 mt-1">
+                                    Depois R$ {{ item.valor_original }}/mês
+                                </div>
+                            {% else %}
+                                <div class="text-lg text-gray-400 line-through">
+                                    R$ {{ item.valor_original }}/mês
+                                </div>
+                                <div class="text-3xl font-bold text-mint">
+                                    R$ {{ item.valor_final }}/mês
+                                </div>
+                                <div class="text-sm text-mint font-semibold">
+                                    Economia de R$ {{ item.valor_desconto }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-3xl font-bold text-primary">
+                                {% if item.valor_original == 0 %}
+                                    GRÁTIS
+                                {% else %}
+                                    R$ {{ item.valor_original }}<span class="text-lg">/mês</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Trial -->
+                    {% if item.plano.dias_trial > 0 %}
+                    <div class="inline-flex items-center gap-2 bg-coral/10 text-coral px-4 py-2 rounded-full text-sm">
+                        <i class="fas fa-gift"></i>
+                        <span>{{ item.plano.dias_trial }} dias grátis para testar</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Features -->
+                <div class="space-y-3 mb-8 flex-grow">
+                    
+                    <!-- Fotos -->
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-camera text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            <strong>{{ item.plano.limite_fotos }}</strong> fotos no perfil
+                        </span>
+                    </div>
+                    
+                    <!-- Vínculos (se aplicável) -->
+                    {% if item.plano.vinculos_espacos > 0 %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-link text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            Até <strong>{{ item.plano.vinculos_espacos }}</strong> espaços vinculados
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Destaque na busca -->
+                    {% if item.plano.destaque_busca %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-star text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            <strong>Destaque</strong> nas buscas
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge Verificado -->
+                    {% if item.plano.badge_verificado %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            <strong>Selo verificado</strong>
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Estatísticas -->
+                    {% if item.plano.estatisticas_avancadas %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-chart-line text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            Estatísticas avançadas
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Suporte -->
+                    {% if item.plano.suporte_prioritario %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-headset text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            Suporte prioritário
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Divulgação -->
+                    {% if item.plano.divulgacao_perfil %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-bullhorn text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            Divulgação do perfil
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Gerenciamento de salas -->
+                    {% if item.plano.gerenciamento_salas %}
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-door-open text-mint text-lg mt-1"></i>
+                        <span class="text-gray-700">
+                            Gerenciamento de salas
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                </div>
+
+                <!-- Disponibilidade -->
+                {% if item.plano.max_usuarios %}
+                <div class="mb-4 text-center text-sm">
+                    {% if item.plano.tem_vagas %}
+                        <span class="text-mint">
+                            <i class="fas fa-users"></i>
+                            {{ item.plano.vagas_disponiveis }} vagas disponíveis
+                        </span>
+                    {% else %}
+                        <span class="text-red-500">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Plano lotado
+                        </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Botão Escolher -->
+                <form method="post" action="{% url 'core:onboarding_select_plan' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="plano_id" value="{{ item.plano.id }}">
+                    
+                    <button type="submit" 
+                            {% if not item.plano.tem_vagas %}disabled{% endif %}
+                            class="w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300
+                            {% if item.plano.recomendado %}
+                                bg-mint text-white hover:bg-mint/90 shadow-lg hover:shadow-xl hover:scale-105
+                            {% else %}
+                                bg-primary text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:scale-105
+                            {% endif %}
+                            {% if not item.plano.tem_vagas %}
+                                opacity-50 cursor-not-allowed
+                            {% endif %}">
+                        {% if item.plano.tem_vagas %}
+                            Escolher {{ item.plano.nome_exibicao }}
+                        {% else %}
+                            Indisponível
+                        {% endif %}
+                    </button>
+                </form>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- Informações Adicionais -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 max-w-3xl mx-auto mb-8">
+            <h3 class="text-2xl font-bold text-primary mb-4 text-center">
+                <i class="fas fa-info-circle text-mint mr-2"></i>
+                Informações Importantes
+            </h3>
+            <div class="space-y-3 text-gray-600">
+                <p class="flex items-start gap-2">
+                    <i class="fas fa-check text-mint mt-1"></i>
+                    <span>Você pode cancelar sua assinatura a qualquer momento</span>
+                </p>
+                <p class="flex items-start gap-2">
+                    <i class="fas fa-check text-mint mt-1"></i>
+                    <span>Períodos de teste são totalmente gratuitos, sem compromisso</span>
+                </p>
+                <p class="flex items-start gap-2">
+                    <i class="fas fa-check text-mint mt-1"></i>
+                    <span>Você pode fazer upgrade ou downgrade do seu plano quando quiser</span>
+                </p>
+                <p class="flex items-start gap-2">
+                    <i class="fas fa-check text-mint mt-1"></i>
+                    <span>Todos os dados do seu perfil são mantidos ao trocar de plano</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Link para Dúvidas -->
+        <div class="text-center">
+            <p class="text-gray-600">
+                Ainda tem dúvidas? 
+                <a href="#" class="text-primary hover:text-mint font-semibold transition-colors">
+                    Veja nosso FAQ
+                </a>
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

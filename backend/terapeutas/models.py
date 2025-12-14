@@ -456,6 +456,57 @@ class Terapeuta(BaseModel):
     def is_premium(self):
         """Verifica se tem qualquer plano premium (A ou S)"""
         return self.plano in [PlanoChoices.PREMIUM_A, PlanoChoices.PREMIUM_S]
+    
+    @property
+    def assinatura_ativa(self):
+        """
+        Retorna a assinatura ativa do usuário (se houver)
+        """
+        from core.models import Assinatura
+        try:
+            return Assinatura.objects.get(
+                usuario=self.user,
+                status__in=['trial', 'active']
+            )
+        except Assinatura.DoesNotExist:
+            return None
+
+    @property
+    def status_assinatura(self):
+        """
+        Retorna informações sobre o status da assinatura
+        """
+        assinatura = self.assinatura_ativa
+        
+        if not assinatura:
+            return {
+                'tem_assinatura': False,
+                'status': 'sem_assinatura',
+                'plano_nome': 'Gratuito',
+                'em_trial': False,
+                'dias_restantes': 0,
+            }
+        
+        from datetime import date
+        
+        em_trial = assinatura.status == 'trial'
+        dias_restantes = 0
+        
+        if em_trial and assinatura.data_fim_trial:
+            delta = assinatura.data_fim_trial - date.today()
+            dias_restantes = max(0, delta.days)
+        
+        return {
+            'tem_assinatura': True,
+            'status': assinatura.status,
+            'plano_nome': assinatura.plano.nome_exibicao,
+            'plano_valor': assinatura.plano.valor,
+            'em_trial': em_trial,
+            'dias_restantes': dias_restantes,
+            'voucher': assinatura.voucher_utilizado.codigo if assinatura.voucher_utilizado else None,
+            'data_fim_trial': assinatura.data_fim_trial,
+            'aviso_expiracao': em_trial and dias_restantes <= 3,
+        }
 
     @property
     def nome_plano(self):

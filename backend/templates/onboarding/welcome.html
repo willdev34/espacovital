@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Espaço Vital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E5C5C',
+                        coral: '#FFB4A2',
+                        mint: '#56C596',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-primary/5 via-mint/5 to-coral/5 min-h-screen">
+    
+    <!-- Container Principal -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="{% url 'core:home' %}" class="inline-block">
+                <img src="{% static 'images/logo/logotipo_minimalista.png' %}" alt="Espaço Vital" class="h-16 mx-auto">
+            </a>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <div class="mb-6">
+                <i class="fas fa-check-circle text-mint text-6xl animate-bounce"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">
+                Bem-vindo(a) ao Espaço Vital, {{ first_name }}! 🎉
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Estamos muito felizes em ter você conosco! Agora vamos configurar seu perfil 
+                para que você possa começar a {% if tipo_perfil == 'espaco' %}atrair terapeutas e clientes{% else %}receber clientes{% endif %}.
+            </p>
+        </div>
+
+        <!-- Cards de Passos -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            
+            <!-- Passo 1: Escolher Plano -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center border-2 border-transparent hover:border-mint transition-all duration-300">
+                <div class="w-16 h-16 bg-mint/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-star text-mint text-2xl"></i>
+                </div>
+                <div class="w-8 h-8 bg-mint text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                    1
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">
+                    Escolher Plano
+                </h3>
+                <p class="text-gray-600 text-sm">
+                    Selecione o plano que melhor atende suas necessidades
+                    {% if has_voucher %}
+                    <span class="block mt-2 text-mint font-semibold">
+                        <i class="fas fa-ticket-alt"></i> Você tem um voucher!
+                    </span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Passo 2: Criar Perfil -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center border-2 border-transparent hover:border-coral transition-all duration-300">
+                <div class="w-16 h-16 bg-coral/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-edit text-coral text-2xl"></i>
+                </div>
+                <div class="w-8 h-8 bg-coral text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                    2
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">
+                    Criar Perfil
+                </h3>
+                <p class="text-gray-600 text-sm">
+                    Preencha suas informações profissionais e adicione uma foto
+                </p>
+            </div>
+
+            <!-- Passo 3: Começar -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center border-2 border-transparent hover:border-primary transition-all duration-300">
+                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-rocket text-primary text-2xl"></i>
+                </div>
+                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                    3
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">
+                    Começar a Receber
+                </h3>
+                <p class="text-gray-600 text-sm">
+                    Seu perfil ficará visível e você poderá começar a atrair clientes
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Card de Benefícios -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold text-primary mb-6 text-center">
+                O que você terá acesso:
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-mint text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-primary">Perfil Profissional</h4>
+                        <p class="text-sm text-gray-600">Destaque suas especialidades e experiência</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-mint text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-primary">Visibilidade nas Buscas</h4>
+                        <p class="text-sm text-gray-600">Apareça para clientes da sua região</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-mint text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-primary">Galeria de Fotos</h4>
+                        <p class="text-sm text-gray-600">Mostre seu espaço e trabalho</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-mint text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-primary">Sistema de Avaliações</h4>
+                        <p class="text-sm text-gray-600">Construa sua reputação online</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Ação -->
+        <div class="text-center">
+            <a href="{% url 'core:onboarding_select_plan' %}" 
+                class="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
+                <span>Começar Agora</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            
+            <p class="text-sm text-gray-500 mt-4">
+                Leva apenas 3 minutos para configurar!
+            </p>
+        </div>
+
+        <!-- Link Voltar -->
+        <div class="text-center mt-8">
+            <a href="{% url 'core:home' %}" class="text-primary hover:text-mint transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar para a Home
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -11,72 +11,42 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.urls import reverse
 from django.contrib import messages
 
+from django.urls import reverse
+
 class CustomAccountAdapter(DefaultAccountAdapter):
     """
-    Adapter: Redirecionar usuário após login
-    Descrição: 
-    - Terapeutas → Dashboard de Terapeutas
-    - Gestores de Espaços → Dashboard de Espaços (quando implementado)
-    - Usuários comuns sem perfil → Home (sem acesso a dashboards)
-    - Gerencia mensagens para evitar duplicação
+    Adapter customizado para django-allauth
     """
     
-    def get_login_redirect_url(self, request):
+    def save_user(self, request, user, form, commit=True):
         """
-        Redireciona baseado no tipo de usuário:
-        - Tem perfil de terapeuta E espaço → Página de seleção de perfil
-        - Tem apenas terapeuta → Dashboard de Terapeutas
-        - Tem apenas espaço → Dashboard de Espaços
-        - Não tem perfil → Home (usuário comum sem acesso)
-        
-        Atualizado: 16/11/2025 - Suporte a múltiplos perfis
+        Salva dados adicionais do usuário durante o signup
         """
-        user = request.user
+        # Salvar first_name e last_name
+        user.first_name = form.cleaned_data.get('first_name', '')
+        user.last_name = form.cleaned_data.get('last_name', '')
         
-        # ===== VERIFICAR PERFIS DISPONÍVEIS =====
-        tem_terapeuta = hasattr(user, 'terapeuta')
-        tem_espaco = False
+        if commit:
+            user.save()
         
-        try:
-            from espacos.models import Espaco
-            # Verificar se usuário é responsável por algum espaço
-            tem_espaco = Espaco.objects.filter(responsavel=user, is_active=True).exists()
-        except Exception:
-            pass  # Campo 'responsavel' ainda não existe no modelo
+        # Salvar dados extras na sessão para uso posterior
+        request.session['signup_data'] = {
+            'phone': form.cleaned_data.get('phone', ''),
+            'tipo_perfil': form.cleaned_data.get('tipo_perfil', 'terapeuta'),
+        }
         
-        # ===== DECISÃO DE REDIRECIONAMENTO =====
+        # Se um voucher foi usado, salvar o ID
+        voucher = form.cleaned_data.get('voucher')
+        if voucher:
+            request.session['signup_data']['voucher_id'] = voucher.id
         
-        # Caso 1: Tem AMBOS os perfis → Página de seleção
-        if tem_terapeuta and tem_espaco:
-            return reverse('core:selecionar_perfil')
-        
-        # Caso 2: Apenas terapeuta → Dashboard do terapeuta
-        if tem_terapeuta:
-            return reverse('terapeutas:dashboard')
-        
-        # Caso 3: Apenas espaço → Dashboard do espaço
-        if tem_espaco:
-            return reverse('espacos:dashboard')
-        
-        # Caso 4: Nenhum perfil → Home
-        return reverse('core:home')
+        return user
     
-    def add_message(self, request, level, message_template, message_context=None, extra_tags=''):
+    def get_email_confirmation_redirect_url(self, request):
         """
-        Sobrescreve método para limpar mensagens antigas antes de adicionar novas
-        Evita acúmulo de mensagens de logout + login
+        Redireciona para tela de boas-vindas do onboarding após confirmar email
         """
-        # ===== LIMPAR MENSAGENS ANTERIORES DE LOGOUT =====
-        # Quando faz login, não queremos ver mensagem de logout anterior
-        if 'logged' in message_template.lower() or 'signed' in message_template.lower():
-            # Limpa todas as mensagens pendentes para evitar duplicação
-            storage = messages.get_messages(request)
-            # Consume as mensagens existentes para limpá-las
-            list(storage)
-        
-        # ===== CHAMAR MÉTODO ORIGINAL =====
-        super().add_message(request, level, message_template, message_context, extra_tags)
-
+        return reverse('core:onboarding_welcome')
 def save_user(self, request, user, form, commit=True):
         """
         Salva dados extras do formulário customizado de signup

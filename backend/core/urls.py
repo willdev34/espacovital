@@ -11,9 +11,17 @@ from . import views
 # Nome do app para namespace das URLs
 app_name = 'core'
 
+# URLs do core (não mostrar todas, apenas o final do arquivo)
+from .views_onboarding import WelcomeView, SelectPlanView, CreateProfileView
+
 urlpatterns = [
     # Página inicial - rota vazia aponta para home
     path('', views.HomeView.as_view(), name='home'),
+
+    # URLs de Onboarding
+    path('onboarding/welcome/', WelcomeView.as_view(), name='onboarding_welcome'),
+    path('onboarding/select-plan/', SelectPlanView.as_view(), name='onboarding_select_plan'),
+    path('onboarding/create-profile/', CreateProfileView.as_view(), name='onboarding_create_profile'),
 
     # Seleção de perfil (terapeuta ou espaço)
     # URL: /selecionar-perfil/

@@ -730,7 +730,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
             )
             return
         
-        updated = queryset.update(ativo=True)
+        updated = queryset.update(is_active=True)
         self.message_user(
             request,
             f'{updated} terapeuta(s) ativado(s) com sucesso.',
@@ -750,7 +750,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
             )
             return
         
-        updated = queryset.update(ativo=False)
+        updated = queryset.update(is_active=False)
         self.message_user(
             request,
             f'{updated} terapeuta(s) desativado(s) com sucesso.',
