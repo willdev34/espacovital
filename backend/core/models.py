@@ -1196,3 +1196,40 @@ class HistoricoAssinatura(TimeStampedModel):
     
     def __str__(self):
         return f"{self.assinatura.usuario.get_full_name()} - {self.acao} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
+    
+# ===============================================================
+# SIGNALS - Sincronização Automática
+# ===============================================================
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Assinatura)
+def sincronizar_plano_terapeuta(sender, instance, created, **kwargs):
+    """
+    Sincroniza o campo 'plano' do Terapeuta quando a Assinatura é criada/atualizada
+    Autor: Will
+    Data: 14/12/2025
+    """
+    # Verificar se o usuário tem perfil de terapeuta
+    if hasattr(instance.usuario, 'terapeuta'):
+        from terapeutas.models import Terapeuta
+        
+        terapeuta = instance.usuario.terapeuta
+        
+        # Mapear nome do plano (Assinatura) para campo plano (Terapeuta)
+        plano_map = {
+            'basic': 'basic',
+            'premium_a': 'premium_a',
+            'premium_s': 'premium_s',
+            'combo_a_s': 'premium_a',
+            'combo_a_s_plus': 'premium_a',
+        }
+        
+        # Atualizar plano do terapeuta baseado no plano da assinatura
+        novo_plano = plano_map.get(instance.plano.nome, 'basic')
+        
+        if terapeuta.plano != novo_plano:
+            terapeuta.plano = novo_plano
+            terapeuta.data_assinatura_plano = instance.data_inicio
+            terapeuta.save(update_fields=['plano', 'data_assinatura_plano'])
