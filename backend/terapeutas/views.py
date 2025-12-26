@@ -5,24 +5,24 @@
 # Data: 13/09/2025
 # ===============================================================
 
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, FormView
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView
-from django.shortcuts import redirect
 from django.contrib import messages
+from django.urls import reverse
 from datetime import timedelta
 from django.utils import timezone
 from .models import (
     Terapeuta, Especialidade, 
-    Avaliacao, Contato, SessionType, ProfileType, ClientType
+    Avaliacao, Contato, SessionType, ProfileType, ClientType, FotoGaleriaTerapeuta
 )
-from core.models import Estado, Cidade
+from .forms import TerapeutaEditarPerfilForm
+from core.models import Especialidade, Estado, Cidade, Pais
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 import json
 
 
@@ -910,19 +910,34 @@ class DashboardView(TerapeutaRequiredMixin, TemplateView):
         }
 
 
-class DashboardEditarPerfilView(TerapeutaRequiredMixin, TemplateView):
+class DashboardEditarPerfilView(TerapeutaRequiredMixin, FormView):
     """
     View: Editar Perfil do Terapeuta
     Descrição: Formulário completo para edição de dados profissionais
-               Upload de foto, bio, especialidades, cidades, etc.
     Template: terapeutas/dashboard/editar_perfil.html
     URL: /terapeutas/dashboard/perfil/
+    Autor: Will
+    Data: 14/12/2025 (Atualizado)
     """
     template_name = 'terapeutas/dashboard/editar_perfil.html'
+    form_class = TerapeutaEditarPerfilForm
+    def get_success_url(self):
+        """
+        URL de redirecionamento após salvar com sucesso
+        """
+        return reverse('terapeutas:dashboard')
+    
+    def get_form_kwargs(self):
+        """
+        Passa a instância do terapeuta para o formulário
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.request.user.terapeuta
+        return kwargs
     
     def get_context_data(self, **kwargs):
         """
-        Adiciona dados necessários para o formulário
+        Adiciona dados necessários para o template
         """
         context = super().get_context_data(**kwargs)
         
@@ -930,48 +945,100 @@ class DashboardEditarPerfilView(TerapeutaRequiredMixin, TemplateView):
         terapeuta = self.request.user.terapeuta
         context['terapeuta'] = terapeuta
         
-        # ===== OPÇÕES PARA OS SELECTS =====
+        # Fotos da galeria
+        context['fotos_galeria'] = terapeuta.fotos_galeria.all().order_by('ordem')
         
-        # Buscar todas as especialidades disponíveis
+        # Total de fotos (para validar limite de 7)
+        context['total_fotos_galeria'] = terapeuta.fotos_galeria.count()
+        context['pode_adicionar_foto'] = context['total_fotos_galeria'] < 7
+        
+        # Países, Estados (para cascata)
+        from core.models import Pais, Estado, Cidade
+        context['paises'] = Pais.objects.filter(ativo=True).order_by('nome')
+        context['estados'] = Estado.objects.filter(
+            pais__nome='Brasil',
+            ativo=True
+        ).order_by('nome')
+        
+        # Se o terapeuta já tem estado selecionado, carregar cidades
+        if terapeuta.estado:
+            context['cidades'] = Cidade.objects.filter(
+                estado=terapeuta.estado,
+                ativo=True
+            ).order_by('nome')
+        else:
+            context['cidades'] = Cidade.objects.none()
+        
+        # Especialidades disponíveis
         from core.models import Especialidade
         context['todas_especialidades'] = Especialidade.objects.filter(
             is_active=True
         ).order_by('nome')
         
-        # Especialidades já selecionadas pelo terapeuta
-        context['especialidades_selecionadas'] = terapeuta.especialidades.values_list(
-            'id', flat=True
+        # IDs das especialidades já selecionadas
+        context['especialidades_selecionadas'] = list(
+            terapeuta.especialidades.values_list('id', flat=True)
         )
         
-        # Buscar todos os estados do Brasil
-        from core.models import Estado
-        context['estados_brasil'] = Estado.objects.filter(
-            pais__nome='Brasil',
-            ativo=True
-        ).order_by('nome')
-        
-        # Cidades já selecionadas pelo terapeuta
-        context['cidades_selecionadas'] = terapeuta.cidades_atendimento.values_list(
-            'id', flat=True
+        # IDs das cidades de atendimento já selecionadas
+        context['cidades_atendimento_selecionadas'] = list(
+            terapeuta.cidades_atendimento.values_list('id', flat=True)
         )
-        
-        # ===== TIPOS DE SESSÃO =====
-        context['tipos_sessao_disponiveis'] = [
-            {'value': 'presencial', 'label': 'Presencial'},
-            {'value': 'online', 'label': 'On-line'},
-            {'value': 'domicilio', 'label': 'Domicílio'},
-        ]
-        
-        # ===== PARA QUEM =====
-        context['para_quem_opcoes'] = [
-            {'value': 'adultos', 'label': 'Adultos'},
-            {'value': 'criancas', 'label': 'Crianças'},
-            {'value': 'idosos', 'label': 'Idosos'},
-            {'value': 'casais', 'label': 'Casais'},
-            {'value': 'grupos', 'label': 'Grupos'},
-        ]
         
         return context
+    
+    def form_valid(self, form):
+        """
+        Salvar formulário e processar uploads de fotos da galeria
+        """
+        # Salvar terapeuta (commit=False para manipular antes de salvar)
+        terapeuta = form.save(commit=False)
+        terapeuta.save()
+        
+        # ===== SALVAR MANYTOMANY MANUALMENTE =====
+        
+        # Salvar especialidades
+        if 'especialidades' in form.cleaned_data:
+            terapeuta.especialidades.set(form.cleaned_data['especialidades'])
+            print(f"✅ Especialidades salvas: {form.cleaned_data['especialidades']}")
+        
+        # Salvar cidades de atendimento
+        if 'cidades_atendimento' in form.cleaned_data:
+            terapeuta.cidades_atendimento.set(form.cleaned_data['cidades_atendimento'])
+            print(f"✅ Cidades salvas: {form.cleaned_data['cidades_atendimento']}")
+        
+        # Processar fotos da galeria (se houver uploads)
+        fotos_galeria = self.request.FILES.getlist('fotos_galeria')
+        
+        if fotos_galeria:
+            from terapeutas.models import FotoGaleriaTerapeuta
+            
+            # Contar fotos existentes
+            total_atual = terapeuta.fotos_galeria.count()
+            
+            for idx, foto in enumerate(fotos_galeria):
+                # Verificar limite de 7
+                if total_atual + idx >= 7:
+                    messages.warning(
+                        self.request,
+                        f'Limite de 7 fotos atingido. Apenas {7 - total_atual} foto(s) foram adicionadas.'
+                    )
+                    break
+                
+                # Criar foto da galeria
+                FotoGaleriaTerapeuta.objects.create(
+                    terapeuta=terapeuta,
+                    imagem=foto,
+                    ordem=total_atual + idx
+                )
+        
+        # Mensagem de sucesso
+        messages.success(
+            self.request,
+            '✅ Perfil atualizado com sucesso!'
+        )
+        
+        return super().form_valid(form)
 
 
 class DashboardEstatisticasView(TerapeutaRequiredMixin, TemplateView):

@@ -72,14 +72,21 @@ class Terapeuta(BaseModel):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Usuário',
-        help_text='Usuário Django relacionado'
+        related_name='terapeuta',
+        verbose_name='Usuário'
+    )
+    
+    # CPF ou CNPJ
+    cpf_cnpj = models.CharField(
+        'CPF/CNPJ',
+        max_length=18,
+        blank=True,
+        help_text='CPF (000.000.000-00) ou CNPJ (00.000.000/0000-00)'
     )
     
     nome_completo = models.CharField(
         'Nome Completo',
-        max_length=150,
-        validators=[MinLengthValidator(2)],
+        max_length=200,
         help_text='Nome completo do terapeuta'
     )
     
@@ -815,28 +822,33 @@ class FotoGaleriaTerapeuta(TimeStampedModel):
     """
     Model para fotos da galeria do terapeuta
     Permite upload de até 7 fotos
+    Autor: Will
+    Data: 14/12/2025
     """
     terapeuta = models.ForeignKey(
-        'Terapeuta',
+        Terapeuta,  # ← SEM ASPAS!
         on_delete=models.CASCADE,
         related_name='fotos_galeria',
         verbose_name='Terapeuta'
     )
+    
     imagem = models.ImageField(
         upload_to='terapeutas/galeria/',
         verbose_name='Foto',
         help_text='Foto da galeria do terapeuta'
     )
+    
     descricao = models.CharField(
         max_length=200,
         blank=True,
         verbose_name='Descrição',
         help_text='Descrição opcional da foto'
     )
+    
     ordem = models.PositiveIntegerField(
         default=0,
         verbose_name='Ordem',
-        help_text='Ordem de exibição da foto'
+        help_text='Ordem de exibição da foto (0 = primeira)'
     )
     
     class Meta:
@@ -846,3 +858,23 @@ class FotoGaleriaTerapeuta(TimeStampedModel):
     
     def __str__(self):
         return f"{self.terapeuta.nome_completo} - Foto {self.ordem}"
+    
+    def save(self, *args, **kwargs):
+        """
+        Validar máximo de 7 fotos por terapeuta
+        Autor: Will
+        Data: 14/12/2025
+        """
+        if not self.pk:  # Novo registro
+            total_fotos = FotoGaleriaTerapeuta.objects.filter(
+                terapeuta=self.terapeuta
+            ).count()
+            
+            if total_fotos >= 7:
+                from django.core.exceptions import ValidationError
+                raise ValidationError(
+                    'Máximo de 7 fotos por terapeuta. '
+                    'Delete uma foto existente antes de adicionar uma nova.'
+                )
+        
+        super().save(*args, **kwargs)

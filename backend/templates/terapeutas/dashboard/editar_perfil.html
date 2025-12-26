@@ -3,9 +3,9 @@
 
 {# ===============================================================
    Título: Editar Perfil do Terapeuta - Espaço Vital
-   Descrição: Formulário completo para edição de dados profissionais
+   Descrição: Formulário completo para edição de dados profissionais (ATUALIZADO)
    Autor: Will
-   Data: 13/11/2025
+   Data: 21/12/2025
 =============================================================== #}
 
 {% block dashboard_content %}
@@ -19,10 +19,40 @@
             Mantenha suas informações atualizadas para atrair mais clientes
         </p>
     </div>
+
+    <!-- ===== Mensagens de Feedback ===== -->
+    {% if messages %}
+    <div class="space-y-2">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800{% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %} border-l-4 p-4 rounded-lg">
+            <p class="text-sm font-medium">{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     
     <!-- ===== Formulário de Edição ===== -->
     <form method="POST" enctype="multipart/form-data" id="form-editar-perfil" class="space-y-6">
         {% csrf_token %}
+        
+        <!-- ===== Erros Gerais do Formulário ===== -->
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Erros no formulário:</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        {{ form.non_field_errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         
         <!-- ===== Seção 1: Informações Básicas ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -35,33 +65,60 @@
                 <!-- Foto de Perfil -->
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Foto de Perfil *
+                        Foto de Perfil
                     </label>
                     <div class="flex items-center gap-6">
-                        <!-- Preview da foto atual -->
                         <div class="flex-shrink-0">
-                            {% if terapeuta.foto %}
-                            <img id="preview-foto" 
-                                 src="{{ terapeuta.foto.url }}" 
+                            {% if terapeuta.foto_perfil %}
+                            <img id="preview-foto-perfil" 
+                                 src="{{ terapeuta.foto_perfil.url }}" 
                                  alt="Foto atual"
                                  class="w-24 h-24 rounded-full object-cover border-2 border-gray-300">
                             {% else %}
-                            <div id="preview-foto" 
+                            <div id="preview-foto-perfil" 
                                  class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl font-bold border-2 border-gray-300">
                                 {{ terapeuta.nome_completo.0|upper }}
                             </div>
                             {% endif %}
                         </div>
-                        
-                        <!-- Input de upload -->
                         <div class="flex-1">
-                            <input type="file" 
-                                   name="foto" 
-                                   id="id_foto"
-                                   accept="image/*"
-                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer">
+                            {{ form.foto_perfil }}
+                            {% if form.foto_perfil.errors %}
+                            <p class="text-sm text-red-600 mt-1">{{ form.foto_perfil.errors }}</p>
+                            {% endif %}
                             <p class="text-xs text-gray-500 mt-2">
-                                Formatos aceitos: JPG, PNG. Tamanho máximo: 5MB
+                                Formatos aceitos: JPG, PNG. Tamanho máximo: 5MB. Recomendado: 400x400px
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Foto de Capa -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Foto de Capa
+                    </label>
+                    <div class="flex items-center gap-6">
+                        <div class="flex-shrink-0">
+                            {% if terapeuta.foto_capa %}
+                            <img id="preview-foto-capa" 
+                                 src="{{ terapeuta.foto_capa.url }}" 
+                                 alt="Capa atual"
+                                 class="w-48 h-24 rounded-lg object-cover border-2 border-gray-300">
+                            {% else %}
+                            <div id="preview-foto-capa" 
+                                 class="w-48 h-24 rounded-lg bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                                <span class="text-gray-400 text-sm">Sem capa</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            {{ form.foto_capa }}
+                            {% if form.foto_capa.errors %}
+                            <p class="text-sm text-red-600 mt-1">{{ form.foto_capa.errors }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-2">
+                                Recomendado: 1200x400px
                             </p>
                         </div>
                     </div>
@@ -69,76 +126,176 @@
                 
                 <!-- Nome Completo -->
                 <div class="md:col-span-2">
-                    <label for="id_nome_completo" class="block text-sm font-medium text-gray-700 mb-2">
-                        Nome Completo *
+                    <label for="{{ form.nome_completo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.nome_completo.label }} *
                     </label>
-                    <input type="text" 
-                           name="nome_completo" 
-                           id="id_nome_completo"
-                           value="{{ terapeuta.nome_completo }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.nome_completo }}
+                    {% if form.nome_completo.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.nome_completo.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Nome de Exibição -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.nome_exibicao.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.nome_exibicao.label }} *
+                    </label>
+                    {{ form.nome_exibicao }}
+                    {% if form.nome_exibicao.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.nome_exibicao.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.nome_exibicao.help_text }}</p>
                 </div>
                 
-                <!-- CPF -->
+                <!-- CPF/CNPJ -->
                 <div>
-                    <label for="id_cpf" class="block text-sm font-medium text-gray-700 mb-2">
-                        CPF *
+                    <label for="{{ form.cpf_cnpj.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.cpf_cnpj.label }}
                     </label>
-                    <input type="text" 
-                           name="cpf" 
-                           id="id_cpf"
-                           value="{{ terapeuta.cpf }}"
-                           required
-                           maxlength="14"
-                           placeholder="000.000.000-00"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                </div>
-                
-                <!-- Telefone -->
-                <div>
-                    <label for="id_telefone" class="block text-sm font-medium text-gray-700 mb-2">
-                        Telefone *
-                    </label>
-                    <input type="tel" 
-                           name="telefone" 
-                           id="id_telefone"
-                           value="{{ terapeuta.telefone }}"
-                           required
-                           placeholder="(00) 00000-0000"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.cpf_cnpj }}
+                    {% if form.cpf_cnpj.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.cpf_cnpj.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.cpf_cnpj.help_text }}</p>
                 </div>
                 
                 <!-- WhatsApp -->
                 <div>
-                    <label for="id_whatsapp" class="block text-sm font-medium text-gray-700 mb-2">
-                        WhatsApp
+                    <label for="{{ form.whatsapp.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.whatsapp.label }}
                     </label>
-                    <input type="tel" 
-                           name="whatsapp" 
-                           id="id_whatsapp"
-                           value="{{ terapeuta.whatsapp|default:'' }}"
-                           placeholder="(00) 00000-0000"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.whatsapp }}
+                    {% if form.whatsapp.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.whatsapp.errors }}</p>
+                    {% endif %}
+                    <div class="mt-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="whatsapp_ativo" {% if terapeuta.whatsapp_ativo %}checked{% endif %} class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-600">Este número é WhatsApp?</span>
+                        </label>
+                    </div>
                 </div>
                 
-                <!-- E-mail -->
-                <div>
-                    <label for="id_email" class="block text-sm font-medium text-gray-700 mb-2">
-                        E-mail *
+                <!-- E-mail Profissional -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.email_profissional.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.email_profissional.label }} *
                     </label>
-                    <input type="email" 
-                           name="email" 
-                           id="id_email"
-                           value="{{ terapeuta.email }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.email_profissional }}
+                    {% if form.email_profissional.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.email_profissional.errors }}</p>
+                    {% endif %}
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- ===== Seção 2: Localização ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                📍 Localização
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- País -->
+                <div>
+                    <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        País
+                    </label>
+                    <select name="pais" 
+                            id="id_pais"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Selecione o país</option>
+                        {% for pais in paises %}
+                        <option value="{{ pais.id }}" {% if terapeuta.pais_id == pais.id %}selected{% endif %}>
+                            {{ pais.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.pais.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.pais.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Estado (Brasil) -->
+                <div id="div-estado" style="display: none;">
+                    <label for="id_estado" class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado *
+                    </label>
+                    <select name="estado" 
+                            id="id_estado"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Selecione o estado</option>
+                        {% for estado in estados %}
+                        <option value="{{ estado.id }}" {% if terapeuta.estado_id == estado.id %}selected{% endif %}>
+                            {{ estado.nome }} - {{ estado.sigla }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.estado.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.estado.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Cidade (Brasil) -->
+                <div id="div-cidade-principal" style="display: none;">
+                    <label for="id_cidade_principal" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cidade *
+                    </label>
+                    <select name="cidade_principal" 
+                            id="id_cidade_principal"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Selecione primeiro o estado</option>
+                        {% if terapeuta.cidade_principal %}
+                        <option value="{{ terapeuta.cidade_principal.id }}" selected>
+                            {{ terapeuta.cidade_principal.nome }}
+                        </option>
+                        {% endif %}
+                    </select>
+                    {% if form.cidade_principal.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.cidade_principal.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Cidade Texto (Outros países) -->
+                <div id="div-cidade-texto" style="display: none;">
+                    <label for="{{ form.cidade_texto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cidade *
+                    </label>
+                    {{ form.cidade_texto }}
+                    {% if form.cidade_texto.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.cidade_texto.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Bairro -->
+                <div>
+                    <label for="{{ form.bairro.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.bairro.label }}
+                    </label>
+                    {{ form.bairro }}
+                    {% if form.bairro.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.bairro.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Endereço Completo -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.endereco.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.endereco.label }}
+                    </label>
+                    {{ form.endereco }}
+                    {% if form.endereco.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.endereco.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">Opcional - apenas se desejar mostrar</p>
                 </div>
                 
             </div>
         </div>
         
-        <!-- ===== Seção 2: Informações Profissionais ===== -->
+        <!-- ===== Seção 3: Informações Profissionais ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 💼 Informações Profissionais
@@ -146,175 +303,174 @@
             
             <div class="space-y-6">
                 
-                <!-- Biografia Completa -->
+                <!-- Registro Profissional -->
                 <div>
-                    <label for="id_bio_completa" class="block text-sm font-medium text-gray-700 mb-2">
-                        Biografia Completa *
+                    <label for="{{ form.registro_profissional.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.registro_profissional.label }}
                     </label>
-                    <textarea name="bio_completa" 
-                              id="id_bio_completa"
-                              rows="6"
-                              required
-                              placeholder="Conte um pouco sobre você, sua experiência, sua abordagem terapêutica..."
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.bio_completa }}</textarea>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Descreva sua trajetória profissional, formações e sua filosofia de trabalho
-                    </p>
+                    {{ form.registro_profissional }}
+                    {% if form.registro_profissional.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.registro_profissional.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.registro_profissional.help_text }}</p>
                 </div>
-                
-                <!-- Formação Acadêmica -->
+
+                <!-- Formação -->
                 <div>
-                    <label for="id_formacao_academica" class="block text-sm font-medium text-gray-700 mb-2">
-                        Formação Acadêmica *
+                    <label for="{{ form.formacao.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.formacao.label }} *
                     </label>
-                    <textarea name="formacao_academica" 
-                              id="id_formacao_academica"
-                              rows="4"
-                              required
-                              placeholder="Ex: Graduação em Psicologia - UFRJ (2015)&#10;Pós-graduação em Terapia Holística - PUC (2017)"
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.formacao_academica }}</textarea>
+                    {{ form.formacao }}
+                    {% if form.formacao.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.formacao.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.formacao.help_text }}</p>
                 </div>
-                
-                <!-- Certificações -->
-                <div>
-                    <label for="id_certificacoes" class="block text-sm font-medium text-gray-700 mb-2">
-                        Certificações e Cursos
-                    </label>
-                    <textarea name="certificacoes" 
-                              id="id_certificacoes"
-                              rows="4"
-                              placeholder="Liste suas certificações, cursos complementares, workshops..."
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ terapeuta.certificacoes|default:'' }}</textarea>
-                </div>
-                
+
                 <!-- Anos de Experiência -->
                 <div>
-                    <label for="id_experiencia_anos" class="block text-sm font-medium text-gray-700 mb-2">
-                        Anos de Experiência
+                    <label for="{{ form.experiencia_anos.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.experiencia_anos.label }}
                     </label>
-                    <input type="number" 
-                           name="experiencia_anos" 
-                           id="id_experiencia_anos"
-                           value="{{ terapeuta.experiencia_anos|default:'' }}"
-                           min="0"
-                           max="50"
-                           placeholder="Ex: 5"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.experiencia_anos }}
+                    {% if form.experiencia_anos.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.experiencia_anos.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Bio Curta -->
+                <div>
+                    <label for="{{ form.bio_curta.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.bio_curta.label }} *
+                    </label>
+                    {{ form.bio_curta }}
+                    <div class="flex justify-between items-center mt-1">
+                        {% if form.bio_curta.errors %}
+                        <p class="text-sm text-red-600">{{ form.bio_curta.errors }}</p>
+                        {% else %}
+                        <p class="text-xs text-gray-500">{{ form.bio_curta.help_text }}</p>
+                        {% endif %}
+                        <span id="bio-curta-contador" class="text-xs text-gray-500">0/200</span>
+                    </div>
+                </div>
+
+                <!-- Bio Completa -->
+                <div>
+                    <label for="id_bio_completa" class="block text-sm font-medium text-gray-700 mb-2">
+                        Bio Completa *
+                    </label>
+                    <textarea name="bio_completa" 
+                            id="id_bio_completa"
+                            rows="10"
+                            required
+                            placeholder="Descreva sua trajetória profissional, abordagem terapêutica, diferenciais..."
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent resize-y">{{ terapeuta.bio_completa|striptags }}</textarea>
+                    {% if form.bio_completa.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.bio_completa.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">Descrição detalhada do perfil profissional</p>
+                </div>
+
+                <!-- Metodologia -->
+                <div>
+                    <label for="{{ form.metodologia.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.metodologia.label }}
+                    </label>
+                    {{ form.metodologia }}
+                    {% if form.metodologia.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.metodologia.errors }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.metodologia.help_text }}</p>
                 </div>
                 
             </div>
         </div>
-        
-        <!-- ===== Seção 3: Especialidades ===== -->
+
+        <!-- ===== Seção 4: Especialidades ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 ✨ Especialidades / Terapias
             </h2>
             
             <p class="text-sm text-gray-600 mb-4">
-                Selecione as terapias que você oferece (mínimo 1, recomendado 3-5)
+                Selecione as terapias que você oferece
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {% for especialidade in todas_especialidades %}
+                {% for checkbox in form.especialidades %}
                 <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="checkbox" 
-                           name="especialidades" 
-                           value="{{ especialidade.id }}"
-                           {% if especialidade.id in especialidades_selecionadas %}checked{% endif %}
-                           class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                    <span class="ml-3 text-sm text-gray-700">{{ especialidade.nome }}</span>
+                    {{ checkbox.tag }}
+                    <span class="ml-3 text-sm text-gray-700">{{ checkbox.choice_label }}</span>
                 </label>
                 {% endfor %}
             </div>
+            {% if form.especialidades.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.especialidades.errors }}</p>
+            {% endif %}
         </div>
-        
-        <!-- ===== Seção 4: Tipos de Atendimento ===== -->
+
+        <!-- ===== Seção 5: Tipos de Sessão ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                📍 Tipos de Atendimento
+                📍 Tipos de Sessão
             </h2>
             
-            <div class="space-y-4">
-                <p class="text-sm text-gray-600">
-                    Selecione como você atende seus clientes
-                </p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {% for tipo in tipos_sessao_disponiveis %}
-                    <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors">
-                        <input type="checkbox" 
-                               name="tipos_sessao" 
-                               value="{{ tipo.value }}"
-                               {% if tipo.value in terapeuta.tipos_sessao %}checked{% endif %}
-                               class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
-                        <span class="ml-3 text-sm font-medium text-gray-700">{{ tipo.label }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {% for checkbox in form.tipos_sessao %}
+                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                    {{ checkbox.tag }}
+                    <span class="ml-3 text-sm font-medium text-gray-700">{{ checkbox.choice_label }}</span>
+                </label>
+                {% endfor %}
             </div>
+            {% if form.tipos_sessao.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.tipos_sessao.errors }}</p>
+            {% endif %}
         </div>
-        
-        <!-- ===== Seção 5: Para Quem ===== -->
+
+        <!-- ===== Seção 6: Para Quem ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 👥 Para Quem é Direcionado
             </h2>
             
-            <p class="text-sm text-gray-600 mb-4">
-                Selecione o público-alvo do seu atendimento
-            </p>
-            
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                {% for opcao in para_quem_opcoes %}
+                {% for checkbox in form.para_quem %}
                 <label class="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors text-center">
-                    <input type="checkbox" 
-                           name="para_quem" 
-                           value="{{ opcao.value }}"
-                           {% if opcao.value in terapeuta.para_quem %}checked{% endif %}
-                           class="sr-only peer">
-                    <span class="text-sm font-medium text-gray-700 peer-checked:text-primary">
-                        {{ opcao.label }}
-                    </span>
+                    {{ checkbox.tag }}
+                    <span class="ml-2 text-sm font-medium text-gray-700">{{ checkbox.choice_label }}</span>
                 </label>
                 {% endfor %}
             </div>
+            {% if form.para_quem.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.para_quem.errors }}</p>
+            {% endif %}
         </div>
-        
-        <!-- ===== Seção 6: Localização ===== -->
+
+        <!-- ===== Seção 7: Cidades de Atendimento ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                🗺️ Cidades de Atendimento
+                🗺️ Outras Cidades de Atendimento
             </h2>
             
             <p class="text-sm text-gray-600 mb-4">
-                Selecione as cidades onde você atende
+                Além da cidade principal, selecione outras cidades onde você atende
             </p>
             
-            <!-- Filtro por Estado -->
-            <div class="mb-4">
-                <label for="filtro_estado" class="block text-sm font-medium text-gray-700 mb-2">
-                    Filtrar por Estado
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg">
+                {% for checkbox in form.cidades_atendimento %}
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    {{ checkbox.tag }}
+                    <span class="ml-3 text-sm text-gray-700">{{ checkbox.choice_label }}</span>
                 </label>
-                <select id="filtro_estado" 
-                        class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <option value="">Todos os estados</option>
-                    {% for estado in estados_brasil %}
-                    <option value="{{ estado.id }}">{{ estado.nome }} - {{ estado.sigla }}</option>
-                    {% endfor %}
-                </select>
+                {% endfor %}
             </div>
-            
-            <!-- Lista de Cidades -->
-            <div id="lista-cidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg">
-                <!-- As cidades serão carregadas aqui via JavaScript -->
-                <p class="text-sm text-gray-500 col-span-full text-center py-8">
-                    Carregando cidades...
-                </p>
-            </div>
+            {% if form.cidades_atendimento.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.cidades_atendimento.errors }}</p>
+            {% endif %}
         </div>
-        
-        <!-- ===== Seção 7: Redes Sociais ===== -->
+
+        <!-- ===== Seção 8: Redes Sociais ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 🌐 Redes Sociais
@@ -324,93 +480,110 @@
                 
                 <!-- Instagram -->
                 <div>
-                    <label for="id_instagram" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram
+                    <label for="{{ form.instagram.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Instagram
                     </label>
-                    <input type="url" 
-                           name="instagram" 
-                           id="id_instagram"
-                           value="{{ terapeuta.instagram|default:'' }}"
-                           placeholder="https://instagram.com/seu_usuario"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.instagram }}
+                    {% if form.instagram.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.instagram.errors }}</p>
+                    {% endif %}
                 </div>
-                
+
                 <!-- Facebook -->
                 <div>
-                    <label for="id_facebook" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook
+                    <label for="{{ form.facebook.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Facebook
                     </label>
-                    <input type="url" 
-                           name="facebook" 
-                           id="id_facebook"
-                           value="{{ terapeuta.facebook|default:'' }}"
-                           placeholder="https://facebook.com/seu_usuario"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.facebook }}
+                    {% if form.facebook.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.facebook.errors }}</p>
+                    {% endif %}
                 </div>
-                
-                <!-- LinkedIn -->
+
+                <!-- TikTok -->
                 <div>
-                    <label for="id_linkedin" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
+                    <label for="{{ form.tiktok.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        TikTok
                     </label>
-                    <input type="url" 
-                           name="linkedin" 
-                           id="id_linkedin"
-                           value="{{ terapeuta.linkedin|default:'' }}"
-                           placeholder="https://linkedin.com/in/seu_usuario"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.tiktok }}
+                    {% if form.tiktok.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.tiktok.errors }}</p>
+                    {% endif %}
                 </div>
-                
-                <!-- Site Pessoal -->
+
+                <!-- YouTube -->
                 <div>
-                    <label for="id_site" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-globe text-gray-600 mr-1"></i> Site Pessoal
+                    <label for="{{ form.youtube.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        YouTube
                     </label>
-                    <input type="url" 
-                           name="site" 
-                           id="id_site"
-                           value="{{ terapeuta.site|default:'' }}"
-                           placeholder="https://seu-site.com.br"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    {{ form.youtube }}
+                    {% if form.youtube.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.youtube.errors }}</p>
+                    {% endif %}
                 </div>
                 
             </div>
         </div>
-        
-        <!-- ===== Seção 8: Outras Configurações ===== -->
+
+        <!-- ===== Seção 9: Galeria de Fotos ===== -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                ⚙️ Outras Configurações
+                📸 Galeria de Fotos (Máx. 7)
+            </h2>
+            
+            <!-- Fotos Existentes -->
+            {% if fotos_galeria %}
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+                {% for foto in fotos_galeria %}
+                <div class="relative group">
+                    <img src="{{ foto.imagem.url }}" alt="{{ foto.descricao }}" class="w-full h-24 object-cover rounded-lg border-2 border-gray-200">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                        <button type="button" onclick="deletarFoto({{ foto.id }})" class="text-white text-xs bg-red-500 px-2 py-1 rounded">Excluir</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1 text-center">Foto {{ foto.ordem|add:1 }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Upload de Novas Fotos -->
+            {% if pode_adicionar_foto %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Adicionar Fotos ({{ total_fotos_galeria }}/7)
+                </label>
+                <input type="file" 
+                       name="fotos_galeria" 
+                       id="id_fotos_galeria"
+                       accept="image/*"
+                       multiple
+                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer">
+                <p class="text-xs text-gray-500 mt-2">
+                    Você pode adicionar até {{ 7|add:total_fotos_galeria|add:"-"|add:total_fotos_galeria }} foto(s) adicional(is)
+                </p>
+            </div>
+            {% else %}
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                <p class="text-sm text-yellow-700">Limite de 7 fotos atingido. Exclua uma foto para adicionar outra.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ===== Seção 10: Configurações ===== -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                ⚙️ Configurações
             </h2>
             
             <div class="space-y-4">
                 
                 <!-- Acessibilidade -->
                 <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input type="checkbox" 
-                           name="acessibilidade" 
-                           id="id_acessibilidade"
-                           {% if terapeuta.acessibilidade %}checked{% endif %}
-                           class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                    <input type="checkbox" name="acessibilidade" {% if terapeuta.acessibilidade %}checked{% endif %} class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
                     <div class="ml-3">
                         <span class="text-sm font-medium text-gray-900">Acessibilidade</span>
                         <p class="text-xs text-gray-500 mt-1">
-                            Marque se seu local de atendimento possui acessibilidade para pessoas com mobilidade reduzida
-                        </p>
-                    </div>
-                </label>
-                
-                <!-- Perfil Ativo -->
-                <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input type="checkbox" 
-                           name="is_active" 
-                           id="id_is_active"
-                           {% if terapeuta.is_active %}checked{% endif %}
-                           class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
-                    <div class="ml-3">
-                        <span class="text-sm font-medium text-gray-900">Perfil Ativo</span>
-                        <p class="text-xs text-gray-500 mt-1">
-                            Desmarque para ocultar temporariamente seu perfil da plataforma
+                            Marque se seu local de atendimento possui acessibilidade
                         </p>
                     </div>
                 </label>
@@ -427,141 +600,308 @@
             
             <button type="submit" 
                     class="px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg">
-                Salvar Alterações
+                💾 Salvar Alterações
             </button>
         </div>
         
     </form>
     
 </div>
-{% endblock %}
+
 
 {% block extra_js %}
-<script>
-// ===== JavaScript para funcionalidades do formulário =====
+{{ block.super }}
+<style>
+/* CKEditor customizado */
+.ckeditor-wrapper {
+    margin-bottom: 1rem;
+}
 
+/* Forçar visibilidade do CKEditor e toolbar */
+.cke {
+    visibility: visible !important;
+    display: block !important;
+}
+
+.cke_top {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.cke_toolbar {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.cke_toolgroup {
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.cke_button {
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+/* Garantir que o textarea original fique escondido */
+#id_bio_completa {
+    display: none !important;
+}
+</style>
+
+<script>
+// ===== EXECUTAR IMEDIATAMENTE - Cascata País → Estado → Cidade =====
+(function() {
+    const inputPais = document.getElementById('id_pais');
+    const inputEstado = document.getElementById('id_estado');
+    const inputCidade = document.getElementById('id_cidade_principal');
+    const divEstado = document.getElementById('div-estado');
+    const divCidadePrincipal = document.getElementById('div-cidade-principal');
+    const divCidadeTexto = document.getElementById('div-cidade-texto');
+
+    console.log('🔧 Inicializando cascata...');
+
+    // Mostrar/esconder campos baseado no país
+    if (inputPais) {
+        inputPais.addEventListener('change', function() {
+            const paisSelecionado = this.options[this.selectedIndex].text;
+            console.log('🌍 País:', paisSelecionado);
+            
+            if (paisSelecionado === 'Brasil') {
+                divEstado.style.display = 'block';
+                divCidadePrincipal.style.display = 'block';
+                divCidadeTexto.style.display = 'none';
+                
+                if (document.getElementById('id_cidade_texto')) {
+                    document.getElementById('id_cidade_texto').value = '';
+                }
+                
+                console.log('✅ Campos Brasil exibidos');
+            } else if (paisSelecionado && paisSelecionado !== '---------' && paisSelecionado !== 'Selecione o país') {
+                divEstado.style.display = 'none';
+                divCidadePrincipal.style.display = 'none';
+                divCidadeTexto.style.display = 'block';
+                
+                inputEstado.value = '';
+                inputCidade.innerHTML = '<option value="">Selecione primeiro o estado</option>';
+                
+                console.log('✅ Campo texto exibido');
+            } else {
+                divEstado.style.display = 'none';
+                divCidadePrincipal.style.display = 'none';
+                divCidadeTexto.style.display = 'none';
+                
+                console.log('⚠️ Nenhum país');
+            }
+        });
+
+        // EXECUTAR IMEDIATAMENTE
+        setTimeout(function() {
+            inputPais.dispatchEvent(new Event('change'));
+        }, 100);
+    }
+
+    // Carregar cidades quando mudar estado
+    if (inputEstado) {
+        inputEstado.addEventListener('change', function() {
+            const estadoId = this.value;
+            console.log('🏙️ Estado ID:', estadoId);
+            
+            if (!estadoId) {
+                inputCidade.innerHTML = '<option value="">Selecione primeiro o estado</option>';
+                return;
+            }
+            
+            inputCidade.innerHTML = '<option value="">⏳ Carregando...</option>';
+            inputCidade.disabled = true;
+            
+            fetch(`/api/cidades/?estado=${estadoId}`)
+                .then(response => response.json())
+                .then(cidades => {
+                    inputCidade.innerHTML = '<option value="">Selecione a cidade</option>';
+                    
+                    cidades.forEach(cidade => {
+                        const option = document.createElement('option');
+                        option.value = cidade.id;
+                        option.textContent = cidade.nome;
+                        inputCidade.appendChild(option);
+                    });
+                    
+                    inputCidade.disabled = false;
+                    console.log(`✅ ${cidades.length} cidades carregadas`);
+                })
+                .catch(error => {
+                    console.error('❌ Erro:', error);
+                    inputCidade.innerHTML = '<option value="">Erro ao carregar</option>';
+                    inputCidade.disabled = false;
+                });
+        });
+        
+        // Se já tem estado selecionado, carregar cidades
+        if (inputEstado.value) {
+            setTimeout(function() {
+                inputEstado.dispatchEvent(new Event('change'));
+            }, 200);
+        }
+    }
+})();
+
+// ===== CKEditor Initialization =====
+(function() {
+    function waitForCKEditor(callback) {
+        if (typeof CKEDITOR !== 'undefined') {
+            callback();
+        } else {
+            setTimeout(function() {
+                waitForCKEditor(callback);
+            }, 100);
+        }
+    }
+    
+    waitForCKEditor(function() {
+        var textarea = document.getElementById('id_bio_completa');
+        
+        if (!textarea) {
+            console.error('Textarea não encontrado!');
+            return;
+        }
+        
+        if (CKEDITOR.instances['id_bio_completa']) {
+            CKEDITOR.instances['id_bio_completa'].destroy(true);
+        }
+        
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = textarea.value;
+        textarea.value = tempDiv.innerHTML;
+        
+        var editor = CKEDITOR.replace('id_bio_completa', {
+            toolbar: [
+                { name: 'estilos', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                { name: 'cores', items: ['TextColor', 'BGColor'] },
+                { name: 'listas', items: ['NumberedList', 'BulletedList'] },
+                { name: 'links', items: ['Link', 'Unlink'] },
+                { name: 'formato', items: ['Format'] },
+                { name: 'ferramentas', items: ['RemoveFormat', 'Smiley', 'Source'] }
+            ],
+            height: 300,
+            language: 'pt-br',
+            entities: false,
+            basicEntities: false,
+            removePlugins: 'elementspath',
+            resize_enabled: true
+        });
+        
+        editor.on('instanceReady', function() {
+            console.log('✅ CKEditor pronto!');
+        });
+    });
+})();
+
+// ===== Outras funcionalidades =====
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ===== Preview de Foto ao Selecionar =====
-    const inputFoto = document.getElementById('id_foto');
-    const previewFoto = document.getElementById('preview-foto');
-    
-    if (inputFoto) {
-        inputFoto.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (previewFoto.tagName === 'IMG') {
-                        previewFoto.src = e.target.result;
-                    } else {
-                        // Criar elemento img se for div
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'w-24 h-24 rounded-full object-cover border-2 border-gray-300';
-                        img.id = 'preview-foto';
-                        previewFoto.parentNode.replaceChild(img, previewFoto);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
+    // Preview de Fotos
+    const inputFotoPerfil = document.getElementById('id_foto_perfil');
+    if (inputFotoPerfil) {
+        inputFotoPerfil.addEventListener('change', function(e) {
+            previewImage(e, 'preview-foto-perfil', true);
+        });
+    }
+
+    const inputFotoCapa = document.getElementById('id_foto_capa');
+    if (inputFotoCapa) {
+        inputFotoCapa.addEventListener('change', function(e) {
+            previewImage(e, 'preview-foto-capa', false);
         });
     }
     
-    // ===== Máscaras de Input =====
-    
-    // Máscara CPF
-    const inputCPF = document.getElementById('id_cpf');
-    if (inputCPF) {
-        inputCPF.addEventListener('input', function(e) {
+    // Máscaras
+    const inputCPFCNPJ = document.getElementById('id_cpf_cnpj');
+    if (inputCPFCNPJ) {
+        inputCPFCNPJ.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
+            
             if (value.length <= 11) {
                 value = value.replace(/(\d{3})(\d)/, '$1.$2');
                 value = value.replace(/(\d{3})(\d)/, '$1.$2');
                 value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            } else {
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
             }
+            
             e.target.value = value;
         });
     }
     
-    // Máscara Telefone
-    const inputTelefone = document.getElementById('id_telefone');
     const inputWhatsApp = document.getElementById('id_whatsapp');
-    
-    function mascaraTelefone(input) {
-        if (!input) return;
-        input.addEventListener('input', function(e) {
+    if (inputWhatsApp) {
+        inputWhatsApp.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/(\d{2})(\d)/, '($1) $2');
-                value = value.replace(/(\d{5})(\d)/, '$1-$2');
-            }
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
             e.target.value = value;
         });
     }
+
+    // Contador Bio Curta
+    const bioCurta = document.getElementById('id_bio_curta');
+    const contador = document.getElementById('bio-curta-contador');
     
-    mascaraTelefone(inputTelefone);
-    mascaraTelefone(inputWhatsApp);
-    
-    // ===== Carregar Cidades =====
-    carregarCidades();
-    
-    // Filtro por Estado
-    const filtroEstado = document.getElementById('filtro_estado');
-    if (filtroEstado) {
-        filtroEstado.addEventListener('change', function() {
-            carregarCidades(this.value);
-        });
+    if (bioCurta && contador) {
+        function atualizarContador() {
+            const length = bioCurta.value.length;
+            contador.textContent = `${length}/200`;
+            
+            if (length > 200) {
+                contador.classList.add('text-red-600');
+                contador.classList.remove('text-gray-500');
+            } else {
+                contador.classList.add('text-gray-500');
+                contador.classList.remove('text-red-600');
+            }
+        }
+        
+        bioCurta.addEventListener('input', atualizarContador);
+        atualizarContador();
     }
-    
 });
 
-// ===== Função para Carregar Cidades =====
-function carregarCidades(estadoId = '') {
-    const listaCidades = document.getElementById('lista-cidades');
-    
-    // URL da API de cidades
-    let url = '/api/cidades/';
-    if (estadoId) {
-        url += `?estado=${estadoId}`;
+// Funções auxiliares
+function previewImage(e, previewId, isRound) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(previewId);
+            
+            if (preview.tagName === 'IMG') {
+                preview.src = e.target.result;
+            } else {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.id = previewId;
+                
+                if (isRound) {
+                    img.className = 'w-24 h-24 rounded-full object-cover border-2 border-gray-300';
+                } else {
+                    img.className = 'w-48 h-24 rounded-lg object-cover border-2 border-gray-300';
+                }
+                
+                preview.parentNode.replaceChild(img, preview);
+            }
+        };
+        reader.readAsDataURL(file);
     }
-    
-    // Mostrar loading
-    listaCidades.innerHTML = '<p class="text-sm text-gray-500 col-span-full text-center py-8">Carregando cidades...</p>';
-    
-    // Buscar cidades (simulação - você precisa implementar a API)
-    // Por enquanto, vou usar dados mockados
-    setTimeout(() => {
-        const cidadesSelecionadas = {{ cidades_selecionadas|safe }};
-        
-        // Aqui você deve fazer um fetch real para sua API
-        // fetch(url).then(response => response.json()).then(data => { ... })
-        
-        // Exemplo mockado:
-        const cidades = [
-            {id: 1, nome: 'Rio de Janeiro', estado: 'RJ'},
-            {id: 2, nome: 'São Paulo', estado: 'SP'},
-            {id: 3, nome: 'Belo Horizonte', estado: 'MG'},
-            // Adicione mais cidades conforme necessário
-        ];
-        
-        let html = '';
-        cidades.forEach(cidade => {
-            const checked = cidadesSelecionadas.includes(cidade.id) ? 'checked' : '';
-            html += `
-                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="checkbox" 
-                           name="cidades_atendimento" 
-                           value="${cidade.id}"
-                           ${checked}
-                           class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                    <span class="ml-3 text-sm text-gray-700">${cidade.nome} - ${cidade.estado}</span>
-                </label>
-            `;
-        });
-        
-        listaCidades.innerHTML = html || '<p class="text-sm text-gray-500 col-span-full text-center py-8">Nenhuma cidade encontrada</p>';
-    }, 500);
+}
+
+function deletarFoto(fotoId) {
+    if (confirm('Tem certeza que deseja excluir esta foto?')) {
+        alert('Função de deletar foto será implementada');
+    }
 }
 </script>
+{% endblock %}
 {% endblock %}

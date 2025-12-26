@@ -514,6 +514,40 @@ Data: 13/09/2025
                             </div>
                         </div>
                         {% endif %}
+
+                        {# Cidades de Atendimento #}
+                        {% if terapeuta.cidade_principal or terapeuta.cidades_atendimento.exists %}
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 mb-2">📍 Cidades de Atendimento:</p>
+                            <div class="space-y-1">
+                                {# Cidade Principal #}
+                                {% if terapeuta.cidade_principal %}
+                                <div class="flex items-start">
+                                    <span class="bg-primary text-white text-xs px-2 py-1 rounded-full mr-2 flex-shrink-0">
+                                        Principal
+                                    </span>
+                                    <span class="text-sm text-gray-700">
+                                        {{ terapeuta.cidade_principal.nome }} - {{ terapeuta.cidade_principal.estado.sigla }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                                
+                                {# Outras Cidades #}
+                                {% if terapeuta.cidades_atendimento.exists %}
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500 mb-1">Também atende em:</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        {% for cidade in terapeuta.cidades_atendimento.all %}
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                            {{ cidade.nome }} - {{ cidade.estado.sigla }}
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
                         
                         {% if terapeuta.acessibilidade %}
                         <div>
