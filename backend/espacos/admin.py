@@ -279,7 +279,7 @@ class EspacoAdmin(admin.ModelAdmin):
     
     list_display = [
         'nome_display', 'get_localizacao', 'tipo_espaco_display', 'status_display', 
-        'rating_display', 'total_avaliacoes_display', 'comodidades_count', 'created_at'
+        'rating_display', 'total_avaliacoes_display', 'comodidades_count', 'salas_count', 'created_at'
     ]
     list_filter = [
         'is_destaque', 'is_premium', 'is_active'
@@ -502,6 +502,30 @@ class EspacoAdmin(admin.ModelAdmin):
             )
         return format_html('<span style="color: #9ca3af;">0</span>')
     comodidades_count.short_description = '# Comodidades'
+
+    def salas_count(self, obj):
+        """
+        Exibe quantidade de salas com link para visualizar
+        """
+        from django.urls import reverse
+        from django.utils.html import format_html
+        
+        total_salas = obj.salas.count()
+        
+        if total_salas == 0:
+            return format_html('<span style="color: gray;">0 salas</span>')
+        
+        # Gera URL com filtro do espaço
+        url = reverse('admin:agendamentos_sala_changelist') + f'?espaco__id__exact={obj.id}'
+        
+        return format_html(
+            '<a href="{}" style="color: #1E5C5C; font-weight: bold;">{} sala{}</a>',
+            url,
+            total_salas,
+            's' if total_salas != 1 else ''
+        )
+    salas_count.short_description = '# SALAS'
+    salas_count.admin_order_field = 'salas'
     
     # ===============================================================
     # AÇÕES PERSONALIZADAS

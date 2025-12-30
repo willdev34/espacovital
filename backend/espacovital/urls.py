@@ -43,7 +43,8 @@ urlpatterns = [
     path('terapeutas/', include('terapeutas.urls')),
     path('espacos/', include('espacos.urls')),
     path('terapias/', include('terapias.urls')), 
-    
+    path('agendamentos/', include('agendamentos.urls')),
+
     # APIs públicas
     path('api/estados/', api_estados, name='api_estados'),
     path('api/cidades/', api_cidades, name='api_cidades'),

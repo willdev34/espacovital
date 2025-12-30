@@ -19,6 +19,7 @@ from .models import (
 )
 from core.models import Estado, Cidade, Especialidade
 from .forms import ContatoEspacoForm, AvaliacaoEspacoForm
+from django.forms import inlineformset_factory
 import json
 
 
@@ -692,116 +693,121 @@ class DashboardEspacoView(EspacoRequiredMixin, TemplateView):
 class DashboardEditarEspacoView(EspacoRequiredMixin, TemplateView):
     """
     Título: Editar Perfil do Espaço
-    Descrição: Formulário completo para edição de dados do espaço
+    Descrição: Formulário completo para edição de dados do espaço + galeria
     Autor: Will
-    Data: 16/11/2025
+    Data: 26/12/2025
     """
     template_name = 'espacos/dashboard/editar_espaco.html'
     
     def get_context_data(self, **kwargs):
         """
-        Carrega todas as estatísticas e informações do espaço
-        Versão simplificada e segura
+        Carrega o formulário unificado e formset de galeria
         """
+        from .forms import EspacoForm
+        from .models import FotoGaleriaEspaco
+        
         context = super().get_context_data(**kwargs)
         
-        # Pegar o espaço do usuário (primeiro se tiver vários)
+        # Pegar o espaço do usuário
         espaco = Espaco.objects.filter(
             responsavel=self.request.user
-        ).first()
+        ).select_related('cidade', 'estado', 'pais').first()
         
+        # Criar formset para galeria (até 7 fotos) - CAMPOS OPCIONAIS
+        FotoGaleriaFormSet = inlineformset_factory(
+            Espaco,
+            FotoGaleriaEspaco,
+            fields=('imagem', 'descricao', 'ordem'),
+            extra=0,  # ✅ Mudou de 1 para 0 (não criar formulários vazios)
+            max_num=7,
+            can_delete=True,
+            can_order=False
+        )
+        
+        # Criar formulário principal e formset
+        context['form'] = EspacoForm(instance=espaco)
+        context['galeria_formset'] = FotoGaleriaFormSet(instance=espaco)
         context['espaco'] = espaco
         
-        # Verificar se tem espaço
-        if not espaco:
-            context['total_visualizacoes'] = 0
-            context['visualizacoes_7_dias'] = 0
-            context['total_contatos'] = 0
-            context['contatos_30_dias'] = 0
-            context['media_avaliacoes'] = 0
-            context['total_avaliacoes'] = 0
-            context['total_terapeutas'] = 0
-            context['percentual_completude'] = 0
-            context['contatos_recentes'] = []
-            context['avaliacoes_recentes'] = []
-            context['plano_atual'] = 'Basic'
-            context['plano_badge_color'] = 'bg-gray-500'
-            context['media_plataforma_visualizacoes'] = 0
-            context['diferenca_visualizacoes'] = 0
-            return context
-        
-        # ===== ESTATÍSTICAS PRINCIPAIS (valores padrão) =====
-        context['total_visualizacoes'] = 0
-        context['visualizacoes_7_dias'] = 0
-        context['total_contatos'] = espaco.contatos.count() if hasattr(espaco, 'contatos') else 0
-        context['contatos_30_dias'] = 0
-        context['media_avaliacoes'] = 0
-        context['total_avaliacoes'] = 0
-        context['total_terapeutas'] = 0
-        
-        # Contatos nos últimos 30 dias
-        if hasattr(espaco, 'contatos'):
-            data_30_dias = timezone.now() - timedelta(days=30)
-            context['contatos_30_dias'] = espaco.contatos.filter(
-                created_at__gte=data_30_dias
-            ).count()
-        
-        # ===== AVALIAÇÕES =====
-        if hasattr(espaco, 'avaliacoes'):
-            media_avaliacoes = espaco.avaliacoes.filter(
-                is_active=True
-            ).aggregate(Avg('nota'))['nota__avg']
-            context['media_avaliacoes'] = round(media_avaliacoes, 1) if media_avaliacoes else 0
-            context['total_avaliacoes'] = espaco.avaliacoes.filter(is_active=True).count()
-        
-        # ===== PERCENTUAL DE COMPLETUDE DO PERFIL =====
-        completude = 0
-        if espaco.nome:
-            completude += 1
-        if hasattr(espaco, 'descricao_completa') and espaco.descricao_completa:
-            completude += 1
-        if hasattr(espaco, 'descricao_breve') and espaco.descricao_breve:
-            completude += 1
-        if espaco.cidade:
-            completude += 1
-        if hasattr(espaco, 'comodidades') and espaco.comodidades.exists():
-            completude += 1
-        if hasattr(espaco, 'especialidades') and espaco.especialidades.exists():
-            completude += 1
-        
-        context['percentual_completude'] = int((completude / 6) * 100)
-        
-        # ===== CONTATOS RECENTES =====
-        if hasattr(espaco, 'contatos'):
-            context['contatos_recentes'] = espaco.contatos.order_by('-created_at')[:5]
-        else:
-            context['contatos_recentes'] = []
-        
-        # ===== AVALIAÇÕES RECENTES =====
-        if hasattr(espaco, 'avaliacoes'):
-            context['avaliacoes_recentes'] = espaco.avaliacoes.filter(
-                is_active=True
-            ).order_by('-created_at')[:3]
-        else:
-            context['avaliacoes_recentes'] = []
-        
-        # ===== PLANO ATUAL =====
-        if hasattr(espaco, 'is_premium') and espaco.is_premium:
-            context['plano_atual'] = 'Premium S'
-            context['plano_badge_color'] = 'bg-gradient-to-r from-amber-500 to-orange-500'
-        elif hasattr(espaco, 'is_destaque') and espaco.is_destaque:
-            context['plano_atual'] = 'Premium A'
-            context['plano_badge_color'] = 'bg-gradient-to-r from-blue-500 to-indigo-500'
-        else:
-            context['plano_atual'] = 'Basic'
-            context['plano_badge_color'] = 'bg-gray-500'
-        
-        # ===== COMPARATIVO =====
-        context['media_plataforma_visualizacoes'] = 0
-        context['diferenca_visualizacoes'] = 0
+        # Carregar dados auxiliares
+        context['especialidades'] = Especialidade.objects.filter(is_active=True)
+        context['estados'] = Estado.objects.filter(pais__nome='Brasil', ativo=True)
+        context['comodidades'] = Comodidade.objects.filter(is_active=True)
         
         return context
-
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Processa o formulário de edição + galeria
+        """
+        from .forms import EspacoForm
+        from .models import FotoGaleriaEspaco
+        
+        espaco = Espaco.objects.filter(
+            responsavel=request.user
+        ).first()
+        
+        if not espaco:
+            messages.error(request, '❌ Espaço não encontrado.')
+            return redirect('core:home')
+        
+        # Criar formset para galeria - OPCIONAL (extra=0)
+        FotoGaleriaFormSet = inlineformset_factory(
+            Espaco,
+            FotoGaleriaEspaco,
+            fields=('imagem', 'descricao', 'ordem'),
+            extra=0,  # ✅ NÃO criar formulários vazios obrigatórios
+            max_num=7,
+            can_delete=True
+        )
+        
+        form = EspacoForm(request.POST, request.FILES, instance=espaco)
+        galeria_formset = FotoGaleriaFormSet(request.POST, request.FILES, instance=espaco)
+        
+        if form.is_valid() and galeria_formset.is_valid():
+            # Salvar formulário principal
+            espaco_atualizado = form.save(commit=False)
+            espaco_atualizado.responsavel = request.user
+            espaco_atualizado.save()
+            form.save_m2m()
+            
+            # Salvar galeria
+            galeria_formset.save()
+            
+            messages.success(request, '✅ Perfil do espaço atualizado com sucesso!')
+            return redirect('espacos:dashboard_editar')
+        else:
+            # ===== MENSAGENS DE ERRO DETALHADAS =====
+            
+            # Erros do formulário principal
+            if form.errors:
+                for field, errors in form.errors.items():
+                    field_name = form.fields[field].label if field in form.fields else field
+                    for error in errors:
+                        messages.error(request, f'❌ {field_name}: {error}')
+            
+            # Erros do formset de galeria
+            if galeria_formset.errors:
+                for i, form_errors in enumerate(galeria_formset.errors):
+                    if form_errors:
+                        for field, errors in form_errors.items():
+                            for error in errors:
+                                messages.error(request, f'❌ Foto {i+1} - {field}: {error}')
+            
+            # Erros não relacionados a campos específicos
+            if galeria_formset.non_form_errors():
+                for error in galeria_formset.non_form_errors():
+                    messages.error(request, f'❌ Galeria: {error}')
+            
+            # Mensagem geral se não houver erros específicos
+            if not form.errors and not galeria_formset.errors:
+                messages.error(request, '❌ Erro desconhecido ao salvar. Tente novamente.')
+        
+        # Se houver erros, renderizar novamente
+        context = self.get_context_data()
+        context['form'] = form
+        context['galeria_formset'] = galeria_formset
+        return self.render_to_response(context)
 
 class DashboardTerapeutasVinculadosView(EspacoRequiredMixin, TemplateView):
     """

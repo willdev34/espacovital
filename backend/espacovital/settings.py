@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     'espacos',
     'terapias',
     'blog',
+    'agendamentos',
 ]
 
 # ===============================================================

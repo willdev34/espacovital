@@ -1,14 +1,12 @@
 {# =============================================================== #}
 {# Título: Editar Perfil do Espaço Terapêutico #}
-{# Descrição: Formulário completo para edição de dados, fotos e comodidades #}
+{# Descrição: Formulário completo para edição com Django Forms #}
 {# Autor: Will #}
-{# Data: 16/11/2025 #}
+{# Data: 26/12/2025 #}
 {# =============================================================== #}
 
 {% extends 'espacos/dashboard/base_dashboard.html' %}
 {% load static %}
-
-{% load espaco_extras %}
 
 {% block title %}Editar Espaço - {{ espaco.nome }} - Espaço Vital{% endblock %}
 
@@ -35,11 +33,89 @@
         </a>
     </div>
     
+    {# ===== MENSAGENS DE FEEDBACK MELHORADAS ===== #}
+    {% if messages %}
+    <div class="space-y-3 mb-6">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}bg-green-50 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-50 border-l-4 border-red-500{% elif message.tags == 'warning' %}bg-yellow-50 border-l-4 border-yellow-500{% else %}bg-blue-50 border-l-4 border-blue-500{% endif %} p-4 rounded-r-lg shadow-sm">
+            <div class="flex items-start gap-3">
+                <div class="flex-shrink-0">
+                    {% if message.tags == 'success' %}
+                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    {% elif message.tags == 'error' %}
+                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    {% elif message.tags == 'warning' %}
+                    <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {% else %}
+                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    {% endif %}
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% elif message.tags == 'warning' %}text-yellow-800{% else %}text-blue-800{% endif %}">
+                        {{ message }}
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="this.parentElement.parentElement.remove()"
+                        class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+        
+        {# ===== ERROS GERAIS DO FORMULÁRIO ===== #}
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Erros no formulário:</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        {{ form.non_field_errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {# ===== DEBUG: TODOS OS ERROS DO FORMULÁRIO ===== #}
+        {% if form.errors %}
+        <div class="bg-red-100 border-l-4 border-red-600 p-4 rounded-lg mb-4">
+            <h3 class="text-red-800 font-bold mb-2">🐛 DEBUG - Erros do Formulário:</h3>
+            <ul class="list-disc list-inside text-red-700 text-sm space-y-1">
+                {% for field, errors in form.errors.items %}
+                    <li>
+                        <strong>{{ field }}:</strong> 
+                        {% for error in errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    
     {# ===== FORMULÁRIO DE EDIÇÃO ===== #}
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6" id="form-editar-espaco">
         {% csrf_token %}
         
-        {# ===== INFORMAÇÕES BÁSICAS ===== #}
+        {# ===== SEÇÃO 1: INFORMAÇÕES BÁSICAS ===== #}
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,110 +125,194 @@
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
                 {# Nome do Espaço #}
-                <div>
-                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
-                        Nome do Espaço *
+                <div class="md:col-span-2">
+                    <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.nome.label }}
                     </label>
-                    <input type="text" 
-                           id="nome" 
-                           name="nome" 
-                           value="{{ espaco.nome }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="Ex: Centro Holístico Harmonia">
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.nome.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {# Descrição Breve #}
+                <div class="md:col-span-2">
+                    <label for="{{ form.descricao_breve.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descricao_breve.label }}
+                    </label>
+                    {{ form.descricao_breve }}
+                    {% if form.descricao_breve.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.descricao_breve.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">Máximo 300 caracteres</p>
+                </div>
+                
+                {# Descrição Completa #}
+                <div class="md:col-span-2">
+                    <label for="{{ form.descricao_completa.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descricao_completa.label }}
+                    </label>
+                    {{ form.descricao_completa }}
+                    {% if form.descricao_completa.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.descricao_completa.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
                 {# Tipo de Espaço #}
                 <div>
-                    <label for="tipo_espaco" class="block text-sm font-medium text-gray-700 mb-2">
-                        Tipo de Espaço *
+                    <label for="{{ form.tipo_espaco.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.tipo_espaco.label }}
                     </label>
-                    <select id="tipo_espaco" 
-                            name="tipo_espaco" 
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
-                        <option value="">Selecione o tipo</option>
-                        {% for value, label in tipos_espaco %}
-                        <option value="{{ value }}" {% if espaco.tipo_espaco == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    {{ form.tipo_espaco }}
+                    {% if form.tipo_espaco.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.tipo_espaco.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
-                {# Email #}
+                {# Foto Principal #}
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email de Contato *
+                    <label for="{{ form.foto_principal.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.foto_principal.label }}
                     </label>
-                    <input type="email" 
-                           id="email" 
-                           name="email" 
-                           value="{{ espaco.email }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="contato@seuespaco.com.br">
+                    {{ form.foto_principal }}
+                    {% if form.foto_principal.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.foto_principal.errors.0 }}</p>
+                    {% endif %}
+                    {% if espaco.foto_principal %}
+                    <div class="mt-2">
+                        <img src="{{ espaco.foto_principal.url }}" alt="Foto atual" class="h-20 w-20 object-cover rounded-lg">
+                    </div>
+                    {% endif %}
+                </div>    
+            </div>
+        </div>
+
+        {# ===== SEÇÃO: GALERIA DE FOTOS (até 7 fotos) ===== #}
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Galeria de Fotos
+                <span class="ml-2 text-sm font-normal text-gray-500">(até 7 fotos)</span>
+            </h2>
+            
+            {{ galeria_formset.management_form }}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for foto_form in galeria_formset %}
+                <div class="relative group">
+                    
+                    {# Card da Foto #}
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl overflow-hidden hover:border-teal-500 transition-all duration-300 bg-gray-50">
+                        
+                        {# Preview da foto existente #}
+                        {% if foto_form.instance.imagem %}
+                        <div class="relative">
+                            <img src="{{ foto_form.instance.imagem.url }}" 
+                                alt="Foto {{ forloop.counter }}"
+                                class="w-full h-48 object-cover">
+                            
+                            {# Overlay com botão de trocar #}
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                                <label for="{{ foto_form.imagem.id_for_label }}" 
+                                    class="opacity-0 group-hover:opacity-100 cursor-pointer bg-white px-4 py-2 rounded-lg text-sm font-medium text-gray-700 shadow-lg transition-opacity duration-300 hover:bg-gray-100">
+                                    📸 Trocar Foto
+                                </label>
+                            </div>
+                        </div>
+                        {% else %}
+                        {# Placeholder para nova foto #}
+                        <label for="{{ foto_form.imagem.id_for_label }}" 
+                            class="w-full h-48 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
+                            <svg class="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-600">Adicionar Foto {{ forloop.counter }}</span>
+                            <span class="text-xs text-gray-500 mt-1">Clique para selecionar</span>
+                        </label>
+                        {% endif %}
+                        
+                        {# Input de arquivo (escondido) #}
+                        <input type="file" 
+                            id="{{ foto_form.imagem.id_for_label }}"
+                            name="{{ foto_form.imagem.html_name }}"
+                            accept="image/*"
+                            class="hidden">
+                        
+                        {# Campos adicionais #}
+                        <div class="p-4 space-y-3 bg-white">
+                            
+                            {# Descrição #}
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">
+                                    Descrição (opcional)
+                                </label>
+                                <input type="text" 
+                                    name="{{ foto_form.descricao.html_name }}"
+                                    value="{{ foto_form.descricao.value|default:'' }}"
+                                    placeholder="Ex: Sala de massagem"
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                            </div>
+                            
+                            {# Ordem #}
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">
+                                    Ordem de exibição
+                                </label>
+                                <input type="number" 
+                                    name="{{ foto_form.ordem.html_name }}"
+                                    value="{{ foto_form.ordem.value|default:forloop.counter0 }}"
+                                    min="0"
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                            </div>
+                            
+                            {# Checkbox de remoção #}
+                            {% if foto_form.instance.pk %}
+                            <div class="flex items-center gap-2 pt-2 border-t border-gray-200">
+                                <input type="checkbox" 
+                                    id="{{ foto_form.DELETE.id_for_label }}"
+                                    name="{{ foto_form.DELETE.html_name }}"
+                                    class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                <label for="{{ foto_form.DELETE.id_for_label }}" 
+                                    class="text-sm text-red-600 cursor-pointer hover:text-red-700">
+                                    🗑️ Remover esta foto
+                                </label>
+                            </div>
+                            
+                            {# Campo ID (escondido) #}
+                            <input type="hidden" 
+                                name="{{ foto_form.id.html_name }}" 
+                                value="{{ foto_form.id.value|default:'' }}">
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                
-                {# Telefone #}
-                <div>
-                    <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">
-                        Telefone
-                    </label>
-                    <input type="tel" 
-                           id="telefone" 
-                           name="telefone" 
-                           value="{{ espaco.telefone|default:'' }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="(21) 3333-4444">
-                </div>
-                
-                {# WhatsApp #}
-                <div>
-                    <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2">
-                        WhatsApp
-                    </label>
-                    <input type="tel" 
-                           id="whatsapp" 
-                           name="whatsapp" 
-                           value="{{ espaco.whatsapp|default:'' }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="(21) 99999-8888">
-                </div>
-                
-                {# Website #}
-                <div>
-                    <label for="website" class="block text-sm font-medium text-gray-700 mb-2">
-                        Website
-                    </label>
-                    <input type="url" 
-                           id="website" 
-                           name="website" 
-                           value="{{ espaco.website|default:'' }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="https://www.seuespaco.com.br">
-                </div>
+                {% endfor %}
             </div>
             
-            {# Descrição #}
-            <div class="mt-6">
-                <label for="descricao" class="block text-sm font-medium text-gray-700 mb-2">
-                    Descrição do Espaço *
-                </label>
-                <textarea id="descricao" 
-                          name="descricao" 
-                          rows="5"
-                          required
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                          placeholder="Descreva seu espaço terapêutico, ambiente, diferenciais...">{{ espaco.descricao|default:'' }}</textarea>
-                <p class="text-xs text-gray-500 mt-1">
-                    Mínimo de 100 caracteres. Descreva o ambiente, a proposta e os diferenciais.
-                </p>
+            {# Informação adicional #}
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div class="flex gap-3">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">💡 Dicas para fotos de qualidade:</p>
+                        <ul class="list-disc list-inside space-y-1 text-blue-700">
+                            <li>Use imagens com boa iluminação natural</li>
+                            <li>Resolução mínima recomendada: 1200x800 pixels</li>
+                            <li>Mostre diferentes ambientes do seu espaço</li>
+                            <li>Formatos aceitos: JPG, PNG (máx. 5MB por foto)</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         
-        {# ===== LOCALIZAÇÃO ===== #}
+        {# ===== SEÇÃO 2: LOCALIZAÇÃO ===== #}
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,272 +323,291 @@
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {# Estado #}
+                
+                {# País #}
                 <div>
-                    <label for="estado" class="block text-sm font-medium text-gray-700 mb-2">
-                        Estado *
+                    <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.pais.label }}
                     </label>
-                    <select id="estado" 
-                            name="estado" 
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
-                        <option value="">Selecione o estado</option>
-                        {% for estado in estados %}
-                        <option value="{{ estado.id }}" {% if espaco.estado.id == estado.id %}selected{% endif %}>
-                            {{ estado.nome }} ({{ estado.sigla }})
-                        </option>
-                        {% endfor %}
-                    </select>
+                    {{ form.pais }}
+                    {% if form.pais.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.pais.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {# Estado #}
+                <div id="campo-estado">
+                    <label for="{{ form.estado.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.estado.label }}
+                    </label>
+                    {{ form.estado }}
+                    {% if form.estado.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.estado.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
                 {# Cidade #}
-                <div>
-                    <label for="cidade" class="block text-sm font-medium text-gray-700 mb-2">
-                        Cidade *
+                <div id="campo-cidade">
+                    <label for="{{ form.cidade.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.cidade.label }}
                     </label>
-                    <select id="cidade" 
-                            name="cidade" 
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
-                        <option value="">Selecione primeiro o estado</option>
-                        {% if espaco.cidade %}
-                        <option value="{{ espaco.cidade.id }}" selected>{{ espaco.cidade.nome }}</option>
-                        {% endif %}
-                    </select>
+                    {{ form.cidade }}
+                    {% if form.cidade.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.cidade.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
-                {# CEP #}
-                <div>
-                    <label for="cep" class="block text-sm font-medium text-gray-700 mb-2">
-                        CEP
+                {# Cidade Texto (outros países) #}
+                <div id="campo-cidade-texto" style="display: none;">
+                    <label for="{{ form.cidade_texto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.cidade_texto.label }}
                     </label>
-                    <input type="text" 
-                           id="cep" 
-                           name="cep" 
-                           value="{{ espaco.cep|default:'' }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="00000-000">
+                    {{ form.cidade_texto }}
+                    {% if form.cidade_texto.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.cidade_texto.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
                 {# Bairro #}
                 <div>
-                    <label for="bairro" class="block text-sm font-medium text-gray-700 mb-2">
-                        Bairro *
+                    <label for="{{ form.bairro.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.bairro.label }}
                     </label>
-                    <input type="text" 
-                           id="bairro" 
-                           name="bairro" 
-                           value="{{ espaco.bairro|default:'' }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                           placeholder="Centro">
-                </div>
-            </div>
-            
-            {# Endereço Completo #}
-            <div class="mt-6">
-                <label for="endereco_completo" class="block text-sm font-medium text-gray-700 mb-2">
-                    Endereço Completo *
-                </label>
-                <input type="text" 
-                       id="endereco_completo" 
-                       name="endereco_completo" 
-                       value="{{ espaco.endereco_completo|default:'' }}"
-                       required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                       placeholder="Rua das Flores, 123 - Sala 45">
-            </div>
-        </div>
-        
-        {# ===== FOTOS DO ESPAÇO ===== #}
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                Fotos do Espaço
-            </h2>
-            
-            {# Foto Principal #}
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Foto Principal *
-                </label>
-                <div class="flex items-start gap-4">
-                    {% if espaco.foto_principal %}
-                    <div class="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                        <img src="{{ espaco.foto_principal.url }}" 
-                             alt="Foto principal"
-                             class="w-full h-full object-cover">
-                    </div>
+                    {{ form.bairro }}
+                    {% if form.bairro.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.bairro.errors.0 }}</p>
                     {% endif %}
+                </div>
+                
+                {# Endereço #}
+                <div>
+                    <label for="{{ form.endereco.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.endereco.label }}
+                    </label>
+                    {{ form.endereco }}
+                    {% if form.endereco.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.endereco.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {# CEP #}
+                <div>
+                    <label for="{{ form.cep.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.cep.label }}
+                    </label>
+                    {{ form.cep }}
+                    {% if form.cep.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.cep.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+            </div>
+        </div>
+        
+        {# ===== SEÇÃO 3: DISPONIBILIDADE (CHECKBOXES) ===== #}
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Disponibilidade por Período
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {# Manhã #}
+                <div class="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center h-5">
+                        {{ form.disponibilidade_manha }}
+                    </div>
                     <div class="flex-1">
-                        <input type="file" 
-                               id="foto_principal" 
-                               name="foto_principal" 
-                               accept="image/*"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
-                        <p class="text-xs text-gray-500 mt-1">
-                            Recomendado: 800x600px, formato JPG ou PNG, máximo 5MB.
-                        </p>
+                        <label for="{{ form.disponibilidade_manha.id_for_label }}" class="text-sm font-medium text-gray-900 cursor-pointer">
+                            {{ form.disponibilidade_manha.label }}
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">{{ form.disponibilidade_manha.help_text }}</p>
                     </div>
                 </div>
-            </div>
-            
-            {# Fotos Adicionais #}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Fotos Adicionais (até 6 fotos)
-                </label>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {% for i in "234567" %}
-                    <div class="relative">
-                        <div class="w-full h-32 rounded-lg overflow-hidden bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-                            {% with foto_field="foto_"|add:i %}
-                            {% if espaco|getattr:foto_field %}
-                            <img src="{{ espaco|getattr:foto_field.url }}" 
-                                 alt="Foto {{ i }}"
-                                 class="w-full h-full object-cover">
-                            {% else %}
-                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                            </svg>
-                            {% endif %}
-                            {% endwith %}
-                        </div>
-                        <input type="file" 
-                               name="foto_{{ i }}" 
-                               accept="image/*"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                
+                {# Tarde #}
+                <div class="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center h-5">
+                        {{ form.disponibilidade_tarde }}
                     </div>
-                    {% endfor %}
+                    <div class="flex-1">
+                        <label for="{{ form.disponibilidade_tarde.id_for_label }}" class="text-sm font-medium text-gray-900 cursor-pointer">
+                            {{ form.disponibilidade_tarde.label }}
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">{{ form.disponibilidade_tarde.help_text }}</p>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-2">
-                    Clique nas áreas acima para adicionar ou substituir fotos.
-                </p>
+                
+                {# Noite #}
+                <div class="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center h-5">
+                        {{ form.disponibilidade_noite }}
+                    </div>
+                    <div class="flex-1">
+                        <label for="{{ form.disponibilidade_noite.id_for_label }}" class="text-sm font-medium text-gray-900 cursor-pointer">
+                            {{ form.disponibilidade_noite.label }}
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">{{ form.disponibilidade_noite.help_text }}</p>
+                    </div>
+                </div>
+                
+                {# Finais de Semana #}
+                <div class="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center h-5">
+                        {{ form.disponibilidade_finais_semana }}
+                    </div>
+                    <div class="flex-1">
+                        <label for="{{ form.disponibilidade_finais_semana.id_for_label }}" class="text-sm font-medium text-gray-900 cursor-pointer">
+                            {{ form.disponibilidade_finais_semana.label }}
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">{{ form.disponibilidade_finais_semana.help_text }}</p>
+                    </div>
+                </div>
+                
             </div>
         </div>
         
-        {# ===== ESPECIALIDADES/TERAPIAS ===== #}
+        {# ===== SEÇÃO 4: CONTATO ===== #}
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                Terapias Disponíveis
+                Informações de Contato
             </h2>
             
-            <p class="text-sm text-gray-600 mb-4">
-                Selecione as terapias/especialidades oferecidas no seu espaço:
-            </p>
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {% for especialidade in todas_especialidades %}
-                <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
-                    <input type="checkbox" 
-                           name="especialidades" 
-                           value="{{ especialidade.id }}"
-                           {% if especialidade in espaco.especialidades.all %}checked{% endif %}
-                           class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
-                    <span class="text-sm text-gray-700">{{ especialidade.nome }}</span>
-                </label>
-                {% endfor %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {# Email #}
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {# WhatsApp #}
+                <div>
+                    <label for="{{ form.whatsapp.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.whatsapp.label }}
+                    </label>
+                    {{ form.whatsapp }}
+                    {% if form.whatsapp.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.whatsapp.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {# WhatsApp Ativo #}
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-2">
+                        {{ form.whatsapp_ativo }}
+                        <label for="{{ form.whatsapp_ativo.id_for_label }}" class="text-sm font-medium text-gray-700">
+                            {{ form.whatsapp_ativo.label }}
+                        </label>
+                    </div>
+                </div>
+                
+                {# Website #}
+                <div>
+                    <label for="{{ form.website.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.website.label }}
+                    </label>
+                    {{ form.website }}
+                    {% if form.website.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.website.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
             </div>
         </div>
         
-        {# ===== COMODIDADES ===== #}
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                </svg>
-                Comodidades
-            </h2>
-            
-            <p class="text-sm text-gray-600 mb-4">
-                Selecione as comodidades disponíveis no seu espaço:
-            </p>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {% for comodidade in todas_comodidades %}
-                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
-                    <input type="checkbox" 
-                           name="comodidades" 
-                           value="{{ comodidade.id }}"
-                           {% if comodidade in espaco.comodidades.all %}checked{% endif %}
-                           class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
-                    <span class="text-xl">{{ comodidade.get_icone_display_emoji }}</span>
-                    <span class="text-sm text-gray-700">{{ comodidade.nome }}</span>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-        
-        {# ===== CONFIGURAÇÕES ADICIONAIS ===== #}
+        {# ===== SEÇÃO 5: CONFIGURAÇÕES ===== #}
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                Configurações Adicionais
+                Configurações do Espaço
             </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                
                 {# Aceita Locação #}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Aceita Locação para Terapeutas?
+                <div class="flex items-center gap-2">
+                    {{ form.aceita_locacao }}
+                    <label for="{{ form.aceita_locacao.id_for_label }}" class="text-sm font-medium text-gray-700">
+                        {{ form.aceita_locacao.label }}
                     </label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" 
-                                   name="aceita_locacao" 
-                                   value="true"
-                                   {% if espaco.aceita_locacao %}checked{% endif %}
-                                   class="w-4 h-4 text-teal-600 border-gray-300 focus:ring-teal-500">
-                            <span class="text-sm text-gray-700">Sim</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" 
-                                   name="aceita_locacao" 
-                                   value="false"
-                                   {% if not espaco.aceita_locacao %}checked{% endif %}
-                                   class="w-4 h-4 text-teal-600 border-gray-300 focus:ring-teal-500">
-                            <span class="text-sm text-gray-700">Não</span>
-                        </label>
-                    </div>
                 </div>
                 
-                {# Acessibilidade #}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Possui Acessibilidade?
+                {# Tem Acessibilidade #}
+                <div class="flex items-center gap-2">
+                    {{ form.tem_acessibilidade }}
+                    <label for="{{ form.tem_acessibilidade.id_for_label }}" class="text-sm font-medium text-gray-700">
+                        {{ form.tem_acessibilidade.label }}
                     </label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" 
-                                   name="acessibilidade" 
-                                   value="true"
-                                   {% if espaco.acessibilidade %}checked{% endif %}
-                                   class="w-4 h-4 text-teal-600 border-gray-300 focus:ring-teal-500">
-                            <span class="text-sm text-gray-700">Sim</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" 
-                                   name="acessibilidade" 
-                                   value="false"
-                                   {% if not espaco.acessibilidade %}checked{% endif %}
-                                   class="w-4 h-4 text-teal-600 border-gray-300 focus:ring-teal-500">
-                            <span class="text-sm text-gray-700">Não</span>
-                        </label>
-                    </div>
                 </div>
+                
             </div>
         </div>
         
+        {# ===== SEÇÃO 6: COMODIDADES (CHECKBOXES) ===== #}
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                {{ form.comodidades.label }}
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {% for checkbox in form.comodidades %}
+                <div class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    {{ checkbox.tag }}
+                    <label for="{{ checkbox.id_for_label }}" class="text-sm text-gray-700 cursor-pointer">
+                        {{ checkbox.choice_label }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% if form.comodidades.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.comodidades.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        {# ===== SEÇÃO 7: ESPECIALIDADES (CHECKBOXES) ===== #}
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                {{ form.especialidades.label }}
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {% for checkbox in form.especialidades %}
+                <div class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    {{ checkbox.tag }}
+                    <label for="{{ checkbox.id_for_label }}" class="text-sm text-gray-700 cursor-pointer">
+                        {{ checkbox.choice_label }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% if form.especialidades.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.especialidades.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
         {# ===== BOTÕES DE AÇÃO ===== #}
-        <div class="flex flex-col sm:flex-row gap-4 justify-end">
+        <div class="flex flex-col sm:flex-row gap-4 justify-end sticky bottom-0 bg-white p-4 border-t border-gray-200 rounded-lg shadow-lg">
             <a href="{% url 'espacos:dashboard' %}" 
                class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-center">
                 Cancelar
@@ -450,34 +629,33 @@
 {% block extra_js %}
 {{ block.super }}
 <script>
-    // ===== Script para carregar cidades dinamicamente =====
-    document.getElementById('estado').addEventListener('change', function() {
-        const estadoId = this.value;
-        const cidadeSelect = document.getElementById('cidade');
+// ===== Script para cascata País → Estado → Cidade =====
+document.addEventListener('DOMContentLoaded', function() {
+    const paisSelect = document.getElementById('id_pais');
+    const estadoField = document.getElementById('campo-estado');
+    const cidadeField = document.getElementById('campo-cidade');
+    const cidadeTextoField = document.getElementById('campo-cidade-texto');
+    
+    if (paisSelect) {
+        paisSelect.addEventListener('change', function() {
+            const paisText = this.options[this.selectedIndex].text;
+            
+            if (paisText.includes('Brasil')) {
+                // Mostrar estado e cidade (Brasil)
+                estadoField.style.display = '';
+                cidadeField.style.display = '';
+                cidadeTextoField.style.display = 'none';
+            } else {
+                // Mostrar cidade_texto (outros países)
+                estadoField.style.display = 'none';
+                cidadeField.style.display = 'none';
+                cidadeTextoField.style.display = '';
+            }
+        });
         
-        // Limpar opções atuais
-        cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
-        
-        if (estadoId) {
-            // Fazer requisição AJAX para buscar cidades
-            fetch(`/espacos/api/cidades/${estadoId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
-                    data.cidades.forEach(cidade => {
-                        const option = document.createElement('option');
-                        option.value = cidade.id;
-                        option.textContent = cidade.nome;
-                        cidadeSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar cidades:', error);
-                    cidadeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
-                });
-        } else {
-            cidadeSelect.innerHTML = '<option value="">Selecione primeiro o estado</option>';
-        }
-    });
+        // Trigger ao carregar (caso já tenha país selecionado)
+        paisSelect.dispatchEvent(new Event('change'));
+    }
+});
 </script>
 {% endblock %}
