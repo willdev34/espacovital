@@ -1,0 +1,254 @@
+{# =============================================================== #}
+{# Título: Lista de Salas do Espaço #}
+{# Descrição: Gerenciamento de salas para agendamento #}
+{# Autor: Will #}
+{# Data: 30/12/2024 #}
+{# =============================================================== #}
+
+{% extends 'espacos/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Salas - {{ espaco.nome }} - Espaço Vital{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+    
+    {# ===== CABEÇALHO DA PÁGINA ===== #}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-poppins font-bold text-gray-900">
+                Gerenciar Salas
+            </h1>
+            <p class="text-gray-600 mt-1">
+                Configure as salas disponíveis para agendamento pelos terapeutas.
+            </p>
+        </div>
+        
+        {# Botão de criar nova sala (só aparece se tiver permissão) #}
+        {% if tem_permissao %}
+        <div>
+            <a href="{% url 'espacos:dashboard_sala_criar' %}" 
+               class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Nova Sala
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {# ===== AVISO SE NÃO TIVER PERMISSÃO ===== #}
+    {% if not tem_permissao %}
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-yellow-800">
+                    Recurso Exclusivo Premium S+
+                </h3>
+                <div class="mt-2 text-sm text-yellow-700">
+                    <p>
+                        O sistema de agendamento de salas está disponível apenas para espaços com plano 
+                        <strong>Premium S+</strong> ou <strong>Premium Combo</strong>.
+                    </p>
+                    <p class="mt-2">
+                        <a href="{% url 'espacos:dashboard_assinatura' %}" 
+                        class="font-medium underline hover:text-yellow-900">
+                            Faça upgrade do seu plano →
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {# ===== ESTATÍSTICAS RÁPIDAS ===== #}
+    {% if tem_permissao %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {# Total de Salas #}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Total de Salas</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_salas }}</p>
+                </div>
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-door-open text-primary text-xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        {# Salas Ativas #}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Salas Ativas</p>
+                    <p class="text-2xl font-bold text-green-600">{{ salas_ativas }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        {# Salas Inativas #}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Salas Inativas</p>
+                    <p class="text-2xl font-bold text-gray-500">{{ salas_inativas }}</p>
+                </div>
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-times-circle text-gray-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {# ===== LISTA DE SALAS ===== #}
+    {% if tem_permissao %}
+        {% if salas %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for sala in salas %}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                {# Imagem da Sala #}
+                <div class="relative h-48 bg-gray-100">
+                    {% if sala.foto %}
+                        <img src="{{ sala.foto.url }}" 
+                             alt="{{ sala.nome }}" 
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-door-open text-gray-300 text-5xl"></i>
+                        </div>
+                    {% endif %}
+                    
+                    {# Badge de Status #}
+                    <div class="absolute top-3 right-3">
+                        {% if sala.is_active %}
+                        <span class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Ativa
+                        </span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-gray-500 text-white text-xs font-semibold rounded-full">
+                            <i class="fas fa-times-circle mr-1"></i>
+                            Inativa
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {# Informações da Sala #}
+                <div class="p-5">
+                    {# Nome da Sala #}
+                    <h3 class="text-lg font-bold text-gray-900 mb-3">
+                        {{ sala.nome }}
+                    </h3>
+                    
+                    {# Detalhes Rápidos #}
+                    <div class="space-y-2 mb-4">
+                        {# Capacidade #}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-users w-5 text-gray-400"></i>
+                            <span class="ml-2">Capacidade: {{ sala.capacidade }} pessoa{{ sala.capacidade|pluralize }}</span>
+                        </div>
+                        
+                        {# Valor #}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-dollar-sign w-5 text-gray-400"></i>
+                            <span class="ml-2">R$ {{ sala.valor_sessao }} / {{ sala.duracao_sessao }}min</span>
+                        </div>
+                        
+                        {# Horário #}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-clock w-5 text-gray-400"></i>
+                            <span class="ml-2">{{ sala.horario_abertura|time:"H:i" }} - {{ sala.horario_fechamento|time:"H:i" }}</span>
+                        </div>
+                        
+                        {# Comodidades #}
+                        {% if sala.comodidades.all %}
+                        <div class="flex items-start text-sm text-gray-600">
+                            <i class="fas fa-check-square w-5 text-gray-400 mt-0.5"></i>
+                            <div class="ml-2">
+                                <span class="block mb-1">Comodidades:</span>
+                                <div class="flex flex-wrap gap-1">
+                                    {% for comodidade in sala.comodidades.all|slice:":3" %}
+                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">
+                                        {{ comodidade.nome }}
+                                    </span>
+                                    {% endfor %}
+                                    {% if sala.comodidades.count > 3 %}
+                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">
+                                        +{{ sala.comodidades.count|add:"-3" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {# Botões de Ação #}
+                    <div class="flex gap-2 pt-4 border-t border-gray-200">
+                        {# Editar #}
+                        <a href="{% url 'espacos:dashboard_sala_editar' sala.id %}" 
+                           class="flex-1 text-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors text-sm font-medium">
+                            <i class="fas fa-edit mr-1"></i>
+                            Editar
+                        </a>
+                        
+                        {# Ativar/Desativar #}
+                        <button onclick="toggleSala({{ sala.id }}, {{ sala.is_active|yesno:'false,true' }})"
+                                class="flex-1 px-4 py-2 {% if sala.is_active %}bg-gray-200 text-gray-700 hover:bg-gray-300{% else %}bg-green-100 text-green-700 hover:bg-green-200{% endif %} rounded-lg transition-colors text-sm font-medium">
+                            <i class="fas fa-{% if sala.is_active %}ban{% else %}check{% endif %} mr-1"></i>
+                            {% if sala.is_active %}Desativar{% else %}Ativar{% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% else %}
+        {# Estado Vazio #}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-door-open text-gray-400 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Nenhuma sala cadastrada
+            </h3>
+            <p class="text-gray-600 mb-6">
+                Comece criando sua primeira sala para disponibilizar agendamentos aos terapeutas.
+            </p>
+            <a href="{% url 'espacos:dashboard_sala_criar' %}" 
+               class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Criar Primeira Sala
+            </a>
+        </div>
+        {% endif %}
+    {% endif %}
+    
+</div>
+
+{# ===== JAVASCRIPT PARA ATIVAR/DESATIVAR SALA ===== #}
+<script>
+function toggleSala(salaId, novoStatus) {
+    const acao = novoStatus ? 'ativar' : 'desativar';
+    
+    if (!confirm(`Deseja realmente ${acao} esta sala?`)) {
+        return;
+    }
+    
+    // TODO: Implementar requisição AJAX para toggle
+    // Por enquanto, recarrega a página
+    window.location.href = `/espacos/dashboard/salas/${salaId}/toggle/`;
+}
+</script>
+
+{% endblock %}

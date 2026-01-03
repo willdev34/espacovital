@@ -1,0 +1,359 @@
+{# =============================================================== #}
+{# Título: Formulário de Sala (Criar/Editar) #}
+{# Descrição: Formulário para criar e editar salas do espaço #}
+{# Autor: Will #}
+{# Data: 30/12/2024 #}
+{# =============================================================== #}
+
+{% extends 'espacos/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} - {{ espaco.nome }} - Espaço Vital{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    
+    {# ===== CABEÇALHO ===== #}
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-poppins font-bold text-gray-900">
+                {{ titulo }}
+            </h1>
+            <p class="text-gray-600 mt-1">
+                Preencha as informações da sala para disponibilizá-la aos terapeutas.
+            </p>
+        </div>
+        
+        {# Botão Voltar #}
+        <a href="{% url 'espacos:dashboard_salas' %}" 
+           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Voltar
+        </a>
+    </div>
+
+    {# ===== MENSAGENS DE SUCESSO/ERRO ===== #}
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+        <div class="rounded-lg p-4 {% if message.tags == 'success' %}bg-green-50 border-l-4 border-green-400{% elif message.tags == 'error' %}bg-red-50 border-l-4 border-red-400{% elif message.tags == 'warning' %}bg-yellow-50 border-l-4 border-yellow-400{% else %}bg-blue-50 border-l-4 border-blue-400{% endif %}">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                    {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle text-red-400 text-xl"></i>
+                    {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                    {% else %}
+                    <i class="fas fa-info-circle text-blue-400 text-xl"></i>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% elif message.tags == 'warning' %}text-yellow-800{% else %}text-blue-800{% endif %}">
+                        {{ message }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {# ===== FORMULÁRIO ===== #}
+    <form method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+        {% csrf_token %}
+        
+        {# Mostrar erros gerais do formulário #}
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div class="flex">
+                <i class="fas fa-exclamation-circle text-red-400 mt-0.5"></i>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Erro no formulário</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        {{ form.non_field_errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {# ===== SEÇÃO: INFORMAÇÕES BÁSICAS ===== #}
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <i class="fas fa-info-circle text-primary mr-2"></i>
+                Informações Básicas
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {# Nome da Sala #}
+                <div class="md:col-span-2">
+                    <label for="id_nome" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome da Sala <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.nome.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Ex: Sala Mandala, Sala Kali, Salão Principal
+                    </p>
+                </div>
+                
+                {# Capacidade #}
+                <div>
+                    <label for="id_capacidade" class="block text-sm font-medium text-gray-700 mb-2">
+                        Capacidade (pessoas) <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.capacidade }}
+                    {% if form.capacidade.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.capacidade.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Número máximo de pessoas na sala
+                    </p>
+                </div>
+                
+                {# Duração da Sessão #}
+                <div>
+                    <label for="id_duracao_sessao" class="block text-sm font-medium text-gray-700 mb-2">
+                        Duração da Sessão (minutos) <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.duracao_sessao }}
+                    {% if form.duracao_sessao.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.duracao_sessao.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Ex: 60 (para 1 hora), 90 (para 1h30)
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        {# ===== SEÇÃO: VALORES E HORÁRIOS ===== #}
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <i class="fas fa-dollar-sign text-primary mr-2"></i>
+                Valores e Horários
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {# Valor por Sessão #}
+                <div>
+                    <label for="id_valor_sessao" class="block text-sm font-medium text-gray-700 mb-2">
+                        Valor por Sessão (R$) <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.valor_sessao }}
+                    {% if form.valor_sessao.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.valor_sessao.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Valor que será cobrado
+                    </p>
+                </div>
+                
+                {# Horário de Abertura #}
+                <div>
+                    <label for="id_horario_abertura" class="block text-sm font-medium text-gray-700 mb-2">
+                        Horário de Abertura <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.horario_abertura }}
+                    {% if form.horario_abertura.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.horario_abertura.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Ex: 08:00
+                    </p>
+                </div>
+                
+                {# Horário de Fechamento #}
+                <div>
+                    <label for="id_horario_fechamento" class="block text-sm font-medium text-gray-700 mb-2">
+                        Horário de Fechamento <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.horario_fechamento }}
+                    {% if form.horario_fechamento.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.horario_fechamento.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Ex: 20:00
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        {# ===== SEÇÃO: FOTO DA SALA ===== #}
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <i class="fas fa-camera text-primary mr-2"></i>
+                Foto da Sala
+            </h2>
+            
+            <div class="space-y-4">
+                {# Preview da foto atual (se estiver editando) #}
+                {% if form.instance.foto %}
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Foto Atual:</p>
+                    <div class="relative w-48 h-48 rounded-lg overflow-hidden border-2 border-gray-200">
+                        <img src="{{ form.instance.foto.url }}" 
+                             alt="Foto atual da sala" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+                {% endif %}
+                
+                {# Upload de nova foto #}
+                <div>
+                    <label for="id_foto" class="block text-sm font-medium text-gray-700 mb-2">
+                        {% if form.instance.foto %}Nova Foto{% else %}Foto da Sala{% endif %}
+                    </label>
+                    <div class="flex items-center space-x-4">
+                        {{ form.foto }}
+                    </div>
+                    {% if form.foto.errors %}
+                    <p class="mt-1 text-sm text-red-600">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.foto.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        Formatos aceitos: JPG, PNG. Tamanho máximo: 5MB
+                    </p>
+                </div>
+                
+                {# Preview da nova foto (JavaScript) #}
+                <div id="preview-container" class="hidden">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                    <div class="relative w-48 h-48 rounded-lg overflow-hidden border-2 border-primary">
+                        <img id="preview-image" src="" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# ===== SEÇÃO: COMODIDADES ===== #}
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <i class="fas fa-check-square text-primary mr-2"></i>
+                Comodidades Disponíveis
+            </h2>
+            
+            <div>
+                <label for="id_comodidades" class="block text-sm font-medium text-gray-700 mb-2">
+                    Selecione as comodidades da sala
+                </label>
+                {{ form.comodidades }}
+                {% if form.comodidades.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                    <i class="fas fa-exclamation-circle mr-1"></i>
+                    {{ form.comodidades.errors.0 }}
+                </p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">
+                    Segure CTRL (Windows) ou CMD (Mac) para selecionar múltiplas opções
+                </p>
+            </div>
+        </div>
+        
+        {# ===== SEÇÃO: STATUS (só aparece ao editar) ===== #}
+        {% if form.instance.pk %}
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <i class="fas fa-toggle-on text-primary mr-2"></i>
+                Status da Sala
+            </h2>
+            
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center">
+                    {{ form.is_active }}
+                    <label for="id_is_active" class="ml-2 text-sm font-medium text-gray-700">
+                        Sala Ativa
+                    </label>
+                </div>
+                <p class="text-sm text-gray-500">
+                    Desmarque para desativar temporariamente a sala
+                </p>
+            </div>
+            {% if form.is_active.errors %}
+            <p class="mt-1 text-sm text-red-600">
+                <i class="fas fa-exclamation-circle mr-1"></i>
+                {{ form.is_active.errors.0 }}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {# ===== BOTÕES DE AÇÃO ===== #}
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+            <a href="{% url 'espacos:dashboard_salas' %}" 
+               class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                <i class="fas fa-times mr-2"></i>
+                Cancelar
+            </a>
+            
+            <button type="submit" 
+                    class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium">
+                <i class="fas fa-save mr-2"></i>
+                {{ botao_texto }}
+            </button>
+        </div>
+        
+    </form>
+    
+</div>
+
+{# ===== JAVASCRIPT ===== #}
+<script>
+// Preview da foto antes de enviar
+document.addEventListener('DOMContentLoaded', function() {
+    const fotoInput = document.getElementById('id_foto');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    
+    if (fotoInput) {
+        fotoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    previewContainer.classList.remove('hidden');
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        });
+    }
+    
+    // Adiciona estilo ao checkbox is_active
+    const isActiveCheckbox = document.getElementById('id_is_active');
+    if (isActiveCheckbox) {
+        isActiveCheckbox.classList.add('w-4', 'h-4', 'text-primary', 'border-gray-300', 'rounded', 'focus:ring-primary');
+    }
+});
+</script>
+
+{% endblock %}

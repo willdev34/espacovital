@@ -6,20 +6,22 @@
 # ===============================================================
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, TemplateView, CreateView
+from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, View
 from django.db.models import Q, Avg, Count, Prefetch
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils import timezone
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import (
     Espaco, Comodidade, AvaliacaoEspaco, ContatoEspaco, TipoEspaco, DisponibilidadePeriodo
 )
-from core.models import Estado, Cidade, Especialidade
+from core.models import Estado, Cidade, Especialidade, Assinatura
 from .forms import ContatoEspacoForm, AvaliacaoEspacoForm
 from django.forms import inlineformset_factory
+from agendamentos.models import Sala
+from core.models import Assinatura
 import json
 
 
@@ -895,6 +897,377 @@ class DashboardDisponibilidadeView(EspacoRequiredMixin, TemplateView):
         
         return context
 
+# ===============================================================
+# VIEW: DASHBOARD - GERENCIAR SALAS (AGENDAMENTO)
+# ===============================================================
+class DashboardSalasView(EspacoRequiredMixin, ListView):
+    """
+    View para listar e gerenciar salas do espaço.
+    Disponível apenas para espaços Premium S+.
+    """
+    model = Sala
+    template_name = 'espacos/dashboard/salas_lista.html'
+    context_object_name = 'salas'
+    
+    def get_queryset(self):
+        """Retorna apenas salas do espaço do usuário logado"""
+        # Busca o espaço do usuário logado
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        
+        if not espaco:
+            return Sala.objects.none()
+        
+        return Sala.objects.filter(
+            espaco=espaco
+        ).prefetch_related('comodidades').order_by('-is_active', 'nome')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Busca o espaço do usuário logado
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        
+        # Adiciona o espaço ao contexto
+        context['espaco'] = espaco
+        
+        # Verifica se tem permissão (Premium S+ ou Combo)
+        # Buscar assinatura ativa do usuário
+        if espaco:
+            from core.models import Assinatura
+            
+            assinatura = Assinatura.objects.filter(
+                usuario=self.request.user,  # ✅ self.request.user
+                status='active'
+            ).select_related('plano').first()
+            
+            # Verificar se o plano permite gerenciamento de salas
+            if assinatura and assinatura.plano:
+                context['tem_permissao'] = assinatura.plano.nome in [
+                    'premium_s_plus', 
+                    'combo_a_s_plus'
+                ]
+            else:
+                context['tem_permissao'] = False
+        else:
+            context['tem_permissao'] = False
+        
+        # Estatísticas básicas
+        context['total_salas'] = self.get_queryset().count()
+        context['salas_ativas'] = self.get_queryset().filter(is_active=True).count()
+        context['salas_inativas'] = self.get_queryset().filter(is_active=False).count()
+        
+        return context
+
+
+class DashboardSalaCriarView(EspacoRequiredMixin, CreateView):
+    """
+    Título: Criar Nova Sala
+    Descrição: Formulário para cadastrar nova sala no espaço.
+               Sincronizado com o Django Admin.
+    Autor: Will
+    Data: 30/12/2024
+    """
+    model = Sala
+    template_name = 'espacos/dashboard/sala_form.html'
+    fields = [
+        'nome', 'capacidade', 'valor_sessao', 'duracao_sessao',
+        'horario_abertura', 'horario_fechamento', 'foto', 'comodidades'
+    ]
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Verifica se o espaço tem permissão (Premium S+)
+        """
+
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+
+        if not espaco:
+            messages.error(request, 'Espaço não encontrado.')
+            return redirect('espacos:dashboard')
+
+        # Verificar se tem assinatura ativa com plano adequado
+        assinatura = Assinatura.objects.filter(
+            usuario=request.user,  # ✅ request.user (sem self)
+            status='active'
+        ).select_related('plano').first()
+
+        tem_permissao = False
+        if assinatura and assinatura.plano:
+            tem_permissao = assinatura.plano.nome in ['premium_s_plus', 'combo_a_s_plus']
+
+        if not tem_permissao:
+            messages.error(
+                request,
+                'O sistema de agendamento de salas está disponível apenas para planos Premium S+ ou Combo Premium.'
+            )
+            return redirect('espacos:dashboard_salas')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_form(self, form_class=None):
+        """
+        Customiza o formulário para filtrar comodidades do espaço
+        """
+        form = super().get_form(form_class)
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        
+        # Filtra apenas comodidades do espaço
+        if espaco:
+            form.fields['comodidades'].queryset = espaco.comodidades.all()
+        
+        # Adiciona classes CSS e configurações
+        form.fields['comodidades'].widget.attrs.update({
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+            'size': '6'
+        })
+        
+        # Adiciona classes para os outros campos
+        for field_name, field in form.fields.items():
+            if field_name != 'comodidades':
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
+                })
+        
+        return form
+    
+    def form_valid(self, form):
+        """
+        Associa a sala ao espaço do usuário logado
+        """
+        from django.db import IntegrityError
+        
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        form.instance.espaco = espaco
+        
+        try:
+            # Tentar salvar a sala
+            response = super().form_valid(form)
+            
+            messages.success(
+                self.request,
+                f'✅ Sala "{form.instance.nome}" criada com sucesso!'
+            )
+            
+            return response
+            
+        except IntegrityError:
+            # Erro de sala duplicada
+            messages.error(
+                self.request,
+                f'❌ Erro: Já existe uma sala chamada "{form.cleaned_data["nome"]}" neste espaço. '
+                f'Por favor, escolha outro nome.'
+            )
+            
+            # Retornar ao formulário com os dados preenchidos
+            return self.form_invalid(form)
+    
+    def get_success_url(self):
+        """
+        Redireciona para a lista de salas após criar
+        """
+        return reverse('espacos:dashboard_salas')
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        context['espaco'] = espaco
+        context['titulo'] = 'Criar Nova Sala'
+        context['botao_texto'] = 'Criar Sala'
+        return context
+
+
+class DashboardSalaEditarView(EspacoRequiredMixin, UpdateView):
+    """
+    Título: Editar Sala Existente
+    Descrição: Formulário para editar dados de uma sala.
+               Sincronizado com o Django Admin.
+    Autor: Will
+    Data: 30/12/2024
+    """
+    model = Sala
+    template_name = 'espacos/dashboard/sala_form.html'
+    fields = [
+        'nome', 'capacidade', 'valor_sessao', 'duracao_sessao',
+        'horario_abertura', 'horario_fechamento', 'foto', 'comodidades', 'is_active'
+    ]
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Verifica se o espaço tem permissão e se a sala pertence a ele
+        """
+
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+
+        if not espaco:
+            messages.error(request, 'Espaço não encontrado.')
+            return redirect('espacos:dashboard')
+
+        # Verificar se tem assinatura ativa com plano adequado
+        assinatura = Assinatura.objects.filter(
+            usuario=request.user,  # ✅ request.user (sem self)
+            status='active'
+        ).select_related('plano').first()
+
+        tem_permissao = False
+        if assinatura and assinatura.plano:
+            tem_permissao = assinatura.plano.nome in ['premium_s_plus', 'combo_a_s_plus']
+
+        if not tem_permissao:
+            messages.error(
+                request,
+                'O sistema de agendamento de salas está disponível apenas para planos Premium S+ ou Combo Premium.'
+            )
+            return redirect('espacos:dashboard_salas')
+        
+        # Verifica se a sala pertence ao espaço
+        sala = self.get_object()
+        if sala.espaco != espaco:
+            messages.error(request, 'Você não tem permissão para editar esta sala.')
+            return redirect('espacos:dashboard_salas')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        """
+        Retorna apenas salas do espaço do usuário
+        """
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        
+        if not espaco:
+            return Sala.objects.none()
+        
+        return Sala.objects.filter(espaco=espaco)
+    
+    def get_form(self, form_class=None):
+        """
+        Customiza o formulário para filtrar comodidades do espaço
+        """
+        form = super().get_form(form_class)
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        
+        # Filtra apenas comodidades do espaço
+        if espaco:
+            form.fields['comodidades'].queryset = espaco.comodidades.all()
+        
+        # Adiciona classes CSS
+        form.fields['comodidades'].widget.attrs.update({
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+            'size': '6'
+        })
+        
+        # Adiciona classes para os outros campos
+        for field_name, field in form.fields.items():
+            if field_name != 'comodidades' and field_name != 'is_active':
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
+                })
+        
+        return form
+    
+    def form_valid(self, form):
+        """
+        Salva as alterações
+        """
+        from django.db import IntegrityError
+        
+        try:
+            # Tentar salvar as alterações
+            response = super().form_valid(form)
+            
+            messages.success(
+                self.request,
+                f'✅ Sala "{form.instance.nome}" atualizada com sucesso!'
+            )
+            
+            return response
+            
+        except IntegrityError:
+            # Erro de sala duplicada
+            messages.error(
+                self.request,
+                f'❌ Erro: Já existe outra sala chamada "{form.cleaned_data["nome"]}" neste espaço. '
+                f'Por favor, escolha outro nome.'
+            )
+            
+            # Retornar ao formulário com os dados preenchidos
+            return self.form_invalid(form)
+    
+    def get_success_url(self):
+        """
+        Redireciona para a lista de salas após editar
+        """
+        return reverse('espacos:dashboard_salas')
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        espaco = Espaco.objects.filter(responsavel=self.request.user).first()
+        context['espaco'] = espaco
+        context['titulo'] = f'Editar Sala: {self.object.nome}'
+        context['botao_texto'] = 'Salvar Alterações'
+        return context
+
+
+class DashboardSalaToggleView(EspacoRequiredMixin, View):
+    """
+    Título: Ativar/Desativar Sala
+    Descrição: View para alternar status is_active da sala via AJAX ou redirect
+    Autor: Will
+    Data: 30/12/2024
+    """
+    
+    def get(self, request, pk):
+        """
+        Alterna o status is_active da sala
+        """
+
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+
+        if not espaco:
+            messages.error(request, 'Espaço não encontrado.')
+            return redirect('espacos:dashboard')
+
+        # Verificar se tem assinatura ativa com plano adequado
+        assinatura = Assinatura.objects.filter(
+            usuario=request.user,  # ✅ request.user (sem self)
+            status='active'
+        ).select_related('plano').first()
+
+        tem_permissao = False
+        if assinatura and assinatura.plano:
+            tem_permissao = assinatura.plano.nome in ['premium_s_plus', 'combo_a_s_plus']
+
+        if not tem_permissao:
+            messages.error(
+                request,
+                'Você não tem permissão para esta ação.'
+            )
+            return redirect('espacos:dashboard_salas')
+        
+        # Busca a sala
+        try:
+            sala = Sala.objects.get(pk=pk, espaco=espaco)
+        except Sala.DoesNotExist:
+            messages.error(request, 'Sala não encontrada.')
+            return redirect('espacos:dashboard_salas')
+        
+        # Alterna o status
+        sala.is_active = not sala.is_active
+        sala.save()
+        
+        # Mensagem de sucesso
+        status = 'ativada' if sala.is_active else 'desativada'
+        messages.success(
+            request,
+            f'Sala "{sala.nome}" {status} com sucesso!'
+        )
+        
+        return redirect('espacos:dashboard_salas')
 
 class DashboardPagamentosEspacoView(EspacoRequiredMixin, TemplateView):
     """

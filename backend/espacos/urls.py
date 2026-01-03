@@ -61,7 +61,47 @@ urlpatterns = [
         name='dashboard_disponibilidade'
     ),
     
-    # Gerenciar pagamentos recebidos
+    # ===============================================================
+    # DASHBOARD - GERENCIAMENTO DE SALAS (AGENDAMENTO)
+    # ===============================================================
+    
+    # Listar salas do espaço
+    # URL: /espacos/dashboard/salas/
+    # Lista todas as salas cadastradas no espaço
+    path(
+        'dashboard/salas/',
+        views.DashboardSalasView.as_view(),
+        name='dashboard_salas'
+    ),
+    
+    # Criar nova sala
+    # URL: /espacos/dashboard/salas/nova/
+    # Formulário para cadastrar nova sala
+    path(
+        'dashboard/salas/nova/',
+        views.DashboardSalaCriarView.as_view(),
+        name='dashboard_sala_criar'
+    ),
+    
+    # Editar sala existente
+    # URL: /espacos/dashboard/salas/<id>/editar/
+    # Formulário para editar dados da sala
+    path(
+        'dashboard/salas/<int:pk>/editar/',
+        views.DashboardSalaEditarView.as_view(),
+        name='dashboard_sala_editar'
+    ),
+    
+    # Ativar/Desativar sala
+    # URL: /espacos/dashboard/salas/<id>/toggle/
+    # Alterna status is_active da sala
+    path(
+        'dashboard/salas/<int:pk>/toggle/',
+        views.DashboardSalaToggleView.as_view(),
+        name='dashboard_sala_toggle'
+    ),
+    
+    # Gerenciar pagamento recebidos
     # URL: /espacos/dashboard/pagamentos/
     # Ver pagamentos de terapeutas pelo uso do espaço
     path(
