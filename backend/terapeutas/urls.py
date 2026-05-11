@@ -98,7 +98,56 @@ urlpatterns = [
         views.DashboardAssinaturaView.as_view(),
         name='dashboard_assinatura'
     ),
-    
+
+    # ============================================
+    # SISTEMA DE AGENDAMENTOS (FASE 3)
+    # ============================================
+
+    # Listar agendamentos
+    # URL: /terapeutas/dashboard/agendamentos/
+    # Lista todos os agendamentos do terapeuta com filtros
+    path(
+        'dashboard/agendamentos/',
+        views.DashboardAgendamentosView.as_view(),
+        name='dashboard_agendamentos'
+    ),
+
+    # Criar novo agendamento
+    # URL: /terapeutas/dashboard/agendamentos/novo/
+    # Formulário para agendar sala em espaço vinculado
+    path(
+        'dashboard/agendamentos/novo/',
+        views.DashboardAgendamentoCriarView.as_view(),
+        name='dashboard_agendamento_criar'
+    ),
+
+    # Ver detalhes do agendamento
+    # URL: /terapeutas/dashboard/agendamentos/<id>/
+    # Exibe informações completas e opção de cancelar
+    path(
+        'dashboard/agendamentos/<int:pk>/',
+        views.DashboardAgendamentoDetalheView.as_view(),
+        name='dashboard_agendamento_detalhe'
+    ),
+
+    # Cancelar agendamento
+    # URL: /terapeutas/dashboard/agendamentos/<id>/cancelar/
+    # Cancela agendamento e aplica multa se necessário
+    path(
+        'dashboard/agendamentos/<int:pk>/cancelar/',
+        views.DashboardAgendamentoCancelarView.as_view(),
+        name='dashboard_agendamento_cancelar'
+    ),
+
+    # Espaços vinculados (para agendamentos)
+    # URL: /terapeutas/dashboard/espacos-vinculados/
+    # Lista espaços onde o terapeuta pode agendar salas
+    path(
+        'dashboard/espacos-vinculados/',
+        views.DashboardEspacosVinculadosAgendamentosView.as_view(),
+        name='dashboard_espacos_vinculados_agendamentos'
+    ),
+
     # ============================================
     # PERFIL DO TERAPEUTA (público)
     # ============================================

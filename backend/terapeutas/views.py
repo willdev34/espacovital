@@ -6,11 +6,10 @@
 # ===============================================================
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView, View
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from django.views.generic import TemplateView
 from django.contrib import messages
 from django.urls import reverse
 from datetime import timedelta
@@ -19,9 +18,9 @@ from .models import (
     Terapeuta, Especialidade, 
     Avaliacao, Contato, SessionType, ProfileType, ClientType, FotoGaleriaTerapeuta
 )
+from agendamentos.models import Agendamento
 from .forms import TerapeutaEditarPerfilForm
 from core.models import Especialidade, Estado, Cidade, Pais
-from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
@@ -1340,5 +1339,345 @@ class DashboardAssinaturaView(TerapeutaRequiredMixin, TemplateView):
                 'descricao': 'Atendimento rápido e personalizado',
             },
         ]
+        
+        return context
+
+# ===============================================================
+# VIEWS: SISTEMA DE AGENDAMENTOS (FASE 3)
+# ===============================================================
+
+from agendamentos.models import Agendamento, VinculoTerapeutaEspaco
+from agendamentos.forms import AgendamentoForm
+from django.db.models import Q, Sum, Count
+
+
+class DashboardAgendamentosView(TerapeutaRequiredMixin, ListView):
+    """
+    Exibe todos os agendamentos (futuros, passados, cancelados)
+    """
+    model = Agendamento
+    template_name = 'terapeutas/dashboard/agendamentos_lista.html'
+    context_object_name = 'agendamentos'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        """
+        Retorna agendamentos do terapeuta logado
+        """
+        terapeuta = self.request.user.terapeuta
+        
+        # Filtro por status (via GET)
+        status_filtro = self.request.GET.get('status', 'todos')
+        
+        queryset = Agendamento.objects.filter(
+            terapeuta=terapeuta
+        ).select_related(
+            'sala',
+            'sala__espaco',
+            'espaco'
+        ).order_by('-data', '-hora_inicio')
+        
+        # Aplicar filtros
+        if status_filtro == 'futuros':
+            queryset = queryset.filter(
+                data__gte=timezone.now().date(),
+                status__in=['PENDENTE', 'CONFIRMADO']
+            )
+        elif status_filtro == 'pendentes':
+            queryset = queryset.filter(status='PENDENTE')
+        elif status_filtro == 'confirmados':
+            queryset = queryset.filter(status='CONFIRMADO')
+        elif status_filtro == 'cancelados':
+            queryset = queryset.filter(status='CANCELADO')
+        elif status_filtro == 'concluidos':
+            queryset = queryset.filter(status='CONCLUIDO')
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona estatísticas e informações ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        terapeuta = self.request.user.terapeuta
+        hoje = timezone.now().date()
+        
+        # Terapeuta
+        context['terapeuta'] = terapeuta
+        
+        # Filtro atual
+        context['status_filtro'] = self.request.GET.get('status', 'todos')
+        
+        # ===== ESTATÍSTICAS GERAIS =====
+        
+        # Total de agendamentos
+        context['total_agendamentos'] = Agendamento.objects.filter(
+            terapeuta=terapeuta
+        ).count()
+        
+        # Próximos agendamentos (futuros e não cancelados)
+        context['proximos_agendamentos'] = Agendamento.objects.filter(
+            terapeuta=terapeuta,
+            data__gte=hoje,
+            status__in=['PENDENTE', 'CONFIRMADO']
+        ).count()
+        
+        # Agendamentos pendentes de pagamento
+        context['pendentes_pagamento'] = Agendamento.objects.filter(
+            terapeuta=terapeuta,
+            status='PENDENTE',
+            pago=False
+        ).count()
+        
+        # Total gasto (apenas pagos)
+        context['total_gasto'] = Agendamento.objects.filter(
+            terapeuta=terapeuta,
+            pago=True
+        ).aggregate(
+            total=Sum('valor_cobrado')
+        )['total'] or 0
+        
+        # Próximo agendamento
+        proximo = Agendamento.objects.filter(
+            terapeuta=terapeuta,
+            data__gte=hoje,
+            status__in=['PENDENTE', 'CONFIRMADO']
+        ).order_by('data', 'hora_inicio').first()
+        
+        context['proximo_agendamento'] = proximo
+        
+        # ===== ESPAÇOS VINCULADOS =====
+        context['espacos_vinculados'] = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status='APROVADO',
+            is_active=True
+        ).select_related('espaco').count()
+        
+        return context
+
+
+class DashboardAgendamentoCriarView(TerapeutaRequiredMixin, CreateView):
+    """
+    Título: Criar Novo Agendamento
+    Descrição: Formulário para terapeuta agendar uma sala
+    Autor: Will
+    Data: 06/01/2026
+    """
+    model = Agendamento
+    form_class = AgendamentoForm
+    template_name = 'terapeutas/dashboard/agendamento_form.html'
+    
+    def get_form_kwargs(self):
+        """
+        Passa o terapeuta para o formulário
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs['terapeuta'] = self.request.user.terapeuta
+        return kwargs
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        context['terapeuta'] = self.request.user.terapeuta
+        context['titulo'] = 'Novo Agendamento'
+        context['botao_texto'] = 'Confirmar Agendamento'
+        
+        # Listar espaços vinculados
+        context['espacos_vinculados'] = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=self.request.user.terapeuta,
+            status='APROVADO',
+            is_active=True
+        ).select_related('espaco')
+        
+        return context
+    
+    def form_valid(self, form):
+        """
+        Salva o agendamento e redireciona
+        """
+        from django.db import IntegrityError
+        
+        try:
+            agendamento = form.save()
+            
+            messages.success(
+                self.request,
+                f'✅ Agendamento criado com sucesso! '
+                f'Sala: {agendamento.sala.nome} - '
+                f'Data: {agendamento.data.strftime("%d/%m/%Y")} às {agendamento.hora_inicio.strftime("%H:%M")}. '
+                f'Valor: R$ {agendamento.valor_cobrado}. '
+                f'Status: Aguardando pagamento.'
+            )
+            
+            return redirect('terapeutas:dashboard_agendamentos')
+            
+        except IntegrityError as e:
+            messages.error(
+                self.request,
+                '❌ Erro ao criar agendamento. Pode já existir um agendamento neste horário. '
+                'Tente novamente.'
+            )
+            return self.form_invalid(form)
+    
+    def form_invalid(self, form):
+        """
+        Exibe erros do formulário
+        """
+        # Erros já são exibidos no template via form.errors
+        return super().form_invalid(form)
+
+
+class DashboardAgendamentoDetalheView(TerapeutaRequiredMixin, DetailView):
+    """
+    Título: Detalhes do Agendamento
+    Descrição: Exibe informações completas de um agendamento
+    Autor: Will
+    Data: 06/01/2026
+    """
+    model = Agendamento
+    template_name = 'terapeutas/dashboard/agendamento_detalhe.html'
+    context_object_name = 'agendamento'
+    
+    def get_queryset(self):
+        """
+        Retorna apenas agendamentos do terapeuta logado
+        """
+        return Agendamento.objects.filter(
+            terapeuta=self.request.user.terapeuta
+        ).select_related('sala', 'sala__espaco', 'espaco')
+    
+    def get_context_data(self, **kwargs):
+        """
+        Adiciona informações extras ao contexto
+        """
+        context = super().get_context_data(**kwargs)
+        
+        agendamento = self.object
+        
+        # Verificar se pode cancelar sem multa
+        pode_cancelar_sem_multa, minutos_restantes = agendamento.pode_cancelar_sem_multa()
+        valor_multa = agendamento.calcular_multa_cancelamento()
+        
+        context['pode_cancelar_sem_multa'] = pode_cancelar_sem_multa
+        context['minutos_restantes'] = minutos_restantes
+        context['valor_multa'] = valor_multa
+        context['terapeuta'] = self.request.user.terapeuta
+        
+        # Verificar se pode cancelar (não pode se já concluído)
+        context['pode_cancelar'] = agendamento.status not in ['CANCELADO', 'CONCLUIDO']
+        
+        return context
+
+
+class DashboardAgendamentoCancelarView(TerapeutaRequiredMixin, View):
+    """
+    Título: Cancelar Agendamento
+    Descrição: Cancela um agendamento e aplica multa se necessário
+    Autor: Will
+    Data: 06/01/2026
+    """
+    
+    def post(self, request, pk):
+        """
+        Processa o cancelamento
+        """
+        terapeuta = request.user.terapeuta
+        
+        # Buscar agendamento
+        try:
+            agendamento = Agendamento.objects.get(
+                pk=pk,
+                terapeuta=terapeuta
+            )
+        except Agendamento.DoesNotExist:
+            messages.error(request, '❌ Agendamento não encontrado.')
+            return redirect('terapeutas:dashboard_agendamentos')
+        
+        # Verificar se pode cancelar
+        if agendamento.status == 'CANCELADO':
+            messages.warning(request, '⚠️ Este agendamento já está cancelado.')
+            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+        
+        if agendamento.status == 'CONCLUIDO':
+            messages.error(request, '❌ Não é possível cancelar um agendamento já concluído.')
+            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+        
+        # Pegar motivo (opcional)
+        motivo = request.POST.get('motivo', 'Cancelado pelo terapeuta')
+        
+        # Cancelar
+        sucesso, mensagem, valor_multa = agendamento.cancelar(
+            usuario=request.user,
+            motivo=motivo
+        )
+        
+        if sucesso:
+            if valor_multa > 0:
+                messages.warning(
+                    request,
+                    f'⚠️ {mensagem}'
+                )
+            else:
+                messages.success(
+                    request,
+                    f'✅ {mensagem}'
+                )
+        else:
+            messages.error(request, f'❌ {mensagem}')
+        
+        return redirect('terapeutas:dashboard_agendamentos')
+
+
+class DashboardEspacosVinculadosAgendamentosView(TerapeutaRequiredMixin, TemplateView):
+    """
+    Título: Espaços Vinculados (Para Agendamentos)
+    Descrição: Lista espaços onde o terapeuta pode agendar salas
+    Autor: Will
+    Data: 06/01/2026
+    """
+    template_name = 'terapeutas/dashboard/espacos_vinculados_agendamentos.html'
+    
+    def get_context_data(self, **kwargs):
+        """
+        Lista espaços vinculados com informações de salas
+        """
+        context = super().get_context_data(**kwargs)
+        
+        terapeuta = self.request.user.terapeuta
+        
+        # Buscar vínculos aprovados
+        vinculos = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status='APROVADO',
+            is_active=True
+        ).select_related('espaco').prefetch_related('espaco__salas')
+        
+        # Adicionar informações extras para cada vínculo
+        espacos_info = []
+        for vinculo in vinculos:
+            espaco = vinculo.espaco
+            
+            # Contar salas ativas
+            salas_ativas = espaco.salas.filter(is_active=True).count()
+            
+            # Contar agendamentos neste espaço
+            total_agendamentos = Agendamento.objects.filter(
+                terapeuta=terapeuta,
+                espaco=espaco
+            ).count()
+            
+            espacos_info.append({
+                'vinculo': vinculo,
+                'espaco': espaco,
+                'salas_ativas': salas_ativas,
+                'total_agendamentos': total_agendamentos,
+            })
+        
+        context['espacos_info'] = espacos_info
+        context['terapeuta'] = terapeuta
+        context['total_vinculos'] = len(espacos_info)
         
         return context

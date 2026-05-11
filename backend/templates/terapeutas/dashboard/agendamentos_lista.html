@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{# 
+Título: Template de Listagem de Agendamentos do Terapeuta
+Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terapeuta logado
+Autor: Will
+Data: 19/01/2026
+#}
+{% load static %}
+
+{% block title %}Meus Agendamentos - Espaço Vital{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos customizados para a lista de agendamentos */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .status-pendente {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+    
+    .status-confirmado {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .status-cancelado {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+    
+    .status-concluido {
+        background-color: #E0E7FF;
+        color: #3730A3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {# Cabeçalho da página #}
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Meus Agendamentos</h1>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Gerencie suas reservas de salas terapêuticas
+                    </p>
+                </div>
+                
+                {# Botão para novo agendamento #}
+                <!-- Temporariamente desabilitado até criar as views de CRUD -->
+                <button onclick="alert('Funcionalidade em desenvolvimento')" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white"
+                        style="background-color: #1E5C5C;">
+                    <i class="fas fa-plus mr-2"></i>
+                    Novo Agendamento
+                </button>
+            </div>
+        </div>
+
+        {# Filtros #}
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <form method="get" class="flex flex-wrap gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select name="status" id="status" 
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]"
+                            onchange="this.form.submit()">
+                        <option value="">Todos os status</option>
+                        <option value="pendente" {% if request.GET.status == 'pendente' %}selected{% endif %}>Pendente</option>
+                        <option value="confirmado" {% if request.GET.status == 'confirmado' %}selected{% endif %}>Confirmado</option>
+                        <option value="cancelado" {% if request.GET.status == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                        <option value="concluido" {% if request.GET.status == 'concluido' %}selected{% endif %}>Concluído</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-end">
+                    <a href="{% url 'terapeutas:dashboard_agendamentos' %}" 
+                       class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+                        Limpar Filtros
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        {# Lista de agendamentos #}
+        {% if agendamentos %}
+            <div class="space-y-4">
+                {% for agendamento in agendamentos %}
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                {# Informações da sala e espaço #}
+                                <div class="flex items-center mb-3">
+                                    <h3 class="text-lg font-semibold text-gray-900">
+                                        {{ agendamento.sala.nome }}
+                                    </h3>
+                                    <span class="status-badge status-{{ agendamento.status }} ml-3">
+                                        {{ agendamento.get_status_display }}
+                                    </span>
+                                </div>
+                                
+                                <div class="space-y-2 text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-building w-5 text-[#1E5C5C]"></i>
+                                        <span class="ml-2">{{ agendamento.sala.espaco.nome }}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar w-5 text-[#1E5C5C]"></i>
+                                        <span class="ml-2">{{ agendamento.data|date:"d/m/Y" }}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock w-5 text-[#1E5C5C]"></i>
+                                        <span class="ml-2">
+                                            {{ agendamento.hora_inicio|time:"H:i" }} - {{ agendamento.hora_fim|time:"H:i" }}
+                                        </span>
+                                    </div>
+                                    
+                                    {% if agendamento.valor_total %}
+                                    <div class="flex items-center">
+                                        <i class="fas fa-dollar-sign w-5 text-[#1E5C5C]"></i>
+                                        <span class="ml-2 font-semibold text-gray-900">
+                                            R$ {{ agendamento.valor_total }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                {# Observações se houver #}
+                                {% if agendamento.observacoes %}
+                                <div class="mt-3 p-3 bg-gray-50 rounded-md">
+                                    <p class="text-sm text-gray-700">
+                                        <strong>Observações:</strong> {{ agendamento.observacoes }}
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# Ações #}
+                            <div class="ml-6 flex flex-col space-y-2">
+                                <button onclick="alert('Funcionalidade em desenvolvimento')"
+                                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                    <i class="fas fa-eye mr-2"></i>
+                                    Ver Detalhes
+                                </button>
+                                
+                                {% if agendamento.status == 'pendente' or agendamento.status == 'confirmado' %}
+                                <button onclick="alert('Funcionalidade em desenvolvimento')"
+                                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Editar
+                                </button>
+                                
+                                <button onclick="confirmarCancelamento({{ agendamento.id }})"
+                                        class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50">
+                                    <i class="fas fa-times mr-2"></i>
+                                    Cancelar
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {# Paginação #}
+            {% if is_paginated %}
+            <div class="mt-8 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+                       class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+                       class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                    {% endif %}
+                    
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+                       class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+                       class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+            
+        {% else %}
+            {# Mensagem quando não há agendamentos #}
+            <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+                <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum agendamento encontrado</h3>
+                <p class="text-gray-600 mb-6">
+                    Você ainda não possui agendamentos de salas.
+                </p>
+                <button onclick="alert('Funcionalidade em desenvolvimento')"
+                        class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white"
+                        style="background-color: #1E5C5C;">
+                    <i class="fas fa-plus mr-2"></i>
+                    Fazer Primeiro Agendamento
+                </button>
+            </div>
+        {% endif %}
+        
+    </div>
+</div>
+
+{# Modal de confirmação de cancelamento #}
+<div id="modalCancelamento" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Cancelar Agendamento?</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Tem certeza que deseja cancelar este agendamento? Esta ação não pode ser desfeita.
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form id="formCancelamento" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                        Sim, cancelar
+                    </button>
+                </form>
+                <button onclick="fecharModal()"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Não, voltar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para confirmar cancelamento
+    function confirmarCancelamento(agendamentoId) {
+        const modal = document.getElementById('modalCancelamento');
+        const form = document.getElementById('formCancelamento');
+        form.action = `/agendamentos/${agendamentoId}/cancelar/`;
+        modal.classList.remove('hidden');
+    }
+    
+    // Função para fechar modal
+    function fecharModal() {
+        const modal = document.getElementById('modalCancelamento');
+        modal.classList.add('hidden');
+    }
+    
+    // Fechar modal ao clicar fora
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalCancelamento');
+        if (event.target == modal) {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
+{% endblock %}

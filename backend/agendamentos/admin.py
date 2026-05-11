@@ -12,7 +12,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
-from .models import Sala, Agendamento, Multa, PIXConfig
+from .models import Sala, Agendamento, Multa, PIXConfig, VinculoTerapeutaEspaco
 
 
 # ==========================================
@@ -113,8 +113,12 @@ class SalaAdmin(admin.ModelAdmin):
             'fields': ('comodidades',),
             'description': 'Configure as comodidades disponíveis na sala (JSON format)'
         }),
-        ('Status', {
-            'fields': ('is_active',)
+        ('Status e Regras de Cancelamento', {
+            'fields': (
+                'is_active',
+                'valor_multa_cancelamento',
+                'prazo_cancelamento_sem_multa'
+            )
         }),
         ('Metadados', {
             'fields': ('created_at', 'updated_at'),
@@ -419,3 +423,151 @@ class PIXConfigAdmin(admin.ModelAdmin):
             '<span style="background-color: #dc3545; color: white; padding: 3px 10px; border-radius: 3px; font-weight: bold;">INATIVA</span>'
         )
     status_badge.short_description = 'Status'
+
+# ===============================================================
+# ADMIN: VÍNCULO TERAPEUTA ↔ ESPAÇO
+# ===============================================================
+@admin.register(VinculoTerapeutaEspaco)
+class VinculoTerapeutaEspacoAdmin(admin.ModelAdmin):
+    """
+    Admin para gerenciar vínculos entre terapeutas e espaços.
+    Permite criar, aprovar e cancelar vínculos.
+    """
+    
+    list_display = [
+        'id',
+        'get_terapeuta',
+        'get_espaco',
+        'tipo',
+        'get_status_badge',
+        'is_active',
+        'data_criacao',
+        'data_aprovacao'
+    ]
+    
+    list_filter = [
+        'status',
+        'tipo',
+        'is_active',
+        'data_criacao',
+        ('espaco', admin.RelatedOnlyFieldListFilter),
+    ]
+    
+    search_fields = [
+        'terapeuta__nome_completo',
+        'terapeuta__user__email',
+        'espaco__nome',
+        'observacoes'
+    ]
+    
+    readonly_fields = [
+        'data_criacao',
+        'created_at',
+        'updated_at'
+    ]
+    
+    fieldsets = (
+        ('Informações do Vínculo', {
+            'fields': (
+                'espaco',
+                'terapeuta',
+                'tipo',
+                'status',
+                'is_active'
+            )
+        }),
+        ('Datas', {
+            'fields': (
+                'data_criacao',
+                'data_aprovacao',
+                'data_cancelamento'
+            )
+        }),
+        ('Voucher (Futuro)', {
+            'fields': ('voucher',),
+            'classes': ('collapse',)
+        }),
+        ('Observações', {
+            'fields': ('observacoes',)
+        }),
+        ('Metadados', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    autocomplete_fields = ['espaco', 'terapeuta']
+    
+    def get_terapeuta(self, obj):
+        """Exibe nome do terapeuta com link"""
+        return format_html(
+            '<a href="/admin/terapeutas/terapeuta/{}/change/">{}</a>',
+            obj.terapeuta.id,
+            obj.terapeuta.nome_completo
+        )
+    get_terapeuta.short_description = 'Terapeuta'
+    
+    def get_espaco(self, obj):
+        """Exibe nome do espaço com link"""
+        return format_html(
+            '<a href="/admin/espacos/espaco/{}/change/">{}</a>',
+            obj.espaco.id,
+            obj.espaco.nome
+        )
+    get_espaco.short_description = 'Espaço'
+    
+    def get_status_badge(self, obj):
+        """Exibe status com badge colorido"""
+        colors = {
+            'PENDENTE': '#FFA500',    # Laranja
+            'APROVADO': '#28A745',    # Verde
+            'RECUSADO': '#DC3545',    # Vermelho
+            'CANCELADO': '#6C757D',   # Cinza
+        }
+        
+        color = colors.get(obj.status, '#6C757D')
+        
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 10px; '
+            'border-radius: 3px; font-weight: bold; font-size: 11px;">{}</span>',
+            color,
+            obj.get_status_display()
+        )
+    get_status_badge.short_description = 'Status'
+    
+    actions = ['aprovar_vinculos', 'cancelar_vinculos', 'ativar_vinculos']
+    
+    def aprovar_vinculos(self, request, queryset):
+        """Ação em massa para aprovar vínculos"""
+        updated = queryset.update(
+            status='APROVADO',
+            data_aprovacao=timezone.now(),
+            is_active=True
+        )
+        self.message_user(
+            request,
+            f'{updated} vínculo(s) aprovado(s) com sucesso!'
+        )
+    aprovar_vinculos.short_description = '✅ Aprovar vínculos selecionados'
+    
+    def cancelar_vinculos(self, request, queryset):
+        """Ação em massa para cancelar vínculos"""
+        updated = queryset.update(
+            status='CANCELADO',
+            data_cancelamento=timezone.now(),
+            is_active=False
+        )
+        self.message_user(
+            request,
+            f'{updated} vínculo(s) cancelado(s) com sucesso!'
+        )
+    cancelar_vinculos.short_description = '❌ Cancelar vínculos selecionados'
+    
+    def ativar_vinculos(self, request, queryset):
+        """Ação em massa para ativar vínculos"""
+        updated = queryset.update(is_active=True)
+        self.message_user(
+            request,
+            f'{updated} vínculo(s) ativado(s) com sucesso!'
+        )
+    ativar_vinculos.short_description = '🔄 Ativar vínculos selecionados'
