@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Models do App Terapeutas - Espaço Vital
 # Descrição: Models para gerenciar terapeutas, especialidades e avaliações
-# Autor: Will | Empresa: Espaço VItal
-# Data: 13/09/2025
 # ===============================================================
 
 from django.db import models

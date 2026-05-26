@@ -1,7 +1,7 @@
 # ===============================================================
 # Título: Forms do App Espacos - Espaço Vital
 # Descrição: Formulários para contato, avaliação e edição de espaços terapêuticos
-# Autor: Will
+#
 # Data: 26/12/2025
 # ===============================================================
 

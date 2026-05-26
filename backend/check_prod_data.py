@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Verificar Dados de Produção
 # Descrição: Script para verificar dados no banco de produção
-# Autor: Will
-# Data: 08/11/2025
 # ===============================================================
 
 import os

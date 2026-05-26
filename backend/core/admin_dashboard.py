@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Dashboard Administrativo Customizado - Espaço Vital
 # Descrição: View customizada para estatísticas e gestão do painel admin
-# Autor: Will
-# Data: 06/12/2025
 # ===============================================================
 
 from django.contrib.admin.views.decorators import staff_member_required

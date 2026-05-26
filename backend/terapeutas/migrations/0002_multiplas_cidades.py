@@ -1,9 +1,6 @@
 # ===============================================================
 # Título: Migration Corrigida - Múltiplas Cidades
 # Descrição: Migration correta para implementar múltiplas cidades
-# Autor: Will | Empresa: Espaço Vital
-# Data: 28/09/2025
-# Arquivo: backend/terapeutas/migrations/0002_multiplas_cidades.py
 # ===============================================================
 
 from django.db import migrations, models

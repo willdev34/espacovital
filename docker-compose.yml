@@ -1,8 +1,6 @@
 # ===============================================================
 # Titulo: Docker Compose - PostgreSQL Local
 # Descricao: Configuracao Docker para PostgreSQL com PostGIS
-# Autor: Will
-# Data: 30/11/2024
 # ===============================================================
 
 services:

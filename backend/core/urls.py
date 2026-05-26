@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: URLs do App Core - Espaço Vital (Versão Simples)
 # Descrição: Configuração básica de rotas do app core
-# Autor: Will | Empresa: Espaço Vital
-# Data: 14/09/2025
 # ===============================================================
 
 from django.urls import path

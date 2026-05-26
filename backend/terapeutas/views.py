@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Views do App Terapeutas - Espaço Vital
 # Descrição: Views para busca, listagem e perfil de terapeutas
-# Autor: Will | Empresa: Espaço VItal
-# Data: 13/09/2025
 # ===============================================================
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1391,6 +1389,11 @@ class DashboardAgendamentosView(TerapeutaRequiredMixin, ListView):
             queryset = queryset.filter(status='CANCELADO')
         elif status_filtro == 'concluidos':
             queryset = queryset.filter(status='CONCLUIDO')
+        
+        # Oculta cancelados se checkbox marcado
+        ocultar_cancelados = self.request.GET.get('ocultar_cancelados')
+        if ocultar_cancelados:
+            queryset = queryset.exclude(status='CANCELADO')
         
         return queryset
     

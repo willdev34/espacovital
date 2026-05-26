@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Admin Customizado para Permissões - Espaço Vital (Corrigido)
 # Descrição: Customizações do Django Admin com permissões traduzidas
-# Autor: Will
-# Data: 27/09/2025
 # ===============================================================
 
 from django.contrib import admin

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: GitIgnore - Espaço Vital
 # Descrição: Arquivos e diretórios ignorados pelo Git
-# Autor: Will
-# Data: 05/10/2025
 # ===============================================================
 
 # Arquivos de ambiente (NUNCA commitar!)

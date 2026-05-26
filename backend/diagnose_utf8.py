@@ -2,8 +2,6 @@
 # ===============================================================
 # Título: Diagnóstico UTF-8 - Espaço Vital
 # Descrição: Identifica problemas de encoding no Windows
-# Autor: Will
-# Data: 13/11/2025
 # ===============================================================
 
 import os

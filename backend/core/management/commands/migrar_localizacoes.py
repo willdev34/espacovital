@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Comando para Migrar Estados e Cidades para Core
 # Descrição: Migra dados de localização de terapeutas/espacos para core
-# Autor: Will
-# Data: 04/10/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

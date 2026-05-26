@@ -1,9 +1,6 @@
 # ===============================================================
 # Título: URLs Principal - Espaço Vital
 # Descrição: Configuração principal de rotas da aplicação
-# Autor: Will | Empresa: Espaço Vital
-# Data: 12/10/2025
-# Atualizado: 15/11/2025 - Views customizadas de autenticação
 # ===============================================================
 
 from django.contrib import admin

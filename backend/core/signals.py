@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Signals do Core
 # Descrição: Signals para sincronizar Assinatura → Terapeuta/Espaço
-# Autor: Will
-# Data: 19/01/2026
 # ===============================================================
 
 from django.db.models.signals import post_save

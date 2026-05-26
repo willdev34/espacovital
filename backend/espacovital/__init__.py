@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: __init__ - Espaço Vital
 # Descrição: Inicialização do projeto com encoding UTF-8
-# Autor: Will
-# Data: 01/11/2025
 # ===============================================================
 
 import sys

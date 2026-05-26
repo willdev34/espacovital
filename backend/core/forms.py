@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Forms do App Core - Espaço Vital
 # Descrição: Formulários customizados incluindo signup expandido
-# Autor: Will
-# Data: Dezembro 2025
 # ===============================================================
 
 from django import forms

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Migration para Configurar Permissões - Espaço Vital
 # Descrição: Migration que cria grupos e configura permissões automaticamente
-# Autor: Will
-# Data: 27/09/2025
 # ===============================================================
 
 from django.db import migrations

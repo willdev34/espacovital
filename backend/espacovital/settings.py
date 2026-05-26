@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Settings - Espaço Vital
 # Descrição: Configurações do projeto Django com encoding UTF-8
-# Autor: Will
-# Data: 07/09/2025
 # ===============================================================
 
 # ⚠️ CRÍTICO: CONFIGURAÇÃO UTF-8 DEVE VIR PRIMEIRO

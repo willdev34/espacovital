@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Apps.py do App Espacos - Espaço Vital
 # Descrição: Configuração do app espacos
-# Autor: Will | Empresa: Espaço Vital
-# Data: 14/09/2025
 # ===============================================================
 
 from django.apps import AppConfig

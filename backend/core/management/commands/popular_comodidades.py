@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Comando para Popular Comodidades
 # Descrição: Popula tabela de comodidades dos espaços terapêuticos
-# Autor: Will
-# Data: 12/10/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

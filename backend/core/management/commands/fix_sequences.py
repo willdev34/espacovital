@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Corrigir Sequences do PostgreSQL
 # Descrição: Reseta sequences de IDs após importação de dados
-# Autor: Will
-# Data: 09/11/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

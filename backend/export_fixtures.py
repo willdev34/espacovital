@@ -1,8 +1,6 @@
 # ===============================================================
 # Script - Export Fixtures
 # Descrição: Exporta fixtures com encoding UTF-8 correto
-# Autor: Will
-# Data: 17/10/2025
 # ===============================================================
 
 import os

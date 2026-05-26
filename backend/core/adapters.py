@@ -1,10 +1,7 @@
 # ===============================================================
 # Título: Adapter customizado para Allauth - Espaço Vital
 # Descrição: Controla redirecionamento após login baseado no usuário
-#            e gerencia mensagens de forma inteligente
-# Autor: Will
-# Data: 13/11/2025
-# Atualizado: 15/11/2025 - Correção de mensagens duplicadas
+# e gerencia mensagens de forma inteligente
 # ===============================================================
 
 from allauth.account.adapter import DefaultAccountAdapter

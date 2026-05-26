@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Template Tags Personalizadas - App Espaços
 # Descrição: Filtros e tags customizados para templates de espaços
-# Autor: Will
-# Data: 16/11/2025
 # ===============================================================
 
 from django import template

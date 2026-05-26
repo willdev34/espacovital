@@ -3,8 +3,6 @@
 {# 
 Título: Template de Listagem de Agendamentos do Terapeuta
 Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terapeuta logado
-Autor: Will
-Data: 19/01/2026
 #}
 {% load static %}
 
@@ -58,13 +56,12 @@ Data: 19/01/2026
                 </div>
                 
                 {# Botão para novo agendamento #}
-                <!-- Temporariamente desabilitado até criar as views de CRUD -->
-                <button onclick="alert('Funcionalidade em desenvolvimento')" 
-                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white"
-                        style="background-color: #1E5C5C;">
-                    <i class="fas fa-plus mr-2"></i>
-                    Novo Agendamento
-                </button>
+                <a href="{% url 'agendamentos:agendamento_create' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white"
+                    style="background-color: #1E5C5C;">
+                        <i class="fas fa-plus mr-2"></i>
+                        Novo Agendamento
+                </a>
             </div>
         </div>
 
@@ -84,9 +81,19 @@ Data: 19/01/2026
                     </select>
                 </div>
                 
-                <div class="flex items-end">
-                    <a href="{% url 'terapeutas:dashboard_agendamentos' %}" 
-                       class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+                {# Checkbox para ocultar cancelados #}
+                <div class="flex items-end gap-4">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                        <input type="checkbox"
+                            name="ocultar_cancelados"
+                            value="1"
+                            {% if request.GET.ocultar_cancelados %}checked{% endif %}
+                            onchange="this.form.submit()"
+                            class="rounded border-gray-300 text-[#1E5C5C] focus:ring-[#1E5C5C]">
+                        Ocultar cancelados
+                    </label>
+                    <a href="{% url 'terapeutas:dashboard_agendamentos' %}"
+                    class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
                         Limpar Filtros
                     </a>
                 </div>
@@ -97,7 +104,8 @@ Data: 19/01/2026
         {% if agendamentos %}
             <div class="space-y-4">
                 {% for agendamento in agendamentos %}
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div class="rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow
+                            {% if agendamento.status == 'CANCELADO' %}bg-red-50 border border-red-100{% else %}bg-white{% endif %}">
                     <div class="p-6">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
@@ -151,20 +159,21 @@ Data: 19/01/2026
                             
                             {# Ações #}
                             <div class="ml-6 flex flex-col space-y-2">
-                                <button onclick="alert('Funcionalidade em desenvolvimento')"
-                                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    <i class="fas fa-eye mr-2"></i>
-                                    Ver Detalhes
-                                </button>
+                                <a href="{% url 'agendamentos:agendamento_detail' agendamento.id %}"
+                                    class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                        <i class="fas fa-eye mr-2"></i>
+                                        Ver Detalhes
+                                </a>
                                 
                                 {% if agendamento.status == 'pendente' or agendamento.status == 'confirmado' %}
-                                <button onclick="alert('Funcionalidade em desenvolvimento')"
-                                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    <i class="fas fa-edit mr-2"></i>
-                                    Editar
-                                </button>
+                                <a href="{% url 'agendamentos:agendamento_update' agendamento.id %}"
+                                    class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                        <i class="fas fa-edit mr-2"></i>
+                                        Editar
+                                </a>
                                 
-                                <button onclick="confirmarCancelamento({{ agendamento.id }})"
+                                <button onclick="confirmarCancelamento(this)"
+                                        data-id="{{ agendamento.id }}"
                                         class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50">
                                     <i class="fas fa-times mr-2"></i>
                                     Cancelar
@@ -218,12 +227,12 @@ Data: 19/01/2026
                 <p class="text-gray-600 mb-6">
                     Você ainda não possui agendamentos de salas.
                 </p>
-                <button onclick="alert('Funcionalidade em desenvolvimento')"
-                        class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white"
-                        style="background-color: #1E5C5C;">
-                    <i class="fas fa-plus mr-2"></i>
-                    Fazer Primeiro Agendamento
-                </button>
+                <a href="{% url 'agendamentos:agendamento_create' %}"
+                    class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white"
+                    style="background-color: #1E5C5C;">
+                        <i class="fas fa-plus mr-2"></i>
+                        Fazer Primeiro Agendamento
+                </a>
             </div>
         {% endif %}
         
@@ -262,7 +271,9 @@ Data: 19/01/2026
 
 <script>
     // Função para confirmar cancelamento
-    function confirmarCancelamento(agendamentoId) {
+    function confirmarCancelamento(btn) {
+        // Lê o ID via data attribute, evitando conflito JS/Django
+        const agendamentoId = btn.dataset.id;
         const modal = document.getElementById('modalCancelamento');
         const form = document.getElementById('formCancelamento');
         form.action = `/agendamentos/${agendamentoId}/cancelar/`;

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Configuração Nixpacks - Espaço Vital
 # Descrição: Configuração de build para Railway
-# Autor: Will
-# Data: 05/10/2025
 # ===============================================================
 
 [phases.setup]

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Models do App Core - Espaço Vital
 # Descrição: Modelos base e utilitários do sistema
-# Autor: Will | Empresa: Espaço VItal
-# Data: 07/09/2025
 # ===============================================================
 
 from django.db import models

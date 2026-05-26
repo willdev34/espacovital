@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Admin do App Espaços - Espaço Vital
 # Descrição: Configuração do painel administrativo para espaços
-# Autor: Will
-# Data: 12/10/2025
 # ===============================================================
 
 from django.contrib import admin

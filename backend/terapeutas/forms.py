@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Forms do App Terapeutas - Espaço Vital
 # Descrição: Formulários para cadastro e edição de terapeutas
-# Autor: Will
-# Data: 14/12/2025
 # ===============================================================
 
 from django import forms

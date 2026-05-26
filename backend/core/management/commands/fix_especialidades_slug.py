@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Comando para corrigir slugs de Especialidades
 # Descrição: Gera slugs para especialidades que não possuem
-# Autor: Will
-# Data: 08/11/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

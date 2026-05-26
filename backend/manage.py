@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 # ===============================================================
 # Título: Manage.py - Espaço Vital
-# Descrição: Script principal do Django com encoding UTF-8 forçado
-# Autor: Will
-# Data: 01/11/2025
+# Descrição: Script principal do Django com encoding UTF-8 forçados
 # ===============================================================
 
 import os

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Migration - Para Quem Múltiplo (VERSÃO FINAL)
 # Descrição: Altera campo para_quem de CharField para JSONField usando SQL
-# Autor: Will
-# Data: 28/09/2025
 # ===============================================================
 
 from django.db import migrations, models

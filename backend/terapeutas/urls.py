@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: URLs do App Terapeutas - Espaço Vital
 # Descrição: Configuração de rotas para busca, perfil e dashboard de terapeutas
-# Autor: Will | Empresa: Espaço VItal
-# Data: 13/11/2025
 # ===============================================================
 
 from django.urls import path

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Comando para Configurar Permissões - Espaço Vital
 # Descrição: Management command para criar grupos e permissões
-# Autor: Will
-# Data: 27/09/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Sistema de Permissões Personalizadas - Espaço Vital
 # Descrição: Configurações de permissões traduzidas e intuitivas
-# Autor: Will
-# Data: 27/09/2025
 # ===============================================================
 
 from django.contrib.auth.models import Group, Permission

@@ -1,9 +1,7 @@
 # ===============================================================
 # Título: Views de Autenticação Customizadas - Espaço Vital
 # Descrição: Views personalizadas para login/logout com controle
-#            de redirecionamento e mensagens
-# Autor: Will
-# Data: 15/11/2025
+# de redirecionamento e mensagens
 # ===============================================================
 
 from django.shortcuts import redirect

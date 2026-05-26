@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: URLs do App Espacos - Espaço Vital
 # Descrição: Configuração de URLs para espaços terapêuticos
-# Autor: Will | Empresa: Espaço Vital
-# Data: 14/09/2025
 # ===============================================================
 
 from django.urls import path, include

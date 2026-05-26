@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Views do App Terapias
 # Descrição: Views para listagem e detalhes de terapias/especialidades
-# Autor: Will
-# Data: Novembro 2025
 # ===============================================================
 
 from django.views.generic import ListView, DetailView

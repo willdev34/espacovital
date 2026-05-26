@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Comando para Popular Países, Estados e Cidades
 # Descrição: Command Django para popular o banco com dados de localização internacional
-# Autor: Will
-# Data: 04/10/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

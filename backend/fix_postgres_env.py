@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Fix PostgreSQL Environment - Espaço Vital
 # Descrição: Remove variáveis de ambiente problemáticas do PostgreSQL
-# Autor: Will
-# Data: 01/11/2025
 # ===============================================================
 
 import os

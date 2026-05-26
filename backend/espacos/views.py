@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Views do App Espacos - Espaço Vital
 # Descrição: Views para busca, listagem e perfil de espaços terapêuticos
-# Autor: Will | Empresa: Espaço Vital
-# Data: 14/09/2025
 # ===============================================================
 
 from django.shortcuts import render, get_object_or_404, redirect

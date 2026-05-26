@@ -1,8 +1,6 @@
 # ===============================================================
 # Management Command - Load Fixtures
 # Descrição: Carrega fixtures de dados no banco
-# Autor: Will
-# Data: 17/10/2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

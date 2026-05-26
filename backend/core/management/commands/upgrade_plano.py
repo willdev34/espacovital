@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Management Command - Upgrade de Plano
 # Descrição: Atualiza ou cria assinatura Premium S+ para testes
-# Autor: Will
-# Data: 30/12/2024
 # ===============================================================
 
 from django.core.management.base import BaseCommand

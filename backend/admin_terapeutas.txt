@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Admin do App Terapeutas - Espaço Vital (Versão Corrigida)
 # Descrição: Interface administrativa para gerenciar terapeutas e especialidades
-# Autor: Will
-# Data: 27/09/2025
 # ===============================================================
 
 from django.contrib import admin

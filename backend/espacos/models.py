@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Models do App Espacos - Espaço Vital
 # Descrição: Models para gerenciar espaços terapêuticos, comodidades e avaliações
-# Autor: Will | Empresa: Espaço Vital
-# Data: 14/09/2025
 # ===============================================================
 
 from django.db import models

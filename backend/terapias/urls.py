@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: URLs do App Terapias
 # Descrição: Rotas para listagem e detalhes de terapias/especialidades
-# Autor: Will
-# Data: Novembro 2025
 # ===============================================================
 
 from django.urls import path

@@ -1,8 +1,6 @@
 # ===============================================================
 # Titulo: Run Server - Espaco Vital  
 # Descricao: Script para iniciar servidor com limpeza de variaveis
-# Autor: Will
-# Data: 30/11/2024
 # ===============================================================
 
 import os

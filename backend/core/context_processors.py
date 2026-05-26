@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Context Processors - Espaço Vital
 # Descrição: Dados globais disponíveis em todos os templates
-# Autor: Will | Empresa: Espaço Vital
-# Data: 07/09/2025
 # ===============================================================
 
 from django.conf import settings

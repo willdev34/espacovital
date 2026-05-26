@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Management Command - Criar Planos de Assinatura
 # Descrição: Popula o banco com os planos padrão do sistema
-# Autor: Will
-# Data: Dezembro 2025
 # ===============================================================
 
 from django.core.management.base import BaseCommand

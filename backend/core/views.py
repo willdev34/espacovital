@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Views do App Core - Carrossel com Todos Destaques
 # Descrição: Views que mostram todos terapeutas destaque com ordem rotativa
-# Autor: Will | Empresa: Espaço Vital
-# Data: 17/09/2025
 # ===============================================================
 
 from django.shortcuts import render

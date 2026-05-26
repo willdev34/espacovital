@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Forms do Sistema de Agendamento
 # Descrição: Formulários para agendamento de salas por terapeutas
-# Autor: Will
-# Data: 03/01/2026
 # ===============================================================
 
 from django import forms

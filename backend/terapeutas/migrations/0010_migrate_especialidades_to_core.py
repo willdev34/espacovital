@@ -1,8 +1,6 @@
 # ===============================================================
 # Título: Migration para migrar Especialidades para Core
 # Descrição: Copia dados de terapeutas.Especialidade para core.Especialidade
-# Autor: Will
-# Data: 12/10/2025
 # ===============================================================
 
 from django.db import migrations

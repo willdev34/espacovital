@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{# ===============================================================
+   Título: Formulário de Agendamento
+   Descrição: Formulário para criar e editar agendamentos de salas
+              Com seletor de duração e cálculo automático de hora_fim e valor
+=============================================================== #}
+
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar Agendamento{% else %}Novo Agendamento{% endif %} - Espaço Vital
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {# Cabeçalho #}
+        <div class="mb-8">
+            <a href="{% url 'terapeutas:dashboard_agendamentos' %}"
+               class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar para Agendamentos
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900">
+                {% if object %}Editar Agendamento{% else %}Novo Agendamento{% endif %}
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">
+                {% if object %}
+                    Edite os dados do agendamento abaixo.
+                {% else %}
+                    Preencha os dados para reservar uma sala.
+                {% endif %}
+            </p>
+        </div>
+
+        {# Formulário #}
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <form method="post" id="formAgendamento">
+                {% csrf_token %}
+
+                {# Exibir erros gerais do formulário #}
+                {% if form.errors %}
+                <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                    <p class="text-sm text-red-700 font-medium">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Corrija os erros abaixo:
+                    </p>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <p class="text-sm text-red-600 mt-1">- {{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {# Campo: Sala (somente na criação) #}
+                {% if not object %}
+                <div class="mb-6">
+                    <label for="{{ form.sala.id_for_label }}"
+                           class="block text-sm font-medium text-gray-700 mb-1">
+                        Sala
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <select name="{{ form.sala.html_name }}"
+                            id="{{ form.sala.id_for_label }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]"
+                            onchange="atualizarInfoSala(this)">
+                        <option value="">Selecione uma sala...</option>
+                        {% for sala in form.sala.field.queryset %}
+                        <option value="{{ sala.pk }}"
+                                data-valor="{{ sala.valor_sessao }}"
+                                data-duracao="{{ sala.duracao_sessao }}"
+                                {% if form.sala.value == sala.pk %}selected{% endif %}>
+                            {{ sala.espaco.nome }} - {{ sala.nome }}
+                            (R$ {{ sala.valor_sessao }} / {{ sala.duracao_sessao }}min)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% else %}
+                {# Na edição, mostra a sala como leitura apenas #}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
+                    <div class="block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">
+                        {{ object.sala.espaco.nome }} - {{ object.sala.nome }}
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">A sala não pode ser alterada após criação.</p>
+                </div>
+
+                {% endif %}
+
+                {# Campo: Data #}
+                <div class="mb-6">
+                    <label for="{{ form.data.id_for_label }}"
+                           class="block text-sm font-medium text-gray-700 mb-1">
+                        Data
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date"
+                           name="{{ form.data.html_name }}"
+                           id="{{ form.data.id_for_label }}"
+                           value="{% if object %}{{ object.data|date:'Y-m-d' }}{% else %}{{ form.data.value|default:'' }}{% endif %}"
+                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]">
+                </div>
+
+                {# Campo: Duração da reserva #}
+                <div class="mb-6">
+                    <label for="id_duracao"
+                           class="block text-sm font-medium text-gray-700 mb-1">
+                        Duração da Reserva
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <select id="id_duracao"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]"
+                            onchange="calcularHoraFimEValor()">
+                        <option value="">Selecione a duração...</option>
+                        <option value="30">30 minutos</option>
+                        <option value="60">1 hora</option>
+                        <option value="90">1h30</option>
+                        <option value="120">2 horas</option>
+                        <option value="150">2h30</option>
+                        <option value="180">3 horas</option>
+                        <option value="210">3h30</option>
+                        <option value="240">4 horas</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Mínimo de 30 minutos.</p>
+                </div>
+
+                {# Campos: Hora Início e Hora Fim lado a lado #}
+                <div class="mb-6 grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.hora_inicio.id_for_label }}"
+                               class="block text-sm font-medium text-gray-700 mb-1">
+                            Hora de Início
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input type="time"
+                               name="{{ form.hora_inicio.html_name }}"
+                               id="{{ form.hora_inicio.id_for_label }}"
+                               value="{% if object %}{{ object.hora_inicio|time:'H:i' }}{% else %}{{ form.hora_inicio.value|default:'' }}{% endif %}"
+                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]"
+                               onchange="calcularHoraFimEValor()">
+                    </div>
+                    <div>
+                        <label for="{{ form.hora_fim.id_for_label }}"
+                               class="block text-sm font-medium text-gray-700 mb-1">
+                            Hora de Término
+                        </label>
+                        <input type="time"
+                               name="{{ form.hora_fim.html_name }}"
+                               id="{{ form.hora_fim.id_for_label }}"
+                               value="{% if object %}{{ object.hora_fim|time:'H:i' }}{% else %}{{ form.hora_fim.value|default:'' }}{% endif %}"
+                               class="block w-full rounded-md border-gray-200 bg-gray-50 shadow-sm text-gray-500"
+                               readonly>
+                        <p class="mt-1 text-xs text-gray-500">Preenchido automaticamente.</p>
+                    </div>
+                </div>
+
+                {# Resumo do valor calculado #}
+                <div id="resumoValor" class="mb-6 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">
+                            <i class="fas fa-dollar-sign mr-2 text-[#1E5C5C]"></i>
+                            Valor estimado da reserva:
+                        </span>
+                        <span id="valorCalculado"
+                              class="text-lg font-bold text-[#1E5C5C]">
+                            R$ 0,00
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Calculado proporcionalmente à duração da sessão base da sala.
+                    </p>
+                </div>
+
+                {# Campo hidden para valor_cobrado #}
+                <input type="hidden" name="valor_cobrado" id="id_valor_cobrado"
+                       value="{% if object %}{{ object.valor_cobrado }}{% endif %}">
+
+                {# Campo: Observações #}
+                <div class="mb-6">
+                    <label for="{{ form.observacoes.id_for_label }}"
+                           class="block text-sm font-medium text-gray-700 mb-1">
+                        Observações
+                    </label>
+                    <textarea name="{{ form.observacoes.html_name }}"
+                              id="{{ form.observacoes.id_for_label }}"
+                              rows="4"
+                              placeholder="Ex: tipo de atendimento, necessidades especiais..."
+                              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]">{% if object %}{{ object.observacoes }}{% else %}{{ form.observacoes.value|default:'' }}{% endif %}</textarea>
+                </div>
+
+                {# Botões de ação #}
+                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <a href="{% url 'terapeutas:dashboard_agendamentos' %}"
+                       class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 text-sm font-medium text-white rounded-md shadow-sm hover:opacity-90"
+                            style="background-color: #1E5C5C;">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if object %}Salvar Alterações{% else %}Criar Agendamento{% endif %}
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{# Dados da sala passados via data attributes para evitar conflito JS/Django #}
+<div id="dadosSala"
+     data-valor="{% if object %}{{ object.sala.valor_sessao }}{% else %}0{% endif %}"
+     data-duracao="{% if object %}{{ object.sala.duracao_sessao }}{% else %}0{% endif %}"
+     data-editando="{% if object %}true{% else %}false{% endif %}"
+     style="display:none;">
+</div>
+
+<script>
+    // ==========================================
+    // Dados da sala lidos via data attributes
+    // Evita conflito entre Django template e JS
+    // ==========================================
+    const dadosSala = document.getElementById('dadosSala');
+    let salaValorSessao = parseFloat(dadosSala.dataset.valor) || 0;
+    let salaDuracaoSessao = parseInt(dadosSala.dataset.duracao) || 0;
+    const estaEditando = dadosSala.dataset.editando === 'true';
+
+    // Atualiza dados da sala ao selecionar (somente na criação)
+    function atualizarInfoSala(select) {
+        const opcao = select.options[select.selectedIndex];
+        salaValorSessao = parseFloat(opcao.dataset.valor) || 0;
+        salaDuracaoSessao = parseInt(opcao.dataset.duracao) || 0;
+        calcularHoraFimEValor();
+    }
+
+    // Calcula hora_fim e valor automaticamente
+    function calcularHoraFimEValor() {
+        const horaInicio = document.getElementById('id_hora_inicio').value;
+        const duracao = parseInt(document.getElementById('id_duracao').value) || 0;
+
+        // Calcula hora_fim somando a duração à hora de início
+        if (horaInicio && duracao) {
+            const [horas, minutos] = horaInicio.split(':').map(Number);
+            const totalMinutos = horas * 60 + minutos + duracao;
+            const horaFim = String(Math.floor(totalMinutos / 60) % 24).padStart(2, '0')
+                          + ':' + String(totalMinutos % 60).padStart(2, '0');
+            document.getElementById('id_hora_fim').value = horaFim;
+        }
+
+        // Calcula valor proporcional à duração
+        if (duracao > 0 && salaValorSessao > 0 && salaDuracaoSessao > 0) {
+            const valorProporcional = (duracao / salaDuracaoSessao) * salaValorSessao;
+            const valorFormatado = valorProporcional.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+            // Exibe o resumo do valor calculado
+            document.getElementById('resumoValor').classList.remove('hidden');
+            document.getElementById('valorCalculado').textContent = valorFormatado;
+
+            // Salva no campo hidden para enviar no POST
+            document.getElementById('id_valor_cobrado').value = valorProporcional.toFixed(2);
+        }
+    }
+
+    // Na edição, calcula a duração atual e pré-seleciona o select
+    document.addEventListener('DOMContentLoaded', function() {
+        if (estaEditando) {
+            const horaInicio = document.getElementById('id_hora_inicio').value;
+            const horaFim = document.getElementById('id_hora_fim').value;
+
+            if (horaInicio && horaFim) {
+                // Calcula a diferença em minutos entre hora_fim e hora_inicio
+                const [hIni, mIni] = horaInicio.split(':').map(Number);
+                const [hFim, mFim] = horaFim.split(':').map(Number);
+                const duracaoAtual = (hFim * 60 + mFim) - (hIni * 60 + mIni);
+
+                // Pré-seleciona a opção correta no select de duração
+                const selectDuracao = document.getElementById('id_duracao');
+                for (let option of selectDuracao.options) {
+                    if (parseInt(option.value) === duracaoAtual) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                // Recalcula valor com a duração correta
+                calcularHoraFimEValor();
+            }
+        }
+    });
+</script>
+{% endblock %}
