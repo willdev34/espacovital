@@ -110,6 +110,38 @@ urlpatterns = [
         name='dashboard_agendamentos'
     ),
 
+    # Espaços vinculados ao terapeuta
+    # URL: /terapeutas/dashboard/espacos/
+    path(
+        'dashboard/espacos/',
+        views.DashboardEspacosVinculadosView.as_view(),
+        name='dashboard_espacos_vinculados'
+    ),
+
+    # Espaços disponíveis para agendamento
+    # URL: /terapeutas/dashboard/espacos/agendamentos/
+    path(
+        'dashboard/espacos/agendamentos/',
+        views.DashboardEspacosVinculadosAgendamentosView.as_view(),
+        name='dashboard_espacos_agendamentos'
+    ),
+
+    # Solicitar vínculo com um espaço
+    # URL: /terapeutas/dashboard/espacos/<id>/solicitar/
+    path(
+        'dashboard/espacos/<int:espaco_id>/solicitar/',
+        views.SolicitarVinculoEspacoView.as_view(),
+        name='solicitar_vinculo_espaco'
+    ),
+
+    # Cancelar vínculo com um espaço
+    # URL: /terapeutas/dashboard/espacos/<int:vinculo_id>/cancelar/
+    path(
+        'dashboard/espacos/<int:vinculo_id>/cancelar/',
+        views.CancelarVinculoEspacoView.as_view(),
+        name='cancelar_vinculo_espaco'
+    ),
+
     # Criar novo agendamento
     # URL: /terapeutas/dashboard/agendamentos/novo/
     # Formulário para agendar sala em espaço vinculado

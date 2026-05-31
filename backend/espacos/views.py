@@ -822,6 +822,8 @@ class DashboardTerapeutasVinculadosView(EspacoRequiredMixin, TemplateView):
         """
         Lista terapeutas vinculados e solicitações pendentes
         """
+        from agendamentos.models import VinculoTerapeutaEspaco
+        
         context = super().get_context_data(**kwargs)
         
         espaco = Espaco.objects.filter(
@@ -830,17 +832,30 @@ class DashboardTerapeutasVinculadosView(EspacoRequiredMixin, TemplateView):
         
         context['espaco'] = espaco
         
-        # Terapeutas vinculados (se o relacionamento existir)
-        if hasattr(espaco, 'terapeutas_vinculados'):
-            context['terapeutas_vinculados'] = espaco.terapeutas_vinculados.all()
-        else:
-            context['terapeutas_vinculados'] = []
+        # Terapeutas com vínculo APROVADO
+        # Retorna objetos Terapeuta para manter compatibilidade com o template
+        vinculos_aprovados = VinculoTerapeutaEspaco.objects.filter(
+            espaco=espaco,
+            status='APROVADO',
+            is_active=True
+        )
+
+        from terapeutas.models import Terapeuta
+        context['terapeutas_vinculados'] = Terapeuta.objects.filter(
+            vinculos_espacos__espaco=espaco,
+            vinculos_espacos__status='APROVADO',
+            vinculos_espacos__is_active=True
+        )
+        context['total_vinculados'] = vinculos_aprovados.count()
         
-        # Solicitações pendentes (estrutura para futuro)
-        context['solicitacoes_pendentes'] = []
+        # Solicitações PENDENTES aguardando aprovação do espaço
+        context['solicitacoes_pendentes'] = VinculoTerapeutaEspaco.objects.filter(
+            espaco=espaco,
+            status='PENDENTE',
+            is_active=True
+        ).select_related('terapeuta')
         
-        # Estatísticas de uso
-        context['total_vinculados'] = len(context['terapeutas_vinculados'])
+        context['total_pendentes'] = context['solicitacoes_pendentes'].count()
         
         return context
 
@@ -1396,3 +1411,193 @@ class DashboardAssinaturaEspacoView(EspacoRequiredMixin, TemplateView):
         context['data_renovacao'] = timezone.now() + timedelta(days=30)
         
         return context
+
+class AprovarVinculoTerapeutaView(EspacoRequiredMixin, View):
+    """
+    Título: Aprovar Vínculo com Terapeuta
+    Descrição: Espaço aprova solicitação de vínculo de um terapeuta.
+               Muda status para APROVADO e registra data de aprovação.
+    URL: /espacos/dashboard/vinculos/<id>/aprovar/
+    """
+
+    def post(self, request, vinculo_id):
+        from agendamentos.models import VinculoTerapeutaEspaco
+        from django.utils import timezone
+
+        # Busca o vínculo garantindo que é do espaço logado
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+
+        vinculo = get_object_or_404(
+            VinculoTerapeutaEspaco,
+            pk=vinculo_id,
+            espaco=espaco,
+            status='PENDENTE'
+        )
+
+        # Aprova o vínculo
+        vinculo.status = 'APROVADO'
+        vinculo.data_aprovacao = timezone.now()
+        vinculo.save()
+
+        messages.success(
+            request,
+            f'✅ Vínculo com {vinculo.terapeuta} aprovado com sucesso!'
+        )
+
+        return redirect('espacos:dashboard_terapeutas')
+
+
+class RecusarVinculoTerapeutaView(EspacoRequiredMixin, View):
+    """
+    Título: Recusar Vínculo com Terapeuta
+    Descrição: Espaço recusa solicitação de vínculo de um terapeuta.
+               Muda status para RECUSADO.
+    URL: /espacos/dashboard/vinculos/<id>/recusar/
+    """
+
+    def post(self, request, vinculo_id):
+        from agendamentos.models import VinculoTerapeutaEspaco
+
+        # Busca o vínculo garantindo que é do espaço logado
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+
+        vinculo = get_object_or_404(
+            VinculoTerapeutaEspaco,
+            pk=vinculo_id,
+            espaco=espaco,
+            status='PENDENTE'
+        )
+
+        # Recusa o vínculo
+        vinculo.status = 'RECUSADO'
+        vinculo.is_active = False
+        vinculo.save()
+
+        messages.warning(
+            request,
+            f'Solicitação de {vinculo.terapeuta} recusada.'
+        )
+
+        return redirect('espacos:dashboard_terapeutas')
+    
+class ConvidarTerapeutaView(EspacoRequiredMixin, View):
+    """
+    Título: Convidar Terapeuta
+    Descrição: Espaço convida um terapeuta pelo email para se vincular.
+               Cria VinculoTerapeutaEspaco com status PENDENTE e tipo CONVITE.
+    URL: /espacos/dashboard/vinculos/convidar/
+    """
+
+    def post(self, request):
+        from agendamentos.models import VinculoTerapeutaEspaco, ConviteExterno
+        from terapeutas.models import Terapeuta
+        from django.utils import timezone
+        from datetime import timedelta
+        from django.core.mail import send_mail
+        from django.template.loader import render_to_string
+
+        espaco = Espaco.objects.filter(responsavel=request.user).first()
+        email = request.POST.get('email_terapeuta', '').strip()
+        mensagem = request.POST.get('mensagem', '').strip()
+
+        if not email:
+            messages.error(request, '❌ Informe o email do terapeuta.')
+            return redirect('espacos:dashboard_terapeutas')
+
+        # ===== FLUXO 1: Terapeuta já cadastrado =====
+        try:
+            from django.contrib.auth.models import User
+            usuario = User.objects.get(email=email)
+            terapeuta = Terapeuta.objects.get(user=usuario)
+
+            # Verifica se já existe vínculo
+            vinculo_existente = VinculoTerapeutaEspaco.objects.filter(
+                terapeuta=terapeuta,
+                espaco=espaco
+            ).first()
+
+            if vinculo_existente:
+                if vinculo_existente.status == 'APROVADO':
+                    messages.warning(request, '⚠️ Este terapeuta já está vinculado ao seu espaço.')
+                elif vinculo_existente.status == 'PENDENTE':
+                    messages.warning(request, '⚠️ Já existe um convite pendente para este terapeuta.')
+                else:
+                    vinculo_existente.status = 'PENDENTE'
+                    vinculo_existente.tipo = 'CONVITE'
+                    vinculo_existente.is_active = True
+                    vinculo_existente.save()
+                    messages.success(request, f'✅ Convite reenviado para {terapeuta}!')
+            else:
+                VinculoTerapeutaEspaco.objects.create(
+                    terapeuta=terapeuta,
+                    espaco=espaco,
+                    status='PENDENTE',
+                    tipo='CONVITE',
+                )
+                messages.success(
+                    request,
+                    f'✅ Convite enviado para {terapeuta}! Aguarde a confirmação.'
+                )
+
+        except (User.DoesNotExist, Terapeuta.DoesNotExist):
+
+            # ===== FLUXO 2: Terapeuta não cadastrado =====
+            # Verifica se já existe convite pendente para esse email
+            convite_existente = ConviteExterno.objects.filter(
+                espaco=espaco,
+                email=email,
+                usado=False,
+                expira_em__gt=timezone.now()
+            ).first()
+
+            if convite_existente:
+                messages.warning(
+                    request,
+                    f'⚠️ Já existe um convite pendente para {email}.'
+                )
+                return redirect('espacos:dashboard_terapeutas')
+
+            # Cria convite externo com validade de 30 dias
+            convite = ConviteExterno.objects.create(
+                espaco=espaco,
+                email=email,
+                mensagem=mensagem,
+                expira_em=timezone.now() + timedelta(days=30)
+            )
+
+            # Monta links para o email
+            base_url = request.build_absolute_uri('/')[:-1]
+            link_cadastro = f"{base_url}/parceiro/?convite={convite.token}"
+            link_login = f"{base_url}/accounts/login/?convite={convite.token}"
+
+            # Renderiza o template do email
+            html_email = render_to_string('emails/convite_terapeuta.html', {
+                'espaco': espaco,
+                'mensagem': mensagem,
+                'link_cadastro': link_cadastro,
+                'link_login': link_login,
+                'expira_em': convite.expira_em.strftime('%d/%m/%Y'),
+            })
+
+            # Envia o email
+            try:
+                send_mail(
+                    subject=f'Convite do {espaco.nome} - Espaço Vital',
+                    message=f'Você recebeu um convite do {espaco.nome} para usar a plataforma Espaço Vital.',
+                    from_email='noreply@espacovital.com.br',
+                    recipient_list=[email],
+                    html_message=html_email,
+                    fail_silently=False,
+                )
+                messages.success(
+                    request,
+                    f'✅ Convite enviado para {email}! O terapeuta receberá um email com instruções.'
+                )
+            except Exception as e:
+                convite.delete()
+                messages.error(
+                    request,
+                    f'❌ Erro ao enviar email. Tente novamente.'
+                )
+
+        return redirect('espacos:dashboard_terapeutas')

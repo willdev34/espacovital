@@ -1158,9 +1158,24 @@ class DashboardEspacosVinculadosView(TerapeutaRequiredMixin, TemplateView):
         context['terapeuta'] = terapeuta
         
         # ===== ESPAÇOS JÁ VINCULADOS =====
-        # TODO: Implementar relacionamento ManyToMany entre Terapeuta e Espaco
-        context['espacos_vinculados'] = []
-        context['total_espacos_vinculados'] = 0
+        # Busca vínculos aprovados do terapeuta
+        vinculos = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status='APROVADO',
+            is_active=True
+        ).select_related('espaco', 'espaco__cidade', 'espaco__cidade__estado')
+
+        # Extrai os espaços dos vínculos aprovados
+        espacos_vinculados = [v.espaco for v in vinculos]
+        context['espacos_vinculados'] = espacos_vinculados
+        context['total_espacos_vinculados'] = len(espacos_vinculados)
+
+        # ===== ESPAÇOS PENDENTES (aguardando aprovação) =====
+        context['vinculos_pendentes'] = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status='PENDENTE',
+            is_active=True
+        ).select_related('espaco')
         
         # ===== SUGERIR ESPAÇOS DISPONÍVEIS =====
         from espacos.models import Espaco
@@ -1173,13 +1188,23 @@ class DashboardEspacosVinculadosView(TerapeutaRequiredMixin, TemplateView):
             cidades_terapeuta_ids.append(terapeuta.cidade_principal.id)
         
         # Buscar espaços nas mesmas cidades
+        # IDs de espaços que já têm vínculo (aprovado ou pendente)
+        espacos_ja_vinculados_ids = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status__in=['APROVADO', 'PENDENTE'],
+            is_active=True
+        ).values_list('espaco_id', flat=True)
+
+        # Buscar espaços nas mesmas cidades excluindo os já vinculados
         if cidades_terapeuta_ids:
             espacos_disponiveis = Espaco.objects.filter(
                 is_active=True,
                 cidade_id__in=cidades_terapeuta_ids
+            ).exclude(
+                id__in=espacos_ja_vinculados_ids
             ).select_related('cidade', 'cidade__estado').prefetch_related(
                 'comodidades'
-            ).order_by('nome')[:10]  # Limitar a 10 sugestões
+            ).order_by('nome')[:10]
         else:
             espacos_disponiveis = []
         
@@ -1684,3 +1709,89 @@ class DashboardEspacosVinculadosAgendamentosView(TerapeutaRequiredMixin, Templat
         context['total_vinculos'] = len(espacos_info)
         
         return context
+
+class SolicitarVinculoEspacoView(TerapeutaRequiredMixin, View):
+    """
+    Título: Solicitar Vínculo com Espaço
+    Descrição: Terapeuta solicita vínculo com um espaço terapêutico.
+               Cria um VinculoTerapeutaEspaco com status PENDENTE.
+    URL: /terapeutas/dashboard/espacos/<espaco_id>/solicitar/
+    """
+
+    def post(self, request, espaco_id):
+        """
+        Processa a solicitação de vínculo via POST
+        """
+        from espacos.models import Espaco
+
+        terapeuta = request.user.terapeuta
+
+        # Busca o espaço
+        espaco = get_object_or_404(Espaco, pk=espaco_id, is_active=True)
+
+        # Verifica se já existe um vínculo entre esse terapeuta e espaço
+        vinculo_existente = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            espaco=espaco
+        ).first()
+
+        if vinculo_existente:
+            if vinculo_existente.status == 'APROVADO':
+                messages.warning(request, '⚠️ Você já está vinculado a este espaço.')
+            elif vinculo_existente.status == 'PENDENTE':
+                messages.warning(request, '⚠️ Já existe uma solicitação pendente para este espaço.')
+            elif vinculo_existente.status in ['RECUSADO', 'CANCELADO']:
+                # Permite reativar solicitação recusada ou cancelada
+                vinculo_existente.status = 'PENDENTE'
+                vinculo_existente.tipo = 'SOLICITACAO'
+                vinculo_existente.is_active = True
+                vinculo_existente.save()
+                messages.success(request, '✅ Solicitação de vínculo reenviada com sucesso!')
+        else:
+            # Cria novo vínculo com status PENDENTE
+            VinculoTerapeutaEspaco.objects.create(
+                terapeuta=terapeuta,
+                espaco=espaco,
+                status='PENDENTE',
+                tipo='SOLICITACAO',
+            )
+            messages.success(
+                request,
+                f'✅ Solicitação enviada para {espaco.nome}! Aguarde a aprovação.'
+            )
+
+        return redirect('terapeutas:dashboard_espacos_vinculados')
+
+
+class CancelarVinculoEspacoView(TerapeutaRequiredMixin, View):
+    """
+    Título: Cancelar Vínculo com Espaço
+    Descrição: Terapeuta cancela um vínculo existente com um espaço.
+               Muda o status para CANCELADO.
+    URL: /terapeutas/dashboard/espacos/<vinculo_id>/cancelar/
+    """
+
+    def post(self, request, vinculo_id):
+        """
+        Processa o cancelamento do vínculo via POST
+        """
+        terapeuta = request.user.terapeuta
+
+        # Busca o vínculo garantindo que é do terapeuta logado
+        vinculo = get_object_or_404(
+            VinculoTerapeutaEspaco,
+            pk=vinculo_id,
+            terapeuta=terapeuta
+        )
+
+        # Cancela o vínculo
+        vinculo.status = 'CANCELADO'
+        vinculo.is_active = False
+        vinculo.save()
+
+        messages.success(
+            request,
+            f'✅ Vínculo com {vinculo.espaco.nome} cancelado com sucesso.'
+        )
+
+        return redirect('terapeutas:dashboard_espacos_vinculados')

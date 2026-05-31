@@ -2,8 +2,6 @@
 {# ===============================================================
    Título: Gerenciar Espaços Vinculados - Espaço Vital
    Descrição: Página para listar e vincular espaços terapêuticos
-   Autor: Will
-   Data: 13/11/2025
    =============================================================== #}
 
 {% load static %}
@@ -103,6 +101,55 @@
             {% endif %}
         </div>
         
+        {# Vínculos pendentes aguardando aprovação #}
+        {% if vinculos_pendentes %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-yellow-800 mb-3 flex items-center gap-2">
+                <i class="fas fa-clock text-yellow-600"></i>
+                Aguardando Aprovação
+            </h3>
+            <div class="space-y-3">
+                {% for vinculo in vinculos_pendentes %}
+                <div class="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                            {% if vinculo.espaco.foto_capa %}
+                            <img src="{{ vinculo.espaco.foto_capa.url }}"
+                                alt="{{ vinculo.espaco.nome }}"
+                                class="w-full h-full object-cover">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center"
+                                style="background-color: #1E5C5C;">
+                                <i class="fas fa-building text-white text-sm"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900 text-sm">{{ vinculo.espaco.nome }}</p>
+                            <p class="text-xs text-yellow-700">
+                                Solicitado em {{ vinculo.data_criacao|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                            Pendente
+                        </span>
+                        <form method="post" action="{% url 'terapeutas:cancelar_vinculo_espaco' vinculo.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    onclick="return confirm('Cancelar solicitação para {{ vinculo.espaco.nome }}?')"
+                                    class="text-xs text-red-600 hover:text-red-800">
+                                Cancelar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         {% if espacos_vinculados %}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {% for espaco in espacos_vinculados %}
@@ -176,10 +223,14 @@
                                 Ver Detalhes
                         </a>
                         
-                        <button onclick="desvincularEspaco({{ espaco.id }}, '{{ espaco.nome }}')"
-                                class="px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-all">
-                            Desvincular
-                        </button>
+                        <form method="post" action="{% url 'terapeutas:cancelar_vinculo_espaco' espaco.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    onclick="return confirm('Tem certeza que deseja desvincular-se de {{ espaco.nome }}?')"
+                                    class="px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-all">
+                                Desvincular
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -276,10 +327,13 @@
                                 Ver Perfil
                         </a>
                         
-                        <button onclick="vincularEspaco({{ espaco.id }}, '{{ espaco.nome }}')"
-                                class="flex-1 px-3 py-2 bg-mint text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-all">
-                            Vincular
-                        </button>
+                        <form method="post" action="{% url 'terapeutas:solicitar_vinculo_espaco' espaco.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="w-full px-3 py-2 bg-mint text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-all">
+                                Solicitar Vínculo
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -366,81 +420,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// ===== JavaScript para Vincular/Desvincular Espaços =====
 
-function vincularEspaco(espacoId, espacoNome) {
-    if (confirm(`Deseja vincular-se ao espaço "${espacoNome}"?`)) {
-        // TODO: Implementar chamada AJAX para vincular
-        console.log('Vincular espaço:', espacoId);
-        
-        // Exemplo de implementação:
-        fetch(`/terapeutas/dashboard/espacos/vincular/${espacoId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Espaço vinculado com sucesso!');
-                location.reload();
-            } else {
-                alert('Erro ao vincular espaço: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao vincular espaço. Tente novamente.');
-        });
-    }
-}
-
-function desvincularEspaco(espacoId, espacoNome) {
-    if (confirm(`Tem certeza que deseja desvincular-se do espaço "${espacoNome}"?`)) {
-        // TODO: Implementar chamada AJAX para desvincular
-        console.log('Desvincular espaço:', espacoId);
-        
-        // Exemplo de implementação:
-        fetch(`/terapeutas/dashboard/espacos/desvincular/${espacoId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Espaço desvinculado com sucesso!');
-                location.reload();
-            } else {
-                alert('Erro ao desvincular espaço: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao desvincular espaço. Tente novamente.');
-        });
-    }
-}
-
-// Função auxiliar para pegar CSRF token
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-</script>
 {% endblock %}

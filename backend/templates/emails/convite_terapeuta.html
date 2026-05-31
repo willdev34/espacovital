@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite - Espaço Vital</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f2eae0; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; }
+        .header { background-color: #1E5C5C; padding: 30px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 24px; }
+        .header p { color: #56C596; margin: 8px 0 0; font-size: 14px; }
+        .body { padding: 40px 30px; }
+        .body h2 { color: #1E5C5C; margin-top: 0; }
+        .body p { color: #555; line-height: 1.6; }
+        .espaco-card { background: #f2eae0; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #1E5C5C; }
+        .espaco-card h3 { color: #1E5C5C; margin: 0 0 8px; }
+        .espaco-card p { color: #777; margin: 0; font-size: 14px; }
+        .mensagem { background: #f9f9f9; border-radius: 8px; padding: 16px; margin: 20px 0; font-style: italic; color: #555; }
+        .btn { display: block; width: fit-content; margin: 30px auto; padding: 16px 40px; background-color: #1E5C5C; color: white; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; text-align: center; }
+        .btn-secondary { display: block; width: fit-content; margin: 10px auto; padding: 12px 30px; background-color: #56C596; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; text-align: center; }
+        .footer { background: #f2eae0; padding: 20px 30px; text-align: center; }
+        .footer p { color: #999; font-size: 12px; margin: 4px 0; }
+        .validade { color: #FFB4A2; font-size: 13px; text-align: center; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        {# Cabeçalho #}
+        <div class="header">
+            <h1>🌿 Espaço Vital</h1>
+            <p>Conectando terapeutas e espaços terapêuticos</p>
+        </div>
+
+        {# Corpo #}
+        <div class="body">
+            <h2>Você recebeu um convite!</h2>
+            <p>Olá! O espaço <strong>{{ espaco.nome }}</strong> quer te convidar para fazer parte da plataforma <strong>Espaço Vital</strong> e utilizar suas salas para atendimentos terapêuticos.</p>
+
+            {# Card do espaço #}
+            <div class="espaco-card">
+                <h3>🏢 {{ espaco.nome }}</h3>
+                <p>📍 {{ espaco.cidade.nome }} - {{ espaco.cidade.estado.sigla }}</p>
+            </div>
+
+            {# Mensagem personalizada #}
+            {% if mensagem %}
+            <div class="mensagem">
+                <p><strong>Mensagem de {{ espaco.nome }}:</strong></p>
+                <p>"{{ mensagem }}"</p>
+            </div>
+            {% endif %}
+
+            <p>Para aceitar o convite, clique no botão abaixo e crie sua conta gratuita na plataforma. Após o cadastro, o vínculo com o espaço será criado automaticamente!</p>
+
+            {# Botão principal #}
+            <a href="{{ link_cadastro }}" class="btn">
+                ✅ Aceitar Convite e Cadastrar
+            </a>
+
+            <p style="text-align: center; color: #999; font-size: 13px;">ou se já tiver conta:</p>
+
+            <a href="{{ link_login }}" class="btn-secondary">
+                Fazer Login e Aceitar
+            </a>
+
+            <p class="validade">⏰ Este convite expira em {{ expira_em }}</p>
+        </div>
+
+        {# Rodapé #}
+        <div class="footer">
+            <p>Espaço Vital - Conectando você ao cuidado terapêutico</p>
+            <p>Se você não esperava este email, pode ignorá-lo com segurança.</p>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,10 +1,9 @@
 """
 Título: Models do Sistema de Agendamento de Salas
 Descrição: Models para gerenciamento de salas, agendamentos, multas e configurações PIX
-Autor: Will
-Data: 29/12/2024
 """
 
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from espacos.models import Espaco
@@ -613,3 +612,68 @@ class VinculoTerapeutaEspaco(models.Model):
         Verifica se o terapeuta pode agendar neste espaço
         """
         return self.status == 'APROVADO' and self.is_active
+
+# ==========================================
+# MODEL: CONVITE EXTERNO
+# ==========================================
+class ConviteExterno(models.Model):
+    """
+    Título: Convite para Terapeuta Externo
+    Descrição: Guarda convites enviados para terapeutas não cadastrados.
+               Após o cadastro, o vínculo é criado automaticamente.
+    """
+
+    # Espaço que enviou o convite
+    espaco = models.ForeignKey(
+        'espacos.Espaco',
+        on_delete=models.CASCADE,
+        related_name='convites_externos',
+        verbose_name='Espaço'
+    )
+
+    # Email do terapeuta convidado
+    email = models.EmailField(
+        verbose_name='Email do Convidado'
+    )
+
+    # Token único para identificar o convite
+    token = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        verbose_name='Token do Convite'
+    )
+
+    # Mensagem personalizada
+    mensagem = models.TextField(
+        blank=True,
+        verbose_name='Mensagem'
+    )
+
+    # Controle
+    usado = models.BooleanField(
+        default=False,
+        verbose_name='Usado',
+        help_text='Token já foi utilizado no cadastro'
+    )
+
+    # Validade do convite (30 dias)
+    expira_em = models.DateTimeField(
+        verbose_name='Expira em'
+    )
+
+    # Metadados
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Convite Externo'
+        verbose_name_plural = 'Convites Externos'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Convite de {self.espaco.nome} para {self.email}"
+
+    @property
+    def is_valido(self):
+        """Retorna True se o convite ainda está válido"""
+        from django.utils import timezone
+        return not self.usado and self.expira_em > timezone.now()

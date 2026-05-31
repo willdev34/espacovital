@@ -49,6 +49,30 @@ urlpatterns = [
         views.DashboardTerapeutasVinculadosView.as_view(),
         name='dashboard_terapeutas'
     ),
+
+    # Convidar terapeuta pelo email
+    # URL: /espacos/dashboard/vinculos/convidar/
+    path(
+        'dashboard/vinculos/convidar/',
+        views.ConvidarTerapeutaView.as_view(),
+        name='convidar_terapeuta'
+    ),
+
+    # Aprovar solicitação de vínculo de terapeuta
+    # URL: /espacos/dashboard/vinculos/<id>/aprovar/
+    path(
+        'dashboard/vinculos/<int:vinculo_id>/aprovar/',
+        views.AprovarVinculoTerapeutaView.as_view(),
+        name='aprovar_vinculo_terapeuta'
+    ),
+
+    # Recusar solicitação de vínculo de terapeuta
+    # URL: /espacos/dashboard/vinculos/<id>/recusar/
+    path(
+        'dashboard/vinculos/<int:vinculo_id>/recusar/',
+        views.RecusarVinculoTerapeutaView.as_view(),
+        name='recusar_vinculo_terapeuta'
+    ),
     
     # Gerenciar disponibilidade/calendário
     # URL: /espacos/dashboard/disponibilidade/

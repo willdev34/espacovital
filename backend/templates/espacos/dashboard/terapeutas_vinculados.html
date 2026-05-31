@@ -119,12 +119,22 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button class="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
-                        Aprovar
-                    </button>
-                    <button class="px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-                        Recusar
-                    </button>
+                    <form method="post" action="{% url 'espacos:aprovar_vinculo_terapeuta' solicitacao.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            Aprovar
+                        </button>
+                    </form>
+
+                    <form method="post" action="{% url 'espacos:recusar_vinculo_terapeuta' solicitacao.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                onclick="return confirm('Tem certeza que deseja recusar esta solicitação?')"
+                                class="px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                            Recusar
+                        </button>
+                    </form>
                 </div>
             </div>
             {% endfor %}
@@ -148,10 +158,10 @@
                 <div class="flex items-start gap-4">
                     {# Foto do Terapeuta #}
                     <div class="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                        {% if terapeuta.foto %}
-                        <img src="{{ terapeuta.foto.url }}" 
-                             alt="{{ terapeuta.nome }}"
-                             class="w-full h-full object-cover">
+                        {% if terapeuta.foto_perfil %}
+                        <img src="{{ terapeuta.foto_perfil.url }}" 
+                            alt="{{ terapeuta.nome_completo }}"
+                            class="w-full h-full object-cover">
                         {% else %}
                         <div class="w-full h-full flex items-center justify-center bg-teal-100">
                             <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,8 +173,8 @@
                     
                     {# Informações #}
                     <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 truncate">{{ terapeuta.nome }}</h3>
-                        <p class="text-sm text-gray-600 line-clamp-2">{{ terapeuta.especialidades_principais }}</p>
+                        <h3 class="font-semibold text-gray-900 truncate">{{ terapeuta.nome_exibicao|default:terapeuta.nome_completo }}</h3>
+                        <p class="text-sm text-gray-600 line-clamp-2">{{ terapeuta.bio_curta|truncatewords:10 }}</p>
                         
                         {# Status #}
                         <div class="mt-2">
@@ -184,7 +194,7 @@
                         Ver Perfil
                     </a>
                     <button type="button"
-                            onclick="confirmarRemocao('{{ terapeuta.id }}', '{{ terapeuta.nome }}')"
+                            onclick="confirmarRemocao('{{ terapeuta.id }}', '{{ terapeuta.nome_completo }}')"
                             class="px-3 py-2 bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -255,7 +265,7 @@
             </button>
         </div>
         
-        <form method="POST" action="#">
+        <form method="POST" action="{% url 'espacos:convidar_terapeuta' %}">
             {% csrf_token %}
             <div class="space-y-4">
                 <div>
@@ -294,10 +304,7 @@
         </form>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
-{{ block.super }}
 <script>
     // ===== Funções do Modal de Convite =====
     function abrirModalConvite() {
