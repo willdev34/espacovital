@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{# ===============================================================
+   Título: Email de Verificação Enviado
+   Descrição: Página exibida após cadastro aguardando confirmação de email
+=============================================================== #}
+
+{% block title %}Verifique seu Email - Espaço Vital{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4" style="background-color: #f2eae0;">
+    <div class="max-w-md w-full space-y-8">
+
+        {# Logo #}
+        <div class="text-center">
+            <a href="{% url 'core:home' %}">
+                <img class="mx-auto h-20 w-auto"
+                     src="{% static 'images/logo/logotipo_minimalista_fundo.png' %}"
+                     alt="Espaço Vital">
+            </a>
+        </div>
+
+        {# Card principal #}
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+
+            {# Ícone #}
+            <div class="flex justify-center mb-6">
+                <div class="w-20 h-20 rounded-full flex items-center justify-center"
+                     style="background-color: #f2eae0;">
+                    <svg class="w-12 h-12" style="color: #1E5C5C;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+            </div>
+
+            {# Título e mensagem #}
+            <div class="text-center space-y-4">
+                <h2 class="text-2xl font-bold text-gray-900">
+                    Verifique seu email!
+                </h2>
+                <p class="text-gray-600">
+                    Enviamos um link de confirmação para o seu email. Clique no link para ativar sua conta.
+                </p>
+
+                {# Dicas #}
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 text-left">
+                    <p class="font-semibold mb-2">📬 Não recebeu o email?</p>
+                    <ul class="space-y-1 list-disc list-inside text-blue-700">
+                        <li>Verifique sua pasta de spam</li>
+                        <li>O link expira em 24 horas</li>
+                        <li>Certifique-se que o email está correto</li>
+                    </ul>
+                </div>
+            </div>
+
+            {# Botão reenviar #}
+            <div class="mt-6">
+                <a href="{% url 'account_email' %}"
+                   class="block w-full text-center py-3 px-4 border rounded-lg font-medium transition-all"
+                   style="border-color: #1E5C5C; color: #1E5C5C;"
+                   onmouseover="this.style.backgroundColor='#1E5C5C'; this.style.color='white';"
+                   onmouseout="this.style.backgroundColor=''; this.style.color='#1E5C5C';">
+                    Reenviar email de confirmação
+                </a>
+            </div>
+
+        </div>
+
+        {# Links úteis #}
+        <div class="text-center space-y-2 text-sm">
+            <a href="{% url 'account_login' %}"
+               class="font-medium hover:opacity-80"
+               style="color: #1E5C5C;">
+                ← Voltar para login
+            </a>
+            <span class="text-gray-400 mx-2">|</span>
+            <a href="{% url 'core:home' %}"
+               class="font-medium text-gray-500 hover:text-gray-700">
+                Ir para home
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
