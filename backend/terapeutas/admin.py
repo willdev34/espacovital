@@ -377,7 +377,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
         """
         Adiciona JavaScript customizado para máscara de telefone e ícones de redes sociais
         """
-        js = ('admin/js/terapeuta_admin.js',)
+        js = ('js/terapeuta_admin.js',)
         css = {
             'all': ('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',)
         }
