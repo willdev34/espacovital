@@ -12,7 +12,7 @@ def criar_planos(apps, schema_editor):
 
     planos_data = [
         {
-            'nome': 'GRATUITO_FILIADO',
+            'nome': 'gratuito_filiado',
             'nome_exibicao': 'Gratuito Filiado',
             'descricao': 'Plano gratuito para terapeutas vinculados a espaços.',
             'valor': 0.00,
@@ -30,7 +30,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': False
         },
         {
-            'nome': 'BASIC',
+            'nome': 'basic',
             'nome_exibicao': 'Basic',
             'descricao': 'Plano básico para terapeutas. Perfil público com funcionalidades essenciais.',
             'valor': 9.00,
@@ -48,7 +48,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': False
         },
         {
-            'nome': 'PREMIUM_A',
+            'nome': 'premium_a',
             'nome_exibicao': 'Premium A',
             'descricao': 'Plano premium para terapeutas. Destaque nas buscas e suporte prioritário.',
             'valor': 49.90,
@@ -66,7 +66,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': True
         },
         {
-            'nome': 'PREMIUM_S',
+            'nome': 'premium_s',
             'nome_exibicao': 'Premium S',
             'descricao': 'Plano premium para espaços terapêuticos.',
             'valor': 99.90,
@@ -84,7 +84,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': False
         },
         {
-            'nome': 'PREMIUM_S_PLUS',
+            'nome': 'premium_s_plus',
             'nome_exibicao': 'Premium S+',
             'descricao': 'Plano premium avançado para espaços com gerenciamento completo de salas.',
             'valor': 129.90,
@@ -102,7 +102,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': False
         },
         {
-            'nome': 'COMBO_A_S',
+            'nome': 'combo_a_s',
             'nome_exibicao': 'Combo Premium A + S',
             'descricao': 'Combo completo para quem é terapeuta e tem espaço.',
             'valor': 139.90,
@@ -120,7 +120,7 @@ def criar_planos(apps, schema_editor):
             'recomendado': False
         },
         {
-            'nome': 'COMBO_A_S_PLUS',
+            'nome': 'combo_a_s_plus',
             'nome_exibicao': 'Combo Premium A + S+',
             'descricao': 'Combo máximo! Terapeuta + Espaço com gerenciamento completo de salas.',
             'valor': 159.90,
@@ -150,8 +150,8 @@ def remover_planos(apps, schema_editor):
     """Reverte a migration removendo os planos"""
     Plano = apps.get_model('core', 'Plano')
     nomes = [
-        'GRATUITO_FILIADO', 'BASIC', 'PREMIUM_A', 'PREMIUM_S',
-        'PREMIUM_S_PLUS', 'COMBO_A_S', 'COMBO_A_S_PLUS'
+        'gratuito_filiado', 'basic', 'premium_a', 'premium_s',
+        'premium_s_plus', 'combo_a_s', 'combo_a_s_plus'
     ]
     Plano.objects.filter(nome__in=nomes).delete()
 
