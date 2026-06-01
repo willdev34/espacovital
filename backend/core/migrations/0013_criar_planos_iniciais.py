@@ -159,7 +159,7 @@ def remover_planos(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0012_alter_plano_nome'),
+        ('core', '0012_assinatura_plano_voucher_historicoassinatura_and_more'),
     ]
 
     operations = [
