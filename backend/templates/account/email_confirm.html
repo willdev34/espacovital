@@ -58,15 +58,29 @@
                 </div>
             </div>
             
-            <!-- Botão Reenviar -->
-            <div class="mt-6">
-                <form method="post" action="{% url 'account_email' %}">
+            <div class="mt-6 space-y-3">
+                {# Botão principal de confirmação #}
+                {% if confirmation %}
+                <form method="post">
                     {% csrf_token %}
-                    <button type="submit" 
-                            class="w-full py-3 px-4 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all">
-                        🔄 Reenviar email de confirmação
+                    <button type="submit"
+                            class="w-full py-3 px-4 rounded-lg font-medium text-white transition-all"
+                            style="background-color: #1E5C5C;">
+                        ✅ Confirmar meu email
                     </button>
                 </form>
+                {% else %}
+                <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+                    <p class="text-red-700 text-sm font-medium">
+                        ❌ Link inválido ou expirado.
+                    </p>
+                </div>
+                <a href="{% url 'account_email' %}"
+                class="block w-full text-center py-3 px-4 border rounded-lg font-medium transition-all"
+                style="border-color: #1E5C5C; color: #1E5C5C;">
+                    🔄 Solicitar novo link de confirmação
+                </a>
+                {% endif %}
             </div>
             
         </div>
