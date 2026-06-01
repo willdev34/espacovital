@@ -1,0 +1,15 @@
+Olá!
+
+Obrigado por se cadastrar no Espaço Vital!
+
+Para confirmar seu email e ativar sua conta, clique no link abaixo:
+
+{{ activate_url }}
+
+Este link expira em 24 horas.
+
+Se você não se cadastrou no Espaço Vital, ignore este email.
+
+Atenciosamente,
+Equipe Espaço Vital
+https://espacovital.onrender.com
