@@ -1,8 +1,6 @@
 """
 Título: Views do Fluxo de Onboarding
 Descrição: Views responsáveis pelo processo de onboarding de novos usuários após o cadastro
-Autor: Will
-Data: 2024-12-13
 """
 
 from django.shortcuts import render, redirect
@@ -109,9 +107,9 @@ class SelectPlanView(View):
         
         # Aplicar filtro baseado no tipo
         if tipo_perfil == 'terapeuta':
-            # Mostrar: Basic, Premium A, Combos
+            # Mostrar: Gratuito Filiado, Basic, Premium A, Combos
             planos_disponiveis = planos_disponiveis.filter(
-                nome__in=['basic', 'premium_a', 'combo_a_s', 'combo_a_s_plus']
+                nome__in=['gratuito_filiado', 'basic', 'premium_a', 'combo_a_s', 'combo_a_s_plus']
             )
         elif tipo_perfil == 'espaco':
             # Mostrar: Premium S, Premium S+, Combos
