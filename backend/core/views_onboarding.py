@@ -473,13 +473,46 @@ class CreateProfileView(View):
             # Limpar sessão
             if 'signup_data' in request.session:
                 del request.session['signup_data']
-            
+
+            # Processar convite externo se existir na sessão
+            convite_token = request.session.pop('convite_token', None)
+            if convite_token:
+                try:
+                    from agendamentos.models import ConviteExterno, VinculoTerapeutaEspaco
+                    from django.utils import timezone
+
+                    convite = ConviteExterno.objects.get(
+                        token=convite_token,
+                        usado=False,
+                        expira_em__gt=timezone.now()
+                    )
+
+                    # Cria o vínculo automaticamente
+                    VinculoTerapeutaEspaco.objects.create(
+                        terapeuta=terapeuta,
+                        espaco=convite.espaco,
+                        status='PENDENTE',
+                        tipo='CONVITE',
+                    )
+
+                    # Marca o convite como usado
+                    convite.usado = True
+                    convite.save()
+
+                    messages.info(
+                        request,
+                        f'✅ Você recebeu um convite do {convite.espaco.nome}! '
+                        f'O vínculo foi criado e aguarda aprovação.'
+                    )
+                except Exception:
+                    pass
+
             messages.success(
                 request,
                 f'Parabéns! Seu perfil de terapeuta foi criado com sucesso! '
                 f'{"Você tem " + str(plano.dias_trial) + " dias grátis para testar." if data_fim_trial else ""}'
             )
-            
+
             return redirect('terapeutas:dashboard')
         
         # Se houver erros, re-renderizar

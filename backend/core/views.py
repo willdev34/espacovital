@@ -483,15 +483,28 @@ class CookiesView(TemplateView):
 class ParceiroView(TemplateView):
     """
     Página Seja um Parceiro
-    Informações para terapeutas e espaços se cadastrarem
-    Autor: Will
-    Data: 08/11/2025
+    Informações para terapeutas e espaços se cadastrarem como parceiros do Espaço Vital
     """
     template_name = 'core/parceiro.html'
-    
+
+    def get(self, request, *args, **kwargs):
+        """
+        Captura o token de convite da URL e salva na sessão
+        Ex: /parceiro/?convite=<token>
+        """
+        token = request.GET.get('convite')
+        if token:
+            # Salva o token na sessão para usar após o cadastro
+            request.session['convite_token'] = str(token)
+            request.session.modified = True
+
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Seja um Parceiro - Espaço Vital'
+        # Informa o template se veio de um convite
+        context['tem_convite'] = 'convite_token' in self.request.session
         return context
 
 
@@ -499,8 +512,6 @@ class FaqView(TemplateView):
     """
     Página de Perguntas Frequentes (FAQ)
     Responde dúvidas comuns dos usuários
-    Autor: Will
-    Data: 08/11/2025
     """
     template_name = 'core/faq.html'
     
@@ -514,8 +525,6 @@ class ContatoView(CreateView):
     """
     Página de Contato com Formulário
     Permite usuários enviarem mensagens para o Espaço Vital
-    Autor: Will
-    Data: 08/11/2025
     """
     model = Contact
     template_name = 'core/contato.html'
@@ -545,8 +554,6 @@ class IndiqueTerapiaView(CreateView):
     """
     Formulário para usuários indicarem terapias
     Permite sugestões de novas terapias para o catálogo
-    Autor: Will
-    Data: 08/11/2025
     """
     model = SugestaoTerapia
     template_name = 'core/indique_terapia.html'
@@ -586,8 +593,6 @@ class SelecionarPerfilView(LoginRequiredMixin, TemplateView):
     Título: Seleção de Perfil de Acesso
     Descrição: Permite usuário escolher qual dashboard acessar quando possui
                perfil de terapeuta E de proprietário de espaço
-    Autor: Will
-    Data: 16/11/2025
     """
     template_name = 'core/selecionar_perfil.html'
     
