@@ -101,6 +101,80 @@
             {% endif %}
         </div>
         
+        {# Convites recebidos de espaços #}
+        {% if convites_recebidos %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2"
+                style="color: #1E5C5C;">
+                <i class="fas fa-envelope"></i>
+                Convites Recebidos
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold text-white"
+                    style="background-color: #FFB4A2;">
+                    {{ total_convites }}
+                </span>
+            </h3>
+            <div class="space-y-3">
+                {% for vinculo in convites_recebidos %}
+                <div class="flex items-center justify-between p-4 rounded-lg border"
+                    style="background-color: #f2eae0; border-color: #1E5C5C;">
+                    <div class="flex items-center gap-3">
+                        {# Foto do espaço #}
+                        <div class="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                            {% if vinculo.espaco.foto_capa %}
+                            <img src="{{ vinculo.espaco.foto_capa.url }}"
+                                alt="{{ vinculo.espaco.nome }}"
+                                class="w-full h-full object-cover">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center"
+                                style="background-color: #1E5C5C;">
+                                <i class="fas fa-building text-white"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {# Informações do espaço #}
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ vinculo.espaco.nome }}</p>
+                            {% if vinculo.espaco.cidade %}
+                            <p class="text-xs text-gray-500">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                {{ vinculo.espaco.cidade.nome }} - {{ vinculo.espaco.cidade.estado.sigla }}
+                            </p>
+                            {% endif %}
+                            <p class="text-xs text-gray-400 mt-1">
+                                Recebido em {{ vinculo.data_criacao|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {# Botões de aceitar e recusar #}
+                    <div class="flex items-center gap-2">
+                        <form method="post" action="{% url 'terapeutas:aceitar_convite_espaco' vinculo.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white rounded-lg hover:opacity-90"
+                                    style="background-color: #1E5C5C;">
+                                <i class="fas fa-check mr-1"></i>
+                                Aceitar
+                            </button>
+                        </form>
+
+                        <form method="post" action="{% url 'terapeutas:recusar_convite_espaco' vinculo.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    onclick="return confirm('Tem certeza que deseja recusar o convite de {{ vinculo.espaco.nome }}?')"
+                                    class="px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50">
+                                <i class="fas fa-times mr-1"></i>
+                                Recusar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         {# Vínculos pendentes aguardando aprovação #}
         {% if vinculos_pendentes %}
         <div class="mb-6">

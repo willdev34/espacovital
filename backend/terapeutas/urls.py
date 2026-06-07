@@ -142,6 +142,22 @@ urlpatterns = [
         name='cancelar_vinculo_espaco'
     ),
 
+    # Aceitar convite de vínculo de um espaço
+    # URL: /terapeutas/dashboard/espacos/convites/<id>/aceitar/
+    path(
+        'dashboard/espacos/convites/<int:vinculo_id>/aceitar/',
+        views.AceitarConviteEspacoView.as_view(),
+        name='aceitar_convite_espaco'
+    ),
+
+    # Recusar convite de vínculo de um espaço
+    # URL: /terapeutas/dashboard/espacos/convites/<id>/recusar/
+    path(
+        'dashboard/espacos/convites/<int:vinculo_id>/recusar/',
+        views.RecusarConviteEspacoView.as_view(),
+        name='recusar_convite_espaco'
+    ),
+
     # Criar novo agendamento
     # URL: /terapeutas/dashboard/agendamentos/novo/
     # Formulário para agendar sala em espaço vinculado

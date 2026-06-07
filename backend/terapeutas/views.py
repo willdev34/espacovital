@@ -1170,12 +1170,23 @@ class DashboardEspacosVinculadosView(TerapeutaRequiredMixin, TemplateView):
         context['espacos_vinculados'] = espacos_vinculados
         context['total_espacos_vinculados'] = len(espacos_vinculados)
 
-        # ===== ESPAÇOS PENDENTES (aguardando aprovação) =====
+        # ===== SOLICITAÇÕES PENDENTES (terapeuta aguardando aprovação do espaço) =====
         context['vinculos_pendentes'] = VinculoTerapeutaEspaco.objects.filter(
             terapeuta=terapeuta,
             status='PENDENTE',
-            is_active=True
+            is_active=True,
+            tipo='SOLICITACAO'
         ).select_related('espaco')
+
+        # ===== CONVITES RECEBIDOS (espaço convidou o terapeuta) =====
+        context['convites_recebidos'] = VinculoTerapeutaEspaco.objects.filter(
+            terapeuta=terapeuta,
+            status='PENDENTE',
+            is_active=True,
+            tipo='CONVITE'
+        ).select_related('espaco', 'espaco__cidade', 'espaco__cidade__estado')
+
+        context['total_convites'] = context['convites_recebidos'].count()
         
         # ===== SUGERIR ESPAÇOS DISPONÍVEIS =====
         from espacos.models import Espaco
@@ -1792,6 +1803,74 @@ class CancelarVinculoEspacoView(TerapeutaRequiredMixin, View):
         messages.success(
             request,
             f'✅ Vínculo com {vinculo.espaco.nome} cancelado com sucesso.'
+        )
+
+        return redirect('terapeutas:dashboard_espacos_vinculados')
+    
+class AceitarConviteEspacoView(TerapeutaRequiredMixin, View):
+    """
+    Título: Aceitar Convite de Espaço
+    Descrição: Terapeuta aceita convite de vínculo enviado por um espaço.
+               Muda status para APROVADO.
+    URL: /terapeutas/dashboard/espacos/convites/<id>/aceitar/
+    """
+
+    def post(self, request, vinculo_id):
+        from django.utils import timezone
+
+        terapeuta = request.user.terapeuta
+
+        # Busca o convite garantindo que é do terapeuta logado
+        vinculo = get_object_or_404(
+            VinculoTerapeutaEspaco,
+            pk=vinculo_id,
+            terapeuta=terapeuta,
+            status='PENDENTE',
+            tipo='CONVITE'
+        )
+
+        # Aprova o vínculo
+        vinculo.status = 'APROVADO'
+        vinculo.data_aprovacao = timezone.now()
+        vinculo.save()
+
+        messages.success(
+            request,
+            f'✅ Você aceitou o convite do {vinculo.espaco.nome}!'
+        )
+
+        return redirect('terapeutas:dashboard_espacos_vinculados')
+
+
+class RecusarConviteEspacoView(TerapeutaRequiredMixin, View):
+    """
+    Título: Recusar Convite de Espaço
+    Descrição: Terapeuta recusa convite de vínculo enviado por um espaço.
+               Muda status para RECUSADO.
+    URL: /terapeutas/dashboard/espacos/convites/<id>/recusar/
+    """
+
+    def post(self, request, vinculo_id):
+
+        terapeuta = request.user.terapeuta
+
+        # Busca o convite garantindo que é do terapeuta logado
+        vinculo = get_object_or_404(
+            VinculoTerapeutaEspaco,
+            pk=vinculo_id,
+            terapeuta=terapeuta,
+            status='PENDENTE',
+            tipo='CONVITE'
+        )
+
+        # Recusa o convite
+        vinculo.status = 'RECUSADO'
+        vinculo.is_active = False
+        vinculo.save()
+
+        messages.warning(
+            request,
+            f'Convite do {vinculo.espaco.nome} recusado.'
         )
 
         return redirect('terapeutas:dashboard_espacos_vinculados')
