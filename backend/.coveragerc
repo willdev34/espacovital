@@ -1,0 +1,73 @@
+# ===============================================================
+# Título: Configuração de Cobertura de Testes - Espaço Vital
+# Descrição: Define o que entra e o que sai do cálculo de
+#            cobertura. Exclui arquivos sem lógica testável
+#            para não distorcer a métrica.
+# ===============================================================
+
+[run]
+# Diretório base para coleta de cobertura
+source = .
+
+# ---------------------------------------------------------------
+# Arquivos excluídos da contagem de cobertura
+# Migrations, configurações, entrypoints e arquivos de setup
+# não têm lógica de negócio e distorceriam a métrica
+# ---------------------------------------------------------------
+omit =
+    # Migrations de todos os apps
+    */migrations/*
+
+    # Configurações do projeto
+    espacovital/settings.py
+    espacovital/wsgi.py
+    espacovital/asgi.py
+    espacovital/urls.py
+
+    # Entrypoint principal
+    manage.py
+
+    # Arquivos de inicialização de pacote
+    */__init__.py
+
+    # Fixtures e seeders
+    */fixtures/*
+
+    # Os próprios arquivos de teste não contam como cobertura
+    */tests/*
+    */test_*.py
+
+    # Ambiente virtual
+    venv-wsl/*
+    venv/*
+
+    # Configurações de ferramentas
+    conftest.py
+
+    # Scripts utilitários soltos na raiz (sem lógica de negócio)
+    debug_psycopg2.py
+    diagnose_utf8.py
+    export_fixtures.py
+    fix_postgres_env.py
+    run_server.py
+    sitecustomize.py
+    check_prod_data.py
+
+    # Management commands (setup e utilitários, não lógica de negócio)
+    */management/*
+
+
+[report]
+# Quality gate: abaixo de 80% o relatório retorna erro
+fail_under = 80
+
+# Mostra as linhas que não foram cobertas
+show_missing = true
+
+# Ignora arquivos com 0 linhas executáveis
+skip_empty = true
+
+
+[xml]
+# Caminho do relatório XML gerado para o GitHub Actions
+output = coverage.xml

@@ -407,7 +407,7 @@ class Terapeuta(BaseModel):
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('terapeutas:profile', kwargs={'slug': self.slug})
+        return reverse('terapeutas:perfil', kwargs={'slug': self.slug})
     
     @property
     def rating_medio(self):
