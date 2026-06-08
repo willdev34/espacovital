@@ -96,7 +96,7 @@ class SelectPlanView(View):
         if voucher_id:
             try:
                 voucher = Voucher.objects.get(id=voucher_id)
-                if not voucher.esta_valido():
+                if not voucher.esta_valido:
                     voucher = None
                     messages.warning(request, 'O voucher não é mais válido.')
             except Voucher.DoesNotExist:
@@ -363,7 +363,7 @@ class CreateProfileView(View):
         if voucher_id:
             try:
                 voucher = Voucher.objects.get(id=voucher_id)
-                if not voucher.esta_valido():
+                if not voucher.esta_valido:
                     voucher = None
             except Voucher.DoesNotExist:
                 pass
