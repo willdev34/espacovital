@@ -241,11 +241,16 @@ class TerapeutaListView(ListView):
         context['total_resultados'] = self.get_queryset().count()
         
         # Informações da busca atual
+        # Valida se o valor da cidade é numérico antes de consultar o banco
         if context['filtros_atuais']['cidade']:
+            cidade_id = context['filtros_atuais']['cidade']
             try:
-                cidade = Cidade.objects.get(id=context['filtros_atuais']['cidade'])
+                cidade_id_int = int(cidade_id)
+                cidade = Cidade.objects.get(id=cidade_id_int)
                 context['localizacao_atual'] = f"{cidade.nome} - {cidade.estado.sigla}"
-            except Cidade.DoesNotExist:
+            except (ValueError, Cidade.DoesNotExist):
+                # ValueError: valor não é inteiro (ex: 'xyz')
+                # DoesNotExist: ID não encontrado no banco
                 pass
         
         # Meta dados da página
