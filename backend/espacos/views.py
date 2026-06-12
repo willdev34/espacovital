@@ -999,6 +999,9 @@ class DashboardSalaCriarView(EspacoRequiredMixin, CreateView):
         """
         Verifica se o espaço tem permissão (Premium S+)
         """
+        # Verificar autenticação antes de qualquer query
+        if not request.user.is_authenticated:
+            return redirect(f'/accounts/login/?next={request.path}')
 
         espaco = Espaco.objects.filter(responsavel=request.user).first()
 
@@ -1008,7 +1011,7 @@ class DashboardSalaCriarView(EspacoRequiredMixin, CreateView):
 
         # Verificar se tem assinatura ativa com plano adequado
         assinatura = Assinatura.objects.filter(
-            usuario=request.user,  # ✅ request.user (sem self)
+            usuario=request.user,
             status='active'
         ).select_related('plano').first()
 
@@ -1119,6 +1122,9 @@ class DashboardSalaEditarView(EspacoRequiredMixin, UpdateView):
         """
         Verifica se o espaço tem permissão e se a sala pertence a ele
         """
+        # Verificar autenticação antes de qualquer query
+        if not request.user.is_authenticated:
+            return redirect(f'/accounts/login/?next={request.path}')
 
         espaco = Espaco.objects.filter(responsavel=request.user).first()
 
@@ -1128,7 +1134,7 @@ class DashboardSalaEditarView(EspacoRequiredMixin, UpdateView):
 
         # Verificar se tem assinatura ativa com plano adequado
         assinatura = Assinatura.objects.filter(
-            usuario=request.user,  # ✅ request.user (sem self)
+            usuario=request.user,
             status='active'
         ).select_related('plano').first()
 
