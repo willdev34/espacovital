@@ -2,8 +2,6 @@
 # Título: Testes das Views do App Core
 # Descrição: Testes unitários para HomeView, views institucionais,
 #             ContatoView, IndiqueTerapiaView e SelecionarPerfilView
-# Autor: Will
-# Data: 09/06/2026
 # ===============================================================
 
 from django.test import TestCase, Client

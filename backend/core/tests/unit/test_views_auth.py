@@ -2,8 +2,6 @@
 # Título: Testes das Views de Autenticação - Espaço Vital
 # Descrição: Testes unitários para CustomLoginView e CustomLogoutView
 #             que sobrescrevem o comportamento padrão do allauth
-# Autor: Will
-# Data: 09/06/2026
 # ===============================================================
 
 from django.test import TestCase, Client

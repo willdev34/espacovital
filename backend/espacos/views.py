@@ -80,7 +80,12 @@ class EspacoListView(ListView):
         # Filtro: Terapias disponíveis (multi-select)
         terapias = self.request.GET.getlist('terapias')
         if terapias and 'todas' not in terapias:
-            queryset = queryset.filter(especialidades__id__in=terapias).distinct()
+            try:
+                terapias_int = [int(t) for t in terapias if str(t).isdigit()]
+                if terapias_int:
+                    queryset = queryset.filter(especialidades__id__in=terapias_int).distinct()
+            except (ValueError, TypeError):
+                pass
         
         # Filtro: Espaço com acessibilidade? (Sim/Não)
         acessibilidade = self.request.GET.get('acessibilidade')
@@ -110,7 +115,10 @@ class EspacoListView(ListView):
         if comodidades:
             # Filtra espaços que têm TODAS as comodidades selecionadas
             for comodidade_id in comodidades:
-                queryset = queryset.filter(comodidades__id=comodidade_id)
+                try:
+                    queryset = queryset.filter(comodidades__id=int(comodidade_id))
+                except (ValueError, TypeError):
+                    pass
         
         # Filtro: Busca por texto (nome, descrição, localização)
         busca = self.request.GET.get('busca', '').strip()
