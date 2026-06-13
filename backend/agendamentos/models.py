@@ -598,6 +598,7 @@ class VinculoTerapeutaEspaco(models.Model):
         """
         Ao aprovar o vínculo, registra a data de aprovação
         """
+        from django.utils import timezone
         if self.status == 'APROVADO' and not self.data_aprovacao:
             self.data_aprovacao = timezone.now()
         
