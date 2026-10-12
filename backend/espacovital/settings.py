@@ -78,6 +78,20 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv()
 )
 
+# Vercel: libera os domínios que a própria Vercel injeta como variáveis de ambiente
+# VERCEL_URL = deploy atual, VERCEL_BRANCH_URL = branch, VERCEL_PROJECT_PRODUCTION_URL = produção
+# Os valores vêm sem "https://", então montamos a origem do CSRF manualmente
+for _vercel_var in ('VERCEL_URL', 'VERCEL_BRANCH_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+    _vercel_host = config(_vercel_var, default='')
+    if _vercel_host:
+        # Adiciona o host aos permitidos, sem duplicar
+        if _vercel_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_vercel_host)
+        # Adiciona a origem HTTPS aos confiáveis para formulários e login
+        _vercel_origin = f'https://{_vercel_host}'
+        if _vercel_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(_vercel_origin)
+
 # ===============================================================
 # APLICAÇÕES INSTALADAS
 # ===============================================================
@@ -171,10 +185,16 @@ if DATABASE_URL:
         )
     }
     # FORÇA UTF-8 no PostgreSQL
-    DATABASES['default']['OPTIONS'] = {
+    # Mantém as opções que vieram da URL (sslmode, channel_binding) e só acrescenta as nossas
+    # Antes o dicionário era substituído e o sslmode exigido pelo Neon se perdia
+    DATABASES['default'].setdefault('OPTIONS', {}).update({
         'client_encoding': 'UTF8',
         'connect_timeout': 10,
-    }
+    })
+
+    # O pooler do Neon (PgBouncer em modo transação) não aceita cursores no servidor
+    if '-pooler' in DATABASE_URL:
+        DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 else:
     # Desenvolvimento local - variáveis individuais
     # FORÇA UTF-8 em TODAS as strings antes de conectar
