@@ -53,6 +53,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENVIRONMENT = config('ENVIRONMENT', default='development')
 
+# Mensagens de diagnóstico saem pelo stderr, nunca pelo stdout
+# A Vercel executa o settings e lê o stdout como JSON, então um print comum quebra o build
+import sys
+
+
+def _aviso_config(mensagem):
+    """Escreve um aviso de configuração no stderr, sem poluir o stdout."""
+    print(mensagem, file=sys.stderr)
+
 # ===============================================================
 # SEGURANÇA
 # ===============================================================
@@ -300,13 +309,13 @@ if USE_CLOUDINARY:
     MEDIA_URL = '/media/'
     
     if DEBUG:
-        print("✓ Cloudinary configurado para mídia")
+        _aviso_config("✓ Cloudinary configurado para mídia")
 else:
     # Armazenamento local para desenvolvimento
     MEDIA_URL = '/media/'
     
     if DEBUG:
-        print("✓ Armazenamento local configurado para mídia")
+        _aviso_config("✓ Armazenamento local configurado para mídia")
 
 # Preparado para S3 (futuro)
 USE_S3 = config('USE_S3', default=False, cast=bool)
@@ -445,7 +454,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ===============================================================
 
 if ENVIRONMENT == 'development':
-    print("🔧 Rodando em modo DESENVOLVIMENTO")
+    _aviso_config("🔧 Rodando em modo DESENVOLVIMENTO")
     
     # Django Debug Toolbar (opcional)
     if config('ENABLE_DEBUG_TOOLBAR', default=False, cast=bool):
@@ -454,14 +463,24 @@ if ENVIRONMENT == 'development':
         INTERNAL_IPS = ['127.0.0.1']
 
 elif ENVIRONMENT == 'qa':
-    print("🚀 Rodando em modo QA (Railway)")
+    _aviso_config("🚀 Rodando em modo QA (Railway)")
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
 elif ENVIRONMENT == 'production':
-    print("🔒 Rodando em modo PRODUÇÃO")
+    _aviso_config("🔒 Rodando em modo PRODUÇÃO")
     DEBUG = False
+
+    # Trava de segurança: não sobe em produção com a SECRET_KEY padrão de desenvolvimento
+    if SECRET_KEY.startswith('dev-secret-key'):
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured('Defina a SECRET_KEY nas variáveis de ambiente.')
+
+    # A Vercel termina o HTTPS no proxy e informa o protocolo original neste cabeçalho
+    # Sem isso o Django acha que a requisição é http e o redirect para HTTPS entra em loop
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
