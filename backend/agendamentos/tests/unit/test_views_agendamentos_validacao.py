@@ -194,6 +194,64 @@ class RegrasDeDataEHorarioTest(CriarAgendamentoBase):
         self._assert_barrado(response, 0, 'após o horário de fechamento')
 
 
+class SessaoQueCruzaAMeiaNoiteTest(CriarAgendamentoBase):
+    """
+    Sala que fecha tarde da noite: a sessão que termina depois da
+    meia-noite não pode passar pela conferência de fechamento.
+    """
+
+    def setUp(self):
+        super().setUp()
+        # Sala noturna: abre às 08:00 e fecha às 23:59, sessão de 60 min
+        self.espaco_noturno, self.sala_noturna = self._criar_espaco_com_sala(
+            'noturno', fechamento='23:59:00', duracao=60
+        )
+        VinculoTerapeutaEspaco.objects.create(
+            espaco=self.espaco_noturno,
+            terapeuta=self.terapeuta,
+            status='APROVADO',
+            is_active=True,
+        )
+
+    def _dados_noturnos(self, hora_inicio):
+        """POST na sala noturna, amanhã, no horário informado"""
+        return self._dados(
+            espaco=self.espaco_noturno.pk,
+            sala=self.sala_noturna.pk,
+            hora_inicio=hora_inicio,
+        )
+
+    def test_sessao_que_termina_apos_a_meia_noite_e_rejeitada(self):
+        """Início 23:30 + 60 min vira 00:30 do dia seguinte: barrado"""
+        response = self.client.post(self.url, self._dados_noturnos('23:30'))
+        self._assert_barrado(response, 0, 'após o horário de fechamento')
+
+    def test_sessao_que_termina_exatamente_a_meia_noite_e_rejeitada(self):
+        """Início 23:00 + 60 min termina 00:00 do dia seguinte: barrado"""
+        response = self.client.post(self.url, self._dados_noturnos('23:00'))
+        self._assert_barrado(response, 0, 'após o horário de fechamento')
+
+    def test_sessao_que_termina_exatamente_no_fechamento_e_aceita(self):
+        """Início 22:59 + 60 min termina às 23:59, no fechamento: aceito"""
+        response = self.client.post(self.url, self._dados_noturnos('22:59'))
+        self.assertRedirects(
+            response, self.url_dashboard, fetch_redirect_response=False
+        )
+        agendamento = Agendamento.objects.get()
+        self.assertEqual(agendamento.hora_inicio, time(22, 59))
+        self.assertEqual(agendamento.hora_fim, time(23, 59))
+
+    def test_sessao_que_termina_antes_do_fechamento_e_aceita(self):
+        """Início 22:30 + 60 min termina às 23:30, antes das 23:59: aceito"""
+        response = self.client.post(self.url, self._dados_noturnos('22:30'))
+        self.assertRedirects(
+            response, self.url_dashboard, fetch_redirect_response=False
+        )
+        agendamento = Agendamento.objects.get()
+        self.assertEqual(agendamento.hora_inicio, time(22, 30))
+        self.assertEqual(agendamento.hora_fim, time(23, 30))
+
+
 # ===============================================================
 # CONFLITO DE HORÁRIO
 # ===============================================================

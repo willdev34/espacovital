@@ -211,19 +211,23 @@ class AgendamentoForm(forms.ModelForm):
                 f'Escolha um horário a partir deste.'
             )
         
-        if hora_inicio >= sala.horario_fechamento:
+        # Compara datetimes completos: uma sessão que cruza a meia-noite
+        # volta para 00:xx como time e parecia estar "antes" do fechamento
+        hora_inicio_dt = datetime.combine(data, hora_inicio)
+        fechamento_dt = datetime.combine(data, sala.horario_fechamento)
+
+        if hora_inicio_dt >= fechamento_dt:
             raise ValidationError(
                 f'A sala fecha às {sala.horario_fechamento.strftime("%H:%M")}. '
                 f'Escolha um horário anterior.'
             )
-        
+
         # ===== VALIDAÇÃO 4: Calcular hora_fim =====
-        hora_inicio_dt = datetime.combine(data, hora_inicio)
         hora_fim_dt = hora_inicio_dt + timedelta(minutes=sala.duracao_sessao)
         cleaned_data['hora_fim'] = hora_fim_dt.time()
-        
-        # Verificar se hora_fim não ultrapassa horário de fechamento
-        if cleaned_data['hora_fim'] > sala.horario_fechamento:
+
+        # Sessão que passa do fechamento (inclusive virando o dia) é barrada
+        if hora_fim_dt > fechamento_dt:
             raise ValidationError(
                 f'A sessão terminaria às {cleaned_data["hora_fim"].strftime("%H:%M")}, '
                 f'após o horário de fechamento da sala ({sala.horario_fechamento.strftime("%H:%M")}). '
