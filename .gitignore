@@ -52,6 +52,8 @@ desktop.ini
 
 # Testes
 .coverage
+# Relatorio de cobertura em XML (gerado a cada rodada do pytest)
+coverage.xml
 htmlcov/
 .pytest_cache/
 
