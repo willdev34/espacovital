@@ -11,6 +11,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from espacos.models import Espaco
+from terapeutas.views import TerapeutaRequiredMixin
+from .forms import AgendamentoForm
 from .models import Agendamento, Sala
 
 
@@ -41,60 +43,60 @@ class GetComodidadesEspacoView(View):
 # ==========================================
 # CRIAR AGENDAMENTO
 # ==========================================
-class AgendamentoCriarView(LoginRequiredMixin, CreateView):
+class AgendamentoCriarView(TerapeutaRequiredMixin, CreateView):
     """
-    Descrição: Formulário para o terapeuta criar um novo agendamento de sala
+    Descrição: Formulário para o terapeuta criar um novo agendamento de sala.
+               Valida pelo AgendamentoForm: data, antecedência mínima,
+               horário da sala, conflito e vínculo com o espaço.
+               O terapeuta vem do usuário logado, nunca do POST.
     """
     model = Agendamento
+    form_class = AgendamentoForm
     template_name = 'agendamentos/agendamento_form.html'
-    fields = ['sala', 'data', 'hora_inicio', 'hora_fim', 'observacoes']
     success_url = reverse_lazy('terapeutas:dashboard_agendamentos')
 
-    def get_form(self, form_class=None):
+    def get_form_kwargs(self):
         """
-        Lista salas ativas disponíveis para agendamento.
-
-        TODO [FASE VÍNCULO]: Substituir o filtro abaixo para retornar
-        apenas salas de espaços onde o terapeuta está APROVADO.
-        Depende da implementação do model VinculoTerapeutaEspaco.
-
-        Exemplo futuro:
-            vinculos_aprovados = VinculoTerapeutaEspaco.objects.filter(
-                terapeuta=self.request.user.terapeuta,
-                status='APROVADO'
-            ).values_list('espaco_id', flat=True)
-
-            form.fields['sala'].queryset = Sala.objects.filter(
-                is_active=True,
-                espaco_id__in=vinculos_aprovados
-            ).select_related('espaco').order_by('espaco__nome', 'nome')
+        Passa o terapeuta logado para o formulário
         """
-        form = super().get_form(form_class)
+        kwargs = super().get_form_kwargs()
+        kwargs['terapeuta'] = self.request.user.terapeuta
+        return kwargs
 
-        # Temporário: lista todas as salas ativas
-        # Será substituído quando o sistema de vínculos for implementado
-        form.fields['sala'].queryset = Sala.objects.filter(
+    def get_context_data(self, **kwargs):
+        """
+        Envia ao template os espaços vinculados e as salas ativas deles.
+        O JS monta o select de sala conforme o espaço escolhido; a
+        validação de verdade continua no AgendamentoForm (servidor).
+        """
+        context = super().get_context_data(**kwargs)
+
+        espacos = context['form'].fields['espaco'].queryset
+        salas = Sala.objects.filter(
+            espaco__in=espacos,
             is_active=True
         ).select_related('espaco').order_by('espaco__nome', 'nome')
 
-        return form
+        context['tem_espacos_vinculados'] = espacos.exists()
+        context['salas'] = salas
+        context['salas_json'] = [
+            {
+                'id': sala.pk,
+                'nome': sala.nome,
+                'espaco_id': sala.espaco_id,
+                'valor': str(sala.valor_sessao),
+                'duracao': sala.duracao_sessao,
+            }
+            for sala in salas
+        ]
+        return context
 
     def form_valid(self, form):
         """
-        Associa o terapeuta e o espaço ao agendamento antes de salvar
+        Salva pelo formulário, que define terapeuta, espaço, hora_fim,
+        valor, status e pago. Campos forjados no POST são ignorados.
         """
-        agendamento = form.save(commit=False)
-
-        # Vincula o terapeuta logado
-        agendamento.terapeuta = self.request.user.terapeuta
-
-        # Vincula o espaço a partir da sala escolhida
-        agendamento.espaco = agendamento.sala.espaco
-
-        # Define valor cobrado a partir da sala
-        agendamento.valor_cobrado = agendamento.sala.valor_sessao
-
-        agendamento.save()
+        self.object = form.save()
 
         messages.success(
             self.request,

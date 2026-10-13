@@ -19,7 +19,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
 
-from agendamentos.models import Sala, Agendamento
+from agendamentos.models import Sala, Agendamento, VinculoTerapeutaEspaco
 from espacos.models import Espaco, Comodidade
 from terapeutas.models import Terapeuta
 
@@ -191,13 +191,24 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
         self.url = reverse('agendamentos:agendamento_create')
         self.url_dashboard = reverse('terapeutas:dashboard_agendamentos')
 
-    def _dados_validos(self, hora_inicio='14:00', hora_fim='15:00', **extra):
-        """Utilitário: dados válidos para amanhã dentro do horário da sala"""
+        # O terapeuta só agenda em espaço com vínculo aprovado e ativo
+        VinculoTerapeutaEspaco.objects.create(
+            espaco=self.espaco,
+            terapeuta=self.terapeuta,
+            status='APROVADO',
+            is_active=True,
+        )
+
+    def _dados_validos(self, hora_inicio='14:00', **extra):
+        """
+        Utilitário: dados válidos para amanhã dentro do horário da sala.
+        O término e o valor são calculados pelo formulário.
+        """
         dados = {
+            'espaco': self.espaco.pk,
             'sala': self.sala.pk,
             'data': self.amanha,
             'hora_inicio': hora_inicio,
-            'hora_fim': hora_fim,
             'observacoes': 'Sessão de teste.',
         }
         dados.update(extra)
@@ -214,8 +225,8 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    def test_form_lista_apenas_salas_ativas(self):
-        """Formulário lista a sala ativa e deixa de fora a inativa"""
+    def test_contexto_lista_apenas_salas_ativas_de_espacos_vinculados(self):
+        """Contexto traz a sala ativa e deixa de fora inativa e sem vínculo"""
         sala_inativa = Sala.objects.create(
             espaco=self.espaco,
             nome='Sala Inativa',
@@ -226,11 +237,35 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
             horario_fechamento='18:00:00',
             is_active=False,
         )
+        # Sala ativa em espaço onde o terapeuta NÃO tem vínculo
+        espaco_alheio = Espaco.objects.create(
+            nome='Espaço Sem Vínculo',
+            slug='espaco-sem-vinculo-crud',
+            descricao_breve='Teste.',
+            descricao_completa='<p>Teste.</p>',
+            endereco='Rua Z, 2',
+            cep='20000-000',
+            bairro='Centro',
+            tipo_espaco='clinica',
+            responsavel=self.user_espaco,
+            is_active=True,
+        )
+        sala_alheia = Sala.objects.create(
+            espaco=espaco_alheio,
+            nome='Sala Alheia',
+            capacidade=2,
+            valor_sessao=Decimal('70.00'),
+            duracao_sessao=60,
+            horario_abertura='08:00:00',
+            horario_fechamento='18:00:00',
+            is_active=True,
+        )
         self._login_terapeuta()
         response = self.client.get(self.url)
-        salas = response.context['form'].fields['sala'].queryset
+        salas = list(response.context['salas'])
         self.assertIn(self.sala, salas)
         self.assertNotIn(sala_inativa, salas)
+        self.assertNotIn(sala_alheia, salas)
 
     def test_post_valido_cria_agendamento(self):
         """POST válido cria o agendamento, avisa e volta ao dashboard"""
@@ -249,7 +284,7 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
         """Agendamento criado leva terapeuta, espaço e valor da sala"""
         self._login_terapeuta()
         self.client.post(
-            self.url, self._dados_validos(hora_inicio='16:00', hora_fim='17:00')
+            self.url, self._dados_validos(hora_inicio='16:00')
         )
         novo = Agendamento.objects.latest('id')
         self.assertEqual(novo.terapeuta, self.terapeuta)

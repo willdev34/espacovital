@@ -44,8 +44,7 @@ class AgendamentoForm(forms.ModelForm):
             }),
             'data': forms.DateInput(attrs={
                 'type': 'date',
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
-                'min': timezone.now().date().isoformat()
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
             }),
             'hora_inicio': forms.TimeInput(attrs={
                 'type': 'time',
@@ -73,6 +72,10 @@ class AgendamentoForm(forms.ModelForm):
         """
         self.terapeuta = kwargs.pop('terapeuta', None)
         super().__init__(*args, **kwargs)
+
+        # Data mínima calculada a cada criação do formulário (dia local),
+        # e não na importação do módulo, para não ficar velha no servidor
+        self.fields['data'].widget.attrs['min'] = timezone.localdate().isoformat()
         
         if not self.terapeuta:
             raise ValueError('O formulário requer um terapeuta')
@@ -182,7 +185,8 @@ class AgendamentoForm(forms.ModelForm):
             return cleaned_data
         
         # ===== VALIDAÇÃO 1: Data não pode ser no passado =====
-        hoje = timezone.now().date()
+        # Usa o dia local (America/Sao_Paulo), não o dia em UTC
+        hoje = timezone.localdate()
         if data < hoje:
             raise ValidationError('A data do agendamento não pode ser no passado.')
         
