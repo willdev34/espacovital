@@ -67,3 +67,18 @@ def client_admin(usuario_admin):
     client = Client()
     client.force_login(usuario_admin)
     return client
+
+
+# ---------------------------------------------------------------
+# Hook: aplica os markers unit e integration pelo caminho do teste
+# Testes em pasta "integration" recebem @pytest.mark.integration
+# Testes em pasta "unit" recebem @pytest.mark.unit
+# Assim não precisamos editar cada arquivo de teste
+# ---------------------------------------------------------------
+def pytest_collection_modifyitems(items):
+    for item in items:
+        pastas = item.path.parts
+        if 'integration' in pastas:
+            item.add_marker(pytest.mark.integration)
+        elif 'unit' in pastas:
+            item.add_marker(pytest.mark.unit)
