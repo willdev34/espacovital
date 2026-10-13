@@ -70,6 +70,20 @@ def client_admin(usuario_admin):
 
 
 # ---------------------------------------------------------------
+# Fixture autouse: hasher de senha rápido SÓ nos testes
+# O PBKDF2 padrão do Django leva ~0,37s por senha e cada teste cria
+# usuários e faz login. O MD5 é inseguro: por isso fica restrito a
+# este conftest e nunca entra no settings.py de produção.
+# Obs.: não vale para setUpTestData (roda antes dos fixtures).
+# ---------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def hasher_rapido(settings):
+    settings.PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+
+
+# ---------------------------------------------------------------
 # Hook: aplica os markers unit e integration pelo caminho do teste
 # Testes em pasta "integration" recebem @pytest.mark.integration
 # Testes em pasta "unit" recebem @pytest.mark.unit
