@@ -81,9 +81,10 @@ Data: 07/09/2025
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
+                        <!-- Logo dobrado: de h-10 para h-24 (pedido de marca) -->
                         <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
                              alt="Seravitta" 
-                             class="h-10 w-auto object-contain"
+                             class="h-24 w-auto object-contain"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     </a>
                 </div>
@@ -204,9 +205,10 @@ Data: 07/09/2025
                 <!-- Logo Mobile -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
+                        <!-- Logo maior: de h-12 para h-16 (64px, cerca de 203px de largura). h-20 nao cabe ao lado dos icones em 375px -->
                         <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
                              alt="Seravitta" 
-                             class="h-12 w-auto object-contain"
+                             class="h-16 w-auto object-contain"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                         <!-- Fallback icon -->
                         <div class="hidden w-10 h-10 bg-primary rounded-full flex items-center justify-center">
@@ -339,10 +341,10 @@ Data: 07/09/2025
             <div class="hidden md:flex md:justify-between md:items-start">
                 <!-- Logo com redes sociais -->
                 <div class="flex flex-col items-start space-y-6 relative" style="width: 280px;">
-                    <!-- Logo -->
-                    <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                    <!-- Logo: modelo com assinatura, h-20 (cerca de 254px de largura) -->
+                    <img src="{% static 'images/logo/seravitta-assinatura.svg' %}" 
                         alt="Seravitta" 
-                        class="h-14 w-auto object-contain"
+                        class="h-20 w-auto object-contain"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <!-- Fallback Logo -->
                     <div class="hidden">
@@ -447,11 +449,11 @@ Data: 07/09/2025
 
             <!-- Mobile Footer -->
             <div class="md:hidden space-y-8">
-                <!-- Logo mobile -->
-                <div class="text-center">
-                    <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                <!-- Logo mobile: modelo com assinatura, alinhado a esquerda (sem text-center e sem mx-auto) -->
+                <div>
+                    <img src="{% static 'images/logo/seravitta-assinatura.svg' %}" 
                         alt="Seravitta" 
-                        class="h-12 w-auto object-contain mx-auto"
+                        class="h-20 w-auto object-contain"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <div class="hidden">
                         <span class="text-lg font-poppins font-bold text-primary">SERAVITTA</span>
