@@ -4,12 +4,16 @@ Descrição: Models para gerenciamento de salas, agendamentos, multas e configur
 """
 
 import uuid
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
+from django.utils import formats
 from espacos.models import Espaco
 from terapeutas.models import Terapeuta
 from django.core.validators import MinValueValidator
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+
+# Limite de Multa.motivo (max_length): o texto composto nunca passa disso
+MOTIVO_MULTA_MAX = 255
 
 
 # ==========================================
@@ -257,65 +261,144 @@ class Agendamento(models.Model):
         
         return pode_cancelar, minutos_restantes
     
+    def previsao_multa(self):
+        """
+        Única fonte da regra de multa: usada por cancelar() e pelos
+        templates (aviso antes de cancelar).
+
+        Regra: só agendamento CONFIRMADO paga multa, com o valor fixo da
+        sala, quando faltam menos minutos que o prazo da sala ou quando
+        o agendamento já começou. PENDENTE nunca paga multa.
+
+        Returns:
+            dict: havera_multa (bool), valor (Decimal),
+                  minutos_restantes (int) e prazo (int, em minutos)
+        """
+        sem_multa, minutos_restantes = self.pode_cancelar_sem_multa()
+
+        valor = Decimal('0.00')
+        if self.status == 'CONFIRMADO' and not sem_multa:
+            valor = self.sala.valor_multa_cancelamento
+
+        return {
+            'havera_multa': valor > 0,
+            'valor': valor,
+            'minutos_restantes': minutos_restantes,
+            'prazo': self.sala.prazo_cancelamento_sem_multa,
+        }
+
     def calcular_multa_cancelamento(self):
         """
-        Calcula o valor da multa caso o cancelamento seja feito fora do prazo.
-        
+        Calcula o valor da multa caso o cancelamento seja feito agora.
+        Mantido por compatibilidade: delega para previsao_multa().
+
         Returns:
-            Decimal: Valor da multa (0.00 se ainda está no prazo)
+            Decimal: Valor da multa (0.00 se não houver multa)
         """
-        pode_cancelar_sem_multa, _ = self.pode_cancelar_sem_multa()
-        
-        if pode_cancelar_sem_multa:
-            return Decimal('0.00')
-        
-        return self.sala.valor_multa_cancelamento
-    
+        return self.previsao_multa()['valor']
+
+    def multa_prevista_confere(self, valor_informado):
+        """
+        Confere se o valor da multa que o usuário viu no aviso ainda é
+        o valor atual. Aviso desatualizado (o prazo venceu enquanto a
+        tela estava aberta) ou campo ausente/inválido: devolve False.
+
+        Args:
+            valor_informado: texto vindo do POST (ex.: '25.00' ou '25,00')
+        """
+        try:
+            informado = Decimal(str(valor_informado).strip().replace(',', '.'))
+        except (InvalidOperation, ValueError):
+            return False
+
+        return informado == self.previsao_multa()['valor']
+
+    def texto_aviso_desatualizado(self):
+        """
+        Mensagem para quando o aviso de multa mostrado ao usuário não
+        confere mais com o valor atual (o prazo venceu com a tela aberta).
+        """
+        valor = self.previsao_multa()['valor']
+
+        if valor > 0:
+            valor_br = formats.number_format(valor, decimal_pos=2, use_l10n=True)
+            situacao = f'cancelar agora gera multa de R$ {valor_br}'
+        else:
+            situacao = 'cancelar agora é sem multa'
+
+        return (
+            f'⚠️ O aviso de multa estava desatualizado: {situacao}. '
+            f'Confira e confirme o cancelamento de novo.'
+        )
+
     def cancelar(self, usuario, motivo=''):
         """
         Cancela o agendamento e aplica multa se necessário.
-        
+
+        A operação é atômica e idempotente: o agendamento é relido com
+        lock (select_for_update), então duplo clique ou duas abas não
+        criam duas multas, e se a criação da multa falhar o status
+        volta a ser o que era.
+
         Args:
             usuario: Usuário que está cancelando
             motivo: Motivo do cancelamento
-        
+
         Returns:
             tuple: (sucesso: bool, mensagem: str, valor_multa: Decimal)
         """
-        from django.utils import timezone
-        
-        # Verificar se já está cancelado
-        if self.status == 'CANCELADO':
-            return False, 'Este agendamento já está cancelado.', Decimal('0.00')
-        
-        # Verificar se já foi concluído
-        if self.status == 'CONCLUIDO':
-            return False, 'Não é possível cancelar um agendamento já concluído.', Decimal('0.00')
-        
-        # Verificar se precisa aplicar multa
-        pode_cancelar_sem_multa, minutos_restantes = self.pode_cancelar_sem_multa()
-        valor_multa = self.calcular_multa_cancelamento()
-        
-        # Cancelar o agendamento
-        self.status = 'CANCELADO'
-        self.save()
-        
-        # Se houver multa, criar registro
-        if valor_multa > 0:
-            Multa.objects.create(
-                terapeuta=self.terapeuta,
-                espaco=self.espaco,
-                agendamento=self,
-                valor=valor_multa,
-                motivo=f'Cancelamento com menos de {self.sala.prazo_cancelamento_sem_multa} minutos de antecedência. '
-                       f'Faltavam apenas {minutos_restantes} minutos. Motivo: {motivo}',
-                status='PENDENTE'
+        with transaction.atomic():
+            # Relê o agendamento com lock: o objeto em memória pode estar velho
+            atual = Agendamento.objects.select_for_update().get(pk=self.pk)
+
+            # Verificar se já está cancelado
+            if atual.status == 'CANCELADO':
+                return False, 'Este agendamento já está cancelado.', Decimal('0.00')
+
+            # Verificar se já foi concluído
+            if atual.status == 'CONCLUIDO':
+                return False, 'Não é possível cancelar um agendamento já concluído.', Decimal('0.00')
+
+            # Regra da multa (calculada antes de mudar o status)
+            previsao = atual.previsao_multa()
+            valor_multa = previsao['valor']
+
+            # Cancelar o agendamento
+            atual.status = 'CANCELADO'
+            atual.save(update_fields=['status', 'updated_at'])
+
+            # Se houver multa, criar registro (nasce com pago=False)
+            if previsao['havera_multa']:
+                if previsao['minutos_restantes'] < 0:
+                    situacao = 'O agendamento já havia começado.'
+                else:
+                    situacao = f'Faltavam {previsao["minutos_restantes"]} minutos.'
+
+                Multa.objects.create(
+                    terapeuta=atual.terapeuta,
+                    espaco=atual.espaco,
+                    agendamento=atual,
+                    valor=valor_multa,
+                    motivo=(
+                        f'Cancelamento com menos de {previsao["prazo"]} minutos '
+                        f'de antecedência. {situacao} Motivo: {motivo}'
+                    )[:MOTIVO_MULTA_MAX],
+                )
+
+        # Só depois do commit o objeto em memória reflete o cancelamento
+        self.status = atual.status
+
+        if previsao['havera_multa']:
+            valor_br = formats.number_format(
+                valor_multa, decimal_pos=2, use_l10n=True
             )
-            
-            mensagem = f'Agendamento cancelado. Multa de R$ {valor_multa} aplicada (cancelamento com menos de 1 hora de antecedência).'
+            mensagem = (
+                f'Agendamento cancelado. Multa de R$ {valor_br} aplicada '
+                f'(cancelamento com menos de {previsao["prazo"]} minutos de antecedência).'
+            )
         else:
             mensagem = 'Agendamento cancelado com sucesso!'
-        
+
         return True, mensagem, valor_multa
 
 

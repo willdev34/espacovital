@@ -1628,49 +1628,45 @@ class DashboardAgendamentoCancelarView(TerapeutaRequiredMixin, View):
         """
         Processa o cancelamento
         """
-        terapeuta = request.user.terapeuta
+        # Buscar agendamento: de outro terapeuta dá 404
+        agendamento = get_object_or_404(
+            Agendamento.objects.select_related('sala'),
+            pk=pk,
+            terapeuta=request.user.terapeuta
+        )
         
-        # Buscar agendamento
-        try:
-            agendamento = Agendamento.objects.get(
-                pk=pk,
-                terapeuta=terapeuta
+        # Aviso desatualizado: o valor da multa mudou desde que o usuário
+        # viu o aviso (ou o campo veio ausente/inválido). Não cancela.
+        # CANCELADO e CONCLUIDO são tratados pelo próprio cancelar().
+        if (
+            agendamento.status in ('PENDENTE', 'CONFIRMADO')
+            and not agendamento.multa_prevista_confere(
+                request.POST.get('multa_prevista')
             )
-        except Agendamento.DoesNotExist:
-            messages.error(request, '❌ Agendamento não encontrado.')
-            return redirect('terapeutas:dashboard_agendamentos')
-        
-        # Verificar se pode cancelar
-        if agendamento.status == 'CANCELADO':
-            messages.warning(request, '⚠️ Este agendamento já está cancelado.')
+        ):
+            messages.warning(request, agendamento.texto_aviso_desatualizado())
             return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
         
-        if agendamento.status == 'CONCLUIDO':
-            messages.error(request, '❌ Não é possível cancelar um agendamento já concluído.')
-            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+        # Pegar motivo (opcional, limitado a 200 caracteres)
+        motivo = (
+            request.POST.get('motivo', '').strip()[:200]
+            or 'Cancelado pelo terapeuta'
+        )
         
-        # Pegar motivo (opcional)
-        motivo = request.POST.get('motivo', 'Cancelado pelo terapeuta')
-        
-        # Cancelar
+        # Cancelar (regra da multa, transação e lock ficam no model)
         sucesso, mensagem, valor_multa = agendamento.cancelar(
             usuario=request.user,
             motivo=motivo
         )
         
-        if sucesso:
-            if valor_multa > 0:
-                messages.warning(
-                    request,
-                    f'⚠️ {mensagem}'
-                )
-            else:
-                messages.success(
-                    request,
-                    f'✅ {mensagem}'
-                )
-        else:
+        if not sucesso:
             messages.error(request, f'❌ {mensagem}')
+            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+        
+        if valor_multa > 0:
+            messages.warning(request, f'⚠️ {mensagem}')
+        else:
+            messages.success(request, f'✅ {mensagem}')
         
         return redirect('terapeutas:dashboard_agendamentos')
 

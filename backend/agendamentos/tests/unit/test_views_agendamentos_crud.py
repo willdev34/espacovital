@@ -476,7 +476,8 @@ class AgendamentoCancelarViewTest(AgendamentosViewsTestBase):
     def test_terapeuta_cancela_proprio_agendamento(self):
         """Cancelar volta ao dashboard e mostra mensagem de sucesso"""
         self._login_terapeuta()
-        response = self.client.post(self.url)
+        # PENDENTE nunca paga multa: o aviso mostrado é 0.00
+        response = self.client.post(self.url, {'multa_prevista': '0.00'})
         self.assertRedirects(
             response, self.url_dashboard, fetch_redirect_response=False
         )
@@ -487,7 +488,7 @@ class AgendamentoCancelarViewTest(AgendamentosViewsTestBase):
     def test_cancelamento_muda_status(self):
         """Cancelar deve mudar o status para CANCELADO"""
         self._login_terapeuta()
-        self.client.post(self.url)
+        self.client.post(self.url, {'multa_prevista': '0.00'})
         self.agendamento.refresh_from_db()
         self.assertEqual(self.agendamento.status, 'CANCELADO')
 
@@ -500,13 +501,22 @@ class AgendamentoCancelarViewTest(AgendamentosViewsTestBase):
         self.assertEqual(self.agendamento.status, 'PENDENTE')
 
     def test_nao_permite_cancelar_agendamento_ja_cancelado(self):
-        """Não deve permitir cancelar agendamento já cancelado"""
+        """Agendamento já cancelado volta ao detalhe com mensagem de erro"""
         self.agendamento.status = 'CANCELADO'
         self.agendamento.save()
 
         self._login_terapeuta()
-        response = self.client.post(self.url)
-        self.assertEqual(response.status_code, 404)
+        response = self.client.post(self.url, {'multa_prevista': '0.00'})
+        url_detalhe = reverse(
+            'agendamentos:agendamento_detail',
+            kwargs={'pk': self.agendamento.pk}
+        )
+        self.assertRedirects(
+            response, url_detalhe, fetch_redirect_response=False
+        )
+        self.assertTrue(self._mensagens(response))
+        self.agendamento.refresh_from_db()
+        self.assertEqual(self.agendamento.status, 'CANCELADO')
 
     def test_nao_permite_cancelar_agendamento_de_outro(self):
         """Terapeuta não deve cancelar agendamento de outro"""
