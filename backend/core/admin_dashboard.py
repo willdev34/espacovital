@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Dashboard Administrativo Customizado - Espaço Vital
+# Título: Dashboard Administrativo Customizado - Seravitta
 # Descrição: View customizada para estatísticas e gestão do painel admin
 # ===============================================================
 

@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Admin do App Espaços - Espaço Vital
+# Título: Admin do App Espaços - Seravitta
 # Descrição: Configuração do painel administrativo para espaços
 # ===============================================================
 

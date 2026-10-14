@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Models do App Terapeutas - Espaço Vital
+# Título: Models do App Terapeutas - Seravitta
 # Descrição: Models para gerenciar terapeutas, especialidades e avaliações
 # ===============================================================
 

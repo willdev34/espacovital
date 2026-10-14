@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Admin do App Terapeutas - Espaço Vital (Versão Corrigida)
+# Título: Admin do App Terapeutas - Seravitta (Versão Corrigida)
 # Descrição: Interface administrativa para gerenciar terapeutas e especialidades
 # ===============================================================
 
@@ -979,6 +979,6 @@ class ContatoAdmin(admin.ModelAdmin):
 # ===============================================================
 
 # Personalizar título do admin
-# admin.site.site_header = "Espaço Vital - Administração"
-# admin.site.site_title = "Espaço Vital Admin"
+# admin.site.site_header = "Seravitta - Administração"
+# admin.site.site_title = "Seravitta Admin"
 # admin.site.index_title = "Painel de Controle - Terapeutas"

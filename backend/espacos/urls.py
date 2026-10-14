@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: URLs do App Espacos - Espaço Vital
+# Título: URLs do App Espacos - Seravitta
 # Descrição: Configuração de URLs para espaços terapêuticos
 # ===============================================================
 

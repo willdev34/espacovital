@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: __init__ - Espaço Vital
+# Título: __init__ - Seravitta
 # Descrição: Inicialização do projeto com encoding UTF-8
 # ===============================================================
 

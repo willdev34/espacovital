@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Models do App Core - Espaço Vital
+# Título: Models do App Core - Seravitta
 # Descrição: Modelos base e utilitários do sistema
 # ===============================================================
 
@@ -333,7 +333,7 @@ class SiteConfiguration(models.Model):
     
     site_description = models.TextField(
         'Descrição do Site',
-        default='Conectando você ao cuidado terapêutico que transforma'
+        default='Conexões para o seu bem-estar'
     )
     
     contact_email = models.EmailField(

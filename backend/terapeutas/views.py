@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Views do App Terapeutas - Espaço Vital
+# Título: Views do App Terapeutas - Seravitta
 # Descrição: Views para busca, listagem e perfil de terapeutas
 # ===============================================================
 
@@ -249,7 +249,7 @@ class TerapeutaListView(ListView):
                 pass
         
         # Meta dados da página
-        context['page_title'] = 'Buscar Terapeuta - Espaço Vital'
+        context['page_title'] = 'Buscar Terapeuta - Seravitta'
         context['meta_description'] = 'Encontre terapeutas verificados usando nossa busca avançada. Filtre por localização, especialidade, tipo de sessão e muito mais.'
         
         return context
@@ -421,7 +421,7 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         'total_resultados': terapeutas.count(),
         'titulo_pagina': titulo_pagina,
         'filtros_aplicados': filtros_aplicados,
-        'page_title': f'{titulo_pagina} - Espaço Vital',
+        'page_title': f'{titulo_pagina} - Seravitta',
         'meta_description': f'Encontre os melhores {titulo_pagina.lower()} verificados pela plataforma.'
     }
     
@@ -493,7 +493,7 @@ class TerapeutaDetailView(DetailView):
         ).order_by('-verificado', '-media_avaliacoes')[:3]
         
         # Meta dados
-        context['page_title'] = f'{terapeuta.nome_exibicao} - Terapeuta - Espaço Vital'
+        context['page_title'] = f'{terapeuta.nome_exibicao} - Terapeuta - Seravitta'
         context['meta_description'] = f'{terapeuta.bio_curta[:150]}...'
         
         return context
@@ -649,7 +649,7 @@ def contatar_terapeuta(request, terapeuta_slug):
     context = {
         'terapeuta': terapeuta,
         'especialidades': terapeuta.especialidades.filter(is_active=True),
-        'page_title': f'Contatar {terapeuta.nome_exibicao} - Espaço Vital',
+        'page_title': f'Contatar {terapeuta.nome_exibicao} - Seravitta',
     }
     
     return render(request, 'terapeutas/contato_form.html', context)
@@ -677,7 +677,7 @@ class TerapeutaCreateView(LoginRequiredMixin, CreateView):
         context['paises'] = Pais.objects.filter(ativo=True).order_by('nome')
         context['estados'] = Estado.objects.filter(ativo=True).order_by('nome')
         context['cidades'] = Cidade.objects.filter(ativo=True).order_by('nome')
-        context['page_title'] = 'Cadastrar Terapeuta - Espaço Vital'
+        context['page_title'] = 'Cadastrar Terapeuta - Seravitta'
         return context
 
     

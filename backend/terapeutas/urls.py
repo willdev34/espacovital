@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: URLs do App Terapeutas - Espaço Vital
+# Título: URLs do App Terapeutas - Seravitta
 # Descrição: Configuração de rotas para busca, perfil e dashboard de terapeutas
 # ===============================================================
 

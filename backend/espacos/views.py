@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Views do App Espacos - Espaço Vital
+# Título: Views do App Espacos - Seravitta
 # Descrição: Views para busca, listagem e perfil de espaços terapêuticos
 # ===============================================================
 
@@ -1582,8 +1582,8 @@ class ConvidarTerapeutaView(EspacoRequiredMixin, View):
             # Envia o email
             try:
                 send_mail(
-                    subject=f'Convite do {espaco.nome} - Espaço Vital',
-                    message=f'Você recebeu um convite do {espaco.nome} para usar a plataforma Espaço Vital.',
+                    subject=f'Convite do {espaco.nome} - Seravitta',
+                    message=f'Você recebeu um convite do {espaco.nome} para usar a plataforma Seravitta.',
                     from_email='noreply@espacovital.com.br',
                     recipient_list=[email],
                     html_message=html_email,

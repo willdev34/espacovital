@@ -1,8 +1,8 @@
 <!-- 
 ===============================================================
-Título: Template Perfil do Terapeuta - Espaço Vital
+Título: Template Perfil do Terapeuta - Seravitta
 Descrição: Página completa do perfil de um terapeuta
-Autor: Will | Empresa: Espaço VItal
+Autor: Will | Empresa: Seravitta
 Data: 13/09/2025
 ===============================================================
 -->
@@ -697,7 +697,7 @@ Data: 13/09/2025
 <script>
     // ===============================================================
     // JavaScript para Perfil do Terapeuta
-    // Autor: Will | Empresa: Espaço VItal
+    // Autor: Will | Empresa: Seravitta
     // Data: 13/09/2025
     // ===============================================================
     
@@ -775,7 +775,7 @@ Data: 13/09/2025
                 if (navigator.share) {
                     try {
                         await navigator.share({
-                            title: '{{ terapeuta.nome_exibicao }} - Espaço Vital',
+                            title: '{{ terapeuta.nome_exibicao }} - Seravitta',
                             text: '{{ terapeuta.bio_curta|truncatewords:15 }}',
                             url: window.location.href
                         });

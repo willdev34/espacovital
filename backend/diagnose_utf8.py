@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # ===============================================================
-# Título: Diagnóstico UTF-8 - Espaço Vital
+# Título: Diagnóstico UTF-8 - Seravitta
 # Descrição: Identifica problemas de encoding no Windows
 # ===============================================================
 
@@ -9,7 +9,7 @@ import sys
 import locale
 
 print("=" * 70)
-print("🔍 DIAGNÓSTICO COMPLETO UTF-8 - ESPAÇO VITAL")
+print("🔍 DIAGNÓSTICO COMPLETO UTF-8 - SERAVITTA")
 print("=" * 70)
 
 # 1. Sistema Operacional e Python

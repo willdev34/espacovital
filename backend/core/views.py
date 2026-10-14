@@ -28,7 +28,7 @@ from .models import Contact, SugestaoTerapia
 
 class HomeView(TemplateView):
     """
-    View da página inicial do Espaço Vital
+    View da página inicial da Seravitta
     Carrossel com todos terapeutas em destaque, ordem rotativa a cada 5h
     """
     template_name = 'core/home.html'
@@ -171,7 +171,7 @@ class HomeView(TemplateView):
         ).select_related('estado').order_by('nome')
         
         # Meta dados da página
-        context['page_title'] = 'Espaço Vital - Conectando você ao cuidado terapêutico'
+        context['page_title'] = 'Seravitta - Conexões para o seu bem-estar'
         context['meta_description'] = 'Encontre terapeutas e espaços terapêuticos verificados. Conectamos você ao cuidado que transforma sua vida.'
         
         return context
@@ -216,7 +216,7 @@ class HomeView(TemplateView):
             },
             {
                 'id': 5,
-                'name': 'Espaço Vital',
+                'name': 'Seravitta',
                 'location': 'Vilinha / ES',
                 'therapists_count': 4,
                 'color_class': 'from-amber-300 via-yellow-400 to-orange-500',
@@ -259,7 +259,7 @@ class HomeView(TemplateView):
             }
         ]
         
-        # Dados para "Por que utilizar o Espaço Vital"
+        # Dados para "Por que utilizar a Seravitta"
         context['platform_benefits'] = [
             {
                 'title': 'Profissionais verificados',
@@ -423,7 +423,7 @@ def fix_sequences_view(request):
 class SobreView(TemplateView):
     """
     Página Sobre o Projeto
-    Descreve a missão, visão e valores do Espaço Vital
+    Descreve a missão, visão e valores da Seravitta
     Autor: Will
     Data: 08/11/2025
     """
@@ -431,7 +431,7 @@ class SobreView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Sobre o Espaço Vital - Nossa História e Missão'
+        context['page_title'] = 'Sobre a Seravitta - Nossa História e Missão'
         return context
 
 
@@ -446,7 +446,7 @@ class TermosView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Termos de Uso - Espaço Vital'
+        context['page_title'] = 'Termos de Uso - Seravitta'
         return context
 
 
@@ -461,7 +461,7 @@ class PrivacidadeView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Política de Privacidade - Espaço Vital'
+        context['page_title'] = 'Política de Privacidade - Seravitta'
         return context
 
 
@@ -476,14 +476,14 @@ class CookiesView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Política de Cookies - Espaço Vital'
+        context['page_title'] = 'Política de Cookies - Seravitta'
         return context
 
 
 class ParceiroView(TemplateView):
     """
     Página Seja um Parceiro
-    Informações para terapeutas e espaços se cadastrarem como parceiros do Espaço Vital
+    Informações para terapeutas e espaços se cadastrarem como parceiros da Seravitta
     """
     template_name = 'core/parceiro.html'
 
@@ -502,7 +502,7 @@ class ParceiroView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Seja um Parceiro - Espaço Vital'
+        context['page_title'] = 'Seja um Parceiro - Seravitta'
         # Informa o template se veio de um convite
         context['tem_convite'] = 'convite_token' in self.request.session
         return context
@@ -517,14 +517,14 @@ class FaqView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Perguntas Frequentes (FAQ) - Espaço Vital'
+        context['page_title'] = 'Perguntas Frequentes (FAQ) - Seravitta'
         return context
 
 
 class ContatoView(CreateView):
     """
     Página de Contato com Formulário
-    Permite usuários enviarem mensagens para o Espaço Vital
+    Permite usuários enviarem mensagens para a Seravitta
     """
     model = Contact
     template_name = 'core/contato.html'
@@ -533,7 +533,7 @@ class ContatoView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Fale Conosco - Espaço Vital'
+        context['page_title'] = 'Fale Conosco - Seravitta'
         return context
     
     def form_valid(self, form):
@@ -562,7 +562,7 @@ class IndiqueTerapiaView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Indique uma Terapia - Espaço Vital'
+        context['page_title'] = 'Indique uma Terapia - Seravitta'
         return context
     
     def form_valid(self, form):

@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Requirements - Espaço Vital
+# Título: Requirements - Seravitta
 # Descrição: Dependências Python para o projeto
 # ===============================================================
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ===============================================================
-# Título: Manage.py - Espaço Vital
+# Título: Manage.py - Seravitta
 # Descrição: Script principal do Django com encoding UTF-8 forçados
 # ===============================================================
 

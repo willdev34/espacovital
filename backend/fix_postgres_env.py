@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Fix PostgreSQL Environment - Espaço Vital
+# Título: Fix PostgreSQL Environment - Seravitta
 # Descrição: Remove variáveis de ambiente problemáticas do PostgreSQL
 # ===============================================================
 

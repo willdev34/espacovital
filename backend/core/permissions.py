@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Sistema de Permissões Personalizadas - Espaço Vital
+# Título: Sistema de Permissões Personalizadas - Seravitta
 # Descrição: Configurações de permissões traduzidas e intuitivas
 # ===============================================================
 

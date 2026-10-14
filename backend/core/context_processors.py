@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Context Processors - Espaço Vital
+# Título: Context Processors - Seravitta
 # Descrição: Dados globais disponíveis em todos os templates
 # ===============================================================
 
@@ -119,7 +119,7 @@ def global_context(request):
     ).select_related('estado', 'estado__pais').order_by('nome')
     
     return {
-        'SITE_NAME': 'Espaço Vital',
+        'SITE_NAME': 'Seravitta',
         'main_navigation': main_navigation,
         'footer_links': footer_links,
         'social_media': social_media,
