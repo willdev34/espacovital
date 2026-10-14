@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Apps.py do App Espacos - Espaço Vital
+# Título: Apps.py do App Espacos - Seravitta
 # Descrição: Configuração do app espacos
 # ===============================================================
 

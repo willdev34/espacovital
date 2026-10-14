@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Comando para Configurar Permissões - Espaço Vital
+# Título: Comando para Configurar Permissões - Seravitta
 # Descrição: Management command para criar grupos e permissões
 # ===============================================================
 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
         reset = options['reset']
         
         self.stdout.write(
-            self.style.SUCCESS('🔧 Configurando Sistema de Permissões - Espaço Vital')
+            self.style.SUCCESS('🔧 Configurando Sistema de Permissões - Seravitta')
         )
         
         if reset:

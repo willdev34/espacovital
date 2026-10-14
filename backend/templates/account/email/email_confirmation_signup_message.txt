@@ -1,6 +1,6 @@
 Olá, {{ user.first_name }}!
 
-Seja bem-vindo ao Espaço Vital!
+Seja bem-vindo à Seravitta!
 
 Para ativar sua conta, confirme seu email clicando no link abaixo:
 
@@ -8,8 +8,8 @@ Para ativar sua conta, confirme seu email clicando no link abaixo:
 
 Este link expira em 24 horas.
 
-Se você não se cadastrou no Espaço Vital, ignore este email.
+Se você não se cadastrou na Seravitta, ignore este email.
 
 Atenciosamente,
-Equipe Espaço Vital
+Equipe Seravitta
 https://espacovital.onrender.com

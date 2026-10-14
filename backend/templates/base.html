@@ -1,8 +1,8 @@
 <!-- 
 ===============================================================
-Título: Template Base - Espaço Vital (Versão Refatorada)
+Título: Template Base - Seravitta (Versão Refatorada)
 Descrição: Template principal responsivo fiel ao layout das imagens
-Autor: Will | Empresa: Espaço VItal
+Autor: Will | Empresa: Seravitta
 Data: 07/09/2025
 ===============================================================
 -->
@@ -14,8 +14,8 @@ Data: 07/09/2025
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>{% block title %}Espaço Vital{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{{ meta_description|default:'Conectando você ao cuidado terapêutico que transforma' }}{% endblock %}">
+    <title>{% block title %}Seravitta{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ meta_description|default:'Conexões para o seu bem-estar' }}{% endblock %}">
 
     <!-- Font Awesome - Ícones oficiais das redes sociais -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
@@ -23,10 +23,11 @@ Data: 07/09/2025
           crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/logo/favicon.svg' %}">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,17 +38,19 @@ Data: 07/09/2025
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#0B5259',      // Verde petróleo principal
-                        'light-bg': '#f2eae0',     // Fundo claro conforme solicitado
-                        'neutral': '#D8E2DC',      // Cinza neutro
-                        'coral': '#FFB4A2',        // Coral para CTAs
-                        'mint': '#56C596',         // Verde menta
+                        'primary': '#1E5C5C',      // Petróleo (cor da marca Seravitta)
+                        'primary-dark': '#123F40', // Petróleo profundo (texto e hover)
+                        'light-bg': '#FBF9F5',     // Quase-branco (fundo padrão da página)
+                        'bege': '#F1E8DA',         // Bege (seções alternadas)
+                        'neutral': '#E3DCCF',      // Divisor
+                        'coral': '#EE8B73',        // Coral: só acento (ponto do logo), nunca texto
+                        'mint': '#9BD8C0',         // Menta: só fundos e degradês, nunca texto
                         'card-bg': '#ffffff',      // Fundo dos cards
                     },
                     fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif'],
-                        'roboto': ['Roboto', 'sans-serif'],
-                        'playfair': ['Playfair Display', 'serif'],
+                        // Roboto é a única fonte da interface; 'poppins' fica como apelido para não mexer em todos os templates
+                        'poppins': ['Roboto', 'system-ui', 'sans-serif'],
+                        'roboto': ['Roboto', 'system-ui', 'sans-serif'],
                     },
                     borderRadius: {
                         'xl': '1rem',
@@ -78,9 +81,9 @@ Data: 07/09/2025
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
-                        <img src="{% static 'images/logo/logotipo_minimalista.png' %}" 
-                             alt="Espaço Vital" 
-                             class="h-24 w-auto object-contain"
+                        <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                             alt="Seravitta" 
+                             class="h-10 w-auto object-contain"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     </a>
                 </div>
@@ -201,13 +204,13 @@ Data: 07/09/2025
                 <!-- Logo Mobile -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
-                        <img src="{% static 'images/logo/logotipo_minimalista.png' %}" 
-                             alt="Espaço Vital" 
-                             class="h-20 w-auto object-contain"
+                        <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                             alt="Seravitta" 
+                             class="h-12 w-auto object-contain"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                         <!-- Fallback icon -->
                         <div class="hidden w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">EV</span>
+                            <span class="text-white font-bold text-lg">S</span>
                         </div>
                     </a>
                 </div>
@@ -337,14 +340,14 @@ Data: 07/09/2025
                 <!-- Logo com redes sociais -->
                 <div class="flex flex-col items-start space-y-6 relative" style="width: 280px;">
                     <!-- Logo -->
-                    <img src="{% static 'images/logo/logotipo_minimalista.png' %}" 
-                        alt="Espaço Vital" 
-                        class="h-24 w-auto object-contain"
+                    <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                        alt="Seravitta" 
+                        class="h-14 w-auto object-contain"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <!-- Fallback Logo -->
                     <div class="hidden">
-                        <span class="text-xl font-poppins font-bold text-primary">ESPAÇO VITAL</span>
-                        <p class="text-xs text-gray-600">Conectando você ao cuidado terapêutico que transforma</p>
+                        <span class="text-xl font-poppins font-bold text-primary">SERAVITTA</span>
+                        <p class="text-xs text-gray-600">Conexões para o seu bem-estar</p>
                     </div>
                     
                     <!-- Redes sociais -->
@@ -446,12 +449,12 @@ Data: 07/09/2025
             <div class="md:hidden space-y-8">
                 <!-- Logo mobile -->
                 <div class="text-center">
-                    <img src="{% static 'images/logo/logotipo_minimalista.png' %}" 
-                        alt="Espaço Vital" 
-                        class="h-20 w-auto object-contain mx-auto"
+                    <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
+                        alt="Seravitta" 
+                        class="h-12 w-auto object-contain mx-auto"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <div class="hidden">
-                        <span class="text-lg font-poppins font-bold text-primary">ESPAÇO VITAL</span>
+                        <span class="text-lg font-poppins font-bold text-primary">SERAVITTA</span>
                     </div>
                 </div>
                 
@@ -538,7 +541,7 @@ Data: 07/09/2025
         <!-- Copyright -->
         <div class="py-4" style="background-color: #f2eae0;">
             <div class="container mx-auto px-4 lg:px-6 text-center">
-                <p class="text-sm text-gray-500">© 2025 Espaço Vital - Todos os direitos reservados</p>
+                <p class="text-sm text-gray-500">© 2025 Seravitta - Todos os direitos reservados</p>
             </div>
         </div>
     </footer>

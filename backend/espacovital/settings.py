@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Settings - Espaço Vital
+# Título: Settings - Seravitta
 # Descrição: Configurações do projeto Django com encoding UTF-8
 # ===============================================================
 

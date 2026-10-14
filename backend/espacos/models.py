@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Models do App Espacos - Espaço Vital
+# Título: Models do App Espacos - Seravitta
 # Descrição: Models para gerenciar espaços terapêuticos, comodidades e avaliações
 # ===============================================================
 

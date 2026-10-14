@@ -1,5 +1,5 @@
 # ===============================================================
-# Titulo: Run Server - Espaco Vital  
+# Titulo: Run Server - Seravitta  
 # Descricao: Script para iniciar servidor com limpeza de variaveis
 # ===============================================================
 
@@ -8,7 +8,7 @@ import sys
 import subprocess
 
 print("=" * 60)
-print("🚀 INICIANDO SERVIDOR ESPACO VITAL")
+print("🚀 INICIANDO SERVIDOR SERAVITTA")
 print("=" * 60)
 
 # PASSO 1: FORCA UTF-8 ANTES DE TUDO

@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Admin Customizado para Permissões - Espaço Vital (Corrigido)
+# Título: Admin Customizado para Permissões - Seravitta (Corrigido)
 # Descrição: Customizações do Django Admin com permissões traduzidas
 # ===============================================================
 
@@ -635,8 +635,8 @@ admin.site.register(Group, CustomGroupAdmin)
 # ===============================================================
 
 # Personalizar título do admin
-admin.site.site_header = "Espaço Vital - Administração"
-admin.site.site_title = "Espaço Vital Admin"
+admin.site.site_header = "Seravitta - Administração"
+admin.site.site_title = "Seravitta Admin"
 admin.site.index_title = "Painel de Controle"
 admin.site.site_url = "/"  # Link para voltar ao site
 

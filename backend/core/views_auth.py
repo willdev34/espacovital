@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Views de Autenticação Customizadas - Espaço Vital
+# Título: Views de Autenticação Customizadas - Seravitta
 # Descrição: Views personalizadas para login/logout com controle
 # de redirecionamento e mensagens
 # ===============================================================

@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: Adapter customizado para Allauth - Espaço Vital
+# Título: Adapter customizado para Allauth - Seravitta
 # Descrição: Controla redirecionamento após login baseado no usuário
 #            e gerencia dados extras durante o signup
 # ===============================================================

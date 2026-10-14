@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: URLs do App Core - Espaço Vital (Versão Simples)
+# Título: URLs do App Core - Seravitta (Versão Simples)
 # Descrição: Configuração básica de rotas do app core
 # ===============================================================
 

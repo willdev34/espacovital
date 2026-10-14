@@ -1,5 +1,5 @@
 # ===============================================================
-# Título: URLs Principal - Espaço Vital
+# Título: URLs Principal - Seravitta
 # Descrição: Configuração principal de rotas da aplicação
 # ===============================================================
 
