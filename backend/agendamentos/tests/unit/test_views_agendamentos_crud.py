@@ -385,15 +385,15 @@ class AgendamentoEditarViewTest(AgendamentosViewsTestBase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    def test_post_valido_atualiza_horario_valor_e_observacoes(self):
-        """POST válido atualiza horário, valor e observações"""
+    def test_post_valido_atualiza_horario_e_observacoes_sem_mexer_no_valor(self):
+        """POST válido atualiza horário e observações; o valor não muda"""
         self._login_terapeuta()
         dados = {
             'data': self.amanha,
             'hora_inicio': '11:00',
-            'hora_fim': '12:00',
             'observacoes': 'Atualizado.',
-            'valor_cobrado': '95.00',
+            # Tentativa de baixar o preço pela tela: deve ser ignorada
+            'valor_cobrado': '1.00',
         }
         response = self.client.post(self.url, dados)
         self.assertRedirects(
@@ -401,21 +401,46 @@ class AgendamentoEditarViewTest(AgendamentosViewsTestBase):
         )
         self.agendamento.refresh_from_db()
         self.assertEqual(self.agendamento.hora_inicio, time(11, 0))
+        # hora_fim vem da duração da sala (60 min), não do POST
         self.assertEqual(self.agendamento.hora_fim, time(12, 0))
-        self.assertEqual(self.agendamento.valor_cobrado, Decimal('95.00'))
+        self.assertEqual(self.agendamento.valor_cobrado, Decimal('90.00'))
         self.assertEqual(self.agendamento.observacoes, 'Atualizado.')
         self.assertIn(
             '✅ Agendamento atualizado com sucesso!', self._mensagens(response)
         )
 
     def test_nao_permite_editar_agendamento_cancelado(self):
-        """Não deve permitir editar agendamento já cancelado"""
+        """Agendamento cancelado vai para o detalhe com mensagem de erro"""
         self.agendamento.status = 'CANCELADO'
         self.agendamento.save()
 
         self._login_terapeuta()
+        url_detalhe = reverse(
+            'agendamentos:agendamento_detail',
+            kwargs={'pk': self.agendamento.pk}
+        )
+
+        # GET bloqueado: redireciona para o detalhe com mensagem
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 404)
+        self.assertRedirects(
+            response, url_detalhe, fetch_redirect_response=False
+        )
+        self.assertTrue(
+            any('pendentes' in m for m in self._mensagens(response))
+        )
+
+        # POST bloqueado: nada é gravado
+        response = self.client.post(self.url, {
+            'data': self.amanha,
+            'hora_inicio': '11:00',
+            'observacoes': 'Tentativa.',
+        })
+        self.assertRedirects(
+            response, url_detalhe, fetch_redirect_response=False
+        )
+        self.agendamento.refresh_from_db()
+        self.assertEqual(self.agendamento.hora_inicio, time(10, 0))
+        self.assertEqual(self.agendamento.status, 'CANCELADO')
 
     def test_nao_permite_editar_agendamento_de_outro_terapeuta(self):
         """Terapeuta não deve editar agendamento de outro"""

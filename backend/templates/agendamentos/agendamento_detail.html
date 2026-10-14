@@ -171,11 +171,14 @@
             {# Ações disponíveis somente para agendamentos ativos #}
             {% if agendamento.status == 'PENDENTE' or agendamento.status == 'CONFIRMADO' %}
             <div class="flex gap-3">
+                {# Editar: somente agendamento PENDENTE #}
+                {% if agendamento.status == 'PENDENTE' %}
                 <a href="{% url 'agendamentos:agendamento_update' agendamento.id %}"
                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
                     <i class="fas fa-edit mr-2"></i>
                     Editar
                 </a>
+                {% endif %}
 
                 {# Cancelar via POST #}
                 <form method="post" action="{% url 'agendamentos:agendamento_cancelar' agendamento.id %}">

@@ -11,6 +11,90 @@ from .models import Agendamento, Sala, VinculoTerapeutaEspaco
 from espacos.models import Espaco
 
 
+def validar_horario_agendamento(sala, data, hora_inicio, ignorar_pk=None):
+    """
+    Regras de horário compartilhadas entre a criação e a edição.
+
+    Valida, nesta ordem: data no passado, antecedência mínima de 30
+    minutos, horário de funcionamento da sala, sessão que passa do
+    fechamento (inclusive virando a meia-noite) e conflito com outro
+    agendamento. Devolve a hora_fim calculada pela duração da sala.
+
+    ignorar_pk: pk do próprio agendamento na edição, para que ele não
+    conflite consigo mesmo.
+    """
+    # ===== VALIDAÇÃO 1: Data não pode ser no passado =====
+    # Usa o dia local (America/Sao_Paulo), não o dia em UTC
+    hoje = timezone.localdate()
+    if data < hoje:
+        raise ValidationError('A data do agendamento não pode ser no passado.')
+
+    # ===== VALIDAÇÃO 2: Antecedência mínima de 30 minutos =====
+    agora = timezone.now()
+    data_hora_agendamento = timezone.make_aware(
+        datetime.combine(data, hora_inicio)
+    )
+
+    diferenca = data_hora_agendamento - agora
+
+    if diferenca.total_seconds() < 1800:  # 1800 segundos = 30 minutos
+        raise ValidationError(
+            'Agendamentos devem ser feitos com pelo menos 30 minutos de antecedência. '
+            'Para agendamentos urgentes, entre em contato diretamente com o espaço.'
+        )
+
+    # ===== VALIDAÇÃO 3: Horário dentro do funcionamento da sala =====
+    if hora_inicio < sala.horario_abertura:
+        raise ValidationError(
+            f'A sala só abre às {sala.horario_abertura.strftime("%H:%M")}. '
+            f'Escolha um horário a partir deste.'
+        )
+
+    # Compara datetimes completos: uma sessão que cruza a meia-noite
+    # volta para 00:xx como time e parecia estar "antes" do fechamento
+    hora_inicio_dt = datetime.combine(data, hora_inicio)
+    fechamento_dt = datetime.combine(data, sala.horario_fechamento)
+
+    if hora_inicio_dt >= fechamento_dt:
+        raise ValidationError(
+            f'A sala fecha às {sala.horario_fechamento.strftime("%H:%M")}. '
+            f'Escolha um horário anterior.'
+        )
+
+    # ===== VALIDAÇÃO 4: Calcular hora_fim =====
+    hora_fim_dt = hora_inicio_dt + timedelta(minutes=sala.duracao_sessao)
+    hora_fim = hora_fim_dt.time()
+
+    # Sessão que passa do fechamento (inclusive virando o dia) é barrada
+    if hora_fim_dt > fechamento_dt:
+        raise ValidationError(
+            f'A sessão terminaria às {hora_fim.strftime("%H:%M")}, '
+            f'após o horário de fechamento da sala ({sala.horario_fechamento.strftime("%H:%M")}). '
+            f'Escolha um horário mais cedo ou uma sala com horário estendido.'
+        )
+
+    # ===== VALIDAÇÃO 5: Verificar conflito de horários =====
+    conflitos = Agendamento.objects.filter(
+        sala=sala,
+        data=data,
+        status__in=['PENDENTE', 'CONFIRMADO']
+    ).exclude(pk=ignorar_pk)
+
+    for agendamento in conflitos:
+        # Verificar sobreposição de horários
+        # Há conflito se: (novo_inicio < existente_fim) E (novo_fim > existente_inicio)
+        if not (hora_fim <= agendamento.hora_inicio or
+                hora_inicio >= agendamento.hora_fim):
+            raise ValidationError(
+                f'❌ Conflito de horário! Já existe um agendamento das '
+                f'{agendamento.hora_inicio.strftime("%H:%M")} às '
+                f'{agendamento.hora_fim.strftime("%H:%M")} nesta sala. '
+                f'Escolha outro horário ou outra sala.'
+            )
+
+    return hora_fim
+
+
 class AgendamentoForm(forms.ModelForm):
     """
     Formulário para criar novo agendamento de sala.
@@ -184,76 +268,13 @@ class AgendamentoForm(forms.ModelForm):
         if not all([sala, data, hora_inicio]):
             return cleaned_data
         
-        # ===== VALIDAÇÃO 1: Data não pode ser no passado =====
-        # Usa o dia local (America/Sao_Paulo), não o dia em UTC
-        hoje = timezone.localdate()
-        if data < hoje:
-            raise ValidationError('A data do agendamento não pode ser no passado.')
-        
-        # ===== VALIDAÇÃO 2: Antecedência mínima de 30 minutos =====
-        agora = timezone.now()
-        data_hora_agendamento = timezone.make_aware(
-            datetime.combine(data, hora_inicio)
+        # Regras de horário compartilhadas com a edição (passado,
+        # antecedência, funcionamento da sala, meia-noite e conflito)
+        cleaned_data['hora_fim'] = validar_horario_agendamento(
+            sala, data, hora_inicio, ignorar_pk=self.instance.pk
         )
-
-        diferenca = data_hora_agendamento - agora
-
-        if diferenca.total_seconds() < 1800:  # 1800 segundos = 30 minutos
-            raise ValidationError(
-                'Agendamentos devem ser feitos com pelo menos 30 minutos de antecedência. '
-                'Para agendamentos urgentes, entre em contato diretamente com o espaço.'
-            )
         
-        # ===== VALIDAÇÃO 3: Horário dentro do funcionamento da sala =====
-        if hora_inicio < sala.horario_abertura:
-            raise ValidationError(
-                f'A sala só abre às {sala.horario_abertura.strftime("%H:%M")}. '
-                f'Escolha um horário a partir deste.'
-            )
-        
-        # Compara datetimes completos: uma sessão que cruza a meia-noite
-        # volta para 00:xx como time e parecia estar "antes" do fechamento
-        hora_inicio_dt = datetime.combine(data, hora_inicio)
-        fechamento_dt = datetime.combine(data, sala.horario_fechamento)
-
-        if hora_inicio_dt >= fechamento_dt:
-            raise ValidationError(
-                f'A sala fecha às {sala.horario_fechamento.strftime("%H:%M")}. '
-                f'Escolha um horário anterior.'
-            )
-
-        # ===== VALIDAÇÃO 4: Calcular hora_fim =====
-        hora_fim_dt = hora_inicio_dt + timedelta(minutes=sala.duracao_sessao)
-        cleaned_data['hora_fim'] = hora_fim_dt.time()
-
-        # Sessão que passa do fechamento (inclusive virando o dia) é barrada
-        if hora_fim_dt > fechamento_dt:
-            raise ValidationError(
-                f'A sessão terminaria às {cleaned_data["hora_fim"].strftime("%H:%M")}, '
-                f'após o horário de fechamento da sala ({sala.horario_fechamento.strftime("%H:%M")}). '
-                f'Escolha um horário mais cedo ou uma sala com horário estendido.'
-            )
-        
-        # ===== VALIDAÇÃO 5: Verificar conflito de horários =====
-        conflitos = Agendamento.objects.filter(
-            sala=sala,
-            data=data,
-            status__in=['PENDENTE', 'CONFIRMADO']
-        ).exclude(pk=self.instance.pk if self.instance else None)
-        
-        for agendamento in conflitos:
-            # Verificar sobreposição de horários
-            # Há conflito se: (novo_inicio < existente_fim) E (novo_fim > existente_inicio)
-            if not (cleaned_data['hora_fim'] <= agendamento.hora_inicio or 
-                    hora_inicio >= agendamento.hora_fim):
-                raise ValidationError(
-                    f'❌ Conflito de horário! Já existe um agendamento das '
-                    f'{agendamento.hora_inicio.strftime("%H:%M")} às '
-                    f'{agendamento.hora_fim.strftime("%H:%M")} nesta sala. '
-                    f'Escolha outro horário ou outra sala.'
-                )
-        
-        # ===== VALIDAÇÃO 6: Calcular valor =====
+        # ===== Calcular valor =====
         cleaned_data['valor_cobrado'] = sala.valor_sessao
         
         return cleaned_data
@@ -283,4 +304,86 @@ class AgendamentoForm(forms.ModelForm):
         if commit:
             agendamento.save()
         
+        return agendamento
+
+
+class AgendamentoEditarForm(forms.ModelForm):
+    """
+    Formulário para editar um agendamento PENDENTE existente.
+
+    Só data, hora_inicio e observacoes mudam pela tela. Sala, espaço,
+    terapeuta, status, pago e valor_cobrado nunca mudam, e hora_fim é
+    recalculada pela duração da sala. Valem as mesmas regras de horário
+    da criação, sem conflitar com o próprio agendamento.
+
+    Se data e hora_inicio não mudaram (só observações), a validação de
+    horário é pulada: o terapeuta pode ajustar o texto de um agendamento
+    que já está dentro dos 30 minutos ou que ficou no passado.
+    """
+
+    class Meta:
+        model = Agendamento
+        fields = ['data', 'hora_inicio', 'observacoes']
+        widgets = {
+            'data': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'type': 'date',
+                    'class': 'block w-full min-h-[44px] rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]',
+                },
+            ),
+            'hora_inicio': forms.TimeInput(
+                format='%H:%M',
+                attrs={
+                    'type': 'time',
+                    'class': 'block w-full min-h-[44px] rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]',
+                },
+            ),
+            'observacoes': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Ex: tipo de atendimento, necessidades especiais...',
+                'class': 'block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1E5C5C] focus:ring-[#1E5C5C]',
+            }),
+        }
+
+    def clean(self):
+        """
+        Valida o horário pelas mesmas regras da criação, usando a sala
+        do próprio agendamento (a sala nunca vem do POST)
+        """
+        cleaned_data = super().clean()
+        data = cleaned_data.get('data')
+        hora_inicio = cleaned_data.get('hora_inicio')
+
+        if not all([data, hora_inicio]):
+            return cleaned_data
+
+        horario_mudou = (
+            'data' in self.changed_data or 'hora_inicio' in self.changed_data
+        )
+
+        if horario_mudou:
+            self._hora_fim = validar_horario_agendamento(
+                self.instance.sala, data, hora_inicio,
+                ignorar_pk=self.instance.pk,
+            )
+        else:
+            # Só observações: mantém o horário que já estava gravado
+            self._hora_fim = self.instance.hora_fim
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        """
+        Grava só os campos editáveis. O update_fields impede que uma
+        tela aberta há tempo reverta status ou pago alterados depois.
+        """
+        agendamento = super().save(commit=False)
+        agendamento.hora_fim = self._hora_fim
+
+        if commit:
+            agendamento.save(update_fields=[
+                'data', 'hora_inicio', 'hora_fim', 'observacoes', 'updated_at',
+            ])
+
         return agendamento

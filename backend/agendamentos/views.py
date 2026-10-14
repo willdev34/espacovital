@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from espacos.models import Espaco
 from terapeutas.views import TerapeutaRequiredMixin
-from .forms import AgendamentoForm
+from .forms import AgendamentoForm, AgendamentoEditarForm
 from .models import Agendamento, Sala
 
 
@@ -118,9 +118,10 @@ class AgendamentoCriarView(TerapeutaRequiredMixin, CreateView):
 # ==========================================
 # DETALHES DO AGENDAMENTO
 # ==========================================
-class AgendamentoDetalheView(LoginRequiredMixin, DetailView):
+class AgendamentoDetalheView(TerapeutaRequiredMixin, DetailView):
     """
-    Descrição: Exibe todos os dados de um agendamento específico
+    Descrição: Exibe todos os dados de um agendamento específico.
+               Usuário sem perfil de terapeuta vai para a home.
     """
     model = Agendamento
     template_name = 'agendamentos/agendamento_detail.html'
@@ -138,24 +139,58 @@ class AgendamentoDetalheView(LoginRequiredMixin, DetailView):
 # ==========================================
 # EDITAR AGENDAMENTO
 # ==========================================
-class AgendamentoEditarView(LoginRequiredMixin, UpdateView):
+class AgendamentoEditarView(TerapeutaRequiredMixin, UpdateView):
     """
-    Descrição: Formulário para editar um agendamento existente
-               Só permite editar agendamentos PENDENTE ou CONFIRMADO
+    Descrição: Formulário para editar um agendamento existente.
+               Só edita agendamento PENDENTE do próprio terapeuta, e só
+               data, hora de início e observações (AgendamentoEditarForm).
+               Os demais status vão para o detalhe com mensagem de erro.
     """
     model = Agendamento
+    form_class = AgendamentoEditarForm
     template_name = 'agendamentos/agendamento_form.html'
-    fields = ['data', 'hora_inicio', 'hora_fim', 'observacoes', 'valor_cobrado']
     success_url = reverse_lazy('terapeutas:dashboard_agendamentos')
 
     def get_queryset(self):
         """
-        Só permite editar agendamentos do próprio terapeuta
-        e que ainda estejam pendentes ou confirmados
+        Só agendamentos do próprio terapeuta: de outro dá 404.
+        O status é tratado em _bloquear_se_nao_pendente.
         """
         return Agendamento.objects.filter(
-            terapeuta=self.request.user.terapeuta,
-            status__in=['PENDENTE', 'CONFIRMADO']
+            terapeuta=self.request.user.terapeuta
+        ).select_related('sala', 'sala__espaco')
+
+    def _bloquear_se_nao_pendente(self):
+        """
+        Devolve um redirect para o detalhe quando o agendamento não
+        está PENDENTE; devolve None quando a edição pode seguir.
+        """
+        if self.get_object().status != 'PENDENTE':
+            messages.error(
+                self.request,
+                '❌ Só é possível editar agendamentos pendentes.'
+            )
+            return redirect(
+                'agendamentos:agendamento_detail', pk=self.kwargs['pk']
+            )
+        return None
+
+    def get(self, request, *args, **kwargs):
+        """
+        Bloqueia o GET fora de PENDENTE antes de mostrar o formulário
+        """
+        return (
+            self._bloquear_se_nao_pendente()
+            or super().get(request, *args, **kwargs)
+        )
+
+    def post(self, request, *args, **kwargs):
+        """
+        Bloqueia o POST fora de PENDENTE antes de validar e gravar
+        """
+        return (
+            self._bloquear_se_nao_pendente()
+            or super().post(request, *args, **kwargs)
         )
 
     def form_valid(self, form):
