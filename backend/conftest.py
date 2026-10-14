@@ -84,6 +84,22 @@ def hasher_rapido(settings):
 
 
 # ---------------------------------------------------------------
+# Fixture autouse: armazenamento de estáticos simples SÓ nos testes
+# O settings usa o WhiteNoise em modo manifesto, que exige o
+# staticfiles.json gerado pelo collectstatic: sem ele, qualquer
+# {% static %} de arquivo novo levanta ValueError. O projeto usa
+# STATICFILES_STORAGE (Django 4.2), então trocamos essa chave.
+# O StaticFilesStorage só monta a URL, sem consultar manifesto.
+# Produção e Vercel continuam com o WhiteNoise (settings.py intacto).
+# ---------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def estaticos_simples(settings):
+    settings.STATICFILES_STORAGE = (
+        'django.contrib.staticfiles.storage.StaticFilesStorage'
+    )
+
+
+# ---------------------------------------------------------------
 # Hook: aplica os markers unit e integration pelo caminho do teste
 # Testes em pasta "integration" recebem @pytest.mark.integration
 # Testes em pasta "unit" recebem @pytest.mark.unit
