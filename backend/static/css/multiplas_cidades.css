@@ -26,7 +26,7 @@
     position: absolute;
     top: -10px;
     left: 20px;
-    background: #0B5259;
+    background: #1E5C5C;
     color: white;
     padding: 4px 12px;
     border-radius: 20px;
@@ -46,7 +46,7 @@
 }
 
 .cidade-adicional:hover {
-    border-color: #0B5259;
+    border-color: #1E5C5C;
     box-shadow: 0 2px 8px rgba(11, 82, 89, 0.1);
 }
 
@@ -84,8 +84,8 @@
 /* Botão adicionar cidade */
 #btn-adicionar-cidade {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 2px dashed #0B5259;
-    color: #0B5259;
+    border: 2px dashed #1E5C5C;
+    color: #1E5C5C;
     transition: all 0.3s ease;
     font-weight: 600;
     position: relative;
@@ -108,7 +108,7 @@
 }
 
 #btn-adicionar-cidade:hover {
-    background: #0B5259;
+    background: #1E5C5C;
     color: white;
     border-style: solid;
     transform: translateY(-1px);
@@ -136,7 +136,7 @@
 
 .estado-select:focus,
 .cidade-select:focus {
-    border-color: #0B5259;
+    border-color: #1E5C5C;
     box-shadow: 0 0 0 3px rgba(11, 82, 89, 0.1);
     transform: translateY(-1px);
 }
@@ -204,7 +204,7 @@
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #0B5259;
+    background: #1E5C5C;
     color: white;
     border-radius: 50%;
     width: 24px;
