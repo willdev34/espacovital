@@ -785,30 +785,15 @@ class DashboardEditarEspacoView(EspacoRequiredMixin, TemplateView):
             messages.success(request, '✅ Perfil do espaço atualizado com sucesso!')
             return redirect('espacos:dashboard_editar')
         else:
-            # ===== MENSAGENS DE ERRO DETALHADAS =====
-            
-            # Erros do formulário principal
-            if form.errors:
-                for field, errors in form.errors.items():
-                    field_name = form.fields[field].label if field in form.fields else field
-                    for error in errors:
-                        messages.error(request, f'❌ {field_name}: {error}')
-            
-            # Erros do formset de galeria
-            if galeria_formset.errors:
-                for i, form_errors in enumerate(galeria_formset.errors):
-                    if form_errors:
-                        for field, errors in form_errors.items():
-                            for error in errors:
-                                messages.error(request, f'❌ Foto {i+1} - {field}: {error}')
-            
-            # Erros não relacionados a campos específicos
-            if galeria_formset.non_form_errors():
-                for error in galeria_formset.non_form_errors():
-                    messages.error(request, f'❌ Galeria: {error}')
-            
-            # Mensagem geral se não houver erros específicos
-            if not form.errors and not galeria_formset.errors:
+            # ===== MENSAGEM DE ERRO ÚNICA =====
+            # Os erros por campo já aparecem no formulário; aqui fica
+            # só um aviso geral, sem repetir cada erro como mensagem
+            tem_erro_no_formset = (
+                any(galeria_formset.errors) or galeria_formset.non_form_errors()
+            )
+            if form.errors or tem_erro_no_formset:
+                messages.error(request, '❌ Corrija os campos destacados.')
+            else:
                 messages.error(request, '❌ Erro desconhecido ao salvar. Tente novamente.')
         
         # Se houver erros, renderizar novamente

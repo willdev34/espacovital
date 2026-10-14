@@ -296,7 +296,7 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
         self.assertEqual(novo.valor_cobrado, self.sala.valor_sessao)
 
     def test_post_invalido_reexibe_formulario_com_erros(self):
-        """POST vazio não cria nada, volta 200 com erros e mensagem"""
+        """POST vazio não cria nada, volta 200 com erros por campo e sem mensagem duplicada"""
         self._login_terapeuta()
         total_antes = Agendamento.objects.count()
         response = self.client.post(self.url, {})
@@ -305,10 +305,8 @@ class AgendamentoCriarViewTest(AgendamentosViewsTestBase):
         erros = response.context['form'].errors
         self.assertIn('sala', erros)
         self.assertIn('data', erros)
-        self.assertIn(
-            '❌ Erro ao criar agendamento. Verifique os dados e tente novamente.',
-            self._mensagens(response),
-        )
+        # Os erros já aparecem por campo: nenhuma mensagem extra
+        self.assertEqual(self._mensagens(response), [])
 
 
 # ===============================================================

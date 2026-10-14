@@ -30,33 +30,6 @@
         </a>
     </div>
 
-    {# ===== MENSAGENS DE SUCESSO/ERRO ===== #}
-    {% if messages %}
-    <div class="mb-6">
-        {% for message in messages %}
-        <div class="rounded-lg p-4 {% if message.tags == 'success' %}bg-green-50 border-l-4 border-green-400{% elif message.tags == 'error' %}bg-red-50 border-l-4 border-red-400{% elif message.tags == 'warning' %}bg-yellow-50 border-l-4 border-yellow-400{% else %}bg-blue-50 border-l-4 border-blue-400{% endif %}">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    {% if message.tags == 'success' %}
-                    <i class="fas fa-check-circle text-green-400 text-xl"></i>
-                    {% elif message.tags == 'error' %}
-                    <i class="fas fa-exclamation-circle text-red-400 text-xl"></i>
-                    {% elif message.tags == 'warning' %}
-                    <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
-                    {% else %}
-                    <i class="fas fa-info-circle text-blue-400 text-xl"></i>
-                    {% endif %}
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% elif message.tags == 'warning' %}text-yellow-800{% else %}text-blue-800{% endif %}">
-                        {{ message }}
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
     
     {# ===== FORMULÁRIO ===== #}
     <form method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">

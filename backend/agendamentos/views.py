@@ -104,16 +104,6 @@ class AgendamentoCriarView(TerapeutaRequiredMixin, CreateView):
         )
         return redirect(self.success_url)
 
-    def form_invalid(self, form):
-        """
-        Retorna mensagem de erro se o formulário for inválido
-        """
-        messages.error(
-            self.request,
-            '❌ Erro ao criar agendamento. Verifique os dados e tente novamente.'
-        )
-        return super().form_invalid(form)
-
 
 # ==========================================
 # DETALHES DO AGENDAMENTO

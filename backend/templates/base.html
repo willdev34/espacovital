@@ -329,6 +329,12 @@ Data: 07/09/2025
 
     <!-- Conteúdo principal -->
     <main class="min-h-screen">
+        {# Mensagens do sistema; telas com layout próprio sobrescrevem este bloco #}
+        {% block mensagens %}
+        <div class="container mx-auto px-4 lg:px-6 pt-6 empty:hidden">
+            {% include 'includes/mensagens.html' %}
+        </div>
+        {% endblock %}
         {% block content %}
         <!-- Conteúdo das páginas aqui -->
         {% endblock %}

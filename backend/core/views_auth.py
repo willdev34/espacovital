@@ -101,12 +101,6 @@ class CustomLoginView(LoginView):
             return '/espacos/dashboard/'
         else:
             return '/'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        storage = messages.get_messages(self.request)
-        storage.used = False
-        return context
 
 
 class CustomLogoutView(LogoutView):
@@ -122,6 +116,12 @@ class CustomLogoutView(LogoutView):
         """
         Processa logout e redireciona para login
         """
+        # ===== DESCARTAR MENSAGENS PENDENTES =====
+        # Itera o storage para marcá-lo como lido: mensagens antigas não
+        # vazam para o login e só fica a do allauth ("Você saiu do sistema")
+        for _ in messages.get_messages(request):
+            pass
+
         # ===== MARCAR QUE FOI LOGOUT RECENTE =====
         # Isso será usado para mostrar mensagem apenas uma vez
         request.session['recent_logout'] = True
