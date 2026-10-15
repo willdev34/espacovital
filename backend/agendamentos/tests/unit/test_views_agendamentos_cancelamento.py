@@ -536,7 +536,7 @@ class CancelamentoAvisoTest(CancelamentoBase):
 class DashboardCancelarTerapeutasTest(CancelamentoBase):
     """
     A view do dashboard de terapeutas usa a mesma regra do model.
-    Os templates dela continuam na 4.1e.
+    Quando não cancela, volta para o detalhe do app agendamentos.
     """
 
     def _url(self, agendamento):
@@ -598,6 +598,19 @@ class DashboardCancelarTerapeutasTest(CancelamentoBase):
         response = self._post(agendamento, multa_prevista='0.00')
         self.assertEqual(response.status_code, 302)
         self._assert_nada_mudou(agendamento, 'CONFIRMADO')
+
+    def test_aviso_desatualizado_volta_para_o_detalhe_do_app_agendamentos(self):
+        """
+        Sem cancelar, volta para o detalhe que existe (agendamentos), e
+        não para a rota antiga do dashboard, que não tem template.
+        """
+        agendamento = self._novo(30)
+        response = self._post(agendamento, multa_prevista='0.00')
+        self.assertRedirects(
+            response,
+            reverse('agendamentos:agendamento_detail', kwargs={'pk': agendamento.pk}),
+            fetch_redirect_response=False,
+        )
 
 
 # ===============================================================

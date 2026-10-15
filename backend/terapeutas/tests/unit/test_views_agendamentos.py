@@ -430,32 +430,62 @@ class DashboardAgendamentoCriarViewTest(AgendamentosTestBase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    import unittest
-
-    @unittest.skip("Template agendamento_form.html ainda não criado")
-    def test_terapeuta_acessa_criar_agendamento(self):
-        """Terapeuta deve acessar o formulário de criar agendamento"""
+    def test_terapeuta_e_encaminhado_para_o_formulario_novo(self):
+        """
+        A rota antiga encaminha para o formulário do app agendamentos,
+        onde ficam as regras de horário e de vínculo.
+        """
         self._login_terapeuta()
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-
-    @unittest.skip("Template agendamento_form.html ainda não criado")
-    def test_usa_template_correto(self):
-        """Deve usar o template de criar agendamento"""
-        self._login_terapeuta()
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(
+        self.assertRedirects(
             response,
-            'terapeutas/dashboard/agendamento_form.html'
+            reverse('agendamentos:agendamento_create'),
+            fetch_redirect_response=False,
         )
 
-    @unittest.skip("Template agendamento_form.html ainda não criado")
-    def test_contexto_tem_salas(self):
-        """Contexto deve ter as salas disponíveis"""
+    def test_encaminhamento_preserva_a_query_string(self):
+        """?espaco=3 chega ao formulário novo (usado pela lista de espaços)"""
         self._login_terapeuta()
-        response = self.client.get(self.url)
-        has_salas = any(
-            k in response.context
-            for k in ['salas', 'salas_disponiveis', 'form']
+        response = self.client.get(self.url, {'espaco': '3'})
+        self.assertRedirects(
+            response,
+            reverse('agendamentos:agendamento_create') + '?espaco=3',
+            fetch_redirect_response=False,
         )
-        self.assertTrue(has_salas)
+
+    def test_formulario_novo_abre_para_o_terapeuta(self):
+        """Seguindo o encaminhamento, o terapeuta chega a uma tela 200"""
+        self._login_terapeuta()
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'agendamentos/agendamento_form.html')
+
+
+# ===============================================================
+# TESTES DA ROTA ANTIGA DE DETALHES DO AGENDAMENTO
+# ===============================================================
+
+class DashboardAgendamentoDetalheViewTest(AgendamentosTestBase):
+    """
+    A rota antiga de detalhes encaminha para o app agendamentos.
+    Antes ela apontava para um template que não existia.
+    """
+
+    def _url(self, pk):
+        return reverse('terapeutas:dashboard_agendamento_detalhe', kwargs={'pk': pk})
+
+    def test_redireciona_nao_autenticado(self):
+        """Sem login, vai para o login e não para os detalhes"""
+        response = self.client.get(self._url(1))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/accounts/login/'))
+
+    def test_terapeuta_e_encaminhado_para_os_detalhes_novos(self):
+        """O encaminhamento leva ao detalhe do app agendamentos"""
+        self._login_terapeuta()
+        response = self.client.get(self._url(7))
+        self.assertRedirects(
+            response,
+            reverse('agendamentos:agendamento_detail', kwargs={'pk': 7}),
+            fetch_redirect_response=False,
+        )

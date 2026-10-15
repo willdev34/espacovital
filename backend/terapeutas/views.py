@@ -4,7 +4,7 @@
 # ===============================================================
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView, View
+from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView, View, RedirectView
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
@@ -1386,7 +1386,6 @@ class DashboardAssinaturaView(TerapeutaRequiredMixin, TemplateView):
 # ===============================================================
 
 from agendamentos.models import Agendamento, VinculoTerapeutaEspaco
-from agendamentos.forms import AgendamentoForm
 from django.db.models import Q, Sum, Count
 
 
@@ -1501,119 +1500,32 @@ class DashboardAgendamentosView(TerapeutaRequiredMixin, ListView):
         return context
 
 
-class DashboardAgendamentoCriarView(TerapeutaRequiredMixin, CreateView):
+class DashboardAgendamentoCriarView(TerapeutaRequiredMixin, RedirectView):
     """
-    Título: Criar Novo Agendamento
-    Descrição: Formulário para terapeuta agendar uma sala
+    Título: Criar Novo Agendamento (rota antiga)
+    Descrição: O formulário de novo agendamento vive no app agendamentos
+               (agendamentos:agendamento_create), com todas as regras de
+               horário e vínculo. Esta rota antiga só encaminha para lá e
+               mantém links e favoritos antigos funcionando. Preserva a
+               query string (ex.: ?espaco=3).
     Autor: Will
     Data: 06/01/2026
     """
-    model = Agendamento
-    form_class = AgendamentoForm
-    template_name = 'terapeutas/dashboard/agendamento_form.html'
-    
-    def get_form_kwargs(self):
-        """
-        Passa o terapeuta para o formulário
-        """
-        kwargs = super().get_form_kwargs()
-        kwargs['terapeuta'] = self.request.user.terapeuta
-        return kwargs
-    
-    def get_context_data(self, **kwargs):
-        """
-        Adiciona informações ao contexto
-        """
-        context = super().get_context_data(**kwargs)
-        context['terapeuta'] = self.request.user.terapeuta
-        context['titulo'] = 'Novo Agendamento'
-        context['botao_texto'] = 'Confirmar Agendamento'
-        
-        # Listar espaços vinculados
-        context['espacos_vinculados'] = VinculoTerapeutaEspaco.objects.filter(
-            terapeuta=self.request.user.terapeuta,
-            status='APROVADO',
-            is_active=True
-        ).select_related('espaco')
-        
-        return context
-    
-    def form_valid(self, form):
-        """
-        Salva o agendamento e redireciona
-        """
-        from django.db import IntegrityError
-        
-        try:
-            agendamento = form.save()
-            
-            messages.success(
-                self.request,
-                f'✅ Agendamento criado com sucesso! '
-                f'Sala: {agendamento.sala.nome} - '
-                f'Data: {agendamento.data.strftime("%d/%m/%Y")} às {agendamento.hora_inicio.strftime("%H:%M")}. '
-                f'Valor: R$ {agendamento.valor_cobrado}. '
-                f'Status: Aguardando pagamento.'
-            )
-            
-            return redirect('terapeutas:dashboard_agendamentos')
-            
-        except IntegrityError as e:
-            messages.error(
-                self.request,
-                '❌ Erro ao criar agendamento. Pode já existir um agendamento neste horário. '
-                'Tente novamente.'
-            )
-            return self.form_invalid(form)
-    
-    def form_invalid(self, form):
-        """
-        Exibe erros do formulário
-        """
-        # Erros já são exibidos no template via form.errors
-        return super().form_invalid(form)
+    pattern_name = 'agendamentos:agendamento_create'
+    query_string = True
 
 
-class DashboardAgendamentoDetalheView(TerapeutaRequiredMixin, DetailView):
+class DashboardAgendamentoDetalheView(TerapeutaRequiredMixin, RedirectView):
     """
-    Título: Detalhes do Agendamento
-    Descrição: Exibe informações completas de um agendamento
+    Título: Detalhes do Agendamento (rota antiga)
+    Descrição: A tela de detalhes vive no app agendamentos
+               (agendamentos:agendamento_detail), que só mostra
+               agendamentos do próprio terapeuta. Esta rota antiga só
+               encaminha para lá.
     Autor: Will
     Data: 06/01/2026
     """
-    model = Agendamento
-    template_name = 'terapeutas/dashboard/agendamento_detalhe.html'
-    context_object_name = 'agendamento'
-    
-    def get_queryset(self):
-        """
-        Retorna apenas agendamentos do terapeuta logado
-        """
-        return Agendamento.objects.filter(
-            terapeuta=self.request.user.terapeuta
-        ).select_related('sala', 'sala__espaco', 'espaco')
-    
-    def get_context_data(self, **kwargs):
-        """
-        Adiciona informações extras ao contexto
-        """
-        context = super().get_context_data(**kwargs)
-        
-        agendamento = self.object
-        
-        # Verificar se pode cancelar sem multa
-        pode_cancelar_sem_multa, minutos_restantes = agendamento.pode_cancelar_sem_multa()
-        valor_multa = agendamento.calcular_multa_cancelamento()
-        
-        context['pode_cancelar_sem_multa'] = pode_cancelar_sem_multa
-        context['minutos_restantes'] = minutos_restantes
-        context['valor_multa'] = valor_multa
-        context['terapeuta'] = self.request.user.terapeuta
-        
-        # Verificar se pode cancelar (não pode se já concluído)
-        context['pode_cancelar'] = agendamento.status not in ['CANCELADO', 'CONCLUIDO']
-        
-        return context
+    pattern_name = 'agendamentos:agendamento_detail'
 
 
 class DashboardAgendamentoCancelarView(TerapeutaRequiredMixin, View):
@@ -1645,7 +1557,7 @@ class DashboardAgendamentoCancelarView(TerapeutaRequiredMixin, View):
             )
         ):
             messages.warning(request, agendamento.texto_aviso_desatualizado())
-            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+            return redirect('agendamentos:agendamento_detail', pk=pk)
         
         # Pegar motivo (opcional, limitado a 200 caracteres)
         motivo = (
@@ -1661,7 +1573,7 @@ class DashboardAgendamentoCancelarView(TerapeutaRequiredMixin, View):
         
         if not sucesso:
             messages.error(request, f'❌ {mensagem}')
-            return redirect('terapeutas:dashboard_agendamento_detalhe', pk=pk)
+            return redirect('agendamentos:agendamento_detail', pk=pk)
         
         if valor_multa > 0:
             messages.warning(request, f'⚠️ {mensagem}')
