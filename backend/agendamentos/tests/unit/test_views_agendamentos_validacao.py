@@ -253,6 +253,106 @@ class SessaoQueCruzaAMeiaNoiteTest(CriarAgendamentoBase):
 
 
 # ===============================================================
+# SALA QUE FECHA À MEIA-NOITE (00:00)
+# ===============================================================
+
+class SalaQueFechaAMeiaNoiteTest(CriarAgendamentoBase):
+    """
+    Sala configurada com fechamento 00:00, que vale como o fim do dia.
+    Antes da correção a sala nunca aceitava agendamento, porque 00:00
+    era comparado como o começo do dia.
+    """
+
+    def setUp(self):
+        super().setUp()
+        # Sala que abre às 08:00 e fecha à meia-noite, sessão de 60 min
+        self.espaco_meia_noite, self.sala_meia_noite = self._criar_espaco_com_sala(
+            'meianoite', fechamento='00:00:00', duracao=60
+        )
+        VinculoTerapeutaEspaco.objects.create(
+            espaco=self.espaco_meia_noite,
+            terapeuta=self.terapeuta,
+            status='APROVADO',
+            is_active=True,
+        )
+
+    def _dados_meia_noite(self, hora_inicio):
+        """POST na sala que fecha à meia-noite, amanhã, no horário informado"""
+        return self._dados(
+            espaco=self.espaco_meia_noite.pk,
+            sala=self.sala_meia_noite.pk,
+            hora_inicio=hora_inicio,
+        )
+
+    def test_horario_no_meio_do_dia_e_aceito(self):
+        """10:00 às 11:00 numa sala que fecha 00:00 deve ser aceito"""
+        response = self.client.post(self.url, self._dados_meia_noite('10:00'))
+        self.assertRedirects(
+            response, self.url_dashboard, fetch_redirect_response=False
+        )
+        self.assertEqual(Agendamento.objects.count(), 1)
+
+    def test_ultima_sessao_do_dia_termina_a_meia_noite_e_e_aceita(self):
+        """Início 23:00 + 60 min termina 00:00 (fechamento): aceito"""
+        response = self.client.post(self.url, self._dados_meia_noite('23:00'))
+        self.assertRedirects(
+            response, self.url_dashboard, fetch_redirect_response=False
+        )
+        agendamento = Agendamento.objects.get()
+        self.assertEqual(agendamento.hora_inicio, time(23, 0))
+        self.assertEqual(agendamento.hora_fim, time(0, 0))
+
+    def test_sessao_que_passa_da_meia_noite_e_rejeitada(self):
+        """Início 23:30 + 60 min termina 00:30, depois do fechamento: barrado"""
+        response = self.client.post(self.url, self._dados_meia_noite('23:30'))
+        self._assert_barrado(response, 0, 'após o horário de fechamento')
+
+    def test_conflito_com_sessao_que_termina_a_meia_noite(self):
+        """
+        Existente 23:00 às 00:00. Pedir 23:00 de novo precisa conflitar,
+        mesmo com hora_fim 00:00 (que como time parece menor que o início).
+        """
+        outro_user = User.objects.create_user(
+            username='outro_terapeuta_meianoite', password='senha123'
+        )
+        outro = self._criar_terapeuta(outro_user, 'meianoite')
+        Agendamento.objects.create(
+            terapeuta=outro,
+            sala=self.sala_meia_noite,
+            espaco=self.espaco_meia_noite,
+            data=self.amanha,
+            hora_inicio=time(23, 0),
+            hora_fim=time(0, 0),
+            valor_cobrado=Decimal('90.00'),
+            status='PENDENTE',
+        )
+        response = self.client.post(self.url, self._dados_meia_noite('23:00'))
+        self._assert_barrado(response, 1, 'Conflito de horário')
+
+    def test_sessao_logo_antes_da_que_termina_a_meia_noite_e_aceita(self):
+        """Existente 23:00 às 00:00. Pedir 22:00 às 23:00 não conflita"""
+        outro_user = User.objects.create_user(
+            username='outro_terapeuta_antes', password='senha123'
+        )
+        outro = self._criar_terapeuta(outro_user, 'antes')
+        Agendamento.objects.create(
+            terapeuta=outro,
+            sala=self.sala_meia_noite,
+            espaco=self.espaco_meia_noite,
+            data=self.amanha,
+            hora_inicio=time(23, 0),
+            hora_fim=time(0, 0),
+            valor_cobrado=Decimal('90.00'),
+            status='PENDENTE',
+        )
+        response = self.client.post(self.url, self._dados_meia_noite('22:00'))
+        self.assertRedirects(
+            response, self.url_dashboard, fetch_redirect_response=False
+        )
+        self.assertEqual(Agendamento.objects.count(), 2)
+
+
+# ===============================================================
 # CONFLITO DE HORÁRIO
 # ===============================================================
 

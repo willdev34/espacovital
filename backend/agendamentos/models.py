@@ -4,6 +4,7 @@ Descrição: Models para gerenciamento de salas, agendamentos, multas e configur
 """
 
 import uuid
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.utils import formats
@@ -56,6 +57,7 @@ class Sala(models.Model):
     
     # Configurações de tempo
     duracao_sessao = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)],
         verbose_name='Duração da Sessão (minutos)',
         help_text='Duração padrão em minutos (ex: 60 para 1 hora)',
         default=60
@@ -68,7 +70,7 @@ class Sala(models.Model):
     
     horario_fechamento = models.TimeField(
         verbose_name='Horário de Fechamento',
-        help_text='Horário em que a sala fecha (ex: 20:00)'
+        help_text='Horário em que a sala fecha (ex: 20:00). Use 00:00 para fechar à meia-noite'
     )
     
     # Mídia
@@ -122,6 +124,56 @@ class Sala(models.Model):
     
     def __str__(self):
         return f"{self.espaco.nome} - {self.nome}"
+
+    # ----------------------------------------
+    # Horários em minutos desde 00:00
+    # ----------------------------------------
+    @property
+    def abertura_em_minutos(self):
+        """Minuto do dia em que a sala abre (08:00 = 480)"""
+        return self.horario_abertura.hour * 60 + self.horario_abertura.minute
+
+    @property
+    def fechamento_em_minutos(self):
+        """
+        Minuto do dia em que a sala fecha. O horário 00:00 significa
+        meia-noite do fim do dia (1440), não o começo dele, senão a
+        sala nunca teria horário livre.
+        """
+        minutos = self.horario_fechamento.hour * 60 + self.horario_fechamento.minute
+        return minutos or 24 * 60
+
+    def clean(self):
+        """
+        Valida a configuração de horários da sala:
+        - o fechamento precisa vir depois da abertura (00:00 vale como
+          meia-noite do fim do dia);
+        - a duração da sessão precisa caber dentro do funcionamento.
+        Roda no admin e nos formulários de sala.
+        """
+        super().clean()
+
+        # Sem os dois horários não há o que comparar (o campo já acusa o erro)
+        if self.horario_abertura is None or self.horario_fechamento is None:
+            return
+
+        janela = self.fechamento_em_minutos - self.abertura_em_minutos
+
+        if janela <= 0:
+            raise ValidationError({
+                'horario_fechamento': (
+                    'O horário de fechamento deve ser depois do de abertura. '
+                    'Para fechar à meia-noite, use 00:00.'
+                )
+            })
+
+        if self.duracao_sessao and self.duracao_sessao > janela:
+            raise ValidationError({
+                'duracao_sessao': (
+                    f'A sessão de {self.duracao_sessao} min não cabe no '
+                    f'funcionamento da sala ({janela} min entre a abertura e o fechamento).'
+                )
+            })
 
 
 # ==========================================

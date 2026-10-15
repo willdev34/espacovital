@@ -6,7 +6,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from .models import Agendamento, Sala, VinculoTerapeutaEspaco
 from espacos.models import Espaco
 
@@ -52,8 +52,12 @@ def validar_horario_agendamento(sala, data, hora_inicio, ignorar_pk=None):
 
     # Compara datetimes completos: uma sessão que cruza a meia-noite
     # volta para 00:xx como time e parecia estar "antes" do fechamento
+    # O fechamento vem em minutos desde 00:00 do dia; 00:00 vale 24:00
+    # (fim do dia), então uma sala que fecha à meia-noite continua usável
     hora_inicio_dt = datetime.combine(data, hora_inicio)
-    fechamento_dt = datetime.combine(data, sala.horario_fechamento)
+    fechamento_dt = datetime.combine(data, time.min) + timedelta(
+        minutes=sala.fechamento_em_minutos
+    )
 
     if hora_inicio_dt >= fechamento_dt:
         raise ValidationError(
@@ -80,11 +84,22 @@ def validar_horario_agendamento(sala, data, hora_inicio, ignorar_pk=None):
         status__in=['PENDENTE', 'CONFIRMADO']
     ).exclude(pk=ignorar_pk)
 
+    # Compara em minutos desde 00:00. Uma sessão que termina à meia-noite
+    # tem hora_fim 00:00, que como time parece "antes" do início; por isso
+    # o fim que não passa do início conta como o fim do dia (+24h)
+    novo_inicio = hora_inicio.hour * 60 + hora_inicio.minute
+    novo_fim = novo_inicio + sala.duracao_sessao
+
     for agendamento in conflitos:
         # Verificar sobreposição de horários
         # Há conflito se: (novo_inicio < existente_fim) E (novo_fim > existente_inicio)
-        if not (hora_fim <= agendamento.hora_inicio or
-                hora_inicio >= agendamento.hora_fim):
+        existente_inicio = agendamento.hora_inicio.hour * 60 + agendamento.hora_inicio.minute
+        existente_fim = agendamento.hora_fim.hour * 60 + agendamento.hora_fim.minute
+        if existente_fim <= existente_inicio:
+            existente_fim += 24 * 60
+
+        if not (novo_fim <= existente_inicio or
+                novo_inicio >= existente_fim):
             raise ValidationError(
                 f'❌ Conflito de horário! Já existe um agendamento das '
                 f'{agendamento.hora_inicio.strftime("%H:%M")} às '
