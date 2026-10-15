@@ -265,9 +265,6 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
     View para listagem de terapeutas que processa filtros vindos do modal
     Usado para /terapeutas/lista/ com parâmetros da busca
     """
-    # DEBUG: Ver parâmetros recebidos
-    print(f"=== DEBUG FILTROS ===")
-    print(f"GET params: {dict(request.GET)}")
     
     terapeutas = Terapeuta.objects.filter(is_active=True).select_related(
         'cidade_principal', 'cidade_principal__estado'
@@ -276,14 +273,12 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         'especialidades', 'avaliacoes'
     )
     
-    print(f"Terapeutas antes dos filtros: {terapeutas.count()}")
     
     # ===== PROCESSAR FILTROS DO MODAL =====
     
     # Filtro: Tipo de sessão
     tipos_sessao = request.GET.getlist('tipo_sessao')
     if tipos_sessao:
-        print(f"Filtrando por tipos_sessao: {tipos_sessao}")
         # O campo no modelo é 'tipos_sessao' (JSONField ou CharField)
         # Filtrar terapeutas que atendem pelo menos um dos tipos
         filtro_sessao = Q()
@@ -294,14 +289,12 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         
         if filtro_sessao:
             terapeutas = terapeutas.filter(filtro_sessao)
-            print(f"Terapeutas após filtro tipo_sessao: {terapeutas.count()}")
     
     # Filtro: Localização (Estado e Cidade)
     estado = request.GET.get('estado')
     cidade = request.GET.get('cidade')
     
     if estado:
-        print(f"Filtrando por estado: {estado}")
         # Filtrar por estado usando nome ou sigla
         terapeutas = terapeutas.filter(
             Q(cidade_principal__estado__nome__icontains=estado) | 
@@ -309,25 +302,18 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
             Q(cidades_atendimento__estado__nome__icontains=estado) |
             Q(cidades_atendimento__estado__sigla__iexact=estado)
         ).distinct()
-        print(f"Terapeutas após filtro estado: {terapeutas.count()}")
     
     if cidade:
-        print(f"Filtrando por cidade: {cidade}")
         # Filtrar por cidade usando apenas nome
         terapeutas = terapeutas.filter(
             Q(cidade_principal__nome__icontains=cidade) |
             Q(cidades_atendimento__nome__icontains=cidade)
         ).distinct()
-        print(f"Terapeutas após filtro cidade: {terapeutas.count()}")
         
-        # DEBUG: Ver quais cidades existem no banco
-        cidades_existentes = Cidade.objects.values_list('nome', flat=True)
-        print(f"Cidades no banco: {list(cidades_existentes)}")
     
     # Filtro: Terapias/Especialidades
     terapias = request.GET.getlist('terapias')
     if terapias:
-        print(f"Filtrando por terapias: {terapias}")
         # Buscar especialidades pelos nomes
         especialidades_ids = []
         for terapia in terapias:
@@ -360,18 +346,14 @@ def terapeutas_sem_filtro(request, especialidade_slug=None):
         
         if especialidades_ids:
             terapeutas = terapeutas.filter(especialidades__id__in=especialidades_ids).distinct()
-            print(f"Terapeutas após filtro terapias: {terapeutas.count()}")
     
     # Filtro: Acessibilidade
     acessibilidade = request.GET.get('acessibilidade')
     if acessibilidade == 'sim':
         terapeutas = terapeutas.filter(acessibilidade=True)
-        print(f"Terapeutas após filtro acessibilidade=True: {terapeutas.count()}")
     elif acessibilidade == 'nao':
         terapeutas = terapeutas.filter(acessibilidade=False)
-        print(f"Terapeutas após filtro acessibilidade=False: {terapeutas.count()}")
     
-    print(f"=== FIM DEBUG ===")
     
     # ===== FILTRO POR ESPECIALIDADE (PARA URLs DIRETAS) =====
     especialidade = None
@@ -1002,12 +984,10 @@ class DashboardEditarPerfilView(TerapeutaRequiredMixin, FormView):
         # Salvar especialidades
         if 'especialidades' in form.cleaned_data:
             terapeuta.especialidades.set(form.cleaned_data['especialidades'])
-            print(f"✅ Especialidades salvas: {form.cleaned_data['especialidades']}")
         
         # Salvar cidades de atendimento
         if 'cidades_atendimento' in form.cleaned_data:
             terapeuta.cidades_atendimento.set(form.cleaned_data['cidades_atendimento'])
-            print(f"✅ Cidades salvas: {form.cleaned_data['cidades_atendimento']}")
         
         # Processar fotos da galeria (se houver uploads)
         fotos_galeria = self.request.FILES.getlist('fotos_galeria')
