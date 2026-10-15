@@ -578,7 +578,6 @@ class TestDashboardAssinaturaEspacoView:
         response = client.get(url)
         assert response.status_code == 302
 
-    @pytest.mark.skip(reason="Bug no template: espacos/dashboard/assinatura.html tem TemplateSyntaxError - corrigir uso de aspas simples dentro de {% if %}")
     def test_assinatura_retorna_200_para_dono(self, client, usuario_com_espaco):
         """Dono do espaço deve ver a página de assinatura"""
         user, espaco = usuario_com_espaco

@@ -5,7 +5,7 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, View
-from django.db.models import Q, Avg, Count, Prefetch
+from django.db.models import F, Q, Avg, Count, Prefetch
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -104,11 +104,15 @@ class EspacoListView(ListView):
         # Filtro: Disponibilidade por período
         disponibilidade = self.request.GET.getlist('disponibilidade')
         if disponibilidade:
-            # Filtra espaços que têm pelo menos um dos períodos selecionados
-            q_objects = Q()
-            for periodo in disponibilidade:
-                q_objects |= Q(disponibilidade__contains=periodo)
-            queryset = queryset.filter(q_objects)
+            # Filtra espaços que atendem em pelo menos um dos períodos
+            # selecionados. O horário fica em horarios_semana (JSON), então
+            # a checagem é feita pelo model e o resultado vira lista de ids.
+            ids_disponiveis = [
+                espaco.pk
+                for espaco in Espaco.objects.filter(is_active=True)
+                if any(espaco.atende_no_periodo(p) for p in disponibilidade)
+            ]
+            queryset = queryset.filter(pk__in=ids_disponiveis)
         
         # Filtro: Comodidades desejadas (checkboxes múltiplos)
         comodidades = self.request.GET.getlist('comodidades')
@@ -136,7 +140,13 @@ class EspacoListView(ListView):
         if ordem == 'nome':
             queryset = queryset.order_by('nome')
         elif ordem == 'avaliacao':
-            queryset = queryset.order_by('-media_avaliacoes', '-total_avaliacoes')
+            # Usa as anotações da própria consulta (media_avaliacoes e
+            # total_avaliacoes são propriedades do model, não campos)
+            # nulls_last: espaços sem avaliação ficam depois dos avaliados
+            # (no Postgres, NULL vem primeiro na ordem decrescente)
+            queryset = queryset.order_by(
+                F('avg_avaliacoes').desc(nulls_last=True), '-count_avaliacoes'
+            )
         elif ordem == 'recente':
             queryset = queryset.order_by('-created_at')
         else:  # destaque (padrão)
@@ -1043,14 +1053,17 @@ class DashboardSalaCriarView(EspacoRequiredMixin, CreateView):
         """
         Associa a sala ao espaço do usuário logado
         """
-        from django.db import IntegrityError
+        from django.db import IntegrityError, transaction
         
         espaco = Espaco.objects.filter(responsavel=self.request.user).first()
         form.instance.espaco = espaco
         
         try:
-            # Tentar salvar a sala
-            response = super().form_valid(form)
+            # Tentar salvar a sala. O savepoint isola o erro de duplicidade:
+            # sem ele, dentro de uma transação o banco recusa novas consultas
+            # e a tela de erro não consegue ser montada.
+            with transaction.atomic():
+                response = super().form_valid(form)
             
             messages.success(
                 self.request,
@@ -1183,11 +1196,12 @@ class DashboardSalaEditarView(EspacoRequiredMixin, UpdateView):
         """
         Salva as alterações
         """
-        from django.db import IntegrityError
+        from django.db import IntegrityError, transaction
         
         try:
-            # Tentar salvar as alterações
-            response = super().form_valid(form)
+            # Tentar salvar as alterações (savepoint isola o erro de duplicidade)
+            with transaction.atomic():
+                response = super().form_valid(form)
             
             messages.success(
                 self.request,

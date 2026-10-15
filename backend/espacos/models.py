@@ -446,6 +446,52 @@ class Espaco(TimeStampedModel):
         
         return horarios_formatados
 
+    # Faixas do dia usadas pelo filtro de disponibilidade (em minutos)
+    FAIXAS_PERIODO = {
+        'manha': (0, 12 * 60),
+        'tarde': (12 * 60, 18 * 60),
+        'noite': (18 * 60, 24 * 60),
+    }
+
+    @staticmethod
+    def _para_minutos(texto):
+        """Converte 'HH:MM' em minutos desde 00:00. Retorna None se inválido."""
+        try:
+            horas, minutos = str(texto).split(':')[:2]
+            return int(horas) * 60 + int(minutos)
+        except (ValueError, TypeError):
+            return None
+
+    def atende_no_periodo(self, periodo):
+        """
+        Informa se o espaço tem horário de funcionamento no período.
+
+        Regras:
+        - manha, tarde, noite: algum horário cadastrado cruza a faixa
+          (manhã até 12h, tarde de 12h a 18h, noite a partir das 18h);
+        - finais_de_semana: sábado ou domingo com ao menos um horário.
+        """
+        horarios = self.horarios_semana or {}
+        fim_de_semana = ('sabado', 'domingo')
+
+        for dia, periodos in horarios.items():
+            if periodo == 'finais_de_semana' and dia not in fim_de_semana:
+                continue
+            for item in periodos or []:
+                inicio = self._para_minutos(item.get('inicio'))
+                fim = self._para_minutos(item.get('fim'))
+                if inicio is None or fim is None:
+                    continue
+                if fim <= inicio:
+                    fim += 24 * 60  # fecha depois da meia-noite
+
+                if periodo == 'finais_de_semana':
+                    return True
+                faixa = self.FAIXAS_PERIODO.get(periodo)
+                if faixa and inicio < faixa[1] and fim > faixa[0]:
+                    return True
+        return False
+
     def tem_horarios(self):
         """
         Verifica se o espaço tem algum horário cadastrado

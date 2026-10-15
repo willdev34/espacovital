@@ -378,7 +378,6 @@ class DashboardAssinaturaEspacoViewTest(EspacoViewsTestBase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    @unittest.skip("TemplateSyntaxError em espacos/dashboard/assinatura.html - bug pendente de aspas simples no if")
     def test_gestor_acessa_assinatura(self):
         """Gestor deve acessar a página de assinatura"""
         self._login_gestor()
