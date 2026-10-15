@@ -53,7 +53,7 @@
         {% if plano_atual != 'Premium S' %}
         <div class="mt-6 pt-6 border-t border-white/20">
             <p class="text-sm text-teal-100 mb-2">
-                💡 <strong>Dica:</strong> Faça upgrade para {{ plano_atual == 'Basic' and 'Premium A ou Premium S' or 'Premium S' }} e aumente sua visibilidade em até 300%!
+                💡 <strong>Dica:</strong> Faça upgrade para {% if plano_atual == 'Basic' %}Premium A ou Premium S{% else %}Premium S{% endif %} e aumente sua visibilidade em até 300%!
             </p>
         </div>
         {% endif %}
