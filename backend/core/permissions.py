@@ -19,22 +19,22 @@ PERMISSIONS_TRANSLATION = {
     'terapeutas.delete_terapeuta': 'Excluir Terapeutas',
     
     # Permissões de Especialidades
-    'terapeutas.add_especialidade': 'Cadastrar Especialidades',
-    'terapeutas.view_especialidade': 'Visualizar Especialidades',
-    'terapeutas.change_especialidade': 'Editar Especialidades',
-    'terapeutas.delete_especialidade': 'Excluir Especialidades',
+    'core.add_especialidade': 'Cadastrar Especialidades',
+    'core.view_especialidade': 'Visualizar Especialidades',
+    'core.change_especialidade': 'Editar Especialidades',
+    'core.delete_especialidade': 'Excluir Especialidades',
     
     # Permissões de Cidades
-    'terapeutas.add_cidade': 'Cadastrar Cidades',
-    'terapeutas.view_cidade': 'Visualizar Cidades',
-    'terapeutas.change_cidade': 'Editar Cidades',
-    'terapeutas.delete_cidade': 'Excluir Cidades',
+    'core.add_cidade': 'Cadastrar Cidades',
+    'core.view_cidade': 'Visualizar Cidades',
+    'core.change_cidade': 'Editar Cidades',
+    'core.delete_cidade': 'Excluir Cidades',
     
     # Permissões de Estados
-    'terapeutas.add_estado': 'Cadastrar Estados',
-    'terapeutas.view_estado': 'Visualizar Estados',
-    'terapeutas.change_estado': 'Editar Estados',
-    'terapeutas.delete_estado': 'Excluir Estados',
+    'core.add_estado': 'Cadastrar Estados',
+    'core.view_estado': 'Visualizar Estados',
+    'core.change_estado': 'Editar Estados',
+    'core.delete_estado': 'Excluir Estados',
     
     # Permissões de Contatos (Terapeutas)
     'terapeutas.view_contato': 'Visualizar Contatos de Terapeutas',
@@ -91,20 +91,20 @@ GROUPS_CONFIG = {
             'terapeutas.delete_terapeuta',
             
             # Especialidades
-            'terapeutas.add_especialidade',
-            'terapeutas.view_especialidade',
-            'terapeutas.change_especialidade', 
-            'terapeutas.delete_especialidade',
+            'core.add_especialidade',
+            'core.view_especialidade',
+            'core.change_especialidade', 
+            'core.delete_especialidade',
             
             # Localização
-            'terapeutas.add_cidade',
-            'terapeutas.view_cidade',
-            'terapeutas.change_cidade',
-            'terapeutas.delete_cidade',
-            'terapeutas.add_estado',
-            'terapeutas.view_estado',
-            'terapeutas.change_estado',
-            'terapeutas.delete_estado',
+            'core.add_cidade',
+            'core.view_cidade',
+            'core.change_cidade',
+            'core.delete_cidade',
+            'core.add_estado',
+            'core.view_estado',
+            'core.change_estado',
+            'core.delete_estado',
             
             # Usuários e Grupos
             'auth.add_user',
@@ -149,11 +149,11 @@ GROUPS_CONFIG = {
             'terapeutas.change_terapeuta',  # Limitado ao próprio perfil
             
             # Pode visualizar especialidades existentes
-            'terapeutas.view_especialidade',
+            'core.view_especialidade',
             
             # Pode visualizar cidades para atendimento
-            'terapeutas.view_cidade',
-            'terapeutas.view_estado',
+            'core.view_cidade',
+            'core.view_estado',
             
             # Pode ver suas próprias avaliações
             'terapeutas.view_avaliacao',
@@ -169,9 +169,9 @@ GROUPS_CONFIG = {
         'permissions': [
             # Visualização de dados relacionados
             'terapeutas.view_terapeuta',
-            'terapeutas.view_especialidade',
-            'terapeutas.view_cidade',
-            'terapeutas.view_estado',
+            'core.view_especialidade',
+            'core.view_cidade',
+            'core.view_estado',
         ]
     },
     
@@ -180,7 +180,7 @@ GROUPS_CONFIG = {
         'permissions': [
             # Visualização para criação de conteúdo
             'terapeutas.view_terapeuta',
-            'terapeutas.view_especialidade',
+            'core.view_especialidade',
             
             # Core content
             'core.add_faq',
