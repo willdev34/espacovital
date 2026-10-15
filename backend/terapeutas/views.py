@@ -161,7 +161,8 @@ class TerapeutaListView(ListView):
         para_quem = self.request.GET.get('para_quem')
         if para_quem:
             if para_quem in [choice[0] for choice in ClientType.choices]:
-                queryset = queryset.filter(para_quem=para_quem)
+                # para_quem é uma lista JSON, então busca por contido na lista
+                queryset = queryset.filter(para_quem__contains=[para_quem])
         
         # Filtro: Busca por texto (nome, bio, especialidades)
         busca = self.request.GET.get('q')
