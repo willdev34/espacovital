@@ -13,6 +13,17 @@ from django.utils.text import slugify
 from terapeutas.models import Terapeuta
 
 
+def usuario_ja_completou_onboarding(user):
+    """
+    Diz se o usuário já tem perfil de terapeuta ou algum espaço.
+
+    O espaço é ligado ao usuário por Espaco.responsavel, com related_name
+    'espacos_gerenciados'. Antes o código testava hasattr(user, 'espacos'),
+    um atributo que não existe, e quem já tinha espaço refazia o onboarding.
+    """
+    return hasattr(user, 'terapeuta') or user.espacos_gerenciados.exists()
+
+
 @method_decorator(login_required, name='dispatch')
 class WelcomeView(View):
     """
@@ -38,7 +49,7 @@ class WelcomeView(View):
         
         # Verificar se já completou o onboarding
         # (se já tem perfil de terapeuta ou espaço criado)
-        if hasattr(request.user, 'terapeuta') or hasattr(request.user, 'espacos'):
+        if usuario_ja_completou_onboarding(request.user):
             messages.info(
                 request,
                 'Você já completou o processo de cadastro!'
@@ -79,7 +90,7 @@ class SelectPlanView(View):
         from .models import Plano, Voucher
         
         # Verificar se já completou o onboarding
-        if hasattr(request.user, 'terapeuta') or hasattr(request.user, 'espacos'):
+        if usuario_ja_completou_onboarding(request.user):
             messages.info(request, 'Você já completou o processo de cadastro!')
             if hasattr(request.user, 'terapeuta'):
                 return redirect('terapeutas:dashboard')
@@ -137,11 +148,14 @@ class SelectPlanView(View):
             
             # Aplicar voucher se existir e for aplicável
             if voucher and plano in voucher.planos_aplicaveis.all():
-                desconto_info = voucher.calcular_desconto(plano.valor)
+                # calcular_desconto devolve só o valor do desconto (Decimal);
+                # o valor final e os dias grátis são calculados aqui
+                valor_desconto = voucher.calcular_desconto(plano.valor)
                 plano_info['tem_desconto'] = True
-                plano_info['valor_desconto'] = desconto_info['valor_desconto']
-                plano_info['valor_final'] = desconto_info['valor_final']
-                plano_info['dias_gratuidade'] = desconto_info.get('dias_gratuidade', 0)
+                plano_info['valor_desconto'] = valor_desconto
+                plano_info['valor_final'] = plano.valor - valor_desconto
+                if voucher.tipo_desconto == 'gratuidade':
+                    plano_info['dias_gratuidade'] = voucher.dias_gratuidade
             
             planos_com_desconto.append(plano_info)
         
@@ -231,18 +245,26 @@ class CreateProfileView(View):
             DadosCompartilhadosForm
         )
         
+        # Pegar dados da sessão
+        signup_data = request.session.get('signup_data', {})
+        tipo_perfil = signup_data.get('tipo_perfil', 'terapeuta')
+        plano_id = signup_data.get('plano_id')
+
+        # No fluxo "ambos", depois da etapa 1 o terapeuta já existe, mas o
+        # espaço ainda não. Sem esta exceção o usuário caía em "já completou"
+        # e nunca via a etapa 2 (nem ganhava a assinatura, criada no fim dela).
+        etapa_2_em_andamento = (
+            tipo_perfil == 'ambos'
+            and request.session.get('onboarding_step') == 2
+        )
+
         # Verificar se já completou o onboarding
-        if hasattr(request.user, 'terapeuta') or hasattr(request.user, 'espacos'):
+        if not etapa_2_em_andamento and usuario_ja_completou_onboarding(request.user):
             messages.info(request, 'Você já completou o processo de cadastro!')
             if hasattr(request.user, 'terapeuta'):
                 return redirect('terapeutas:dashboard')
             else:
                 return redirect('espacos:dashboard')
-        
-        # Pegar dados da sessão
-        signup_data = request.session.get('signup_data', {})
-        tipo_perfil = signup_data.get('tipo_perfil', 'terapeuta')
-        plano_id = signup_data.get('plano_id')
         
         # Verificar se selecionou um plano
         if not plano_id:
@@ -631,10 +653,11 @@ class CreateProfileView(View):
             # Salvar especialidades
             especialidades = form_terapeuta.cleaned_data.get('especialidades', [])
             for especialidade in especialidades:
+                # TerapeutaEspecialidade não tem campo 'ordem'; passar ordem=0
+                # dava TypeError e derrubava a etapa 1 do fluxo "ambos"
                 TerapeutaEspecialidade.objects.create(
                     terapeuta=terapeuta,
-                    especialidade=especialidade,
-                    ordem=0
+                    especialidade=especialidade
                 )
             
             # Salvar dados compartilhados na sessão

@@ -3,6 +3,7 @@
 # Descrição: Modelos base e utilitários do sistema
 # ===============================================================
 
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -1020,10 +1021,14 @@ class Voucher(BaseModel):
         """
         Calcula o valor do desconto sobre um valor de plano
         """
+        # valor_desconto é opcional no banco; sem valor o desconto é zero
+        # (antes isso quebrava com TypeError em vez de não descontar)
+        valor = self.valor_desconto or Decimal('0')
+
         if self.tipo_desconto == TipoDescontoVoucher.PERCENTUAL:
-            return (valor_plano * self.valor_desconto) / 100
+            return (valor_plano * valor) / 100
         elif self.tipo_desconto == TipoDescontoVoucher.VALOR_FIXO:
-            return min(self.valor_desconto, valor_plano)
+            return min(valor, valor_plano)
         else:  # GRATUIDADE
             return valor_plano  # Desconto total durante período
     

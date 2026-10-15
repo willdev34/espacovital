@@ -140,12 +140,25 @@ class WelcomeViewTest(OnboardingTestBase):
         """Usuário com espaço cadastrado deve ser redirecionado"""
         self._verificar_email()
 
-        # Simular que usuário tem 'espacos' mas não 'terapeuta'
-        with patch('core.views_onboarding.hasattr') as mock_hasattr:
-            mock_hasattr.side_effect = lambda obj, attr: attr == 'espacos'
-            response = self.client.get(self.url)
+        # Espaço de verdade, ligado ao usuário por Espaco.responsavel
+        from espacos.models import Espaco
+        Espaco.objects.create(
+            nome='Espaço do Carlos',
+            slug='espaco-do-carlos',
+            descricao_breve='Teste.',
+            descricao_completa='<p>Teste.</p>',
+            endereco='Rua X, 1',
+            cep='20000-000',
+            bairro='Centro',
+            tipo_espaco='clinica',
+            responsavel=self.user,
+        )
 
-        self.assertEqual(response.status_code, 302)
+        response = self.client.get(self.url)
+
+        self.assertRedirects(
+            response, reverse('espacos:dashboard'), fetch_redirect_response=False
+        )
 
     # --- Fluxo normal ---
 

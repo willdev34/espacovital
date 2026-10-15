@@ -462,15 +462,30 @@ class Espaco(TimeStampedModel):
             models.Index(fields=['is_destaque', 'is_premium']),
         ]
 
+    @property
+    def local_texto(self):
+        """
+        Cidade para exibição: a cidade do banco (Brasil, com estado e país,
+        como no __str__ de Cidade) ou o texto livre (outros países).
+        Vazio quando nenhum dos dois foi informado.
+        """
+        if self.cidade:
+            return str(self.cidade)
+        return self.cidade_texto
+
     def __str__(self):
-        return f"{self.nome} - {self.cidade}"
+        return self.nome_completo
 
     def save(self, *args, **kwargs):
         """
         Gera slug automático e validações personalizadas
         """
         if not self.slug:
-            base_slug = slugify(f"{self.nome}-{self.cidade.nome}")
+            # A cidade é opcional (outro país usa texto livre ou nada); antes
+            # self.cidade.nome quebrava com AttributeError quando não havia cidade
+            nome_da_cidade = self.cidade.nome if self.cidade else self.cidade_texto
+            partes = [self.nome, nome_da_cidade]
+            base_slug = slugify('-'.join(parte for parte in partes if parte))
             slug = base_slug
             counter = 1
             while Espaco.objects.filter(slug=slug).exclude(pk=self.pk).exists():
@@ -488,9 +503,11 @@ class Espaco(TimeStampedModel):
     @property
     def nome_completo(self):
         """
-        Nome completo com localização
+        Nome completo com localização (só o nome, se não houver cidade)
         """
-        return f"{self.nome} - {self.cidade}"
+        if self.local_texto:
+            return f"{self.nome} - {self.local_texto}"
+        return self.nome
 
     @property
     def media_avaliacoes(self):
