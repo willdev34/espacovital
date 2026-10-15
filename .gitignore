@@ -81,3 +81,13 @@ node_modules/
 *.egg-info/
 dist/
 build/
+# Dados pessoais de usuarios, terapeutas e espacos (nunca versionar)
+# Exports de teste e backups ficam so na maquina local
+backend/fixtures/users.json
+backend/fixtures/terapeutas.json
+backend/fixtures/espacos.json
+backend/usuarios.json
+backend/terapeutas.json
+backend/espacos.json
+backend/dados_*.json
+backend/backup_*.json
