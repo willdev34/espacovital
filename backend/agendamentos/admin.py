@@ -9,6 +9,7 @@ Data: 29/12/2024
 """
 
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
@@ -89,8 +90,7 @@ class SalaAdmin(admin.ModelAdmin):
     
     search_fields = [
         'nome',
-        'espaco__nome_fantasia',
-        'espaco__razao_social'
+        'espaco__nome'
     ]
     
     readonly_fields = [
@@ -188,7 +188,7 @@ class AgendamentoAdmin(admin.ModelAdmin):
         'sala__nome',
         'terapeuta__nome_completo',
         'terapeuta__user__email',
-        'espaco__nome_fantasia',
+        'espaco__nome',
         'observacoes'
     ]
     
@@ -298,7 +298,7 @@ class MultaAdmin(admin.ModelAdmin):
     
     search_fields = [
         'terapeuta__nome_completo',
-        'espaco__nome_fantasia',
+        'espaco__nome',
         'motivo',
         'agendamento__sala__nome'
     ]
@@ -387,7 +387,7 @@ class PIXConfigAdmin(admin.ModelAdmin):
     ]
     
     search_fields = [
-        'espaco__nome_fantasia',
+        'espaco__nome',
         'chave_pix',
         'nome_recebedor'
     ]

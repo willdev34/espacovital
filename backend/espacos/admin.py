@@ -286,7 +286,7 @@ class EspacoAdmin(admin.ModelAdmin):
     # VerificadoEspacoFilter, AvaliacaoEspacoFilter, TipoEspacoFilter
     # 'aceita_locacao', 'tem_acessibilidade', 'pais'
     search_fields = [
-        'nome', 'descricao_breve', 'email', 'telefone',
+        'nome', 'descricao_breve', 'email', 'whatsapp',
         'cidade__nome', 'cidade_texto', 'bairro'
     ]
     readonly_fields = [
@@ -529,6 +529,14 @@ class EspacoAdmin(admin.ModelAdmin):
     # AÇÕES PERSONALIZADAS
     # ===============================================================
     
+    def is_admin_user(self, user):
+        """
+        Verifica se o usuário é administrador (superusuário ou grupo
+        Administradores). As ações restritas chamavam este método, que
+        não existia neste admin, e quebravam com AttributeError.
+        """
+        return user.is_superuser or user.groups.filter(name='Administradores').exists()
+
     def verificar_espacos(self, request, queryset):
         """Ação para verificar espaços"""
         updated = queryset.update(is_verificado=True)
@@ -559,7 +567,7 @@ class EspacoAdmin(admin.ModelAdmin):
             )
             return
         
-        updated = queryset.update(destaque=False)
+        updated = queryset.update(is_destaque=False)
         self.message_user(
             request,
             f'{updated} espaço(s) removido(s) do destaque.'
@@ -578,7 +586,7 @@ class EspacoAdmin(admin.ModelAdmin):
             )
             return
         
-        updated = queryset.update(ativo=True)
+        updated = queryset.update(is_active=True)
         self.message_user(
             request,
             f'{updated} espaço(s) ativado(s) com sucesso.',
@@ -598,7 +606,7 @@ class EspacoAdmin(admin.ModelAdmin):
             )
             return
         
-        updated = queryset.update(ativo=False)
+        updated = queryset.update(is_active=False)
         self.message_user(
             request,
             f'{updated} espaço(s) desativado(s) com sucesso.',
@@ -645,14 +653,14 @@ class EspacoAdmin(admin.ModelAdmin):
                 espaco.id,
                 espaco.nome,
                 espaco.email or '',
-                espaco.telefone or '',
+                espaco.whatsapp or '',
                 espaco.endereco or '',
-                espaco.cidade.nome if espaco.cidade else '',
-                espaco.cidade.estado.sigla if espaco.cidade else '',
-                'Sim' if espaco.verificado else 'Não',
-                'Sim' if espaco.destaque else 'Não',
-                espaco.get_plano_display(),
-                'Sim' if espaco.ativo else 'Não',
+                espaco.cidade.nome if espaco.cidade else espaco.cidade_texto,
+                espaco.cidade.estado.sigla if espaco.cidade and espaco.cidade.estado else '',
+                'Sim' if espaco.is_verificado else 'Não',
+                'Sim' if espaco.is_destaque else 'Não',
+                'Premium' if espaco.is_premium else 'Padrão',
+                'Sim' if espaco.is_active else 'Não',
                 'Sim' if espaco.aceita_locacao else 'Não',
                 espaco.created_at.strftime('%d/%m/%Y %H:%M')
             ])

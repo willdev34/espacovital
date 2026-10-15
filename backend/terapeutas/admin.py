@@ -297,7 +297,7 @@ class TerapeutaAdmin(admin.ModelAdmin):
                     'fields': ('nome_completo', 'nome_exibicao', 'slug')
                 }),
                 ('Contato', {
-                    'fields': ('email_profissional', 'telefone', 'whatsapp')
+                    'fields': ('email_profissional', 'whatsapp')
                 }),
                 ('Localização', {
                     'fields': ('cidade_principal', 'cidades_atendimento', 'bairro', 'endereco')
@@ -793,15 +793,15 @@ class TerapeutaAdmin(admin.ModelAdmin):
             writer.writerow([
                 terapeuta.id,
                 terapeuta.nome_exibicao,
-                terapeuta.usuario.email if terapeuta.usuario else '',
-                terapeuta.telefone or '',
-                terapeuta.crp_crt or '',
+                terapeuta.email_profissional or terapeuta.user.email,
+                terapeuta.whatsapp or '',
+                terapeuta.registro_profissional or '',
                 terapeuta.get_cidade_principal_display(),
                 '',  # Estado já está na cidade
                 'Sim' if terapeuta.verificado else 'Não',
                 'Sim' if terapeuta.destaque else 'Não',
                 terapeuta.get_plano_display(),
-                'Sim' if terapeuta.ativo else 'Não',
+                'Sim' if terapeuta.is_active else 'Não',
                 terapeuta.created_at.strftime('%d/%m/%Y %H:%M')
             ])
         

@@ -602,7 +602,7 @@ class PIXConfig(models.Model):
         verbose_name_plural = 'Configurações PIX'
     
     def __str__(self):
-        return f"PIX - {self.espaco.nome_fantasia} - {self.tipo_chave}"
+        return f"PIX - {self.espaco.nome} - {self.tipo_chave}"
     
 # ===============================================================
 # MODEL: VÍNCULO TERAPEUTA ↔ ESPAÇO

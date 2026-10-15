@@ -488,7 +488,10 @@ class Estado(models.Model):
         ordering = ['nome']  # Temporário - vamos ajustar depois
     
     def __str__(self):
-        return f'{self.nome} ({self.sigla}) - {self.pais.nome}'
+        # pais ainda é opcional no banco (campo marcado como temporário)
+        if self.pais:
+            return f'{self.nome} ({self.sigla}) - {self.pais.nome}'
+        return f'{self.nome} ({self.sigla})'
 
 
 class Cidade(models.Model):
