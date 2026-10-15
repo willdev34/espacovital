@@ -189,11 +189,18 @@ class CustomSignupForm(SignupForm):
         user.last_name = self.cleaned_data['last_name']
         user.save()
         
-        # Armazenar dados extras na sessão para usar após confirmação de email
-        request.session['signup_data'] = {
+        # Armazenar dados extras na sessão para usar após confirmação de email.
+        # O voucher usa a chave 'voucher_id', a mesma que o adapter grava e que
+        # o onboarding lê. Com outra chave o voucher digitado se perdia.
+        signup_data = {
             'phone': self.cleaned_data['phone'],
             'tipo_perfil': self.cleaned_data['tipo_perfil'],
-            'voucher': self.cleaned_data.get('voucher_code').id if self.cleaned_data.get('voucher_code') else None
         }
+
+        voucher = self.cleaned_data.get('voucher_code')
+        if voucher:
+            signup_data['voucher_id'] = voucher.id
+
+        request.session['signup_data'] = signup_data
         
         return user
