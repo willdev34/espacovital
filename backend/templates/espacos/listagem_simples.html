@@ -1,0 +1,240 @@
+<!--
+===============================================================
+Título: Listagem Simples de Espaços - Seravitta
+Descrição: Lista de espaços terapêuticos no layout "espaço sem filtro"
+           (desktop e mobile): filtro lateral, regiões, contador e
+           cards horizontais com foto, terapias e contato.
+           O filtro envia os dados para a busca avançada.
+Autor: Will
+Data: 2026-10-15
+===============================================================
+-->
+{% extends 'base.html' %}
+
+{% block title %}Espaços Terapêuticos - Seravitta{% endblock %}
+{% block meta_description %}Encontre espaços terapêuticos verificados para sua terapia.{% endblock %}
+
+{% block content %}
+<section class="py-8 lg:py-12 min-h-screen bg-bege">
+    <div class="container mx-auto px-4 lg:px-6">
+
+        <!-- Botão que abre o filtro no mobile (no desktop o filtro fica sempre visível) -->
+        <button type="button" id="abrir-filtro"
+                class="lg:hidden w-full mb-6 px-4 py-3 border border-primary text-primary rounded-lg font-medium bg-white"
+                aria-controls="filtro-lateral" aria-expanded="false">
+            <i class="fas fa-sliders-h mr-2"></i>Filtro
+        </button>
+
+        <div class="flex flex-col lg:flex-row lg:gap-8">
+
+            <!-- ===== FILTRO LATERAL ===== -->
+            <aside id="filtro-lateral" class="hidden lg:block lg:w-1/4 mb-8 lg:mb-0">
+                <form method="get" action="{% url 'espacos:busca_avancada' %}"
+                      class="bg-white rounded-2xl shadow-card p-6 lg:sticky lg:top-24">
+                    <h2 class="font-poppins font-bold text-primary mb-6 text-xl">Refina sua busca</h2>
+
+                    <!-- Localização -->
+                    <div class="mb-6">
+                        <label for="filtro-estado" class="block text-primary font-poppins font-semibold mb-2">Localização</label>
+                        <select id="filtro-estado" name="estado"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Todos os estados</option>
+                            {% for estado in estados %}
+                            <option value="{{ estado.id }}">{{ estado.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Terapias -->
+                    <div class="mb-6">
+                        <label for="filtro-terapia" class="block text-primary font-poppins font-semibold mb-2">Terapias</label>
+                        <select id="filtro-terapia" name="terapias"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Todas as terapias</option>
+                            {% for especialidade in todas_especialidades %}
+                            <option value="{{ especialidade.id }}">{{ especialidade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Acessibilidade -->
+                    <fieldset class="mb-6">
+                        <legend class="text-primary font-poppins font-semibold mb-2">Acessibilidade?</legend>
+                        <div class="flex gap-6">
+                            <label class="flex items-center">
+                                <input type="radio" name="acessibilidade" value="sim" class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-gray-700">Sim</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="acessibilidade" value="nao" class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-gray-700">Não</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- Aceita locação -->
+                    <fieldset class="mb-6">
+                        <legend class="text-primary font-poppins font-semibold mb-2">Aceita locação?</legend>
+                        <div class="flex gap-6">
+                            <label class="flex items-center">
+                                <input type="radio" name="locacao" value="sim" class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-gray-700">Sim</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="locacao" value="nao" class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-gray-700">Não</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit"
+                            class="w-full bg-primary text-white px-6 py-3 rounded-lg font-poppins font-semibold hover:bg-primary-dark transition-colors">
+                        Aplicar Filtros
+                    </button>
+                </form>
+            </aside>
+
+            <!-- ===== RESULTADOS ===== -->
+            <div class="lg:w-3/4">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-primary mb-4">
+                    Locais para sua terapia
+                </h1>
+
+                <p class="bg-white rounded-lg shadow-card px-5 py-4 text-primary mb-8">
+                    Todos os profissionais seguem nossas políticas
+                </p>
+
+                <!-- Regiões: cada uma abre a busca avançada filtrada por cidade -->
+                <h2 class="font-poppins font-semibold text-primary mb-3 text-xl">Regiões</h2>
+                <ul class="bg-white rounded-lg shadow-card p-5 mb-6 grid grid-cols-2 gap-x-6 gap-y-2 text-primary">
+                    {% for regiao in espacos_por_regiao %}
+                        {% if regiao != 'Outras' %}
+                        <li>
+                            <a href="{% url 'espacos:busca_avancada' %}?busca={{ regiao|urlencode }}"
+                               class="hover:underline">{{ regiao }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                <!-- Contador de resultados -->
+                <p class="text-gray-700 mb-6">
+                    <strong>{{ paginator.count|default:0 }}</strong>
+                    opç{{ paginator.count|pluralize:"ão,ões" }}
+                    encontrada{{ paginator.count|pluralize }}
+                </p>
+
+                <!-- Cards -->
+                <div class="space-y-5">
+                    {% for espaco in espacos %}
+                    <article class="bg-white border border-gray-200 overflow-hidden flex flex-col md:flex-row">
+
+                        <!-- Foto (redonda no desktop, quadrada com cidade no mobile) -->
+                        <div class="md:w-56 bg-gray-200 flex items-center justify-center p-6 shrink-0">
+                            {% if espaco.foto_principal %}
+                            <img src="{{ espaco.foto_principal.url }}" alt="{{ espaco.nome }}"
+                                 class="w-32 h-32 rounded-full object-cover border-4 border-primary">
+                            {% else %}
+                            <div class="w-32 h-32 rounded-full bg-primary/10 border-4 border-primary flex items-center justify-center">
+                                <i class="fas fa-spa text-primary/50 text-4xl" aria-hidden="true"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Conteúdo -->
+                        <div class="flex-1 p-6 flex flex-col">
+                            <h3 class="font-poppins font-bold text-primary text-2xl">{{ espaco.nome }}</h3>
+
+                            {% if espaco.cidade or espaco.cidade_texto %}
+                            <p class="text-sm text-gray-600 mt-1">
+                                <i class="fas fa-map-marker-alt text-primary mr-1" aria-hidden="true"></i>
+                                {% if espaco.cidade %}{{ espaco.cidade.nome }}{% else %}{{ espaco.cidade_texto }}{% endif %}
+                            </p>
+                            {% endif %}
+
+                            <p class="text-gray-700 mt-3">{{ espaco.descricao_breve|truncatewords:30 }}</p>
+
+                            <!-- Terapias oferecidas -->
+                            <div class="border-t border-b border-gray-200 py-4 my-4 flex flex-wrap gap-3">
+                                {% for especialidade in espaco.especialidades.all|slice:":3" %}
+                                <span class="bg-gray-200 text-primary text-sm px-4 py-2">{{ especialidade.nome }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Contato e perfil -->
+                            <div class="mt-auto flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center gap-4 text-xl text-gray-900">
+                                    {% if espaco.whatsapp %}
+                                    <a href="https://wa.me/55{{ espaco.whatsapp }}" target="_blank" rel="noopener"
+                                       aria-label="WhatsApp de {{ espaco.nome }}" class="hover:text-primary">
+                                        <i class="fab fa-whatsapp"></i></a>
+                                    {% endif %}
+                                    {% if espaco.email %}
+                                    <a href="mailto:{{ espaco.email }}"
+                                       aria-label="E-mail de {{ espaco.nome }}" class="hover:text-primary">
+                                        <i class="fas fa-envelope"></i></a>
+                                    {% endif %}
+                                    {% if espaco.instagram %}
+                                    <a href="https://instagram.com/{{ espaco.instagram|cut:'@' }}" target="_blank" rel="noopener"
+                                       aria-label="Instagram de {{ espaco.nome }}" class="hover:text-primary">
+                                        <i class="fab fa-instagram"></i></a>
+                                    {% endif %}
+                                    {% if espaco.facebook %}
+                                    <a href="{{ espaco.facebook }}" target="_blank" rel="noopener"
+                                       aria-label="Facebook de {{ espaco.nome }}" class="hover:text-primary">
+                                        <i class="fab fa-facebook-f"></i></a>
+                                    {% endif %}
+                                </div>
+
+                                <a href="{% url 'espacos:detalhe' espaco.slug %}"
+                                   class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
+                                    Acessar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <!-- Nenhum espaço cadastrado -->
+                    <div class="text-center py-16 bg-white rounded-lg shadow-card">
+                        <h3 class="text-xl font-poppins font-semibold text-primary mb-3">Nenhum espaço encontrado</h3>
+                        <p class="text-gray-600 mb-6">Ainda não há espaços cadastrados por aqui.</p>
+                        <a href="{% url 'espacos:busca_avancada' %}"
+                           class="inline-block bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors">
+                            Fazer nova busca
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav class="mt-10 flex justify-center items-center gap-4" aria-label="Paginação">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"
+                       class="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white">Anterior</a>
+                    {% endif %}
+                    <span class="text-gray-700">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"
+                       class="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white">Próxima</a>
+                    {% endif %}
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Mostra ou esconde o filtro lateral no mobile
+    (function () {
+        var botao = document.getElementById('abrir-filtro');
+        var filtro = document.getElementById('filtro-lateral');
+        if (!botao || !filtro) return;
+        botao.addEventListener('click', function () {
+            var aberto = filtro.classList.toggle('hidden') === false;
+            botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+        });
+    })();
+</script>
+{% endblock %}

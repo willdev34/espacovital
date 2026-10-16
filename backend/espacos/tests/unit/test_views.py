@@ -109,25 +109,21 @@ def usuario_sem_espaco(db):
 
 @pytest.mark.django_db
 class TestEspacoHomeView:
-    @pytest.mark.skip(reason="Template espacos/home.html ainda não criado")
     def test_home_retorna_200(self, client):
         url = reverse('espacos:home')
         response = client.get(url)
         assert response.status_code == 200
 
-    @pytest.mark.skip(reason="Template espacos/home.html ainda não criado")
     def test_home_usa_template_correto(self, client):
         url = reverse('espacos:home')
         response = client.get(url)
         assert 'espacos/home.html' in [t.name for t in response.templates]
 
-    @pytest.mark.skip(reason="Template espacos/home.html ainda não criado")
     def test_home_tem_espacos_destaque_no_contexto(self, client):
         url = reverse('espacos:home')
         response = client.get(url)
         assert 'espacos_destaque' in response.context
 
-    @pytest.mark.skip(reason="Template espacos/home.html ainda não criado")
     def test_home_tem_total_espacos_no_contexto(self, client):
         url = reverse('espacos:home')
         response = client.get(url)
@@ -240,19 +236,16 @@ class TestEspacoListView:
 
 @pytest.mark.django_db
 class TestEspacoListagemSimplesView:
-    @pytest.mark.skip(reason="Template espacos/listagem_simples.html ainda não criado")
     def test_listagem_simples_retorna_200(self, client):
         url = reverse('espacos:listagem_simples')
         response = client.get(url)
         assert response.status_code == 200
 
-    @pytest.mark.skip(reason="Template espacos/listagem_simples.html ainda não criado")
     def test_listagem_simples_usa_template_correto(self, client):
         url = reverse('espacos:listagem_simples')
         response = client.get(url)
         assert 'espacos/listagem_simples.html' in [t.name for t in response.templates]
 
-    @pytest.mark.skip(reason="Template espacos/listagem_simples.html ainda não criado")
     def test_listagem_simples_exibe_espacos_ativos(self, client, espaco_ativo):
         url = reverse('espacos:listagem_simples')
         response = client.get(url)
@@ -260,7 +253,6 @@ class TestEspacoListagemSimplesView:
         espacos_ids = [e.id for e in response.context['espacos']]
         assert espaco_ativo.id in espacos_ids
 
-    @pytest.mark.skip(reason="Template espacos/listagem_simples.html ainda não criado")
     def test_listagem_simples_oculta_espacos_inativos(self, client, espaco_inativo):
         url = reverse('espacos:listagem_simples')
         response = client.get(url)
@@ -334,7 +326,6 @@ class TestEspacoPorRegiaoView:
     Testa a view de listagem de espaços por região
     """
 
-    @pytest.mark.skip(reason="Bug na view: Cidade não tem campo 'slug', view usa get_object_or_404(Cidade, slug=...) - corrigir espacos/views.py linha 231")
     def test_por_regiao_slug_inexistente_retorna_404(self, client):
         """Cidade que não existe deve retornar 404"""
         url = reverse('espacos:por_regiao', kwargs={
@@ -355,7 +346,6 @@ class TestContatoEspacoView:
     Testa o formulário de contato com o espaço
     """
 
-    @pytest.mark.skip(reason="Template espacos/contato.html ainda não criado")
     def test_contato_get_retorna_200_para_espaco_ativo(self, client, espaco_ativo):
         """GET no formulário de contato deve carregar sem erro"""
         url = reverse('espacos:contato', kwargs={'slug': espaco_ativo.slug})

@@ -1,0 +1,62 @@
+<!--
+===============================================================
+Título: Página Inicial de Espaços - Seravitta
+Descrição: Porta de entrada da seção de espaços: números gerais,
+           espaços em destaque e atalhos para a busca.
+Autor: Will
+Data: 2026-10-15
+===============================================================
+-->
+{% extends 'base.html' %}
+
+{% block title %}Espaços Terapêuticos - Seravitta{% endblock %}
+{% block meta_description %}Conheça os espaços terapêuticos verificados da Seravitta.{% endblock %}
+
+{% block content %}
+<section class="py-12 lg:py-16 bg-bege">
+    <div class="container mx-auto px-4 text-center max-w-3xl">
+        <h1 class="text-3xl md:text-4xl font-poppins font-bold text-primary mb-4">
+            Encontre o espaço certo para sua terapia
+        </h1>
+        <p class="text-gray-700 mb-8">
+            {{ total_espacos }} espaço{{ total_espacos|pluralize }} em
+            {{ total_cidades }} cidade{{ total_cidades|pluralize }}.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'espacos:busca_avancada' %}"
+               class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
+                Buscar com filtros
+            </a>
+            <a href="{% url 'espacos:listagem_simples' %}"
+               class="border border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
+                Ver todos os espaços
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-poppins font-bold text-primary mb-6">Espaços em destaque</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for espaco in espacos_destaque %}
+            <a href="{% url 'espacos:detalhe' espaco.slug %}"
+               class="block bg-white rounded-xl shadow-card hover:shadow-lg transition-shadow overflow-hidden">
+                <div class="h-44 bg-gray-200">
+                    {% if espaco.foto_principal %}
+                    <img src="{{ espaco.foto_principal.url }}" alt="{{ espaco.nome }}" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <div class="p-5">
+                    <h3 class="font-poppins font-bold text-primary text-lg">{{ espaco.nome }}</h3>
+                    <p class="text-gray-600 text-sm mt-2">{{ espaco.descricao_breve|truncatewords:20 }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <p class="text-gray-600 col-span-full">Nenhum espaço em destaque no momento.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

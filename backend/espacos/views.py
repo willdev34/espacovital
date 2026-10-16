@@ -6,10 +6,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, View
 from django.db.models import F, Q, Avg, Count, Prefetch
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils import timezone
+from django.utils.text import slugify
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import (
@@ -232,6 +233,12 @@ class EspacoListagemSimplesView(ListView):
                 espacos = self.get_queryset().filter(cidade__nome=regiao)[:6]
             context['espacos_por_regiao'][regiao] = espacos
         
+        # Dados do filtro lateral (enviado para a busca avançada)
+        context['estados'] = Estado.objects.filter(ativo=True).order_by('nome')
+        context['todas_especialidades'] = Especialidade.objects.filter(
+            is_active=True
+        ).order_by('nome')
+        
         return context
 
 
@@ -246,7 +253,19 @@ class EspacoPorRegiaoView(ListView):
     
     def get_queryset(self):
         cidade_slug = self.kwargs.get('cidade_slug')
-        self.cidade = get_object_or_404(Cidade, slug=cidade_slug)
+
+        # Cidade não tem campo slug: compara o slug do nome entre as cidades
+        # que têm espaço ativo (conjunto pequeno). Se duas cidades de estados
+        # diferentes tiverem o mesmo nome, vale a primeira.
+        cidades_com_espaco = Cidade.objects.filter(
+            espacos__is_active=True
+        ).select_related('estado').distinct().order_by('nome', 'id')
+        self.cidade = next(
+            (c for c in cidades_com_espaco if slugify(c.nome) == cidade_slug),
+            None
+        )
+        if self.cidade is None:
+            raise Http404('Região não encontrada')
         
         return Espaco.objects.filter(
             is_active=True, cidade=self.cidade

@@ -3,17 +3,13 @@
 # Descrição: Cobre os filtros e a ordenação de EspacoListView, a
 #            disponibilidade por período (Espaco.atende_no_periodo),
 #            o contexto das listagens, o contato com o espaço, a
-#            avaliação e as estatísticas.
-#            As telas que ainda não têm template (home, listagem
-#            simples, contato, avaliar, estatísticas) são testadas
-#            com a renderização isolada, para validar só a lógica.
+#            avaliação, as estatísticas e a página por região.
 # Autor: Will
 # Data: 2026-10-15
 # ===============================================================
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -27,21 +23,6 @@ from core.models import Especialidade
 pytestmark = pytest.mark.django_db
 
 User = get_user_model()
-
-
-# ---------------------------------------------------------------
-# Isola a renderização de uma view cujo template ainda não existe.
-# Devolve um dicionário que recebe o contexto montado pela view.
-# ---------------------------------------------------------------
-def _sem_template(monkeypatch, classe_view):
-    capturado = {}
-
-    def renderizar(self, context, **kwargs):
-        capturado.update(context)
-        return HttpResponse('ok')
-
-    monkeypatch.setattr(classe_view, 'render_to_response', renderizar)
-    return capturado
 
 
 # ---------------------------------------------------------------
@@ -344,13 +325,12 @@ class TestHomeEListagens:
         assert contexto['total_cidades'] == 3
         assert contexto['total_comodidades'] == 2
 
-    def test_home_responde_pela_url(self, client, cenario, monkeypatch):
-        capturado = _sem_template(monkeypatch, views.EspacoHomeView)
-
+    def test_home_responde_pela_url(self, client, cenario):
         resposta = client.get(reverse('espacos:home'))
 
         assert resposta.status_code == 200
-        assert capturado['total_espacos'] == 3
+        assert resposta.context['total_espacos'] == 3
+        assert 'Espaço Zen' in resposta.content.decode()
 
     def test_listagem_simples_agrupa_por_regiao(self, cenario):
         contexto = _contexto_lista(views.EspacoListagemSimplesView)
@@ -361,14 +341,49 @@ class TestHomeEListagens:
         assert [e.nome for e in grupos['Outras']] == ['Espaço Lótus']
         assert list(grupos['Belo Horizonte']) == []
 
-    def test_listagem_simples_responde_pela_url(
-        self, client, cenario, monkeypatch
-    ):
-        _sem_template(monkeypatch, views.EspacoListagemSimplesView)
+    def test_listagem_simples_mostra_cards_e_contador(self, client, cenario):
+        resposta = client.get(reverse('espacos:listagem_simples'))
 
+        html = resposta.content.decode()
+        assert resposta.status_code == 200
+        assert '<strong>3</strong>' in html
+        for nome in ('Espaço Zen', 'Espaço Lótus', 'Espaço Vida'):
+            assert nome in html
+        assert reverse('espacos:detalhe', kwargs={'slug': 'zen'}) in html
+
+    def test_listagem_simples_oferece_filtro_para_a_busca(
+        self, client, cenario
+    ):
+        resposta = client.get(reverse('espacos:listagem_simples'))
+
+        html = resposta.content.decode()
+        assert f'action="{reverse("espacos:busca_avancada")}"' in html
+        assert 'name="estado"' in html
+        assert 'Rio de Janeiro' in html
+
+    def test_listagem_simples_sem_espacos(self, client, db):
         resposta = client.get(reverse('espacos:listagem_simples'))
 
         assert resposta.status_code == 200
+        assert 'Nenhum espaço encontrado' in resposta.content.decode()
+
+    def test_por_regiao_lista_espacos_da_cidade(self, client, cenario):
+        url = reverse('espacos:por_regiao', kwargs={'cidade_slug': 'niteroi'})
+
+        resposta = client.get(url)
+
+        assert resposta.status_code == 200
+        assert resposta.context['cidade'] == cenario['niteroi']
+        assert resposta.context['total_espacos'] == 1
+        assert 'Espaço Lótus' in resposta.content.decode()
+
+    def test_por_regiao_cidade_sem_espaco_retorna_404(self, client, cenario):
+        Cidade.objects.create(nome='Cidade Vazia', estado=cenario['rj'])
+        url = reverse(
+            'espacos:por_regiao', kwargs={'cidade_slug': 'cidade-vazia'}
+        )
+
+        assert client.get(url).status_code == 404
 
 
 # ===============================================================
@@ -401,19 +416,21 @@ class TestContatoComOEspaco:
         assert contato.espaco == cenario['zen']
         assert contato.email == 'maria@teste.com'
 
-    def test_envio_invalido_reexibe_o_formulario(
-        self, client, cenario, monkeypatch
-    ):
-        capturado = _sem_template(monkeypatch, views.ContatoEspacoView)
+    def test_formulario_de_contato_abre(self, client, cenario):
+        resposta = client.get(self._url(cenario['zen']))
 
+        assert resposta.status_code == 200
+        assert 'Fale com Espaço Zen' in resposta.content.decode()
+
+    def test_envio_invalido_reexibe_o_formulario(self, client, cenario):
         resposta = client.post(
             self._url(cenario['zen']), self._dados(email='nao-e-email')
         )
 
         assert resposta.status_code == 200
         assert ContatoEspaco.objects.count() == 0
-        assert 'email' in capturado['form'].errors
-        assert capturado['espaco'] == cenario['zen']
+        assert 'email' in resposta.context['form'].errors
+        assert resposta.context['espaco'] == cenario['zen']
 
     def test_espaco_inativo_nao_recebe_contato(self, client, cenario):
         cenario['zen'].is_active = False
@@ -448,10 +465,17 @@ class TestAvaliarEspaco:
         assert resposta.status_code == 302
         assert resposta.url.startswith('/accounts/login/')
 
-    def test_formulario_traz_avaliacao_existente(
-        self, client, cenario, usuario_logado, monkeypatch
+    def test_formulario_de_avaliacao_abre(
+        self, client, cenario, usuario_logado
     ):
-        capturado = _sem_template(monkeypatch, views.AvaliarEspacoView)
+        resposta = client.get(self._url(cenario['zen']))
+
+        assert resposta.status_code == 200
+        assert 'Enviar avaliação' in resposta.content.decode()
+
+    def test_mostra_aviso_para_quem_ja_avaliou(
+        self, client, cenario, usuario_logado
+    ):
         existente = AvaliacaoEspaco.objects.create(
             espaco=cenario['zen'], usuario=usuario_logado, nota=4,
             comentario='Bom', is_active=True,
@@ -460,7 +484,8 @@ class TestAvaliarEspaco:
         resposta = client.get(self._url(cenario['zen']))
 
         assert resposta.status_code == 200
-        assert capturado['avaliacao_existente'] == existente
+        assert resposta.context['avaliacao_existente'] == existente
+        assert 'Você já avaliou este espaço' in resposta.content.decode()
 
     def test_avaliacao_valida_e_salva(
         self, client, cenario, usuario_logado
@@ -498,8 +523,7 @@ class TestEstatisticasDoEspaco:
     def _url(self, espaco):
         return reverse('espacos:estatisticas', kwargs={'slug': espaco.slug})
 
-    def test_responsavel_ve_totais(self, client, cenario, monkeypatch):
-        capturado = _sem_template(monkeypatch, views.EspacoEstatisticasView)
+    def test_responsavel_ve_totais(self, client, cenario):
         ContatoEspaco.objects.create(
             espaco=cenario['zen'], nome='Ana', email='ana@teste.com',
             assunto='Oi', mensagem='Olá',
@@ -509,12 +533,12 @@ class TestEstatisticasDoEspaco:
         resposta = client.get(self._url(cenario['zen']))
 
         assert resposta.status_code == 200
-        assert capturado['total_contatos'] == 1
-        assert capturado['contatos_mes'] == 1
-        assert capturado['total_avaliacoes'] == 0
+        assert resposta.context['total_contatos'] == 1
+        assert resposta.context['contatos_mes'] == 1
+        assert resposta.context['total_avaliacoes'] == 0
+        assert 'Estatísticas de Espaço Zen' in resposta.content.decode()
 
-    def test_outro_usuario_nao_acessa(self, client, cenario, monkeypatch):
-        _sem_template(monkeypatch, views.EspacoEstatisticasView)
+    def test_outro_usuario_nao_acessa(self, client, cenario):
         User.objects.create_user(
             username='intruso', email='i@teste.com', password='senha123'
         )

@@ -191,19 +191,16 @@ class EspacoListagemSimplesViewTest(EspacoViewsTestBase):
         super().setUp()
         self.url = reverse('espacos:listagem_simples')
 
-    @unittest.skip("Template espacos/listagem_simples.html ainda não criado")
     def test_listagem_simples_acessivel(self):
         """Listagem simples deve ser pública e retornar 200"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    @unittest.skip("Template espacos/listagem_simples.html ainda não criado")
     def test_usa_template_correto(self):
         """Deve usar o template de listagem simples"""
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'espacos/listagem_simples.html')
 
-    @unittest.skip("Template espacos/listagem_simples.html ainda não criado")
     def test_contexto_tem_espacos_por_regiao(self):
         """Contexto deve ter espaços agrupados por região"""
         response = self.client.get(self.url)
@@ -398,7 +395,6 @@ class ContatoEspacoViewTest(EspacoViewsTestBase):
         super().setUp()
         self.url = reverse('espacos:contato', kwargs={'slug': self.espaco.slug})
 
-    @unittest.skip("Template espacos/contato.html ainda não criado")
     def test_get_exibe_formulario(self):
         """GET deve exibir o formulário de contato"""
         response = self.client.get(self.url)
