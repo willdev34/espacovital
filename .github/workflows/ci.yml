@@ -1,0 +1,111 @@
+# ===============================================================
+# Título: Pipeline de Integração Contínua (CI) - Seravitta
+# Descrição: Roda a cada push e pull request. Valida o projeto
+#            Django, confere se há migrations pendentes e executa os
+#            testes com PostgreSQL. O pytest.ini já bloqueia o
+#            pipeline se a cobertura ficar abaixo de 80%.
+# Autor: Will
+# Data: 2026-10-15
+# ===============================================================
+
+name: CI
+
+# ---------------------------------------------------------------
+# Quando roda: push nas branches principais e todo pull request
+# ---------------------------------------------------------------
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+# ---------------------------------------------------------------
+# Cancela execuções antigas do mesmo branch quando chega um push novo
+# ---------------------------------------------------------------
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# O CI só precisa ler o código
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    name: testes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # -------------------------------------------------------------
+    # PostgreSQL 16, mesma versão usada no desenvolvimento local.
+    # O healthcheck garante que o banco aceita conexões antes dos
+    # passos seguintes começarem.
+    # -------------------------------------------------------------
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: espacovital
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # -------------------------------------------------------------
+    # Variáveis lidas pelo settings.py (valores só para teste)
+    # -------------------------------------------------------------
+    env:
+      ENVIRONMENT: development
+      SECRET_KEY: chave-somente-para-ci
+      DB_NAME: espacovital
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: "5432"
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      # 1. Baixa o código do repositório
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      # 2. Python na mesma versão da produção (runtime.txt), com cache do pip
+      - name: Instalar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      # 3. Dependências do projeto (inclui pytest, pytest-django e pytest-cov)
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      # 4. Confere a configuração do Django
+      - name: Verificar projeto Django
+        run: python manage.py check
+
+      # 5. Falha se alguém mudou um model e esqueceu de gerar a migration
+      - name: Verificar migrations pendentes
+        run: python manage.py makemigrations --check --dry-run
+
+      # 6. Testes com cobertura (o gate de 80% está no pytest.ini)
+      - name: Rodar testes
+        run: python -m pytest -q -p no:cacheprovider
+
+      # 7. Guarda o relatório de cobertura para consulta no GitHub
+      - name: Salvar relatório de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: backend/coverage.xml
+          if-no-files-found: ignore
