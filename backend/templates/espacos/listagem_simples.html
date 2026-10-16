@@ -127,23 +127,24 @@ Data: 2026-10-15
                 <!-- Cards -->
                 <div class="space-y-5">
                     {% for espaco in espacos %}
-                    <article class="bg-white border border-gray-200 overflow-hidden flex flex-col md:flex-row">
+                    <!-- Mobile: foto pequena ao lado do nome. Desktop: foto redonda em coluna própria -->
+                    <article class="grid grid-cols-[auto_1fr] md:grid-cols-[14rem_1fr] bg-white border border-gray-200 overflow-hidden">
 
-                        <!-- Foto (redonda no desktop, quadrada com cidade no mobile) -->
-                        <div class="md:w-56 bg-gray-200 flex items-center justify-center p-6 shrink-0">
+                        <!-- Foto -->
+                        <div class="p-4 md:p-6 md:row-span-2 md:bg-gray-200 flex items-center justify-center">
                             {% if espaco.foto_principal %}
                             <img src="{{ espaco.foto_principal.url }}" alt="{{ espaco.nome }}"
-                                 class="w-32 h-32 rounded-full object-cover border-4 border-primary">
+                                 class="w-20 h-20 md:w-32 md:h-32 rounded-md md:rounded-full object-cover border-4 border-primary">
                             {% else %}
-                            <div class="w-32 h-32 rounded-full bg-primary/10 border-4 border-primary flex items-center justify-center">
-                                <i class="fas fa-spa text-primary/50 text-4xl" aria-hidden="true"></i>
+                            <div class="w-20 h-20 md:w-32 md:h-32 rounded-md md:rounded-full bg-primary/10 border-4 border-primary flex items-center justify-center">
+                                <i class="fas fa-spa text-primary/50 text-2xl md:text-4xl" aria-hidden="true"></i>
                             </div>
                             {% endif %}
                         </div>
 
-                        <!-- Conteúdo -->
-                        <div class="flex-1 p-6 flex flex-col">
-                            <h3 class="font-poppins font-bold text-primary text-2xl">{{ espaco.nome }}</h3>
+                        <!-- Nome e cidade -->
+                        <div class="py-4 pr-4 md:pt-6 md:pl-6 md:pr-6 md:pb-0 self-center md:self-start min-w-0">
+                            <h3 class="font-poppins font-bold text-primary text-xl md:text-2xl break-words">{{ espaco.nome }}</h3>
 
                             {% if espaco.cidade or espaco.cidade_texto %}
                             <p class="text-sm text-gray-600 mt-1">
@@ -151,8 +152,11 @@ Data: 2026-10-15
                                 {% if espaco.cidade %}{{ espaco.cidade.nome }}{% else %}{{ espaco.cidade_texto }}{% endif %}
                             </p>
                             {% endif %}
+                        </div>
 
-                            <p class="text-gray-700 mt-3">{{ espaco.descricao_breve|truncatewords:30 }}</p>
+                        <!-- Descrição, terapias, contato e perfil -->
+                        <div class="col-span-2 md:col-span-1 px-4 pb-4 md:pl-6 md:pr-6 md:pb-6 flex flex-col min-w-0">
+                            <p class="text-gray-700 md:mt-3">{{ espaco.descricao_breve|truncatewords:30 }}</p>
 
                             <!-- Terapias oferecidas -->
                             <div class="border-t border-b border-gray-200 py-4 my-4 flex flex-wrap gap-3">

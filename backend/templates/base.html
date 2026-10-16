@@ -77,47 +77,47 @@ Data: 07/09/2025
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 lg:px-6">
             <!-- Desktop Navigation -->
-            <nav class="hidden md:flex items-center justify-between py-3">
+            <nav class="hidden lg:flex items-center justify-between py-3">
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
                         <!-- Logo dobrado: de h-10 para h-24 (pedido de marca) -->
                         <img src="{% static 'images/logo/seravitta-horizontal.svg' %}" 
                              alt="Seravitta" 
-                             class="h-24 w-auto object-contain"
+                             class="h-16 xl:h-24 w-auto shrink-0 object-contain"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     </a>
                 </div>
                 
                 <!-- Menu desktop -->
-                <nav class="hidden md:flex md:items-center md:space-x-8">
+                <nav class="hidden lg:flex lg:items-center lg:space-x-5 xl:space-x-8">
                     <a href="{% url 'core:home' %}" 
-                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Home
                     </a>
 
                     <button onclick="abrirModalBusca()" 
-                            class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                            class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Buscar Terapeuta
                     </button>
 
                     <a href="{% url 'terapias:destaques' %}" 
-                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Terapias
                     </a>
                     
                     <a href="{% url 'espacos:busca_avancada' %}" 
-                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Espaços
                     </a>
                     
                     <a href="#blog" 
-                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Blog
                     </a>
                     
                     <a href="{% url 'core:sobre' %}" 
-                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-lg font-medium">
+                    class="text-gray-700 hover:text-primary hover:-translate-y-1 transition-all duration-300 text-base xl:text-lg font-medium whitespace-nowrap">
                         Sobre
                     </a>
                 </nav>
@@ -193,7 +193,7 @@ Data: 07/09/2025
                     </div>
                     {% else %}
                     {# ===== USUÁRIO NÃO LOGADO ===== #}
-                    <a href="{% url 'account_login' %}" class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-medium">
+                    <a href="{% url 'account_login' %}" class="px-4 xl:px-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-medium whitespace-nowrap">
                         LOGIN / CADASTRAR
                     </a>
                     {% endif %}
@@ -201,7 +201,7 @@ Data: 07/09/2025
             </nav>
             
             <!-- Mobile Navigation -->
-            <nav class="md:hidden flex items-center justify-between py-3">
+            <nav class="lg:hidden flex items-center justify-between py-3">
                 <!-- Logo Mobile -->
                 <div class="flex items-center">
                     <a href="{% url 'core:home' %}" class="flex items-center">
@@ -236,7 +236,7 @@ Data: 07/09/2025
             </nav>
             
             <!-- Mobile Search (oculto por padrão) -->
-            <div id="mobile-search" class="hidden md:hidden py-4 border-t border-gray-200">
+            <div id="mobile-search" class="hidden lg:hidden py-4 border-t border-gray-200">
                 <div class="relative">
                     <input type="text" 
                            placeholder="Digite a Terapia" 
@@ -250,7 +250,7 @@ Data: 07/09/2025
             </div>
             
             <!-- Mobile Menu (oculto por padrão) -->
-            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+            <div id="mobile-menu" class="hidden lg:hidden py-4 border-t border-gray-200">
                 <div class="flex flex-col space-y-4">
                     <a href="{% url 'core:home' %}" 
                     class="text-gray-700 font-medium py-2">
@@ -344,7 +344,7 @@ Data: 07/09/2025
     <footer class="bg-white mt-16 border-t border-gray-200">
         <div class="container mx-auto px-4 lg:px-6 py-12">
             <!-- Desktop Footer -->
-            <div class="hidden md:flex md:justify-between md:items-start">
+            <div class="hidden lg:flex lg:justify-between lg:items-start">
                 <!-- Logo com redes sociais -->
                 <div class="flex flex-col items-start space-y-6 relative" style="width: 280px;">
                     <!-- Logo: modelo com assinatura, h-20 (cerca de 254px de largura) -->
@@ -454,7 +454,7 @@ Data: 07/09/2025
             </div>
 
             <!-- Mobile Footer -->
-            <div class="md:hidden space-y-8">
+            <div class="lg:hidden space-y-8">
                 <!-- Logo mobile: modelo com assinatura, alinhado a esquerda (sem text-center e sem mx-auto) -->
                 <div>
                     <img src="{% static 'images/logo/seravitta-assinatura.svg' %}" 

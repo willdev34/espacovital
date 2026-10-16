@@ -48,9 +48,10 @@ Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terap
         
         {# Cabeçalho da página #}
         <div class="mb-8">
-            <div class="flex items-center justify-between">
+            {# Empilha título e botão no celular; lado a lado a partir de sm #}
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Meus Agendamentos</h1>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Meus Agendamentos</h1>
                     <p class="mt-2 text-sm text-gray-600">
                         Gerencie suas reservas de salas terapêuticas
                     </p>
@@ -58,7 +59,7 @@ Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terap
                 
                 {# Botão para novo agendamento #}
                 <a href="{% url 'agendamentos:agendamento_create' %}"
-                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white"
+                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white whitespace-nowrap"
                     style="background-color: #1E5C5C;">
                         <i class="fas fa-plus mr-2"></i>
                         Novo Agendamento
@@ -107,15 +108,17 @@ Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terap
                 {% for agendamento in agendamentos %}
                 <div class="rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow
                             {% if agendamento.status == 'CANCELADO' %}bg-red-50 border border-red-100{% else %}bg-white{% endif %}">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
+                    <div class="p-4 sm:p-6">
+                        {# Coluna no celular (ações abaixo), linha a partir de sm #}
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div class="flex-1 min-w-0">
                                 {# Informações da sala e espaço #}
-                                <div class="flex items-center mb-3">
+                                <div class="flex flex-wrap items-center gap-2 mb-3">
                                     <h3 class="text-lg font-semibold text-gray-900">
                                         {{ agendamento.sala.nome }}
                                     </h3>
-                                    <span class="status-badge status-{{ agendamento.status }} ml-3">
+                                    {# status em minúsculo para casar com as classes .status-* #}
+                                    <span class="status-badge status-{{ agendamento.status|lower }}">
                                         {{ agendamento.get_status_display }}
                                     </span>
                                 </div>
@@ -159,7 +162,7 @@ Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terap
                             </div>
                             
                             {# Ações #}
-                            <div class="ml-6 flex flex-col space-y-2">
+                            <div class="flex flex-wrap gap-2 sm:ml-6 sm:flex-col sm:flex-nowrap">
                                 <a href="{% url 'agendamentos:agendamento_detail' agendamento.id %}"
                                     class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                         <i class="fas fa-eye mr-2"></i>
@@ -250,7 +253,7 @@ Descrição: Exibe a lista de agendamentos (reservas de salas) feitos pelo terap
 
 {# Modal de confirmação de cancelamento #}
 <div id="modalCancelamento" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-sm shadow-lg rounded-md bg-white">
         <div class="mt-3 text-center">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                 <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
