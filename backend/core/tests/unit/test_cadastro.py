@@ -103,6 +103,12 @@ class TestCadastroFormularioGeral:
         assert 'rounded-lg' in form.fields['password1'].widget.attrs['class']
         assert form.fields['password2'].widget.attrs['placeholder'] == 'Confirme sua senha'
 
+    def test_nome_de_usuario_recebe_o_mesmo_visual_dos_demais_campos(self):
+        """O campo username do allauth nao pode aparecer sem borda no celular"""
+        form = CustomSignupForm()
+        assert 'border-gray-300' in form.fields['username'].widget.attrs['class']
+        assert form.fields['username'].widget.attrs['placeholder'] == 'Nome de usuário'
+
 
 # ===============================================================
 # FORMULÁRIO: TELEFONE

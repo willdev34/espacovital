@@ -96,7 +96,7 @@ class CustomSignupForm(SignupForm):
         max_length=50,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Possui um cupom? Digite aqui',
+            'placeholder': 'Possui um cupom?',
             'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all uppercase',
             'style': 'text-transform: uppercase;'
         }),
@@ -124,6 +124,13 @@ class CustomSignupForm(SignupForm):
             'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all',
             'placeholder': 'Confirme sua senha'
         })
+        
+        # Nome de usuário: o campo vem do allauth sem estilo, então aplica o mesmo padrão dos demais
+        if 'username' in self.fields:
+            self.fields['username'].widget.attrs.update({
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all',
+                'placeholder': 'Nome de usuário'
+            })
         
         # Pré-selecionar tipo de perfil se vier do GET
         request = kwargs.get('request')
