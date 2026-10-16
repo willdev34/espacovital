@@ -88,7 +88,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Foto de Capa
                     </label>
-                    <div class="flex items-center gap-6">
+                    {# Prévia e campo empilham no celular; lado a lado a partir de sm #}
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
                         <div class="flex-shrink-0">
                             {% if terapeuta.foto_capa %}
                             <img id="preview-foto-capa" 
@@ -102,7 +103,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        <div class="flex-1">
+                        <div class="flex-1 min-w-0">
                             {{ form.foto_capa }}
                             {% if form.foto_capa.errors %}
                             <p class="text-sm text-red-600 mt-1">{{ form.foto_capa.errors }}</p>
