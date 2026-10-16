@@ -14,12 +14,14 @@
 <style>
     /* ===== Estilos customizados do Dashboard ===== */
     
-    /* Menu lateral fixo */
-    .sidebar-fixed {
-        position: sticky;
-        top: 80px;
-        height: calc(100vh - 100px);
-        overflow-y: auto;
+    /* Menu lateral fixo: só em telas grandes; no celular fluxo normal, sem altura fixa */
+    @media (min-width: 1024px) {
+        .sidebar-fixed {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
     }
     
     /* Item de menu ativo */
