@@ -283,7 +283,7 @@ class EspacoOnboardingForm(forms.ModelForm):
                 estado_id = int(self.data.get('estado'))
                 self.fields['cidade'].queryset = Cidade.objects.filter(
                     estado_id=estado_id,
-                    is_active=True
+                    ativo=True
                 ).order_by('nome')
             except (ValueError, TypeError):
                 pass
